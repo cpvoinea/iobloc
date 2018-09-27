@@ -1,2 +1,2 @@
-# tetris
+# iobloc
 it's mostly tetris
