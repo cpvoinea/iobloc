@@ -8,8 +8,9 @@ namespace iobloc
         {
             Console.WriteLine("1:tetris");
             Console.WriteLine("2:runner");
+            Console.WriteLine("3:helicopter");
             var key = Console.ReadKey().KeyChar;
-            if (key != '1' && key != '2')
+            if (key != '1' && key != '2' && key != '3')
                 return;
 
             Game game = null;
@@ -23,6 +24,9 @@ namespace iobloc
                         break;
                     case '2':
                         board = new RunnerBoard();
+                        break;
+                    case '3':
+                        board = new HelicopterBoard();
                         break;
                 }
 

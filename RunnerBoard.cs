@@ -14,7 +14,7 @@ namespace iobloc
             get
             {
                 var result = _grid.Copy(Height, Width);
-                int h = Height - 1 - _piece;
+                int h = Height - 1 - _distance;
                 result[h, 1] = result[h - 1, 1] = 1;
                 return result;
             }
@@ -22,8 +22,8 @@ namespace iobloc
 
         readonly Random _random = new Random();
         readonly int[,] _grid;
-        int _piece = 0;
-        int _hang = 0;
+        int _distance;
+        int _hang;
         bool _upwards;
         bool _doubleJump;
         bool _skipAdvance;
@@ -40,15 +40,16 @@ namespace iobloc
             {
                 _kill = false;
                 Restart();
+                return true;
             }
 
-            if (_piece == 0)
+            if (_distance == 0)
             {
                 _upwards = true;
                 return true;
             }
 
-            if (_piece > 0 && !_doubleJump)
+            if (_distance > 0 && !_doubleJump)
             {
                 _doubleJump = true;
                 _upwards = true;
@@ -64,19 +65,19 @@ namespace iobloc
                 return true;
 
             int max = _doubleJump ? 3 : 2;
-            if (_upwards && _piece < max)
-                _piece++;
+            if (_upwards && _distance < max)
+                _distance++;
             else
             {
                 _upwards = false;
-                if (_piece == max && _hang < max)
+                if (_distance == max && _hang < max)
                     _hang++;
                 else
                 {
                     _hang = 0;
 
-                    if (_piece > 0)
-                        _piece--;
+                    if (_distance > 0)
+                        _distance--;
                     else
                         _doubleJump = false;
                 }
@@ -97,7 +98,7 @@ namespace iobloc
 
         void Restart()
         {
-            _piece = 0;
+            _distance = 0;
             _hang = 0;
             _upwards = false;
             _doubleJump = false;
@@ -117,7 +118,7 @@ namespace iobloc
             int x = Height - 1;
             while (_grid[x--, 1] > 0)
                 fence++;
-            return _piece < fence;
+            return _distance < fence;
         }
 
         void Advance()
