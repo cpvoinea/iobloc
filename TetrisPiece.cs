@@ -1,25 +1,25 @@
 namespace iobloc
 {
-    enum PieceType { I = 1, O, T, L, J, S, Z }
-
-    struct Piece
+    struct TetrisPiece
     {
+        enum PieceType { I = 1, O, T, L, J, S, Z }
+
         int Rotation { get; set; }
-        internal PieceType Type { get; private set; }
+        internal int Type { get; private set; }
         internal int[,] Mask { get; private set; }
         internal int X { get; private set; }
         internal int Y { get; private set; }
 
-        internal Piece(PieceType type, int rotation)
+        internal TetrisPiece(int type, int rotation)
         {
-            Type = type;
+            Type = type + 1;
             Rotation = rotation;
-            Mask = GetMask(type, rotation);
+            Mask = GetMask((PieceType)type, rotation);
             X = -1;
             Y = 5;
         }
 
-        Piece(Piece p)
+        TetrisPiece(TetrisPiece p)
         {
             Type = p.Type;
             Rotation = p.Rotation;
@@ -204,31 +204,31 @@ namespace iobloc
             return null;
         }
 
-        internal Piece Rotate()
+        internal TetrisPiece Rotate()
         {
-            var p = new Piece(this);
+            var p = new TetrisPiece(this);
             p.Rotation = (p.Rotation + 1) % 4;
-            p.Mask = GetMask(p.Type, p.Rotation);
+            p.Mask = GetMask((PieceType)p.Type, p.Rotation);
             return p;
         }
 
-        internal Piece Left()
+        internal TetrisPiece Left()
         {
-            var p = new Piece(this);
+            var p = new TetrisPiece(this);
             p.Y--;
             return p;
         }
 
-        internal Piece Right()
+        internal TetrisPiece Right()
         {
-            var p = new Piece(this);
+            var p = new TetrisPiece(this);
             p.Y++;
             return p;
         }
 
-        internal Piece Down()
+        internal TetrisPiece Down()
         {
-            var p = new Piece(this);
+            var p = new TetrisPiece(this);
             p.X++;
             return p;
         }

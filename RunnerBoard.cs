@@ -4,30 +4,24 @@ namespace iobloc
 {
     class RunnerBoard : IBoard
     {
-        readonly string[] HELP = { "Play:SPACE", "Exit:ESC", "Pause:ANY" };
-        readonly ConsoleKey[] KEYS = { ConsoleKey.Spacebar };
-        const int INTERVAL = 100;
-        const int WIDTH = 20;
-        const int HEIGHT = 6;
-
-        public string[] Help { get { return HELP; } }
-        public ConsoleKey[] Keys { get { return KEYS; } }
-        public int StepInterval { get { return INTERVAL; } }
-        public int Width { get { return WIDTH; } }
-        public int Height { get { return HEIGHT; } }
+        public string[] Help { get { return Settings.Runner.HELP; } }
+        public ConsoleKey[] Keys { get { return Settings.Runner.KEYS; } }
+        public int StepInterval { get { return Settings.Runner.INTERVAL; } }
+        public int Width { get { return Settings.Runner.WIDTH; } }
+        public int Height { get { return Settings.Runner.HEIGHT; } }
         public int[,] Grid
         {
             get
             {
-                var result = _grid.Copy(HEIGHT, WIDTH);
-                int h = HEIGHT - 1 - _piece;
+                var result = _grid.Copy(Height, Width);
+                int h = Height - 1 - _piece;
                 result[h, 1] = result[h - 1, 1] = 1;
                 return result;
             }
         }
 
         readonly Random _random = new Random();
-        readonly int[,] _grid = new int[HEIGHT, WIDTH];
+        readonly int[,] _grid;
         int _piece = 0;
         int _hang = 0;
         bool _upwards;
@@ -35,7 +29,10 @@ namespace iobloc
         bool _skipAdvance;
         bool _kill;
 
-        internal RunnerBoard() { }
+        internal RunnerBoard()
+        {
+            _grid = new int[Height, Width];
+        }
 
         public bool Action(ConsoleKey key)
         {
@@ -109,15 +106,15 @@ namespace iobloc
 
         void Clear(int v)
         {
-            for (int i = 0; i < HEIGHT; i++)
-                for (int j = 0; j < WIDTH; j++)
+            for (int i = 0; i < Height; i++)
+                for (int j = 0; j < Width; j++)
                     _grid[i, j] = v;
         }
 
         bool Collides()
         {
             int fence = 0;
-            int x = HEIGHT - 1;
+            int x = Height - 1;
             while (_grid[x--, 1] > 0)
                 fence++;
             return _piece < fence;
@@ -125,20 +122,20 @@ namespace iobloc
 
         void Advance()
         {
-            for (int j = 1; j < WIDTH - 2; j++)
-                for (int i = HEIGHT - 1; i >= HEIGHT - 3; i--)
+            for (int j = 1; j < Width - 2; j++)
+                for (int i = Height - 1; i >= Height - 3; i--)
                     _grid[i, j] = _grid[i, j + 1];
             int fence = CreateFence();
             for (int i = 0; i < 3; i++)
-                _grid[HEIGHT - 1 - i, WIDTH - 2] = i < fence ? 4 : 0;
+                _grid[Height - 1 - i, Width - 2] = i < fence ? 4 : 0;
         }
 
         int CreateFence()
         {
             bool hasSpace = true;
-            int y = WIDTH - 3;
-            while (hasSpace && y >= WIDTH - 12)
-                hasSpace &= _grid[HEIGHT - 1, y--] == 0;
+            int y = Width - 3;
+            while (hasSpace && y >= Width - 12)
+                hasSpace &= _grid[Height - 1, y--] == 0;
             if (!hasSpace)
                 return 0;
             return _random.Next(4);

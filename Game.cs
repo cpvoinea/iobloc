@@ -17,8 +17,6 @@ namespace iobloc
 
         public event EventHandler Ended;
 
-        const int FRAME = 20;
-
         IBoard Board { get; set; }
         IBoardUI UI { get; set; }
         bool IsRunning { get; set; }
@@ -35,7 +33,7 @@ namespace iobloc
 
         internal void Start()
         {
-            _stepFrames = Board.StepInterval / FRAME;
+            _stepFrames = Board.StepInterval / Settings.Game.FRAME;
             _frames = 0;
             UI.Reset();
             UI.Draw();
@@ -48,13 +46,13 @@ namespace iobloc
                     while (IsPaused)
                     {
                         CheckInput();
-                        Thread.Sleep(FRAME);
+                        Thread.Sleep(Settings.Game.FRAME);
                     }
                     UI.Draw();
                 }
 
                 CheckInput();
-                Thread.Sleep(FRAME);
+                Thread.Sleep(Settings.Game.FRAME);
                 _frames++;
                 if (_frames >= _stepFrames)
                 {

@@ -4,34 +4,29 @@ namespace iobloc
 {
     class TetrisBoard : IBoard
     {
-        readonly string[] HELP = { "Play:ARROW", "Exit:ESC", "Pause:ANY" };
-        readonly ConsoleKey[] KEYS = { ConsoleKey.LeftArrow, ConsoleKey.RightArrow, ConsoleKey.UpArrow, ConsoleKey.DownArrow };
-        readonly int INTERVAL = 1000;
-        const int WIDTH = 10;
-        const int HEIGHT = 20;
-
-        public string[] Help { get { return HELP; } }
-        public ConsoleKey[] Keys { get { return KEYS; } }
-        public int StepInterval { get { return INTERVAL; } }
-        public int Width { get { return WIDTH; } }
-        public int Height { get { return HEIGHT; } }
+        public string[] Help { get { return Settings.Tetris.HELP; } }
+        public ConsoleKey[] Keys { get { return Settings.Tetris.KEYS; } }
+        public int StepInterval { get { return Settings.Tetris.INTERVAL; } }
+        public int Width { get { return Settings.Tetris.WIDTH; } }
+        public int Height { get { return Settings.Tetris.HEIGHT; } }
         public int[,] Grid
         {
             get
             {
-                var result = _grid.Copy(HEIGHT, WIDTH);
+                var result = _grid.Copy(Height, Width);
                 CheckGridPiece(result, _piece, true, true);
                 return result;
             }
         }
 
         readonly Random _random = new Random();
-        readonly int[,] _grid = new int[HEIGHT, WIDTH];
-        Piece _piece;
+        readonly int[,] _grid;
+        TetrisPiece _piece;
 
         internal TetrisBoard()
         {
             _piece = NewPiece();
+            _grid = new int[Height, Width];
         }
 
         public bool Action(ConsoleKey key)
@@ -51,7 +46,7 @@ namespace iobloc
             return MoveDown() || Next();
         }
 
-        static bool CheckGridPiece(int[,] grid, Piece piece, bool partiallyEntered, bool set)
+        bool CheckGridPiece(int[,] grid, TetrisPiece piece, bool partiallyEntered, bool set)
         {
             for (int i = 0; i < 4; i++)
             {
@@ -60,7 +55,7 @@ namespace iobloc
                     {
                         int gx = piece.X - 1 + i;
                         int gy = piece.Y - 2 + j;
-                        if (gx >= HEIGHT || gy < 0 || gy >= WIDTH ||
+                        if (gx >= Height || gy < 0 || gy >= Width ||
                             (!partiallyEntered && gx < 0) ||
                             (partiallyEntered && gx >= 0 && grid[gx, gy] > 0))
                             return false;
@@ -72,12 +67,12 @@ namespace iobloc
             return true;
         }
 
-        Piece NewPiece()
+        TetrisPiece NewPiece()
         {
-            return new Piece((PieceType)(_random.Next(7) + 1), _random.Next(4));
+            return new TetrisPiece(_random.Next(7), _random.Next(4));
         }
 
-        bool Collides(Piece piece)
+        bool Collides(TetrisPiece piece)
         {
             return !CheckGridPiece(_grid, piece, true, false);
         }
@@ -131,16 +126,16 @@ namespace iobloc
 
         void RemoveRows()
         {
-            for (int i = HEIGHT - 1; i >= 0; i--)
+            for (int i = Height - 1; i >= 0; i--)
             {
                 bool line = true;
                 int j = 0;
-                while (line && j < WIDTH)
+                while (line && j < Width)
                     line &= _grid[i, j++] > 0;
                 if (line)
                 {
                     for (int k = i; k >= 0; k--)
-                        for (int l = 0; l < WIDTH; l++)
+                        for (int l = 0; l < Width; l++)
                             _grid[k, l] = k == 0 ? 0 : _grid[k - 1, l];
                     i++;
                 }
