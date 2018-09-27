@@ -4,10 +4,26 @@ namespace iobloc
 {
     class TetrisBoard : IBoard
     {
-        internal enum MoveType { Rotate, MoveLeft, MoveRight, MoveDown, Next }
-
+        readonly string[] HELP = { "Play:ARROW", "Exit:ESC", "Pause:ANY" };
+        readonly ConsoleKey[] KEYS = { ConsoleKey.LeftArrow, ConsoleKey.RightArrow, ConsoleKey.UpArrow, ConsoleKey.DownArrow };
+        readonly int INTERVAL = 1000;
         const int WIDTH = 10;
         const int HEIGHT = 20;
+
+        public string[] Help { get { return HELP; } }
+        public ConsoleKey[] Keys { get { return KEYS; } }
+        public int StepInterval { get { return INTERVAL; } }
+        public int Width { get { return WIDTH; } }
+        public int Height { get { return HEIGHT; } }
+        public int[,] Grid
+        {
+            get
+            {
+                var result = _grid.Copy(HEIGHT, WIDTH);
+                CheckGridPiece(result, _piece, true, true);
+                return result;
+            }
+        }
 
         readonly Random _random = new Random();
         readonly int[,] _grid = new int[HEIGHT, WIDTH];
@@ -18,44 +34,21 @@ namespace iobloc
             _piece = NewPiece();
         }
 
-        public int Width { get { return WIDTH; } }
-        public int Height { get { return HEIGHT; } }
-
-        public int[,] Grid
+        public bool Action(ConsoleKey key)
         {
-            get
+            switch (key)
             {
-                int[,] result = CopyGrid();
-                CheckGridPiece(result, _piece, true, true);
-                return result;
-            }
-        }
-
-        public bool Move(object action)
-        {
-            switch ((MoveType)action)
-            {
-                case MoveType.Rotate: return Rotate();
-                case MoveType.MoveLeft: return MoveLeft();
-                case MoveType.MoveRight: return MoveRight();
-                case MoveType.MoveDown: return MoveDown();
-                case MoveType.Next: return Next();
+                case ConsoleKey.UpArrow: return Rotate();
+                case ConsoleKey.LeftArrow: return MoveLeft();
+                case ConsoleKey.RightArrow: return MoveRight();
+                case ConsoleKey.DownArrow: return MoveDown();
                 default: return false;
             }
         }
 
-        Piece NewPiece()
+        public bool Step()
         {
-            return new Piece((PieceType)(_random.Next(7) + 1), _random.Next(4));
-        }
-
-        int[,] CopyGrid()
-        {
-            int[,] result = new int[HEIGHT, WIDTH];
-            for (int i = 0; i < HEIGHT; i++)
-                for (int j = 0; j < WIDTH; j++)
-                    result[i, j] = _grid[i, j];
-            return result;
+            return MoveDown() || Next();
         }
 
         static bool CheckGridPiece(int[,] grid, Piece piece, bool partiallyEntered, bool set)
@@ -77,6 +70,11 @@ namespace iobloc
             }
 
             return true;
+        }
+
+        Piece NewPiece()
+        {
+            return new Piece((PieceType)(_random.Next(7) + 1), _random.Next(4));
         }
 
         bool Collides(Piece piece)

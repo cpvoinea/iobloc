@@ -6,21 +6,43 @@ namespace iobloc
     {
         static void Main(string[] args)
         {
-            var game = new Game();
-            game.Ended += GameEnded;
+            Console.WriteLine("1:tetris");
+            Console.WriteLine("2:runner");
+            var key = Console.ReadKey().KeyChar;
+            if (key != '1' && key != '2')
+                return;
+
+            Game game = null;
             try
             {
+                IBoard board = null;
+                switch (key)
+                {
+                    case '1':
+                        board = new TetrisBoard();
+                        break;
+                    case '2':
+                        board = new RunnerBoard();
+                        break;
+                }
+
+                game = new Game(board);
+                game.Ended += GameEnded;
                 game.Start();
             }
             catch (Exception ex)
             {
                 Console.Clear();
                 Console.WriteLine(ex);
+                Console.ReadKey(true);
             }
             finally
             {
-                game.Ended -= GameEnded;
-                game.Close();
+                if (game != null)
+                {
+                    game.Ended -= GameEnded;
+                    game.Close();
+                }
             }
         }
 

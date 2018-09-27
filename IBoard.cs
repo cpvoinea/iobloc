@@ -1,10 +1,16 @@
+using System;
+
 namespace iobloc
 {
     interface IBoard
     {
+        string[] Help { get; }
+        ConsoleKey[] Keys { get; }
+        int StepInterval { get; }
         int Width { get; }
         int Height { get; }
         int[,] Grid { get; }
-        bool Move(object action);
+        bool Action(ConsoleKey key);
+        bool Step();
     }
 }

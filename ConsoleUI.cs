@@ -57,13 +57,13 @@ namespace iobloc
         public void ShowHelp()
         {
             Reset();
-            int row = _board.Height / 2 - 1;
-            Console.SetCursorPosition(1, row);
-            Console.WriteLine("Play:ARROW");
-            Console.SetCursorPosition(1, row + 1);
-            Console.WriteLine("Exit:ESC");
-            Console.SetCursorPosition(1, row + 2);
-            Console.WriteLine("Pause:ANY");
+            int row = _board.Height / 2 - _board.Help.Length / 2;
+            string[] help = _board.Help;
+            foreach (string s in help)
+            {
+                Console.SetCursorPosition(1, row++);
+                Console.WriteLine(s);
+            }
         }
 
         void WriteMultiple(char c, int times)

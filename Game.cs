@@ -17,28 +17,28 @@ namespace iobloc
 
         public event EventHandler Ended;
 
-        const int FRAME = 50;
+        const int FRAME = 20;
 
-        IBoard Board{get;set;}
-        IBoardUI UI{get;set;}
-        int MoveCount{get;set;}
-        int FrameCount{get;set;}
-        bool IsRunning{get;set;}
-        bool IsPaused{get;set;}
+        IBoard Board { get; set; }
+        IBoardUI UI { get; set; }
+        bool IsRunning { get; set; }
+        bool IsPaused { get; set; }
         string _message = string.Empty;
+        int _frames;
+        int _stepFrames;
 
-        internal Game()
+        internal Game(IBoard board)
         {
-            Board = new TetrisBoard();
-            UI = new ConsoleUI(Board);
+            Board = board;
+            UI = new ConsoleUI(board);
         }
 
         internal void Start()
         {
+            _stepFrames = Board.StepInterval / FRAME;
+            _frames = 0;
             UI.Reset();
             UI.Draw();
-            MoveCount = 20;
-            FrameCount = 0;
             IsRunning = true;
             while (IsRunning)
             {
@@ -52,13 +52,14 @@ namespace iobloc
                     }
                     UI.Draw();
                 }
+
                 CheckInput();
                 Thread.Sleep(FRAME);
-                FrameCount++;
-                if (FrameCount >= MoveCount)
+                _frames++;
+                if (_frames >= _stepFrames)
                 {
                     Step();
-                    FrameCount = 0;
+                    _frames = 0;
                 }
             }
             if (Ended != null)
@@ -80,46 +81,31 @@ namespace iobloc
                 IsPaused = false;
                 return;
             }
-            switch (key)
+            if (key == ConsoleKey.Escape)
             {
-                case ConsoleKey.LeftArrow:
-                    if (Board.Move(TetrisBoard.MoveType.MoveLeft))
-                        UI.Draw();
-                    break;
-                case ConsoleKey.RightArrow:
-                    if (Board.Move(TetrisBoard.MoveType.MoveRight))
-                        UI.Draw();
-                    break;
-                case ConsoleKey.UpArrow:
-                    if (Board.Move(TetrisBoard.MoveType.Rotate))
-                        UI.Draw();
-                    break;
-                case ConsoleKey.DownArrow:
-                    if (Board.Move(TetrisBoard.MoveType.MoveDown))
-                        UI.Draw();
-                    break;
-                case ConsoleKey.Escape:
-                    IsRunning = false;
-                    _message = "Bye!";
-                    break;
-                default:
-                    IsPaused = true;
-                    break;
+                IsRunning = false;
+                _message = "Bye!";
+                return;
             }
+
+            if (Board.Keys.Contains(key))
+            {
+                if (Board.Action(key))
+                    UI.Draw();
+            }
+            else
+                IsPaused = true;
         }
 
         void Step()
         {
             if (!IsRunning || IsPaused)
                 return;
-            if (!Board.Move(TetrisBoard.MoveType.MoveDown))
+            if (!Board.Step())
             {
-                if (!Board.Move(TetrisBoard.MoveType.Next))
-                {
-                    IsRunning = false;
-                    _message = "Game over.";
-                    return;
-                }
+                IsRunning = false;
+                _message = "Game over.";
+                return;
             }
             UI.Draw();
         }
