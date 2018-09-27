@@ -17,47 +17,48 @@ namespace iobloc
 
         public event EventHandler Ended;
 
-        readonly Board _board;
-        readonly ConsoleUI _ui;
         const int FRAME = 50;
-        int _moveCount;
-        int _frameCount;
-        bool _isRunning;
-        bool _isPaused;
+
+        IBoard Board{get;set;}
+        IBoardUI UI{get;set;}
+        int MoveCount{get;set;}
+        int FrameCount{get;set;}
+        bool IsRunning{get;set;}
+        bool IsPaused{get;set;}
         string _message = string.Empty;
 
         internal Game()
         {
-            _board = new Board();
-            _ui = new ConsoleUI(_board);
+            Board = new TetrisBoard();
+            UI = new ConsoleUI(Board);
         }
 
         internal void Start()
         {
-            _ui.Reset();
-            _ui.Draw();
-            _moveCount = 20;
-            _frameCount = 0;
-            _isRunning = true;
-            while (_isRunning)
+            UI.Reset();
+            UI.Draw();
+            MoveCount = 20;
+            FrameCount = 0;
+            IsRunning = true;
+            while (IsRunning)
             {
-                if (_isPaused)
+                if (IsPaused)
                 {
-                    _ui.ShowHelp();
-                    while (_isPaused)
+                    UI.ShowHelp();
+                    while (IsPaused)
                     {
                         CheckInput();
                         Thread.Sleep(FRAME);
                     }
-                    _ui.Draw();
+                    UI.Draw();
                 }
                 CheckInput();
                 Thread.Sleep(FRAME);
-                _frameCount++;
-                if (_frameCount >= _moveCount)
+                FrameCount++;
+                if (FrameCount >= MoveCount)
                 {
-                    StepDown();
-                    _frameCount = 0;
+                    Step();
+                    FrameCount = 0;
                 }
             }
             if (Ended != null)
@@ -66,7 +67,7 @@ namespace iobloc
 
         internal void Close()
         {
-            _ui.Restore();
+            UI.Restore();
         }
 
         void CheckInput()
@@ -74,53 +75,53 @@ namespace iobloc
             if (!Console.KeyAvailable)
                 return;
             var key = Console.ReadKey(true).Key;
-            if (_isPaused)
+            if (IsPaused)
             {
-                _isPaused = false;
+                IsPaused = false;
                 return;
             }
             switch (key)
             {
                 case ConsoleKey.LeftArrow:
-                    if (_board.MoveLeft())
-                        _ui.Draw();
+                    if (Board.Move(TetrisBoard.MoveType.MoveLeft))
+                        UI.Draw();
                     break;
                 case ConsoleKey.RightArrow:
-                    if (_board.MoveRight())
-                        _ui.Draw();
+                    if (Board.Move(TetrisBoard.MoveType.MoveRight))
+                        UI.Draw();
                     break;
                 case ConsoleKey.UpArrow:
-                    if (_board.Rotate())
-                        _ui.Draw();
+                    if (Board.Move(TetrisBoard.MoveType.Rotate))
+                        UI.Draw();
                     break;
                 case ConsoleKey.DownArrow:
-                    if (_board.MoveDown())
-                        _ui.Draw();
+                    if (Board.Move(TetrisBoard.MoveType.MoveDown))
+                        UI.Draw();
                     break;
                 case ConsoleKey.Escape:
-                    _isRunning = false;
+                    IsRunning = false;
                     _message = "Bye!";
                     break;
                 default:
-                    _isPaused = true;
+                    IsPaused = true;
                     break;
             }
         }
 
-        void StepDown()
+        void Step()
         {
-            if (!_isRunning || _isPaused)
+            if (!IsRunning || IsPaused)
                 return;
-            if (!_board.MoveDown())
+            if (!Board.Move(TetrisBoard.MoveType.MoveDown))
             {
-                if (!_board.Next())
+                if (!Board.Move(TetrisBoard.MoveType.Next))
                 {
-                    _isRunning = false;
+                    IsRunning = false;
                     _message = "Game over.";
                     return;
                 }
             }
-            _ui.Draw();
+            UI.Draw();
         }
     }
 }
