@@ -31,8 +31,8 @@ namespace iobloc
         {
             internal static readonly string[] HELP = { "Play:SPACE", "Exit:ESC", "Pause:ANY" };
             internal static readonly ConsoleKey[] KEYS = { ConsoleKey.Spacebar };
-            internal const int INTERVAL = 100;
-            internal const int WIDTH = 30;
+            internal const int INTERVAL = 200;
+            internal const int WIDTH = 20;
             internal const int HEIGHT = 10;
         }
     }

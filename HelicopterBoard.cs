@@ -14,7 +14,7 @@ namespace iobloc
             get
             {
                 var result = _grid.Copy(Height, Width);
-                result[_distance, 10] = result[_distance, 11] = result[_distance, 12] = 1;
+                result[_distance, 5] = result[_distance, 6] = 1;
                 return result;
             }
         }
@@ -22,14 +22,14 @@ namespace iobloc
         readonly Random _random = new Random();
         readonly int[,] _grid;
         int _distance;
-        int _lift;
-        int _hang;
+        int _speed;
         bool _skipAdvance;
         bool _kill;
 
         internal HelicopterBoard()
         {
             _grid = new int[Height, Width];
+            _speed = -1;
         }
 
         public bool Action(ConsoleKey key)
@@ -41,7 +41,7 @@ namespace iobloc
                 return true;
             }
 
-            if(_distance == 0)
+            if (_distance <= 1)
             {
                 Clear(4);
                 _kill = true;
@@ -49,7 +49,7 @@ namespace iobloc
             }
 
             _distance--;
-            _lift = 2;
+            _speed = 1;
 
             return true;
         }
@@ -58,6 +58,22 @@ namespace iobloc
         {
             if (_kill)
                 return true;
+
+            if (_speed == 1)
+            {
+                _distance--;
+                _speed--;
+            }
+            else if (_speed == 0)
+                _speed--;
+            else if (_distance < Height - 1)
+                _distance++;
+            else
+            {
+                _kill = true;
+                Clear(4);
+                return true;
+            }
 
             _skipAdvance = !_skipAdvance;
             if (!_skipAdvance)
@@ -76,8 +92,7 @@ namespace iobloc
         void Restart()
         {
             _distance = 0;
-            _lift = 0;
-            _hang = 0;
+            _speed = -1;
             Clear(0);
         }
 
@@ -90,17 +105,17 @@ namespace iobloc
 
         bool Collides()
         {
-            return _grid[_distance, 10] > 0 || _grid[_distance, 11] > 0 || _grid[_distance, 12] > 0;
+            return _grid[_distance, 5] > 0 || _grid[_distance, 6] > 0;
         }
 
         void Advance()
         {
-            for (int j = 1; j < Width - 2; j++)
-                for (int i = Height - 1; i >= Height - 3; i--)
+            for (int j = 1; j < Width - 1; j++)
+                for (int i = 0; i < Height; i++)
                     _grid[i, j] = _grid[i, j + 1];
             var fence = CreateFence();
             for (int i = 0; i < Height; i++)
-                _grid[i, Width - 2] = fence[i];
+                _grid[i, Width - 1] = fence[i];
         }
 
         int[] CreateFence()
@@ -117,7 +132,7 @@ namespace iobloc
             }
             if ((p & 2) > 0)
             {
-                int c = _random.Next(5);
+                int c = _random.Next(4);
                 for (int i = 0; i < c; i++)
                     result[i] = 4;
             }

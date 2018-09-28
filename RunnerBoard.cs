@@ -134,12 +134,12 @@ namespace iobloc
         int CreateFence()
         {
             bool hasSpace = true;
-            int y = Width - 3;
+            int y = Width - 4;
             while (hasSpace && y >= Width - 12)
                 hasSpace &= _grid[Height - 1, y--] == 0;
             if (!hasSpace)
                 return 0;
-            return _random.Next(4);
+            return _random.Next(3);
         }
     }
 }
