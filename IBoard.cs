@@ -5,6 +5,7 @@ namespace iobloc
     interface IBoard
     {
         string[] Help { get; }
+        int Score { get; }
         ConsoleKey[] Keys { get; }
         int StepInterval { get; }
         int Width { get; }

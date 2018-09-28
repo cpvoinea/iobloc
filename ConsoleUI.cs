@@ -45,6 +45,8 @@ namespace iobloc
                 }
             }
             Console.ForegroundColor = color;
+            Console.SetCursorPosition(_board.Width / 2 - 2, 0);
+            Console.Write("{0,5}", _board.Score);
             Console.SetCursorPosition(1, 1);
         }
 

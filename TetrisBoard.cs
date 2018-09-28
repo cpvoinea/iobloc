@@ -18,10 +18,12 @@ namespace iobloc
                 return result;
             }
         }
+        public int Score { get { return _score; } }
 
         readonly Random _random = new Random();
         readonly int[,] _grid;
         TetrisPiece _piece;
+        int _score;
 
         internal TetrisBoard()
         {
@@ -126,6 +128,7 @@ namespace iobloc
 
         void RemoveRows()
         {
+            int series = 0;
             for (int i = Height - 1; i >= 0; i--)
             {
                 bool line = true;
@@ -138,8 +141,17 @@ namespace iobloc
                         for (int l = 0; l < Width; l++)
                             _grid[k, l] = k == 0 ? 0 : _grid[k - 1, l];
                     i++;
+                    series++;
                 }
             }
+            if (series == 4)
+                _score += 10;
+            else if (series == 3)
+                _score += 6;
+            else if (series == 2)
+                _score += 3;
+            else if (series == 1)
+                _score += 1;
         }
     }
 }
