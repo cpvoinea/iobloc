@@ -12,7 +12,7 @@ namespace iobloc
 
         internal TetrisPiece(int type, int rotation)
         {
-            Type = type + 1;
+            Type = type;
             Rotation = rotation;
             Mask = GetMask((PieceType)type, rotation);
             X = -1;

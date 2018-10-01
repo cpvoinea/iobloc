@@ -71,7 +71,7 @@ namespace iobloc
 
         TetrisPiece NewPiece()
         {
-            return new TetrisPiece(_random.Next(7), _random.Next(4));
+            return new TetrisPiece(_random.Next(7) + 1, _random.Next(4));
         }
 
         bool Collides(TetrisPiece piece)
