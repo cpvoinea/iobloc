@@ -2,38 +2,67 @@ namespace iobloc
 {
     struct TetrisPiece
     {
+        /// <summary>
+        /// 1-based list of piece types, each int value has a color corespondent in ConsoleColor
+        /// </summary>
         enum PieceType { I = 1, O, T, L, J, S, Z }
 
-        int Rotation { get; set; }
+        /// <summary>
+        /// Current orientation
+        /// </summary>
+        int Orientation { get; set; }
         internal int Type { get; private set; }
+        /// <summary>
+        /// A 4x4 mask of piece
+        /// </summary>
         internal int[,] Mask { get; private set; }
+        /// <summary>
+        /// Distance from top
+        /// </summary>
         internal int X { get; private set; }
+        /// <summary>
+        /// Distance from left
+        /// </summary>
         internal int Y { get; private set; }
 
-        internal TetrisPiece(int type, int rotation)
+        /// <summary>
+        /// Initialize piece
+        /// </summary>
+        /// <param name="type">only 1-7 values allowed</param>
+        /// <param name="orientation">only 0-3 values allowed</param>
+        internal TetrisPiece(int type, int orientation)
         {
             Type = type;
-            Rotation = rotation;
-            Mask = GetMask((PieceType)type, rotation);
+            Orientation = orientation;
+            // mask is set once and changed only on rotations
+            Mask = GetMask((PieceType)type, orientation);
+            // start position is top-center of board
             X = -1;
             Y = 5;
         }
 
+        /// <summary>
+        /// Copy constructor
+        /// </summary>
         TetrisPiece(TetrisPiece p)
         {
             Type = p.Type;
-            Rotation = p.Rotation;
+            Orientation = p.Orientation;
             Mask = p.Mask;
             X = p.X;
             Y = p.Y;
         }
 
-        static int[,] GetMask(PieceType type, int rotation)
+        /// <summary>
+        /// Get piece template mask
+        /// </summary>
+        /// <returns>a 4x4 array</returns>
+        static int[,] GetMask(PieceType type, int orientation)
         {
             switch (type)
             {
                 case PieceType.I:
-                    switch (rotation % 2)
+                    switch (orientation % 2)
                     {
                         case 0:
                             return new[,]{
@@ -59,7 +88,7 @@ namespace iobloc
                         {0,0,0,0}
                     };
                 case PieceType.T:
-                    switch (rotation % 4)
+                    switch (orientation % 4)
                     {
                         case 0:
                             return new[,]{
@@ -93,7 +122,7 @@ namespace iobloc
                     }
                     break;
                 case PieceType.L:
-                    switch (rotation % 4)
+                    switch (orientation % 4)
                     {
                         case 0:
                             return new[,]{
@@ -127,7 +156,7 @@ namespace iobloc
                     }
                     break;
                 case PieceType.J:
-                    switch (rotation % 4)
+                    switch (orientation % 4)
                     {
                         case 0:
                             return new[,]{
@@ -161,7 +190,7 @@ namespace iobloc
                     }
                     break;
                 case PieceType.S:
-                    switch (rotation % 2)
+                    switch (orientation % 2)
                     {
                         case 0:
                             return new[,]{
@@ -181,7 +210,7 @@ namespace iobloc
                     }
                     break;
                 case PieceType.Z:
-                    switch (rotation % 2)
+                    switch (orientation % 2)
                     {
                         case 0:
                             return new[,]{
@@ -204,14 +233,23 @@ namespace iobloc
             return null;
         }
 
+        /// <summary>
+        /// Get a rotated piece
+        /// </summary>
+        /// <returns>a new piece</returns>
         internal TetrisPiece Rotate()
         {
             var p = new TetrisPiece(this);
-            p.Rotation = (p.Rotation + 1) % 4;
-            p.Mask = GetMask((PieceType)p.Type, p.Rotation);
+            p.Orientation = (p.Orientation + 1) % 4;
+            // refresh the mask
+            p.Mask = GetMask((PieceType)p.Type, p.Orientation);
             return p;
         }
 
+        /// <summary>
+        /// Get a shifted piece
+        /// </summary>
+        /// <returns>a new piece</returns>
         internal TetrisPiece Left()
         {
             var p = new TetrisPiece(this);
@@ -219,6 +257,10 @@ namespace iobloc
             return p;
         }
 
+        /// <summary>
+        /// Get a shifted piece
+        /// </summary>
+        /// <returns>a new piece</returns>
         internal TetrisPiece Right()
         {
             var p = new TetrisPiece(this);
@@ -226,6 +268,10 @@ namespace iobloc
             return p;
         }
 
+        /// <summary>
+        /// Get a shifted piece
+        /// </summary>
+        /// <returns>a new piece</returns>
         internal TetrisPiece Down()
         {
             var p = new TetrisPiece(this);

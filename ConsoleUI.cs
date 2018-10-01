@@ -2,16 +2,26 @@ using System;
 
 namespace iobloc
 {
-    class ConsoleUI : IBoardUI
+    /// <summary>
+    /// Display a framed grid of blocks, each grid value representing the console color
+    /// </summary>
+    class ConsoleUI
     {
         readonly IBoard _board;
 
+        /// <summary>
+        /// Set the board to display
+        /// </summary>
+        /// <param name="board">provides Height, Width and Grid[Height,Width] containing ConsoleColor to display</param>
         internal ConsoleUI(IBoard board)
         {
             _board = board;
         }
 
-        public void Reset()
+        /// <summary>
+        /// Draw an empty frame
+        /// </summary>
+        internal void Reset()
         {
             Console.CursorVisible = false;
             Console.Clear();
@@ -31,7 +41,10 @@ namespace iobloc
             Console.SetCursorPosition(1, 1);
         }
 
-        public void Draw()
+        /// <summary>
+        /// Draw Height x Width grid of blocks inside the frame
+        /// </summary>
+        internal void Draw()
         {
             var grid = _board.Grid;
             var color = Console.ForegroundColor;
@@ -50,13 +63,19 @@ namespace iobloc
             Console.SetCursorPosition(1, 1);
         }
 
-        public void Restore()
+        /// <summary>
+        /// Restores console values
+        /// </summary>
+        internal void Restore()
         {
             Console.CursorVisible = true;
             Console.ResetColor();
         }
 
-        public void ShowHelp()
+        /// <summary>
+        /// Hide grid and display help text inside frame
+        /// </summary>
+        internal void ShowHelp()
         {
             Reset();
             int row = _board.Height / 2 - _board.Help.Length / 2;
@@ -68,6 +87,11 @@ namespace iobloc
             }
         }
 
+        /// <summary>
+        /// Repeat same block
+        /// </summary>
+        /// <param name="c">value to write</param>
+        /// <param name="times">number of times to repeat</param>
         void WriteMultiple(char c, int times)
         {
             for (int i = 0; i < times; i++)

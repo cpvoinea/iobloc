@@ -4,8 +4,14 @@ namespace iobloc
 {
     static class Settings
     {
+        /// <summary>
+        /// Game engine settings
+        /// </summary>
         internal static class Game
         {
+            /// <summary>
+            /// Action cycle (frame) duration in miliseconds
+            /// </summary>
             internal const int FRAME = 20;
         }
 

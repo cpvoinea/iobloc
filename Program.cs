@@ -4,12 +4,17 @@ namespace iobloc
 {
     class Program
     {
+        /// <summary>
+        /// List of games. Add a new case for each game in this list
+        /// </summary>
         static readonly string[] _list = { "tetris", "runner", "helicopter", "breakout" };
 
         static void Main(string[] args)
         {
+            // Show games options
             for (int i = 0; i < _list.Length; i++)
                 Console.WriteLine("{0}: {1}", i, _list[i]);
+            // Choose a game
             int key = Console.ReadKey().KeyChar - '0';
             if (key < 0 || key >= _list.Length)
                 return;

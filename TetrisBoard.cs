@@ -2,13 +2,44 @@ using System;
 
 namespace iobloc
 {
+    /// <summary>
+    /// Tetris game
+    /// </summary>
     class TetrisBoard : IBoard
     {
+        #region Settings
         public string[] Help { get { return Settings.Tetris.HELP; } }
         public ConsoleKey[] Keys { get { return Settings.Tetris.KEYS; } }
         public int StepInterval { get { return Settings.Tetris.INTERVAL; } }
         public int Width { get { return Settings.Tetris.WIDTH; } }
         public int Height { get { return Settings.Tetris.HEIGHT; } }
+        #endregion
+
+        /// <summary>
+        /// Current score
+        /// </summary>
+        int _score;
+        /// <summary>
+        /// Used for next piece
+        /// </summary>
+        readonly Random _random = new Random();
+        /// <summary>
+        /// Fixed pieces
+        /// </summary>
+        readonly int[,] _grid;
+        /// <summary>
+        /// Current piece
+        /// </summary>
+        TetrisPiece _piece;
+
+        /// <summary>
+        /// Current score
+        /// </summary>
+        public int Score { get { return _score; } }
+
+        /// <summary>
+        /// Fixed pieces + current piece
+        /// </summary>
         public int[,] Grid
         {
             get
@@ -18,19 +49,19 @@ namespace iobloc
                 return result;
             }
         }
-        public int Score { get { return _score; } }
 
-        readonly Random _random = new Random();
-        readonly int[,] _grid;
-        TetrisPiece _piece;
-        int _score;
-
+        /// <summary>
+        /// Tetris game
+        /// </summary>
         internal TetrisBoard()
         {
             _piece = NewPiece();
             _grid = new int[Height, Width];
         }
 
+        /// <summary>
+        /// Perform apropriate action
+        /// </summary>
         public bool Action(ConsoleKey key)
         {
             switch (key)
@@ -43,11 +74,24 @@ namespace iobloc
             }
         }
 
+        /// <summary>
+        /// Move current piece down or bring in a new piece if bottom was reached
+        /// </summary>
+        /// <returns>false if game over</returns>
         public bool Step()
         {
-            return MoveDown() || Next();
+            return MoveDown()   // try to move down, if not able then
+                || Next();      // try to bring in a new piece
         }
 
+        /// <summary>
+        /// Helper method to check for collisions and set grid
+        /// </summary>
+        /// <param name="grid">fixed pieces grid</param>
+        /// <param name="piece">mobile piece</param>
+        /// <param name="partiallyEntered">ignore collision if mobile piece is partially outside the upper bounds of the grid</param>
+        /// <param name="set">permanently fix the mobile piece to the grid</param>
+        /// <returns>true if collission was detected (keeping account of partiallyEntered option)</returns>
         bool CheckGridPiece(int[,] grid, TetrisPiece piece, bool partiallyEntered, bool set)
         {
             for (int i = 0; i < 4; i++)
@@ -69,16 +113,29 @@ namespace iobloc
             return true;
         }
 
+        /// <summary>
+        /// Randomly generate a new piece
+        /// </summary>
+        /// <returns>new piece</returns>
         TetrisPiece NewPiece()
         {
             return new TetrisPiece(_random.Next(7) + 1, _random.Next(4));
         }
 
+        /// <summary>
+        /// Check if this piece is colliding with the fixed grid
+        /// </summary>
+        /// <param name="piece">piece to check</param>
+        /// <returns>true if piece overlaps the fixed pieces</returns>
         bool Collides(TetrisPiece piece)
         {
             return !CheckGridPiece(_grid, piece, true, false);
         }
 
+        /// <summary>
+        /// Try to rotate piece in place
+        /// </summary>
+        /// <returns>true if rotation was successful, false if collision detected</returns>
         bool Rotate()
         {
             var p = _piece.Rotate();
@@ -88,6 +145,10 @@ namespace iobloc
             return true;
         }
 
+        /// <summary>
+        /// Try to shieft piece to left
+        /// </summary>
+        /// <returns>false if collision detected</returns>
         bool MoveLeft()
         {
             var p = _piece.Left();
@@ -97,6 +158,10 @@ namespace iobloc
             return true;
         }
 
+        /// <summary>
+        /// Try to shieft piece to right
+        /// </summary>
+        /// <returns>false if collision detected</returns>
         bool MoveRight()
         {
             var p = _piece.Right();
@@ -106,6 +171,10 @@ namespace iobloc
             return true;
         }
 
+        /// <summary>
+        /// Try to shieft piece down
+        /// </summary>
+        /// <returns>false if collision detected</returns>
         bool MoveDown()
         {
             var p = _piece.Down();
@@ -115,6 +184,11 @@ namespace iobloc
             return true;
         }
 
+        /// <summary>
+        /// If there is currently an overlap of mobile and fixed pieces, the game is over.
+        /// Otherwise remove completed lines and try to insert a new piece.
+        /// </summary>
+        /// <returns>false if game over</returns>
         bool Next()
         {
             if (!CheckGridPiece(_grid, _piece, false, true))
@@ -126,6 +200,9 @@ namespace iobloc
             return true;
         }
 
+        /// <summary>
+        /// Remove completed lines and add to score
+        /// </summary>
         void RemoveRows()
         {
             int series = 0;
