@@ -65,15 +65,16 @@ namespace iobloc
         {
             if (_ballRow >= Height - 1)
                 return false;
+
             if (_ballRow == Height - 2 && Math.Abs(_ballCol - _pad) <= 2 && _angle > Math.PI)
             {
                 int x = _ballCol - _pad;
                 switch (x)
                 {
                     case -2: _angle = 3 * Math.PI / 4; break;
-                    case -1: _angle = 9 * Math.PI / 4 - _angle; break;
+                    case -1: _angle = Math.Min(9 * Math.PI / 4 - _angle, 3 * Math.PI / 4); break;
                     case 0: _angle = 2 * Math.PI - _angle; break;
-                    case 1: _angle = 7 * Math.PI / 4 - _angle; break;
+                    case 1: _angle = Math.Max(7 * Math.PI / 4 - _angle, Math.PI / 4); break;
                     case 2: _angle = Math.PI / 4; break;
                 }
             }
@@ -82,10 +83,20 @@ namespace iobloc
                 _angle = Math.PI - _angle;
             else if (_ballRow == 0 && (_angle > 0 && _angle < Math.PI))
                 _angle = 2 * Math.PI - _angle;
-            _ballX += Math.Cos(_angle);
-            _ballY -= Math.Sin(_angle);
+
+            _ballX = _ballX + Math.Cos(_angle);
+            _ballY = _ballY - Math.Sin(_angle);
             _ballRow = (int)Math.Round(_ballY);
             _ballCol = (int)Math.Round(_ballX);
+            if (_grid[_ballRow, _ballCol] > 0)
+            {
+                int x = _ballCol / 3;
+                x *= 3;
+                _grid[_ballRow, x] = _grid[_ballRow, x + 1] = _grid[_ballRow, x + 2] = 0;
+                _angle = 2 * Math.PI - _angle;
+                _score++;
+            }
+            
             return true;
         }
     }
