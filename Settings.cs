@@ -26,5 +26,14 @@ namespace iobloc
             internal const int WIDTH = 20;
             internal const int HEIGHT = 10;
         }
+
+        internal static class Breakout
+        {
+            internal static readonly string[] HELP = { "Play:ARROW", "Exit:ESC", "Pause:ANY" };
+            internal static readonly ConsoleKey[] KEYS = { ConsoleKey.LeftArrow, ConsoleKey.RightArrow };
+            internal const int INTERVAL = 200;
+            internal const int WIDTH = 20;
+            internal const int HEIGHT = 10;
+        }
     }
 }
