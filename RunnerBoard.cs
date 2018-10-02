@@ -74,7 +74,7 @@ namespace iobloc
                 return result;
             }
         }
-        
+
         /// <summary>
         /// Endless runner game
         /// </summary>
@@ -118,7 +118,7 @@ namespace iobloc
                     _kill = true;
                 }
             }
-            
+
             return true;
         }
 
@@ -209,7 +209,7 @@ namespace iobloc
                 return;
             int fence = _random.Next(3); // random height, including 0
             for (int i = 0; i < 3; i++)
-                _grid[Height - 1 - i, Width - 2] = i < fence ?  Settings.Game.ColorEnemy : 0; // set fence to grid
+                _grid[Height - 1 - i, Width - 2] = i < fence ? Settings.Game.ColorEnemy : 0; // set fence to grid
         }
 
         /// <summary>
@@ -235,6 +235,8 @@ namespace iobloc
             for (int j = 1; j < Width - 1; j++) // shift grid to left
                 for (int i = 0; i < Height; i++)
                     _grid[i, j] = _grid[i, j + 1];
+            for (int i = 0; i < Height; i++)
+                _grid[i, Width - 1] = 0;
             CreateFence();
         }
 

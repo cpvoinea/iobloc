@@ -51,6 +51,7 @@ namespace iobloc
             // Show games options
             for (int i = 0; i < _list.Length; i++)
                 Console.WriteLine("{0}: {1}", i, _list[i]);
+            Console.Write("Option (ESC to exit): ");
             return Console.ReadKey();
         }
 

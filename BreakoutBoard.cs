@@ -26,7 +26,7 @@ namespace iobloc
         /// <summary>
         /// Pad position from left
         /// </summary>
-        int _pad = 5;
+        int _paddle = 5;
         /// <summary>
         /// Ball position from left
         /// </summary>
@@ -61,7 +61,7 @@ namespace iobloc
             get
             {
                 var result = _grid.Copy(Height, Width);
-                result[Height - 1, _pad - 1] = result[Height - 1, _pad] = result[Height - 1, _pad + 1] = Settings.Game.ColorPlayer;
+                result[Height - 1, _paddle - 1] = result[Height - 1, _paddle] = result[Height - 1, _paddle + 1] = Settings.Game.ColorPlayer;
                 result[_ballRow, _ballCol] = Settings.Game.ColorNeutral;
                 return result;
             }
@@ -88,16 +88,16 @@ namespace iobloc
             switch (key)
             {
                 case ConsoleKey.LeftArrow:
-                    if (_pad > 1)
+                    if (_paddle > 1)
                     {
-                        _pad--;
+                        _paddle--;
                         return true;
                     }
                     break;
                 case ConsoleKey.RightArrow:
-                    if (_pad < Width - 2)
+                    if (_paddle < Width - 2)
                     {
-                        _pad++;
+                        _paddle++;
                         return true;
                     }
                     break;
@@ -112,42 +112,86 @@ namespace iobloc
         /// <returns>false if ball is missed by pad and game is over</returns>
         public bool Step()
         {
-            if (_ballRow >= Height - 1) // game over
+            bool lost;
+            _angle = NextAngle(out lost);
+            if (lost)
                 return false;
-
-            // ball hits pad
-            if (_ballRow == Height - 2 && Math.Abs(_ballCol - _pad) <= 2 && _angle > Math.PI)
-            {
-                int x = _ballCol - _pad; // impact location
-                switch (x)
-                {
-                    case -2: _angle = 3 * Math.PI / 4; break;
-                    case -1: _angle = Math.Min(9 * Math.PI / 4 - _angle, 3 * Math.PI / 4); break;
-                    case 0: _angle = 2 * Math.PI - _angle; break;
-                    case 1: _angle = Math.Max(7 * Math.PI / 4 - _angle, Math.PI / 4); break;
-                    case 2: _angle = Math.PI / 4; break;
-                }
-            }
-            else if (_ballCol == 0 && (_angle > Math.PI / 2 && _angle < 3 * Math.PI / 2) || // left wall is hit
-                _ballCol == Width - 1 && (_angle < Math.PI / 2 || _angle > 3 * Math.PI / 2)) // right wall is hit
-                _angle = Math.PI - _angle;
-            else if (_ballRow == 0 && (_angle > 0 && _angle < Math.PI)) // ceiling is hit
-                _angle = 2 * Math.PI - _angle;
-
-            // move the ball
-            _ballX = _ballX + Math.Cos(_angle);
-            _ballY = _ballY - Math.Sin(_angle);
-            _ballRow = (int)Math.Round(_ballY);
+            _ballX += Math.Cos(_angle);
+            _ballY -= Math.Sin(_angle);
+            _ballRow = (int)Math.Round(_ballY); ;
             _ballCol = (int)Math.Round(_ballX);
-            if (_grid[_ballRow, _ballCol] > 0) // a block is hit
-            {
-                int x = (_ballCol / 3) * 3; // block start column
-                _grid[_ballRow, x] = _grid[_ballRow, x + 1] = _grid[_ballRow, x + 2] = 0; // remove block
-                _angle = 2 * Math.PI - _angle; // ricochet angle
-                _score++; // increase score
-            }
-            
+
             return true;
+        }
+
+        double NextAngle(out bool lost)
+        {
+            lost = false;
+
+            double newAngle = _angle;
+            bool hit;
+            do
+            {
+                hit = true;
+                double newX = _ballX + Math.Cos(newAngle);
+                double newY = _ballY - Math.Sin(newAngle);
+                int row = (int)Math.Round(newY);
+                int col = (int)Math.Round(newX);
+
+                if (newAngle < Math.PI) // moving upwards
+                {
+                    if (row < 0) // hitting ceiling
+                        newAngle = 2 * Math.PI - newAngle;
+                    else if (col < 0 || col >= Width) // hitting walls
+                        newAngle = Math.PI - newAngle;
+                    else if (_grid[row, col] > 0) // hitting block
+                    {
+                        Break(row, col);
+                        newAngle = 2 * Math.PI - newAngle;
+                    }
+                    else
+                        hit = false;
+                }
+                else // moving downwards
+                {
+                    // vertical check
+                    if (row >= Height) // hitting floor
+                    {
+                        lost = true;
+                        newAngle = 2 * Math.PI - newAngle;
+                        return newAngle;
+                    }
+                    else if (col < 0 || col >= Width) // hitting walls
+                        newAngle = 3 * Math.PI - newAngle;
+                    else if (row == Height - 1 && Math.Abs(col - _paddle) <= 1) // hitting paddle
+                    {
+                        int p = col - _paddle;
+                        double a = 2 * Math.PI - newAngle;
+                        switch (p)
+                        {
+                            case -1: newAngle = Math.Min(a + Math.PI / 4, 3 * Math.PI / 4); break;
+                            case 0: newAngle = a; break;
+                            case 1: newAngle = Math.Max(a - Math.PI / 4, Math.PI / 4); break;
+                        }
+                    }
+                    else if (_grid[row, col] > 0) // hitting block
+                    {
+                        Break(row, col);
+                        newAngle = 2 * Math.PI - newAngle;
+                    }
+                    else
+                        hit = false;
+                }
+            } while (hit);
+
+            return newAngle;
+        }
+
+        void Break(int row, int col)
+        {
+            int x = (col / 3) * 3;
+            _grid[row, x] = _grid[row, x + 1] = _grid[row, x + 2] = 0;
+            _score++;
         }
 
         public override string ToString()
