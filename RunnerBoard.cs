@@ -226,7 +226,7 @@ namespace iobloc
         /// <summary>
         /// Move fence to the left to simulate player advance
         /// </summary>
-        void Advance()
+        protected virtual void Advance()
         {
             _score++; // each step is a score
             if (_score > _highscore) // only keep the highscore

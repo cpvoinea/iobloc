@@ -15,6 +15,8 @@ namespace iobloc
         public int Height { get { return Settings.Breakout.HEIGHT; } }
         #endregion
 
+        const int BLOCK = Settings.Breakout.BLOCK_WIDTH + Settings.Breakout.BLOCK_SPACE;
+
         /// <summary>
         /// Current score is number of broken blocks
         /// </summary>
@@ -26,7 +28,7 @@ namespace iobloc
         /// <summary>
         /// Pad position from left
         /// </summary>
-        int _paddle = 5;
+        int _paddle = Settings.Breakout.WIDTH / 2 - 2;
         /// <summary>
         /// Ball position from left
         /// </summary>
@@ -42,7 +44,7 @@ namespace iobloc
         /// <summary>
         /// Vertical grid position
         /// </summary>
-        double _ballY = 5;
+        double _ballY = Settings.Breakout.BLOCK_ROWS;
         /// <summary>
         /// Current ball direction angle
         /// </summary>
@@ -68,15 +70,18 @@ namespace iobloc
             }
         }
 
+        bool Won { get { return _score == (Width / BLOCK) * Settings.Breakout.BLOCK_ROWS; } }
+
         /// <summary>
         /// Breakout game
         /// </summary>
         internal BreakoutBoard()
         {
             _grid = new int[Height, Width];
-            for (int row = 0; row < 5; row++) // set 5 rows of blocks
-                for (int col = 0; col < Width; col++)
-                    _grid[row, col] = Settings.Game.ColorEnemy;
+            for (int row = 0; row < Settings.Breakout.BLOCK_ROWS; row++) // set rows of blocks
+                for (int col = 0; col < Width; col += BLOCK)
+                    for (int i = 0; i < Settings.Breakout.BLOCK_WIDTH; i++)
+                        _grid[row, col + i] = Settings.Game.ColorEnemy;
         }
 
         /// <summary>
@@ -113,6 +118,8 @@ namespace iobloc
         /// <returns>false if ball is missed by pad and game is over</returns>
         public bool Step()
         {
+            if (Won)
+                return false;
             bool lost;
             _angle = NextAngle(out lost);
             if (lost)
@@ -192,8 +199,9 @@ namespace iobloc
 
         void Break(int row, int col)
         {
-            int x = (col / 3) * 3;
-            _grid[row, x] = _grid[row, x + 1] = _grid[row, x + 2] = 0;
+            int x = (col / BLOCK) * BLOCK;
+            for (int i = 0; i < Settings.Breakout.BLOCK_WIDTH; i++)
+                _grid[row, x + i] = 0;
             _score++;
         }
 

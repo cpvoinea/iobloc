@@ -96,16 +96,17 @@ namespace iobloc
             int p = _random.Next(4); // 0 = no obstacles, 1 = top only, 2 = bottom only, 3 = both
             if (p == 0)
                 return;
+            int up = 0;
             if ((p & 1) > 0) // top obstacle
             {
-                int c = _random.Next(5);
-                for (int i = Height - 1; i >= Height - 1 - c; i--)
+                up = _random.Next(4);
+                for (int i = 0; i < up; i++)
                     _grid[i, Width - 1] = Settings.Game.ColorEnemy;
             }
             if ((p & 2) > 0) // bottom obstacle
             {
-                int c = _random.Next(4);
-                for (int i = 0; i < c; i++)
+                int c = _random.Next(Height - 4 - up);
+                for (int i = Height - 1; i > Height - 1 - c; i--)
                     _grid[i, Width - 1] = Settings.Game.ColorEnemy;
             }
         }
