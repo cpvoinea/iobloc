@@ -61,7 +61,8 @@ namespace iobloc
             get
             {
                 var result = _grid.Copy(Height, Width);
-                result[Height - 1, _paddle - 1] = result[Height - 1, _paddle] = result[Height - 1, _paddle + 1] = Settings.Game.ColorPlayer;
+                for (int i = -2; i <= 2; i++)
+                    result[Height - 1, _paddle + i] = Settings.Game.ColorPlayer;
                 result[_ballRow, _ballCol] = Settings.Game.ColorNeutral;
                 return result;
             }
@@ -88,14 +89,14 @@ namespace iobloc
             switch (key)
             {
                 case ConsoleKey.LeftArrow:
-                    if (_paddle > 1)
+                    if (_paddle > 2)
                     {
                         _paddle--;
                         return true;
                     }
                     break;
                 case ConsoleKey.RightArrow:
-                    if (_paddle < Width - 2)
+                    if (_paddle < Width - 3)
                     {
                         _paddle++;
                         return true;
@@ -163,15 +164,17 @@ namespace iobloc
                     }
                     else if (col < 0 || col >= Width) // hitting walls
                         newAngle = 3 * Math.PI - newAngle;
-                    else if (row == Height - 1 && Math.Abs(col - _paddle) <= 1) // hitting paddle
+                    else if (row == Height - 1 && Math.Abs(col - _paddle) <= 2) // hitting paddle
                     {
                         int p = col - _paddle;
                         double a = 2 * Math.PI - newAngle;
                         switch (p)
                         {
+                            case -2: newAngle = 3 * Math.PI / 4; break;
                             case -1: newAngle = Math.Min(a + Math.PI / 4, 3 * Math.PI / 4); break;
                             case 0: newAngle = a; break;
                             case 1: newAngle = Math.Max(a - Math.PI / 4, Math.PI / 4); break;
+                            case 2: newAngle = Math.PI / 4; break;
                         }
                     }
                     else if (_grid[row, col] > 0) // hitting block
