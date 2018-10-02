@@ -13,6 +13,9 @@ namespace iobloc
             /// Action cycle (frame) duration in miliseconds
             /// </summary>
             internal const int FRAME = 20;
+            internal const int ColorPlayer = (int)ConsoleColor.Blue;
+            internal const int ColorEnemy = (int)ConsoleColor.Red;
+            internal const int ColorNeutral = (int)ConsoleColor.Gray;
         }
 
         internal static class Tetris

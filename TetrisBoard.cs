@@ -230,5 +230,10 @@ namespace iobloc
             else if (series == 1)
                 _score += 1;
         }
+
+        public override string ToString()
+        {
+            return "Tetris";
+        }
     }
 }

@@ -70,7 +70,7 @@ namespace iobloc
             {
                 var result = _grid.Copy(Height, Width);
                 int h = Height - 1 - _distance;
-                result[h, 1] = result[h - 1, 1] = 1;
+                result[h, 1] = result[h - 1, 1] = Settings.Game.ColorPlayer;
                 return result;
             }
         }
@@ -114,7 +114,7 @@ namespace iobloc
                 Advance(); // move fences (player advances)
                 if (Collides()) // check if player collides with a fence
                 {
-                    Clear(4); // kill animation
+                    Clear(Settings.Game.ColorEnemy); // kill animation
                     _kill = true;
                 }
             }
@@ -209,7 +209,7 @@ namespace iobloc
                 return;
             int fence = _random.Next(3); // random height, including 0
             for (int i = 0; i < 3; i++)
-                _grid[Height - 1 - i, Width - 2] = i < fence ? 4 : 0; // set fence to grid
+                _grid[Height - 1 - i, Width - 2] = i < fence ?  Settings.Game.ColorEnemy : 0; // set fence to grid
         }
 
         /// <summary>
@@ -236,6 +236,11 @@ namespace iobloc
                 for (int i = 0; i < Height; i++)
                     _grid[i, j] = _grid[i, j + 1];
             CreateFence();
+        }
+
+        public override string ToString()
+        {
+            return "Endless Runner";
         }
     }
 }

@@ -136,7 +136,7 @@ namespace iobloc
             if (key == ConsoleKey.Escape) // exit on ESC
             {
                 IsRunning = false;
-                _message = "Bye!";
+                _message = string.Format("Exit {0} with score {1}", Board, Board.Score);
                 return;
             }
 
@@ -159,7 +159,7 @@ namespace iobloc
             if (!Board.Step()) // perform step until game ended
             {
                 IsRunning = false;
-                _message = "Game over.";
+                _message = string.Format("Game over {0} scored {1}", Board, Board.Score);
                 return;
             }
             UI.Draw(); // re-draw after each step

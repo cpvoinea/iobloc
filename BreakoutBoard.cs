@@ -61,8 +61,8 @@ namespace iobloc
             get
             {
                 var result = _grid.Copy(Height, Width);
-                result[Height - 1, _pad - 1] = result[Height - 1, _pad] = result[Height - 1, _pad + 1] = 1;
-                result[_ballRow, _ballCol] = 7;
+                result[Height - 1, _pad - 1] = result[Height - 1, _pad] = result[Height - 1, _pad + 1] = Settings.Game.ColorPlayer;
+                result[_ballRow, _ballCol] = Settings.Game.ColorNeutral;
                 return result;
             }
         }
@@ -75,7 +75,7 @@ namespace iobloc
             _grid = new int[Height, Width];
             for (int row = 0; row < 5; row++) // set 5 rows of blocks
                 for (int col = 0; col < Width; col++)
-                    _grid[row, col] = 4;
+                    _grid[row, col] = Settings.Game.ColorEnemy;
         }
 
         /// <summary>
@@ -148,6 +148,11 @@ namespace iobloc
             }
             
             return true;
+        }
+
+        public override string ToString()
+        {
+            return "Breakout";
         }
     }
 }
