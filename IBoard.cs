@@ -35,6 +35,7 @@ namespace iobloc
         /// Grid to display, including static board and player actions
         /// </summary>
         int[,] Grid { get; }
+        int[] Clip { get; }
         /// <summary>
         /// Try performing an action when a valid input is provided
         /// </summary>

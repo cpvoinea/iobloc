@@ -44,14 +44,14 @@ namespace iobloc
         /// <summary>
         /// Draw Height x Width grid of blocks inside the frame
         /// </summary>
-        internal void Draw()
+        internal void Draw(int[] clip)
         {
             var grid = _board.Grid;
             var color = Console.ForegroundColor;
-            for (int i = 0; i < _board.Height; i++)
+            for (int i = clip[1]; i < clip[3]; i++)
             {
-                Console.SetCursorPosition(1, i + 1);
-                for (int j = 0; j < _board.Width; j++)
+                Console.SetCursorPosition(clip[0] + 1, i + 1);
+                for (int j = clip[0]; j < clip[2]; j++)
                 {
                     Console.ForegroundColor = (ConsoleColor)grid[i, j];
                     Console.Write((char)0x2588);
@@ -61,6 +61,11 @@ namespace iobloc
             Console.SetCursorPosition(_board.Width / 2 - 2, 0);
             Console.Write("{0,5}", _board.Score);
             Console.SetCursorPosition(1, 1);
+        }
+
+        internal void Draw()
+        {
+            Draw(new[] { 0, 0, _board.Width, _board.Height });
         }
 
         /// <summary>

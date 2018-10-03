@@ -25,6 +25,7 @@ namespace iobloc
         /// Remaining blocks
         /// </summary>
         readonly int[,] _grid;
+        int[] _clip = new int[4];
         /// <summary>
         /// Pad position from left
         /// </summary>
@@ -70,6 +71,8 @@ namespace iobloc
             }
         }
 
+        public int[] Clip { get { return _clip; } }
+
         bool Won { get { return _score == (Width / BLOCK) * Settings.Breakout.BLOCK_ROWS; } }
 
         /// <summary>
@@ -97,6 +100,7 @@ namespace iobloc
                     if (_paddle > 2)
                     {
                         _paddle--;
+                        _clip = new[] { 0, Height - 1, Width - 1, Height - 1 };
                         return true;
                     }
                     break;
@@ -104,6 +108,7 @@ namespace iobloc
                     if (_paddle < Width - 3)
                     {
                         _paddle++;
+                        _clip = new[] { 0, Height - 1, Width - 1, Height - 1 };
                         return true;
                     }
                     break;
@@ -126,6 +131,11 @@ namespace iobloc
                 return false;
             _ballX += Math.Cos(_angle);
             _ballY -= Math.Sin(_angle);
+            _clip = new[] {
+                _ballCol < 3 ? 0 : _ballCol - 3,
+                 _ballRow < 1 ? 0 : _ballRow - 1,
+                 _ballCol > Width - 3 ? Width : _ballCol + 3,
+                _ballRow > Height - 1 ? Height : _ballRow + 1 };
             _ballRow = (int)Math.Round(_ballY); ;
             _ballCol = (int)Math.Round(_ballX);
 
@@ -167,7 +177,6 @@ namespace iobloc
                     {
                         lost = true;
                         newAngle = 2 * Math.PI - newAngle;
-                        return newAngle;
                     }
                     else if (col < 0 || col >= Width) // hitting walls
                         newAngle = 3 * Math.PI - newAngle;

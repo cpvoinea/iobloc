@@ -10,7 +10,7 @@ namespace iobloc
         #region Settings
         public string[] Help { get { return Settings.Runner.HELP; } }
         public ConsoleKey[] Keys { get { return Settings.Runner.KEYS; } }
-        public int StepInterval { get { return Settings.Runner.INTERVAL; } }
+        public virtual int StepInterval { get { return Settings.Runner.INTERVAL; } }
         public int Width { get { return Settings.Runner.WIDTH; } }
         public int Height { get { return Settings.Runner.HEIGHT; } }
         #endregion
@@ -74,6 +74,8 @@ namespace iobloc
                 return result;
             }
         }
+
+        public int[] Clip { get { return new[] { 0, 0, Width, Height }; } }
 
         /// <summary>
         /// Endless runner game

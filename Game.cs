@@ -143,7 +143,7 @@ namespace iobloc
             if (Board.Keys.Contains(key)) // perform action on game keys
             {
                 if (Board.Action(key))
-                    UI.Draw(); // redraw if action is performed
+                    UI.Draw(Board.Clip); // redraw if action is performed
             }
             else // or pause on any other key
                 IsPaused = true;

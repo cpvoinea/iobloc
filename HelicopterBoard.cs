@@ -7,6 +7,8 @@ namespace iobloc
     /// </summary>
     class HelicopterBoard : RunnerBoard
     {
+        public override int StepInterval { get { return 2 * base.StepInterval; } }
+
         /// <summary>
         /// Helicopter vertical speed: +1 if upwards, 0 if hanging in the air, -1 if downwards
         /// </summary>

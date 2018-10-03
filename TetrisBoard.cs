@@ -50,6 +50,8 @@ namespace iobloc
             }
         }
 
+        public int[] Clip { get { return new[] { 0, 0, Width, Height }; } }
+
         /// <summary>
         /// Tetris game
         /// </summary>

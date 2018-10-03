@@ -40,7 +40,7 @@ namespace iobloc
         {
             internal static readonly string[] HELP = { "Play:ARROW", "Exit:ESC", "Pause:ANY" };
             internal static readonly ConsoleKey[] KEYS = { ConsoleKey.LeftArrow, ConsoleKey.RightArrow };
-            internal const int INTERVAL = 10;
+            internal const int INTERVAL = 50;
             internal const int WIDTH = 31;
             internal const int HEIGHT = 20;
             internal const int BLOCK_ROWS = 5;
