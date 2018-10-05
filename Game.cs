@@ -162,7 +162,7 @@ namespace iobloc
                 _message = string.Format("Game over {0} scored {1}", Board, Board.Score);
                 return;
             }
-            UI.Draw(); // re-draw after each step
+            UI.Draw(Board.Clip); // re-draw after each step
         }
     }
 }

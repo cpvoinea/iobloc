@@ -7,7 +7,7 @@ namespace iobloc
         /// <summary>
         /// List of games. Add a new case for each game in this list
         /// </summary>
-        static readonly string[] _list = { "tetris", "runner", "helicopter", "breakout" };
+        static readonly string[] _list = { "tetris", "runner", "helicopter", "breakout", "invaders", "snake" };
 
         static string _log = string.Empty;
 
@@ -34,6 +34,12 @@ namespace iobloc
                             break;
                         case 3:
                             board = new BreakoutBoard();
+                            break;
+                        case 4:
+                            board = new InvadersBoard();
+                            break;
+                        case 5:
+                            board = new SnakeBoard();
                             break;
                     }
 

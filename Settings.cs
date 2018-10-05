@@ -29,7 +29,7 @@ namespace iobloc
 
         internal static class Runner
         {
-            internal static readonly string[] HELP = { "Play:SPACE", "Exit:ESC", "Pause:ANY" };
+            internal static readonly string[] HELP = { "Jump the fences!", "Double-jump once", "Jump:SPACE", "Exit:ESC", "Pause:ANY" };
             internal static readonly ConsoleKey[] KEYS = { ConsoleKey.Spacebar };
             internal const int INTERVAL = 25;
             internal const int WIDTH = 20;
@@ -38,7 +38,7 @@ namespace iobloc
 
         internal static class Breakout
         {
-            internal static readonly string[] HELP = { "Play:ARROW", "Exit:ESC", "Pause:ANY" };
+            internal static readonly string[] HELP = { "Move:ARROWS", "Exit:ESC", "Pause:ANY" };
             internal static readonly ConsoleKey[] KEYS = { ConsoleKey.LeftArrow, ConsoleKey.RightArrow };
             internal const int INTERVAL = 50;
             internal const int WIDTH = 31;
@@ -46,6 +46,29 @@ namespace iobloc
             internal const int BLOCK_ROWS = 5;
             internal const int BLOCK_WIDTH = 3;
             internal const int BLOCK_SPACE = 1;
+        }
+
+        internal static class Invaders
+        {
+            internal static readonly string[] HELP = { "Move:ARROWS", "Shoot:SPACE", "Exit:ESC", "Pause:ANY" };
+            internal static readonly ConsoleKey[] KEYS = { ConsoleKey.LeftArrow, ConsoleKey.RightArrow, ConsoleKey.Spacebar };
+            internal const int INTERVAL = 25;
+            internal const int WIDTH = 31;
+            internal const int HEIGHT = 20;
+            internal const int ALIEN_WIDTH = 3;
+            internal const int ALIEN_SPACE = 1;
+            internal const int ALIEN_ROWS = 3;
+            internal const int ALIEN_COLS = 5;
+            internal const int BULLET_SPEED = 2;
+        }
+
+        internal static class Snake
+        {
+            internal static readonly string[] HELP = { "Move:ARROWS", "Exit:ESC", "Pause:ANY" };
+            internal static readonly ConsoleKey[] KEYS = { ConsoleKey.LeftArrow, ConsoleKey.RightArrow, ConsoleKey.UpArrow, ConsoleKey.DownArrow };
+            internal const int INTERVAL = 50;
+            internal const int WIDTH = 20;
+            internal const int HEIGHT = 20;
         }
     }
 }

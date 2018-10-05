@@ -100,7 +100,7 @@ namespace iobloc
                     if (_paddle > 2)
                     {
                         _paddle--;
-                        _clip = new[] { 0, Height - 1, Width - 1, Height - 1 };
+                        _clip = new[] { 0, Height - 1, Width, Height };
                         return true;
                     }
                     break;
@@ -108,7 +108,7 @@ namespace iobloc
                     if (_paddle < Width - 3)
                     {
                         _paddle++;
-                        _clip = new[] { 0, Height - 1, Width - 1, Height - 1 };
+                        _clip = new[] { 0, Height - 1, Width, Height };
                         return true;
                     }
                     break;
@@ -134,8 +134,8 @@ namespace iobloc
             _clip = new[] {
                 _ballCol < 3 ? 0 : _ballCol - 3,
                  _ballRow < 1 ? 0 : _ballRow - 1,
-                 _ballCol > Width - 3 ? Width : _ballCol + 3,
-                _ballRow > Height - 1 ? Height : _ballRow + 1 };
+                 _ballCol > Width - 4 ? Width : _ballCol + 4,
+                _ballRow > Height - 2 ? Height : _ballRow + 2 };
             _ballRow = (int)Math.Round(_ballY); ;
             _ballCol = (int)Math.Round(_ballX);
 
