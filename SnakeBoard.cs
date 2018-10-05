@@ -73,12 +73,24 @@ namespace iobloc
         {
             switch (key)
             {
-                case ConsoleKey.LeftArrow: SetMove(-1, 0); return false;
-                case ConsoleKey.RightArrow: SetMove(1, 0); return false;
-                case ConsoleKey.UpArrow: SetMove(0, -1); return false;
-                case ConsoleKey.DownArrow: SetMove(0, 1); return false;
-                default: return false;
+                case ConsoleKey.LeftArrow:
+                    if (_h != 1)
+                        SetMove(-1, 0);
+                    break;
+                case ConsoleKey.RightArrow:
+                    if (_h != -1)
+                        SetMove(1, 0);
+                    break;
+                case ConsoleKey.UpArrow:
+                    if (_v != 1)
+                        SetMove(0, -1);
+                    break;
+                case ConsoleKey.DownArrow:
+                    if (_v != -1)
+                        SetMove(0, 1);
+                    break;
             }
+            return false;
         }
 
         public bool Step()
