@@ -70,7 +70,7 @@ namespace iobloc
         /// Current score is number of broken blocks
         /// </summary>
         public int Score { get { return _score; } }
-        public bool Won { get { return _score == (Width / BLOCK) * Settings.Breakout.BLOCK_ROWS; } }
+        public bool Won { get { return _score == (Width / BLOCK + 1) * Settings.Breakout.BLOCK_ROWS; } }
         public int[] Clip { get { return _clip; } }
 
 
