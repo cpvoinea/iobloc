@@ -80,7 +80,7 @@ namespace iobloc
         /// </summary>
         internal void Start()
         {
-            _stepFrames = Board.StepInterval / Settings.Game.FRAME;
+            _stepFrames = Board.StepInterval;
             _frames = 0;
             UI.Reset();
             UI.Draw();

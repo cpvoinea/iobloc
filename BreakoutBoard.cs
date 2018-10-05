@@ -10,7 +10,6 @@ namespace iobloc
         #region Settings
         public string[] Help { get { return Settings.Breakout.HELP; } }
         public ConsoleKey[] Keys { get { return Settings.Breakout.KEYS; } }
-        public int StepInterval { get { return Settings.Breakout.INTERVAL; } }
         public int Width { get { return Settings.Breakout.WIDTH; } }
         public int Height { get { return Settings.Breakout.HEIGHT; } }
         #endregion
@@ -51,10 +50,7 @@ namespace iobloc
         /// </summary>
         double _angle = 7 * Math.PI / 4;
 
-        /// <summary>
-        /// Current score is number of broken blocks
-        /// </summary>
-        public int Score { get { return _score; } }
+        public int StepInterval { get { return Settings.Game.LevelInterval * Settings.Breakout.INTERVALS; } }
 
         /// <summary>
         /// Blocks + pad + ball
@@ -70,6 +66,11 @@ namespace iobloc
                 return result;
             }
         }
+
+        /// <summary>
+        /// Current score is number of broken blocks
+        /// </summary>
+        public int Score { get { return _score; } }
 
         public int[] Clip { get { return _clip; } }
 

@@ -58,8 +58,8 @@ namespace iobloc
                 }
             }
             Console.ForegroundColor = color;
-            Console.SetCursorPosition(_board.Width / 2 - 2, 0);
-            Console.Write("{0,5}", _board.Score);
+            Console.SetCursorPosition(_board.Width / 2 - 1, 0);
+            Console.Write("{0,3}", _board.Score);
             Console.SetCursorPosition(1, 1);
         }
 
@@ -84,6 +84,8 @@ namespace iobloc
         {
             Reset();
             int row = _board.Height / 2 - _board.Help.Length / 2;
+            if (row <= 0)
+                row = 1;
             string[] help = _board.Help;
             foreach (string s in help)
             {

@@ -7,7 +7,7 @@ namespace iobloc
         /// <summary>
         /// List of games. Add a new case for each game in this list
         /// </summary>
-        static readonly string[] _list = { "tetris", "runner", "helicopter", "breakout", "invaders", "snake" };
+        static readonly string[] _list = { ">>level<<", "tetris", "runner", "helicopter", "breakout", "invaders", "snake" };
 
         static string _log = string.Empty;
 
@@ -24,21 +24,24 @@ namespace iobloc
                     switch (option)
                     {
                         case 0:
-                            board = new TetrisBoard();
+                            board = new LevelBoard();
                             break;
                         case 1:
-                            board = new RunnerBoard();
+                            board = new TetrisBoard();
                             break;
                         case 2:
-                            board = new HelicopterBoard();
+                            board = new RunnerBoard();
                             break;
                         case 3:
-                            board = new BreakoutBoard();
+                            board = new HelicopterBoard();
                             break;
                         case 4:
-                            board = new InvadersBoard();
+                            board = new BreakoutBoard();
                             break;
                         case 5:
+                            board = new InvadersBoard();
+                            break;
+                        case 6:
                             board = new SnakeBoard();
                             break;
                     }

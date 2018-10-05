@@ -10,7 +10,6 @@ namespace iobloc
         #region Settings
         public string[] Help { get { return Settings.Tetris.HELP; } }
         public ConsoleKey[] Keys { get { return Settings.Tetris.KEYS; } }
-        public int StepInterval { get { return Settings.Tetris.INTERVAL; } }
         public int Width { get { return Settings.Tetris.WIDTH; } }
         public int Height { get { return Settings.Tetris.HEIGHT; } }
         #endregion
@@ -32,11 +31,8 @@ namespace iobloc
         /// </summary>
         TetrisPiece _piece;
 
-        /// <summary>
-        /// Current score
-        /// </summary>
-        public int Score { get { return _score; } }
-
+        public int StepInterval { get { return Settings.Game.LevelInterval * Settings.Tetris.INTERVALS; } }
+        
         /// <summary>
         /// Fixed pieces + current piece
         /// </summary>
@@ -49,6 +45,11 @@ namespace iobloc
                 return result;
             }
         }
+
+        /// <summary>
+        /// Current score
+        /// </summary>
+        public int Score { get { return _score; } }
 
         public int[] Clip { get { return new[] { 0, 0, Width, Height }; } }
 

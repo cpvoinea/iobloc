@@ -7,7 +7,6 @@ namespace iobloc
         #region Settings
         public string[] Help => Settings.Invaders.HELP;
         public ConsoleKey[] Keys => Settings.Invaders.KEYS;
-        public int StepInterval => Settings.Invaders.INTERVAL;
         public int Width => Settings.Invaders.WIDTH;
         public int Height => Settings.Invaders.HEIGHT;
         #endregion
@@ -23,6 +22,8 @@ namespace iobloc
         int _skipFrame = Settings.Invaders.BULLET_SPEED;
         bool _shot = false;
         bool _movingRight = true;
+
+        public int StepInterval { get { return Settings.Game.LevelInterval * Settings.Invaders.INTERVALS; } }
 
         public int[,] Grid
         {

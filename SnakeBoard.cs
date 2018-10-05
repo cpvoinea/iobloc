@@ -8,7 +8,6 @@ namespace iobloc
         #region Settings
         public string[] Help => Settings.Snake.HELP;
         public ConsoleKey[] Keys => Settings.Snake.KEYS;
-        public int StepInterval => Settings.Snake.INTERVAL;
         public int Width => Settings.Snake.WIDTH;
         public int Height => Settings.Snake.HEIGHT;
         #endregion
@@ -42,7 +41,11 @@ namespace iobloc
         Position _point;
         int _h = 1;
         int _v = 0;
+        int _nextH = 1;
+        int _nextV = 0;
 
+        public int StepInterval { get { return Settings.Game.LevelInterval * Settings.Snake.INTERVALS; } }
+        
         public int[,] Grid
         {
             get
@@ -117,15 +120,15 @@ namespace iobloc
 
         void SetMove(int h, int v)
         {
-            _h = h;
-            _v = v;
+            _nextH = h;
+            _nextV = v;
         }
 
         Position GetNext()
         {
             Position head = _snake.First.Value;
-            int nextV = head.Row + _v;
-            int nextH = head.Col + _h;
+            int nextV = head.Row + _nextV;
+            int nextH = head.Col + _nextH;
             if (nextV < 0)
                 nextV = Height - 1;
             else if (nextV >= Height)
@@ -134,6 +137,8 @@ namespace iobloc
                 nextH = Width - 1;
             else if (nextH >= Width)
                 nextH = 0;
+            _h = _nextH;
+            _v = _nextV;
             return new Position(nextV, nextH);
         }
 

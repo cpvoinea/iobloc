@@ -10,7 +10,6 @@ namespace iobloc
         #region Settings
         public string[] Help { get { return Settings.Runner.HELP; } }
         public ConsoleKey[] Keys { get { return Settings.Runner.KEYS; } }
-        public virtual int StepInterval { get { return Settings.Runner.INTERVAL; } }
         public int Width { get { return Settings.Runner.WIDTH; } }
         public int Height { get { return Settings.Runner.HEIGHT; } }
         #endregion
@@ -56,10 +55,7 @@ namespace iobloc
         /// </summary>
         bool _doubleJump;
 
-        /// <summary>
-        /// Highest score
-        /// </summary>
-        public int Score { get { return _highscore; } }
+        public virtual int StepInterval { get { return Settings.Game.LevelInterval * Settings.Runner.INTERVALS; } }
 
         /// <summary>
         /// Fences + jumper
@@ -74,6 +70,11 @@ namespace iobloc
                 return result;
             }
         }
+
+        /// <summary>
+        /// Highest score
+        /// </summary>
+        public int Score { get { return _highscore; } }
 
         public int[] Clip { get { return new[] { 0, 0, Width, Height }; } }
 
