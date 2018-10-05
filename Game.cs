@@ -60,10 +60,6 @@ namespace iobloc
         /// Count frames in the current game cycle
         /// </summary>
         int _frames;
-        /// <summary>
-        /// Max number of frames where game cycle ends and a step is performed
-        /// </summary>
-        int _stepFrames;
 
         /// <summary>
         /// Initialize a game
@@ -80,7 +76,6 @@ namespace iobloc
         /// </summary>
         internal void Start()
         {
-            _stepFrames = Board.StepInterval;
             _frames = 0;
             UI.Reset();
             UI.Draw();
@@ -93,15 +88,15 @@ namespace iobloc
                     while (IsPaused) // wait to unpause
                     {
                         CheckInput();
-                        Thread.Sleep(Settings.Game.FRAME);
+                        Thread.Sleep(10);
                     }
                     UI.Draw(); // restore game display
                 }
 
                 CheckInput(); // handle any input
-                Thread.Sleep(Settings.Game.FRAME);
+                Thread.Sleep(1);
                 _frames++;
-                if (_frames >= _stepFrames) // perform step when game cycle ended
+                if (_frames >= Board.StepInterval) // perform step when game cycle ended
                 {
                     Step();
                     _frames = 0;

@@ -12,7 +12,6 @@ namespace iobloc
             /// <summary>
             /// Action cycle (frame) duration in miliseconds
             /// </summary>
-            internal const int FRAME = 1;
             internal const int ColorPlayer = (int)ConsoleColor.Blue;
             internal const int ColorEnemy = (int)ConsoleColor.Red;
             internal const int ColorNeutral = (int)ConsoleColor.Gray;
