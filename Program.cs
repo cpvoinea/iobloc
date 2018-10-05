@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace iobloc
 {
     class Program
     {
+        static Dictionary<string, int> HS = Settings.Game.Highscore;
+
         /// <summary>
         /// List of games. Add a new case for each game in this list
         /// </summary>
@@ -18,7 +21,7 @@ namespace iobloc
             while (key.Key != ConsoleKey.Escape)
             {
                 int option = key.KeyChar - '0';
-                if (option >= 0 && option < _list.Length)
+                if (option >= 0 && option < _list.Length || option == 9)
                 {
                     IBoard board = null;
                     switch (option)
@@ -44,9 +47,13 @@ namespace iobloc
                         case 6:
                             board = new SnakeBoard();
                             break;
+                        case 9:
+                            ShowLog();
+                            break;
                     }
 
-                    RunGame(board);
+                    if (board != null)
+                        RunGame(board);
                 }
 
                 key = ShowOptions();
@@ -56,12 +63,35 @@ namespace iobloc
         static ConsoleKeyInfo ShowOptions()
         {
             Console.Clear();
-            Console.Write(_log);
+            ShowHighscores();
             // Show games options
             for (int i = 0; i < _list.Length; i++)
+            {
+                Console.ForegroundColor = (ConsoleColor)(15 - i);
                 Console.WriteLine("{0}: {1}", i, _list[i]);
+            }
+            Console.ResetColor();
             Console.Write("Option (ESC to exit): ");
             return Console.ReadKey();
+        }
+
+        static void ShowHighscores()
+        {
+            if (HS.Count > 0)
+            {
+                Console.WriteLine("||Highscore||");
+                Console.WriteLine("=============");
+                foreach (var g in HS.Keys)
+                    Console.WriteLine("{0,-10}{1,3}", g, HS[g]);
+                Console.WriteLine("=============");
+            }
+        }
+
+        static void ShowLog()
+        {
+            Console.Clear();
+            Console.Write(_log);
+            Console.ReadKey();
         }
 
         static void RunGame(IBoard board)
@@ -69,7 +99,7 @@ namespace iobloc
             Game game = null;
             try
             {
-                Log("Starting " + board);
+                Log("Start " + board);
                 game = new Game(board);
                 game.Ended += GameEnded;
                 game.Start();
@@ -95,7 +125,10 @@ namespace iobloc
 
         static void GameEnded(object sender, EventArgs ea)
         {
-            Log(((Game.EndedArgs)ea).Message);
+            var args = (Game.EndedArgs)ea;
+            Log(args.Message);
+            if (!HS.ContainsKey(args.GameName) || HS[args.GameName] < args.Score)
+                HS[args.GameName] = args.Score;
         }
     }
 }

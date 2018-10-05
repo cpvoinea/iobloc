@@ -10,6 +10,7 @@ namespace iobloc
         public ConsoleKey[] Keys => Settings.Snake.KEYS;
         public int Width => Settings.Snake.WIDTH;
         public int Height => Settings.Snake.HEIGHT;
+        public bool Won => false;
         #endregion
 
         struct Position
@@ -45,15 +46,15 @@ namespace iobloc
         int _nextV = 0;
 
         public int StepInterval { get { return Settings.Game.LevelInterval * Settings.Snake.INTERVALS; } }
-        
+
         public int[,] Grid
         {
             get
             {
                 var result = new int[Height, Width];
                 foreach (var p in _snake)
-                    result[p.Row, p.Col] = Settings.Game.ColorPlayer;
-                result[_point.Row, _point.Col] = Settings.Game.ColorNeutral;
+                    result[p.Row, p.Col] = Settings.Game.COLOR_PLAYER;
+                result[_point.Row, _point.Col] = Settings.Game.COLOR_NEUTRAL;
                 return result;
             }
         }

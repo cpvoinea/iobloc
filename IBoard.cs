@@ -18,6 +18,7 @@ namespace iobloc
         /// <summary>
         /// Allowed keys which trigger game action; rest of keys pause the game
         /// </summary>
+        bool Won { get; }
         ConsoleKey[] Keys { get; }
         /// <summary>
         /// Game cycle (step) duration in miliseconds

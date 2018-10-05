@@ -8,13 +8,12 @@ namespace iobloc
     class BreakoutBoard : IBoard
     {
         #region Settings
-        public string[] Help { get { return Settings.Breakout.HELP; } }
-        public ConsoleKey[] Keys { get { return Settings.Breakout.KEYS; } }
-        public int Width { get { return Settings.Breakout.WIDTH; } }
-        public int Height { get { return Settings.Breakout.HEIGHT; } }
-        #endregion
-
+        public string[] Help => Settings.Breakout.HELP;
+        public ConsoleKey[] Keys => Settings.Breakout.KEYS;
+        public int Width => Settings.Breakout.WIDTH;
+        public int Height => Settings.Breakout.HEIGHT;
         const int BLOCK = Settings.Breakout.BLOCK_WIDTH + Settings.Breakout.BLOCK_SPACE;
+        #endregion
 
         /// <summary>
         /// Current score is number of broken blocks
@@ -61,8 +60,8 @@ namespace iobloc
             {
                 var result = _grid.Copy(Height, Width);
                 for (int i = -2; i <= 2; i++)
-                    result[Height - 1, _paddle + i] = Settings.Game.ColorPlayer;
-                result[_ballRow, _ballCol] = Settings.Game.ColorNeutral;
+                    result[Height - 1, _paddle + i] = Settings.Game.COLOR_PLAYER;
+                result[_ballRow, _ballCol] = Settings.Game.COLOR_NEUTRAL;
                 return result;
             }
         }
@@ -71,10 +70,9 @@ namespace iobloc
         /// Current score is number of broken blocks
         /// </summary>
         public int Score { get { return _score; } }
-
+        public bool Won { get { return _score == (Width / BLOCK) * Settings.Breakout.BLOCK_ROWS; } }
         public int[] Clip { get { return _clip; } }
 
-        bool Won { get { return _score == (Width / BLOCK) * Settings.Breakout.BLOCK_ROWS; } }
 
         /// <summary>
         /// Breakout game
@@ -85,7 +83,7 @@ namespace iobloc
             for (int row = 0; row < Settings.Breakout.BLOCK_ROWS; row++) // set rows of blocks
                 for (int col = 0; col < Width; col += BLOCK)
                     for (int i = 0; i < Settings.Breakout.BLOCK_WIDTH; i++)
-                        _grid[row, col + i] = Settings.Game.ColorEnemy;
+                        _grid[row, col + i] = Settings.Game.COLOR_ENEMY;
         }
 
         /// <summary>

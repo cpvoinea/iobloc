@@ -8,10 +8,11 @@ namespace iobloc
     class RunnerBoard : IBoard
     {
         #region Settings
-        public string[] Help { get { return Settings.Runner.HELP; } }
-        public ConsoleKey[] Keys { get { return Settings.Runner.KEYS; } }
-        public int Width { get { return Settings.Runner.WIDTH; } }
-        public int Height { get { return Settings.Runner.HEIGHT; } }
+        public string[] Help => Settings.Runner.HELP;
+        public ConsoleKey[] Keys => Settings.Runner.KEYS;
+        public int Width => Settings.Runner.WIDTH;
+        public int Height => Settings.Runner.HEIGHT;
+        public bool Won => false;
         #endregion
 
         /// <summary>
@@ -66,7 +67,7 @@ namespace iobloc
             {
                 var result = _grid.Copy(Height, Width);
                 int h = Height - 1 - _distance;
-                result[h, 1] = result[h - 1, 1] = Settings.Game.ColorPlayer;
+                result[h, 1] = result[h - 1, 1] = Settings.Game.COLOR_PLAYER;
                 return result;
             }
         }
@@ -117,7 +118,7 @@ namespace iobloc
                 Advance(); // move fences (player advances)
                 if (Collides()) // check if player collides with a fence
                 {
-                    Clear(Settings.Game.ColorEnemy); // kill animation
+                    Clear(Settings.Game.COLOR_ENEMY); // kill animation
                     _kill = true;
                 }
             }
@@ -212,7 +213,7 @@ namespace iobloc
                 return;
             int fence = _random.Next(3); // random height, including 0
             for (int i = 0; i < 3; i++)
-                _grid[Height - 1 - i, Width - 2] = i < fence ? Settings.Game.ColorEnemy : 0; // set fence to grid
+                _grid[Height - 1 - i, Width - 2] = i < fence ? Settings.Game.COLOR_ENEMY : 0; // set fence to grid
         }
 
         /// <summary>
@@ -245,7 +246,7 @@ namespace iobloc
 
         public override string ToString()
         {
-            return "Endless Runner";
+            return "Runner";
         }
     }
 }

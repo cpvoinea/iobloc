@@ -24,7 +24,7 @@ namespace iobloc
             {
                 var result = _grid.Copy(Height, Width);
                 if (_distance < Height)
-                    result[_distance, 5] = result[_distance, 6] = Settings.Game.ColorPlayer;
+                    result[_distance, 5] = result[_distance, 6] = Settings.Game.COLOR_PLAYER;
                 return result;
             }
         }
@@ -45,7 +45,7 @@ namespace iobloc
         {
             if (_distance <= 1) // helicopter is too close to the sky and will burn
             {
-                Clear(Settings.Game.ColorEnemy); // kill animation
+                Clear(Settings.Game.COLOR_ENEMY); // kill animation
                 _kill = true;
                 return true; // return true to draw
             }
@@ -103,13 +103,13 @@ namespace iobloc
             {
                 up = _random.Next(4);
                 for (int i = 0; i < up; i++)
-                    _grid[i, Width - 1] = Settings.Game.ColorEnemy;
+                    _grid[i, Width - 1] = Settings.Game.COLOR_ENEMY;
             }
             if ((p & 2) > 0) // bottom obstacle
             {
                 int c = _random.Next(Height - 4 - up);
                 for (int i = Height - 1; i > Height - 1 - c; i--)
-                    _grid[i, Width - 1] = Settings.Game.ColorEnemy;
+                    _grid[i, Width - 1] = Settings.Game.COLOR_ENEMY;
             }
         }
 

@@ -9,9 +9,8 @@ namespace iobloc
         public ConsoleKey[] Keys => Settings.Invaders.KEYS;
         public int Width => Settings.Invaders.WIDTH;
         public int Height => Settings.Invaders.HEIGHT;
-        #endregion
-
         const int ALIEN = Settings.Invaders.ALIEN_WIDTH + Settings.Invaders.ALIEN_SPACE;
+        #endregion
 
         int _score;
         readonly int[,] _grid;
@@ -31,14 +30,14 @@ namespace iobloc
             {
                 var result = _grid.Copy(Height, Width);
                 for (int i = -1; i <= 1; i++)
-                    result[Height - 1, _ship + i] = Settings.Game.ColorPlayer;
-                result[_bulletRow, _bulletCol] = Settings.Game.ColorNeutral;
+                    result[Height - 1, _ship + i] = Settings.Game.COLOR_PLAYER;
+                result[_bulletRow, _bulletCol] = Settings.Game.COLOR_NEUTRAL;
                 return result;
             }
         }
         public int Score { get { return _score; } }
+        public bool Won { get { return _score == Settings.Invaders.ALIEN_ROWS * Settings.Invaders.ALIEN_COLS; } }
         public int[] Clip { get { return _clip; } }
-        bool Won { get { return _score == Settings.Invaders.ALIEN_ROWS * Settings.Invaders.ALIEN_COLS; } }
 
         internal InvadersBoard()
         {
@@ -46,7 +45,7 @@ namespace iobloc
             for (int row = 0; row < Settings.Invaders.ALIEN_ROWS; row++)
                 for (int col = 0; col < Settings.Invaders.ALIEN_COLS * ALIEN; col += ALIEN)
                     for (int i = 0; i < Settings.Invaders.ALIEN_WIDTH; i++)
-                        _grid[row, col + i] = Settings.Game.ColorEnemy;
+                        _grid[row, col + i] = Settings.Game.COLOR_ENEMY;
         }
 
         public bool Action(ConsoleKey key)

@@ -8,10 +8,11 @@ namespace iobloc
     class TetrisBoard : IBoard
     {
         #region Settings
-        public string[] Help { get { return Settings.Tetris.HELP; } }
-        public ConsoleKey[] Keys { get { return Settings.Tetris.KEYS; } }
-        public int Width { get { return Settings.Tetris.WIDTH; } }
-        public int Height { get { return Settings.Tetris.HEIGHT; } }
+        public string[] Help => Settings.Tetris.HELP;
+        public ConsoleKey[] Keys => Settings.Tetris.KEYS;
+        public int Width => Settings.Tetris.WIDTH;
+        public int Height => Settings.Tetris.HEIGHT;
+        public bool Won => false;
         #endregion
 
         /// <summary>
@@ -32,7 +33,7 @@ namespace iobloc
         TetrisPiece _piece;
 
         public int StepInterval { get { return Settings.Game.LevelInterval * Settings.Tetris.INTERVALS; } }
-        
+
         /// <summary>
         /// Fixed pieces + current piece
         /// </summary>

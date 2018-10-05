@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace iobloc
 {
@@ -12,13 +13,15 @@ namespace iobloc
             /// <summary>
             /// Action cycle (frame) duration in miliseconds
             /// </summary>
-            internal const int ColorPlayer = (int)ConsoleColor.Blue;
-            internal const int ColorEnemy = (int)ConsoleColor.Red;
-            internal const int ColorNeutral = (int)ConsoleColor.Gray;
-            const int INTERVAL = 25;
+            internal const int COLOR_PLAYER = (int)ConsoleColor.Blue;
+            internal const int COLOR_ENEMY = (int)ConsoleColor.Red;
+            internal const int COLOR_NEUTRAL = (int)ConsoleColor.Gray;
+            internal const int LEVEL_MAX = 16;
+            const int STEP_INTERVAL = 5;
 
-            internal static int Level { get; set; } = 10;
-            internal static int LevelInterval { get { return INTERVAL * (12 - Level); } }
+            internal static int Level { get; set; } = 0;
+            internal static int LevelInterval { get { return STEP_INTERVAL * (LEVEL_MAX - Level); } }
+            internal static Dictionary<string, int> Highscore { get; } = new Dictionary<string, int>();
         }
 
         internal static class Tetris

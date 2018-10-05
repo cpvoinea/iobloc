@@ -25,8 +25,13 @@ namespace iobloc
             /// </summary>
             internal string Message { get; private set; }
 
-            internal EndedArgs(string message)
+            internal int Score { get; private set; }
+            internal string GameName { get; private set; }
+
+            internal EndedArgs(string gameName, int score, string message)
             {
+                GameName = gameName;
+                Score = score;
                 Message = message;
             }
         }
@@ -104,7 +109,7 @@ namespace iobloc
             }
             // exit loop when game has ended
             if (Ended != null)
-                Ended(this, new EndedArgs(_message));
+                Ended(this, new EndedArgs(Board.ToString(), Board.Score, _message));
         }
 
         /// <summary>
@@ -131,7 +136,7 @@ namespace iobloc
             if (key == ConsoleKey.Escape) // exit on ESC
             {
                 IsRunning = false;
-                _message = string.Format("Exit {0} with score {1}", Board, Board.Score);
+                _message = string.Format("Quit " + Board);
                 return;
             }
 
@@ -154,7 +159,11 @@ namespace iobloc
             if (!Board.Step()) // perform step until game ended
             {
                 IsRunning = false;
-                _message = string.Format("Game over {0} scored {1}", Board, Board.Score);
+                if (Board.Won)
+                    _message = string.Format("WINNER " + Board);
+                else
+                    _message = string.Format("Game over " + Board);
+
                 return;
             }
             UI.Draw(Board.Clip); // re-draw after each step
