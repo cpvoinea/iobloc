@@ -3,3 +3,5 @@
 * runner
 * helicopter
 * breakout
+* invaders
+* snake
