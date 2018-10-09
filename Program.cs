@@ -10,7 +10,7 @@ namespace iobloc
         /// <summary>
         /// List of games. Add a new case for each game in this list
         /// </summary>
-        static readonly string[] _list = { ">>level<<", "tetris", "runner", "helicopter", "breakout", "invaders", "snake" };
+        static readonly string[] _list = { ">>level<<", "tetris", "runner", "helicopter", "breakout", "invaders", "snake", "table" };
 
         static string _log = string.Empty;
 
@@ -24,6 +24,7 @@ namespace iobloc
                 if (option >= 0 && option < _list.Length || option == 9)
                 {
                     IBoard board = null;
+                    bool table = false;
                     switch (option)
                     {
                         case 0:
@@ -47,6 +48,9 @@ namespace iobloc
                         case 6:
                             board = new SnakeBoard();
                             break;
+                        case 7:
+                            table = true;
+                            break;
                         case 9:
                             ShowLog();
                             break;
@@ -54,10 +58,17 @@ namespace iobloc
 
                     if (board != null)
                         RunGame(board);
+                    else if (table)
+                        RunTable();
                 }
 
                 key = ShowOptions();
             }
+        }
+
+        static void RunTable()
+        {
+            new TableBoard();
         }
 
         static ConsoleKeyInfo ShowOptions()
