@@ -76,5 +76,22 @@ namespace iobloc
             internal const int WIDTH = 20;
             internal const int HEIGHT = 20;
         }
+
+        internal static class Sokoban
+        {
+            internal static readonly string[] HELP = { "Restrt:R", "Move:ARW", "Exit:ESC", "Paus:ANY" };
+            internal static readonly ConsoleKey[] KEYS = { ConsoleKey.LeftArrow, ConsoleKey.RightArrow, ConsoleKey.UpArrow, ConsoleKey.DownArrow, ConsoleKey.R };
+            internal const int INTERVALS = 100;
+            internal const int WIDTH = 4 * BLOCK_WIDTH;
+            internal const int HEIGHT = 6;
+            internal const int BLOCK_WIDTH = 2;
+            internal const int LEVEL_SCORE = 20;
+            internal const int MARK_PLAYER = 9;
+            internal const int MARK_WALL = 12;
+            internal const int MARK_BLOCK = 7;
+            internal const int MARK_TARGET = 10;
+            internal const int MARK_TARGET_BLOCK = 2;
+            internal const int MARK_TARGET_PLAYER = 1;
+        }
     }
 }
