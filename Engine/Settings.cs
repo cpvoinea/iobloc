@@ -85,13 +85,13 @@ namespace iobloc
             internal const int WIDTH = 4 * BLOCK_WIDTH;
             internal const int HEIGHT = 6;
             internal const int BLOCK_WIDTH = 2;
-            internal const int LEVEL_SCORE = 20;
-            internal const int MARK_PLAYER = 9;
-            internal const int MARK_WALL = 12;
-            internal const int MARK_BLOCK = 7;
-            internal const int MARK_TARGET = 10;
-            internal const int MARK_TARGET_BLOCK = 2;
-            internal const int MARK_TARGET_PLAYER = 1;
+            internal const int LEVEL_SCORE = 100;
+            internal const int MARK_WALL = (int)ConsoleColor.DarkGray;
+            internal const int MARK_BLOCK = (int)ConsoleColor.Blue;
+            internal const int MARK_PLAYER = (int)ConsoleColor.Red;
+            internal const int MARK_TARGET = (int)ConsoleColor.DarkYellow;
+            internal const int MARK_TARGET_PLAYER = (int)ConsoleColor.DarkRed;
+            internal const int MARK_TARGET_BLOCK = (int)ConsoleColor.DarkBlue;
         }
     }
 }
