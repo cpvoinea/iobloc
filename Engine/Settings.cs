@@ -7,6 +7,7 @@ namespace iobloc
 {
     static class Settings
     {
+        #region Default Settings
         static Dictionary<int, Dictionary<string, string>> _settings = new Dictionary<int, Dictionary<string, string>>{
             {1, // Tetris
                 new Dictionary<string, string>{
@@ -19,7 +20,7 @@ namespace iobloc
             },
             {2, // Runner
                 new Dictionary<string, string>{
-                    {"Help", "Jump the fences!,Double-jump once,Jump:SPACE,Exit:ESC,Pause:ANY"},
+                    {"Help", "Jump:SPACE,Exit:ESC,Pause:ANY"},
                     {"Keys", "Spacebar"},
                     {"FrameMultiplier", "1"},
                     {"Width", "20"},
@@ -31,9 +32,9 @@ namespace iobloc
             },
             {3, // Helicopter
                 new Dictionary<string, string>{
-                    {"Help", "Avoid obstacles!,Lift:SPACE,Exit:ESC,Pause:ANY"},
+                    {"Help", "Lift:SPACE,Exit:ESC,Pause:ANY"},
                     {"Keys", "Spacebar"},
-                    {"FrameMultiplier", "8"},
+                    {"FrameMultiplier", "2"},
                     {"Width", "20"},
                     {"Height", "10"},
                     {"PlayerColor", "Blue"},
@@ -85,12 +86,12 @@ namespace iobloc
             },
             {7, // Sokoban
                 new Dictionary<string, string>{
-                    {"Help", "Restrt:R,Move:ARW,Exit:ESC,Paus:ANY"},
+                    {"Help", "R:Re,strt"}, //"Restrt:R,Move:ARW,Exit:ESC,Paus:ANY"},
                     {"Keys", "LeftArrow,RightArrow,UpArrow,DownArrow,R"},
-                    {"FrameMultiplier", "50"},
-                    {"Width", "8"},
+                    {"FrameMultiplier", "5"},
+                    {"Width", "4"},
                     {"Height", "6"},
-                    {"BlockWidth", "2"},
+                    {"BlockWidth", "1"},
                     {"WinScore", "100"},
                     {"WallColor", "DarkGray"},
                     {"PlayerColor", "Red"},
@@ -101,7 +102,9 @@ namespace iobloc
                 }
             }
         };
+        #endregion
 
+        internal const string SettingsFile = "iobloc.settings";
         internal static Dictionary<string, string> Get(GameOption gameOption)
         {
             return _settings[(int)gameOption];
@@ -123,6 +126,20 @@ namespace iobloc
                                 _settings[code][attr[0]] = attr[1];
                         }
                     }
+        }
+
+        internal static void Save()
+        {
+            using(var sw = File.CreateText(SettingsFile))
+            {
+                foreach(int code in _settings.Keys)
+                {
+                    sw.WriteLine("{0} {1}", code, (GameOption)code);
+                    foreach(string k in _settings[code].Keys)
+                        sw.WriteLine("{0} {1}", k, _settings[code][k]);
+                    sw.WriteLine();
+                }
+            }
         }
 
         /// <summary>

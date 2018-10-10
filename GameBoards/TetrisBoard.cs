@@ -36,7 +36,7 @@ namespace iobloc
         /// <summary>
         /// Tetris game
         /// </summary>
-        internal TetrisBoard() : base(GameOption.Sokoban)
+        internal TetrisBoard() : base(GameOption.Tetris)
         {
             _piece = NewPiece();
             _grid = new int[Height, Width];

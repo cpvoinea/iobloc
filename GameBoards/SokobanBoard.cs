@@ -4,20 +4,24 @@ namespace iobloc
 {
     class SokobanBoard : BaseBoard
     {
-        int P => _settings.All.GetInt("PlayerColor");
-        int B => _settings.All.GetInt("BlockColor");
-        int W => _settings.All.GetInt("WallColor");
-        int T => _settings.All.GetInt("TargetColor");
-        int R => _settings.All.GetInt("TargetBlocColor");
-        int H => _settings.All.GetInt("TargetPlayerColor");
-        int BW => _settings.All.GetInt("BlockWidth");
-        int WS => _settings.All.GetInt("WinScore");
+        int P => (int)_settings.All.GetColor("PlayerColor");
+        int B => (int)_settings.All.GetColor("BlockColor");
+        int W => (int)_settings.All.GetColor("WallColor");
+        int T => (int)_settings.All.GetColor("TargetColor");
+        int R => (int)_settings.All.GetColor("TargetBlockColor");
+        int H => (int)_settings.All.GetColor("TargetPlayerColor");
+        int BW => (int)_settings.All.GetInt("BlockWidth");
+        int WS => (int)_settings.All.GetInt("WinScore");
+        int L
+        {
+            get { return Settings.Game.Level; }
+            set { Settings.Game.Level = value; }
+        }
         public override bool Won { get; protected set; }
         public override int[,] Grid { get { return _grid; } }
 
         readonly int[,] _grid;
         int _startScore = 0;
-        int _level = 0;
         int _targets = 100;
         int _row;
         int _col;
@@ -25,9 +29,8 @@ namespace iobloc
         internal SokobanBoard() : base(GameOption.Sokoban)
         {
             _grid = new int[Height, Width];
-            _level = Settings.Game.Level;
-            if (_level > SokobanLevels.Count)
-                _level = SokobanLevels.Count - 1;
+            if (L > SokobanLevels.Count)
+                L = SokobanLevels.Count - 1;
             InitializeLevel();
         }
 
@@ -39,7 +42,7 @@ namespace iobloc
 
         void InitializeLevel()
         {
-            var board = SokobanLevels.Get(_level);
+            var board = SokobanLevels.Get(L);
             _targets = 0;
             for (int i = 0; i < Height && i < 6; i++)
                 for (int j = 0; j < Width && j / BW < 4; j += BW)
@@ -117,7 +120,7 @@ namespace iobloc
                             {
                                 Score += WS;
                                 Won = true;
-                                _level++;
+                                L++;
                             }
                             return true;
                         }
@@ -137,7 +140,7 @@ namespace iobloc
         {
             if (Won)
             {
-                if (_level >= SokobanLevels.Count)
+                if (L >= SokobanLevels.Count)
                     return false;
                 Won = false;
                 InitializeLevel();

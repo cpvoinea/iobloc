@@ -7,11 +7,10 @@ namespace iobloc
     /// </summary>
     class RunnerBoard : BaseBoard
     {
-        int CP => _settings.All.GetInt("PlayerColor");
-        int CE => _settings.All.GetInt("EnemyColor");
+        int CP => (int)_settings.All.GetColor("PlayerColor");
+        int CE => (int)_settings.All.GetColor("EnemyColor");
         int JS => _settings.All.GetInt("JumpSpace");
-        public new int Score => _highscore;
-
+        public override int Score => _highscore;
         /// <summary>
         /// Fences + jumper
         /// </summary>
@@ -64,13 +63,14 @@ namespace iobloc
         bool _doubleJump;
         protected int _score;
 
-        /// <summary>
-        /// Endless runner game
-        /// </summary>
-        protected internal RunnerBoard() : base(GameOption.Runner)
+        protected RunnerBoard(GameOption gameOption) : base(gameOption)
         {
             _grid = new int[Height, Width];
         }
+        /// <summary>
+        /// Endless runner game
+        /// </summary>
+        protected internal RunnerBoard() : this(GameOption.Runner) { }
 
         /// <summary>
         /// Jump action is performed

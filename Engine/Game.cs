@@ -144,7 +144,7 @@ namespace iobloc
         /// </summary>
         internal void Close()
         {
-            UI.Restore();
+            Settings.Save();
         }
 
         /// <summary>
@@ -163,7 +163,7 @@ namespace iobloc
             if (key == ConsoleKey.Escape) // exit on ESC
             {
                 IsRunning = false;
-                _message = string.Format("Quit " + Board);
+                _message = string.Format("Quit " + Board.Name);
                 return;
             }
 
@@ -187,9 +187,9 @@ namespace iobloc
             {
                 IsRunning = false;
                 if (Board.Won)
-                    _message = string.Format("WINNER " + Board);
+                    _message = string.Format("WINNER " + Board.Name);
                 else
-                    _message = string.Format("Game over " + Board);
+                    _message = string.Format("Game over " + Board.Name);
 
                 return;
             }

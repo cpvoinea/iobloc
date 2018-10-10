@@ -14,12 +14,11 @@ namespace iobloc
         static SokobanLevels()
         {
             var settings = Settings.Get(GameOption.Sokoban);
-            int P = settings.GetInt("PlayerColor");
-            int B = settings.GetInt("BlockColor");
-            int W = settings.GetInt("WallColor");
-            int T = settings.GetInt("TargetColor");
-            int R = settings.GetInt("TargetBlocColor");
-            int H = settings.GetInt("TargetPlayerColor");
+            int P = (int)settings.GetColor("PlayerColor");
+            int B = (int)settings.GetColor("BlockColor");
+            int W = (int)settings.GetColor("WallColor");
+            int T = (int)settings.GetColor("TargetColor");
+            int R = (int)settings.GetColor("TargetBlockColor");
 
             _levels = new[]{
                 new[,] {

@@ -28,9 +28,9 @@ namespace iobloc
             }
         }
 
-        int CP => _settings.All.GetInt("PlayerColor");
-        int CE => _settings.All.GetInt("EnemyColor");
-        int CN => _settings.All.GetInt("NeutralColor");
+        int CP => (int)_settings.All.GetColor("PlayerColor");
+        int CE => (int)_settings.All.GetColor("EnemyColor");
+        int CN => (int)_settings.All.GetColor("NeutralColor");
 
         public override int[,] Grid
         {

@@ -12,7 +12,7 @@ namespace iobloc
 
         static void Main(string[] args)
         {
-            string settingsFile = "iobloc.settings";
+            string settingsFile = Settings.SettingsFile;
             if (args.Length > 0)
                 settingsFile = args[0];
             if (File.Exists(settingsFile))
@@ -30,6 +30,8 @@ namespace iobloc
 
                 key = ShowOptions();
             }
+
+            Settings.Save();
         }
 
         static void RunTable()

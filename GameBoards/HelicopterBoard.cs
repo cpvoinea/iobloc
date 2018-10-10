@@ -7,8 +7,8 @@ namespace iobloc
     /// </summary>
     class HelicopterBoard : RunnerBoard
     {
-        int CP => _settings.All.GetInt("PlayerColor");
-        int CE => _settings.All.GetInt("EnemyColor");
+        int CP => (int)_settings.All.GetColor("PlayerColor");
+        int CE => (int)_settings.All.GetColor("EnemyColor");
         /// <summary>
         /// Obstacles + helicopter
         /// </summary>
@@ -33,7 +33,7 @@ namespace iobloc
         /// Helicopter game
         /// </summary>
         /// <returns></returns>
-        internal HelicopterBoard() : base()
+        internal HelicopterBoard() : base(GameOption.Helicopter)
         {
             _speed = -1; // start by falling downwards
         }

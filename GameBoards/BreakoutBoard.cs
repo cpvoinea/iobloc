@@ -7,9 +7,9 @@ namespace iobloc
     /// </summary>
     class BreakoutBoard : BaseBoard
     {
-        int CP => _settings.All.GetInt("PlayerColor");
-        int CE => _settings.All.GetInt("EnemyColor");
-        int CN => _settings.All.GetInt("NeutralColor");
+        int CP => (int)_settings.All.GetColor("PlayerColor");
+        int CE => (int)_settings.All.GetColor("EnemyColor");
+        int CN => (int)_settings.All.GetColor("NeutralColor");
         int BW => _settings.All.GetInt("BlockWidth");
         int BS => _settings.All.GetInt("BlockSpace");
         int BR => _settings.All.GetInt("BlockRows");

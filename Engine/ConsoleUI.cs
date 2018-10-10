@@ -58,13 +58,16 @@ namespace iobloc
                 Console.SetCursorPosition(clip[0] + 1, i + 1);
                 for (int j = clip[0]; j < clip[2]; j++)
                 {
-                    Console.ForegroundColor = (ConsoleColor)grid[i, j];
+                    int c = grid[i,j];
+                    Console.ForegroundColor = c == 0 ? Console.BackgroundColor : (ConsoleColor)c;
                     Console.Write((char)BoxGraphics.BlockFull);
                 }
             }
             Console.ForegroundColor = color;
             Console.SetCursorPosition(_board.Frame.Width / 2 - 1, 0);
             Console.Write("{0,3}", _board.Score);
+            Console.SetCursorPosition(_board.Frame.Width / 2 - 1, _board.Frame.Height - 1);
+            Console.Write("L{0,2}", Settings.Game.Level);
             Console.SetCursorPosition(1, 1);
         }
 

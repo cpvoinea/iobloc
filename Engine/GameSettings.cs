@@ -9,8 +9,8 @@ namespace iobloc
         internal string Name { get; private set; }
         internal Dictionary<string, string> All { get; private set; }
 
-        internal int PanelWidth { get; private set; }
-        internal int PanelHeight { get; private set; }
+        internal int Width { get; private set; }
+        internal int Height { get; private set; }
         internal string[] Help { get; private set; }
         internal ConsoleKey[] Keys { get; private set; }
         internal int StepInterval { get; private set; }
@@ -21,8 +21,8 @@ namespace iobloc
             Name = gameOption.ToString();
             All = Settings.Get(gameOption);
 
-            PanelWidth = All.GetInt("PanelWidth", 10);
-            PanelHeight = All.GetInt("PanelHeight", 10);
+            Width = All.GetInt("Width", 10);
+            Height = All.GetInt("Height", 10);
             Help = All.GetList("Help");
             List<ConsoleKey> keys = new List<ConsoleKey>();
             foreach (string k in All.GetList("Keys"))
