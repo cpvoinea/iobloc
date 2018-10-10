@@ -16,6 +16,10 @@ namespace iobloc
 
         static void Main(string[] args)
         {
+            Console.OutputEncoding = Settings.Game.Encoding;
+            BoxGraphics.List();
+            Console.ReadKey();
+
             // Choose a game
             var key = ShowOptions();
             while (key.Key != ConsoleKey.Escape)

@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using System.Collections.Generic;
 
 namespace iobloc
@@ -10,6 +11,7 @@ namespace iobloc
         /// </summary>
         internal static class Game
         {
+            internal static Encoding Encoding { get; set; } = Encoding.Unicode;
             /// <summary>
             /// Action cycle (frame) duration in miliseconds
             /// </summary>

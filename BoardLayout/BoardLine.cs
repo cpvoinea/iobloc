@@ -25,31 +25,31 @@ namespace iobloc
             IsSingle = isSingle;
         }
 
-        internal BoardSymbol GetIntersection(BoardLine line)
+        internal int GetIntersectionSymbol(BoardLine line)
         {
             if (IsVertical == line.IsVertical || Position < line.From || Position > line.To || line.Position < From || line.Position > To)
-                return BoardSymbol.None;
+                return BoxGraphics.None;
             if (IsVertical)
             {
                 if (Position == line.From)
                 {
                     if (line.Position == From)
-                        return BoardSymbol.UpperLeftCorner;
+                        return BoxGraphics.UpperLeftCorner;
                     if (line.Position == To)
-                        return BoardSymbol.LowerLeftCorner;
+                        return BoxGraphics.LowerLeftCorner;
                     if (IsSingle)
-                        return BoardSymbol.SingleLeftSplit;
-                    return BoardSymbol.LeftSplit;
+                        return BoxGraphics.SingleLeftSplit;
+                    return BoxGraphics.LeftSplit;
                 }
                 if (Position == line.To)
                 {
                     if (line.Position == From)
-                        return BoardSymbol.UpperRightCorner;
+                        return BoxGraphics.UpperRightCorner;
                     if (line.Position == To)
-                        return BoardSymbol.LowerRightCorner;
+                        return BoxGraphics.LowerRightCorner;
                     if (IsSingle)
-                        return BoardSymbol.SingleRightSplit;
-                    return BoardSymbol.RightSplit;
+                        return BoxGraphics.SingleRightSplit;
+                    return BoxGraphics.RightSplit;
                 }
             }
             else
@@ -57,26 +57,26 @@ namespace iobloc
                 if (Position == line.From)
                 {
                     if (line.Position == From)
-                        return BoardSymbol.UpperLeftCorner;
+                        return BoxGraphics.UpperLeftCorner;
                     if (line.Position == To)
-                        return BoardSymbol.UpperRightCorner;
+                        return BoxGraphics.UpperRightCorner;
                     if (IsSingle)
-                        return BoardSymbol.SingleUppperSplit;
-                    return BoardSymbol.UpperSplit;
+                        return BoxGraphics.SingleUppperSplit;
+                    return BoxGraphics.UpperSplit;
                 }
                 if (Position == line.To)
                 {
                     if (line.Position == From)
-                        return BoardSymbol.LowerLeftCorner;
+                        return BoxGraphics.LowerLeftCorner;
                     if (line.Position == To)
-                        return BoardSymbol.LowerRightCorner;
+                        return BoxGraphics.LowerRightCorner;
                     if (IsSingle)
-                        return BoardSymbol.SingleLowerSplit;
-                    return BoardSymbol.LowerSplit;
+                        return BoxGraphics.SingleLowerSplit;
+                    return BoxGraphics.LowerSplit;
                 }
             }
 
-            return BoardSymbol.SingleIntersection;
+            return BoxGraphics.SingleIntersection;
         }
 
         public override bool Equals(object obj)

@@ -24,20 +24,21 @@ namespace iobloc
         internal void Reset()
         {
             Console.CursorVisible = false;
+            Console.OutputEncoding = Settings.Game.Encoding;
             Console.Clear();
             Console.ForegroundColor = ConsoleColor.White;
-            Console.Write((char)0x2554);
-            WriteMultiple((char)0x2550, _board.Width);
-            Console.WriteLine((char)0x2557);
+            Console.Write((char)BoxGraphics.UpperLeftCorner);
+            WriteMultiple((char)BoxGraphics.HorizontalLine, _board.Width);
+            Console.WriteLine((char)BoxGraphics.UpperRightCorner);
             for (int i = 0; i < _board.Height; i++)
             {
-                Console.Write((char)0x2551);
+                Console.Write((char)BoxGraphics.VerticalLine);
                 WriteMultiple(' ', _board.Width);
-                Console.WriteLine((char)0x2551);
+                Console.WriteLine((char)BoxGraphics.VerticalLine);
             }
-            Console.Write((char)0x255A);
-            WriteMultiple((char)0x2550, _board.Width);
-            Console.Write((char)0x255D);
+            Console.Write((char)BoxGraphics.LowerLeftCorner);
+            WriteMultiple((char)BoxGraphics.HorizontalLine, _board.Width);
+            Console.Write((char)BoxGraphics.LowerRightCorner);
             Console.SetCursorPosition(1, 1);
         }
 
@@ -54,7 +55,7 @@ namespace iobloc
                 for (int j = clip[0]; j < clip[2]; j++)
                 {
                     Console.ForegroundColor = (ConsoleColor)grid[i, j];
-                    Console.Write((char)0x2588);
+                    Console.Write((char)BoxGraphics.BlockFull);
                 }
             }
             Console.ForegroundColor = color;
