@@ -28,14 +28,18 @@ namespace iobloc
             }
         }
 
+        int CP => _settings.All.GetInt("PlayerColor");
+        int CE => _settings.All.GetInt("EnemyColor");
+        int CN => _settings.All.GetInt("NeutralColor");
+
         public override int[,] Grid
         {
             get
             {
                 var result = new int[Height, Width];
                 foreach (var p in _snake)
-                    result[p.Row, p.Col] = Settings.Snake.COLOR_PLAYER;
-                result[_point.Row, _point.Col] = Settings.Snake.COLOR_NEUTRAL;
+                    result[p.Row, p.Col] = CP;
+                result[_point.Row, _point.Col] = CN;
                 return result;
             }
         }

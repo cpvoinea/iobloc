@@ -27,7 +27,7 @@ namespace iobloc
             return Array.IndexOf(array, val) >= 0;
         }
 
-        internal static int GetInt(this Dictionary<string, string> dic, string key, int defVal)
+        internal static int GetInt(this Dictionary<string, string> dic, string key, int defVal = 1)
         {
             if (!dic.ContainsKey(key))
                 return defVal;
@@ -39,6 +39,13 @@ namespace iobloc
             if (!dic.ContainsKey(key))
                 return new string[0];
             return dic[key].Split(',');
+        }
+
+        internal static ConsoleColor GetColor(this Dictionary<string, string> dic, string key)
+        {
+            if(!dic.ContainsKey(key))
+                return ConsoleColor.Black;
+            return (ConsoleColor)Enum.Parse(typeof(ConsoleColor), dic[key]);
         }
     }
 }

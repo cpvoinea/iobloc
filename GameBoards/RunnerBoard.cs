@@ -7,6 +7,9 @@ namespace iobloc
     /// </summary>
     class RunnerBoard : BaseBoard
     {
+        int CP => _settings.All.GetInt("PlayerColor");
+        int CE => _settings.All.GetInt("EnemyColor");
+        int JS => _settings.All.GetInt("JumpSpace");
         public new int Score => _highscore;
 
         /// <summary>
@@ -18,7 +21,7 @@ namespace iobloc
             {
                 var result = _grid.Copy(Height, Width);
                 int h = Height - 1 - _distance;
-                result[h, 1] = result[h - 1, 1] = Settings.Runner.COLOR_PLAYER;
+                result[h, 1] = result[h - 1, 1] = CP;
                 return result;
             }
         }
@@ -100,7 +103,7 @@ namespace iobloc
                 Advance(); // move fences (player advances)
                 if (Collides()) // check if player collides with a fence
                 {
-                    Clear(Settings.Runner.COLOR_ENEMY); // kill animation
+                    Clear(CE); // kill animation
                     _kill = true;
                 }
             }
@@ -189,13 +192,13 @@ namespace iobloc
         {
             bool hasSpace = true; // fences should not be to close together; check if there is room for new fence
             int y = Width - 4;
-            while (hasSpace && y >= Width - 12)
+            while (hasSpace && y >= 0 && y >= Width - JS)
                 hasSpace &= _grid[Height - 1, y--] == 0;
             if (!hasSpace) // no room for new fence
                 return;
             int fence = _random.Next(3); // random height, including 0
             for (int i = 0; i < 3; i++)
-                _grid[Height - 1 - i, Width - 2] = i < fence ? Settings.Runner.COLOR_ENEMY : 0; // set fence to grid
+                _grid[Height - 1 - i, Width - 2] = i < fence ? CE : 0; // set fence to grid
         }
 
         /// <summary>

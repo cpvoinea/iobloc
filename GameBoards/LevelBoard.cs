@@ -5,10 +5,11 @@ namespace iobloc
     class LevelBoard : IBoard
     {
         const int MAX = Settings.Game.LEVEL_MAX;
+        public string Name => "Level";
         public string[] Help => new[] { "<<Easy   Hard>>" };
         public ConsoleKey[] Keys { get; private set; } = new[] { ConsoleKey.LeftArrow, ConsoleKey.RightArrow, ConsoleKey.Enter };
         public bool Won => false;
-        public int StepInterval => 500;
+        public int StepInterval => 200;
         public BoardFrame Frame { get; private set; } = new BoardFrame(MAX + 2, 3);
         public int[] Clip { get; private set; } = new[] { 0, 0, MAX, 1 };
         public int Score => Settings.Game.Level;
@@ -27,15 +28,17 @@ namespace iobloc
 
         public bool Action(ConsoleKey key)
         {
-            _levels[0, Score] = 15 - Score;
-            if (key == ConsoleKey.RightArrow && Settings.Game.Level < MAX - 1)
-                Settings.Game.Level++;
-            else if (key == ConsoleKey.LeftArrow && Settings.Game.Level > 0)
-                Settings.Game.Level--;
+            int lvl = Settings.Game.Level;
+            _levels[0, lvl] = 15 - lvl;
+            if (key == ConsoleKey.RightArrow && lvl < MAX - 1)
+                lvl++;
+            else if (key == ConsoleKey.LeftArrow && lvl > 0)
+                lvl--;
             else if (key == ConsoleKey.Enter)
                 _exit = true;
 
-            _levels[0, Score] = 15;
+            Settings.Game.Level = lvl;
+            _levels[0, lvl] = 15;
             return true;
         }
 
@@ -44,11 +47,6 @@ namespace iobloc
             if (_exit)
                 return false;
             return true;
-        }
-
-        public override string ToString()
-        {
-            return "Level";
         }
     }
 }

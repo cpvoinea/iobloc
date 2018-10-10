@@ -1,14 +1,128 @@
 using System;
 using System.Text;
 using System.Collections.Generic;
+using System.IO;
 
 namespace iobloc
 {
     static class Settings
     {
-        internal static Dictionary<string, string> Get(int gameCode)
+        static Dictionary<int, Dictionary<string, string>> _settings = new Dictionary<int, Dictionary<string, string>>{
+            {1, // Tetris
+                new Dictionary<string, string>{
+                    {"Help", "Play:ARROW,Exit:ESC,Pause:ANY"},
+                    {"Keys", "LeftArrow,RightArrow,UpArrow,DownArrow"},
+                    {"FrameMultiplier", "4"},
+                    {"Width", "10"},
+                    {"Height", "20"},
+                }
+            },
+            {2, // Runner
+                new Dictionary<string, string>{
+                    {"Help", "Jump the fences!,Double-jump once,Jump:SPACE,Exit:ESC,Pause:ANY"},
+                    {"Keys", "Spacebar"},
+                    {"FrameMultiplier", "1"},
+                    {"Width", "20"},
+                    {"Height", "10"},
+                    {"PlayerColor", "Blue"},
+                    {"EnemyColor", "Red"},
+                    {"JumpSpace", "12"},
+                }
+            },
+            {3, // Helicopter
+                new Dictionary<string, string>{
+                    {"Help", "Avoid obstacles!,Lift:SPACE,Exit:ESC,Pause:ANY"},
+                    {"Keys", "Spacebar"},
+                    {"FrameMultiplier", "8"},
+                    {"Width", "20"},
+                    {"Height", "10"},
+                    {"PlayerColor", "Blue"},
+                    {"EnemyColor", "Red"},
+                }
+            },
+            {4, // Breakout
+                new Dictionary<string, string>{
+                    {"Help", "Move:ARROWS,Exit:ESC,Pause:ANY" },
+                    {"Keys", "LeftArrow,RightArrow"},
+                    {"FrameMultiplier", "2"},
+                    {"Width", "31"},
+                    {"Height", "20"},
+                    {"PlayerColor", "Blue"},
+                    {"EnemyColor", "Red"},
+                    {"NeutralColor", "Gray"},
+                    {"BlockWidth", "3"},
+                    {"BlockSpace", "1"},
+                    {"BlockRows", "5"},
+                }
+            },
+            {5, // Invaders
+                new Dictionary<string, string>{
+                    {"Help", "Move:ARROWS,Shoot:SPACE,Exit:ESC,Pause:ANY"},
+                    {"Keys", "LeftArrow,RightArrow,Spacebar"},
+                    {"FrameMultiplier", "1"},
+                    {"Width", "31"},
+                    {"Height", "20"},
+                    {"PlayerColor", "Blue"},
+                    {"EnemyColor", "Red"},
+                    {"NeutralColor", "Gray"},
+                    {"AlienWidth", "3"},
+                    {"AlienSpace", "1"},
+                    {"AlienRows", "3"},
+                    {"AlienCols", "5"},
+                    {"BulletSpeed", "2"},
+                }
+            },
+            {6, // Snake
+                new Dictionary<string, string>{
+                    {"Help", "Move:ARROWS,Exit:ESC,Pause:ANY"},
+                    {"Keys", "LeftArrow,RightArrow,UpArrow,DownArrow"},
+                    {"FrameMultiplier", "2"},
+                    {"Width", "20"},
+                    {"Height", "20"},
+                    {"PlayerColor", "Blue"},
+                    {"NeutralColor", "Gray"},
+                }
+            },
+            {7, // Sokoban
+                new Dictionary<string, string>{
+                    {"Help", "Restrt:R,Move:ARW,Exit:ESC,Paus:ANY"},
+                    {"Keys", "LeftArrow,RightArrow,UpArrow,DownArrow,R"},
+                    {"FrameMultiplier", "50"},
+                    {"Width", "8"},
+                    {"Height", "6"},
+                    {"BlockWidth", "2"},
+                    {"WinScore", "100"},
+                    {"WallColor", "DarkGray"},
+                    {"PlayerColor", "Red"},
+                    {"BlockColor", "Blue"},
+                    {"TargetColor", "DarkYellow"},
+                    {"TargetPlayerColor", "DarkRed"},
+                    {"TargetBlockColor", "DarkBlue"},
+                }
+            }
+        };
+
+        internal static Dictionary<string, string> Get(GameOption gameOption)
         {
-            return new Dictionary<string, string>();
+            return _settings[(int)gameOption];
+        }
+
+        internal static void FromFile(string fileName)
+        {
+            if (File.Exists(fileName))
+                using (var sr = File.OpenText(fileName))
+                    while (!sr.EndOfStream)
+                    {
+                        string line = sr.ReadLine();
+                        int code = int.Parse(line.Split(' ')[0]);
+                        while (!string.IsNullOrEmpty(line) && !sr.EndOfStream)
+                        {
+                            line = sr.ReadLine();
+                            var attr = line.Split(' ');
+                            if (attr.Length >= 2 && _settings.ContainsKey(code) && _settings[code].ContainsKey(attr[0]))
+                                _settings[code][attr[0]] = attr[1];
+                        }
+                    }
         }
 
         /// <summary>
@@ -22,86 +136,6 @@ namespace iobloc
             internal static int Level { get; set; } = 0;
             internal static int LevelInterval { get { return STEP_INTERVAL * (LEVEL_MAX - Level); } }
             internal static Dictionary<string, int> Highscore { get; } = new Dictionary<string, int>();
-        }
-
-        internal static class Tetris
-        {
-            internal static readonly string[] HELP = { "Play:ARROW", "Exit:ESC", "Pause:ANY" };
-            internal static readonly ConsoleKey[] KEYS = { ConsoleKey.LeftArrow, ConsoleKey.RightArrow, ConsoleKey.UpArrow, ConsoleKey.DownArrow };
-            internal const int INTERVALS = 4;
-            internal const int WIDTH = 10;
-            internal const int HEIGHT = 20;
-        }
-
-        internal static class Runner
-        {
-            internal static readonly string[] HELP = { "Jump the fences!", "Double-jump once", "Jump:SPACE", "Exit:ESC", "Pause:ANY" };
-            internal static readonly ConsoleKey[] KEYS = { ConsoleKey.Spacebar };
-            internal const int INTERVALS = 1;
-            internal const int WIDTH = 20;
-            internal const int HEIGHT = 10;
-            internal const int COLOR_PLAYER = (int)ConsoleColor.Blue;
-            internal const int COLOR_ENEMY = (int)ConsoleColor.Red;
-        }
-
-        internal static class Breakout
-        {
-            internal static readonly string[] HELP = { "Move:ARROWS", "Exit:ESC", "Pause:ANY" };
-            internal static readonly ConsoleKey[] KEYS = { ConsoleKey.LeftArrow, ConsoleKey.RightArrow };
-            internal const int INTERVALS = 2;
-            internal const int WIDTH = 31;
-            internal const int HEIGHT = 20;
-            internal const int BLOCK_ROWS = 5;
-            internal const int BLOCK_WIDTH = 3;
-            internal const int BLOCK_SPACE = 1;
-            internal const int COLOR_PLAYER = (int)ConsoleColor.Blue;
-            internal const int COLOR_ENEMY = (int)ConsoleColor.Red;
-            internal const int COLOR_NEUTRAL = (int)ConsoleColor.Gray;
-        }
-
-        internal static class Invaders
-        {
-            internal static readonly string[] HELP = { "Move:ARROWS", "Shoot:SPACE", "Exit:ESC", "Pause:ANY" };
-            internal static readonly ConsoleKey[] KEYS = { ConsoleKey.LeftArrow, ConsoleKey.RightArrow, ConsoleKey.Spacebar };
-            internal const int INTERVALS = 1;
-            internal const int WIDTH = 31;
-            internal const int HEIGHT = 20;
-            internal const int ALIEN_WIDTH = 3;
-            internal const int ALIEN_SPACE = 1;
-            internal const int ALIEN_ROWS = 3;
-            internal const int ALIEN_COLS = 5;
-            internal const int BULLET_SPEED = 2;
-            internal const int COLOR_PLAYER = (int)ConsoleColor.Blue;
-            internal const int COLOR_ENEMY = (int)ConsoleColor.Red;
-            internal const int COLOR_NEUTRAL = (int)ConsoleColor.Gray;
-        }
-
-        internal static class Snake
-        {
-            internal static readonly string[] HELP = { "Move:ARROWS", "Exit:ESC", "Pause:ANY" };
-            internal static readonly ConsoleKey[] KEYS = { ConsoleKey.LeftArrow, ConsoleKey.RightArrow, ConsoleKey.UpArrow, ConsoleKey.DownArrow };
-            internal const int INTERVALS = 2;
-            internal const int WIDTH = 20;
-            internal const int HEIGHT = 20;
-            internal const int COLOR_PLAYER = (int)ConsoleColor.Blue;
-            internal const int COLOR_ENEMY = (int)ConsoleColor.Red;
-            internal const int COLOR_NEUTRAL = (int)ConsoleColor.Gray;
-        }
-
-        internal static class Sokoban
-        {
-            internal static readonly string[] HELP = { "Restrt:R", "Move:ARW", "Exit:ESC", "Paus:ANY" };
-            internal static readonly ConsoleKey[] KEYS = { ConsoleKey.LeftArrow, ConsoleKey.RightArrow, ConsoleKey.UpArrow, ConsoleKey.DownArrow, ConsoleKey.R };
-            internal const int WIDTH = 4 * BLOCK_WIDTH;
-            internal const int HEIGHT = 6;
-            internal const int BLOCK_WIDTH = 2;
-            internal const int LEVEL_SCORE = 100;
-            internal const int MARK_WALL = (int)ConsoleColor.DarkGray;
-            internal const int MARK_BLOCK = (int)ConsoleColor.Blue;
-            internal const int MARK_PLAYER = (int)ConsoleColor.Red;
-            internal const int MARK_TARGET = (int)ConsoleColor.DarkYellow;
-            internal const int MARK_TARGET_PLAYER = (int)ConsoleColor.DarkRed;
-            internal const int MARK_TARGET_BLOCK = (int)ConsoleColor.DarkBlue;
         }
     }
 }

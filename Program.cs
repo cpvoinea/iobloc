@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace iobloc
 {
@@ -11,6 +12,12 @@ namespace iobloc
 
         static void Main(string[] args)
         {
+            string settingsFile = "iobloc.settings";
+            if (args.Length > 0)
+                settingsFile = args[0];
+            if (File.Exists(settingsFile))
+                Settings.FromFile(settingsFile);
+
             // Choose a game
             var key = ShowOptions();
             while (key.Key != ConsoleKey.Escape)

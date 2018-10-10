@@ -136,7 +136,7 @@ namespace iobloc
             }
             // exit loop when game has ended
             if (Ended != null)
-                Ended(this, new EndedArgs(Board.ToString(), Board.Score, _message));
+                Ended(this, new EndedArgs(Board.Name, Board.Score, _message));
         }
 
         /// <summary>

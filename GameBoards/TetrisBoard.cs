@@ -5,25 +5,16 @@ namespace iobloc
     /// <summary>
     /// Tetris game
     /// </summary>
-    class TetrisBoard : IBoard
+    class TetrisBoard : BaseBoard
     {
-        const int W = Settings.Tetris.WIDTH;
-        const int H = Settings.Tetris.HEIGHT;
-        public string[] Help => Settings.Tetris.HELP;
-        public ConsoleKey[] Keys => Settings.Tetris.KEYS;
-        public int StepInterval { get; private set; } = Settings.Game.LevelInterval * Settings.Tetris.INTERVALS;
-        public bool Won => false;
-        public BoardFrame Frame { get; private set; } = new BoardFrame(W + 2, H + 2);
-        public int[] Clip { get; private set; } = new[] { 0, 0, W, H };
-        public int Score { get; private set; }
         /// <summary>
         /// Fixed pieces + current piece
         /// </summary>
-        public int[,] Grid
+        public override int[,] Grid
         {
             get
             {
-                var result = _grid.Copy(H, W);
+                var result = _grid.Copy(Height, Width);
                 CheckGridPiece(result, _piece, true, true);
                 return result;
             }
@@ -45,16 +36,16 @@ namespace iobloc
         /// <summary>
         /// Tetris game
         /// </summary>
-        internal TetrisBoard()
+        internal TetrisBoard() : base(GameOption.Sokoban)
         {
             _piece = NewPiece();
-            _grid = new int[H, W];
+            _grid = new int[Height, Width];
         }
 
         /// <summary>
         /// Perform apropriate action
         /// </summary>
-        public bool Action(ConsoleKey key)
+        public override bool Action(ConsoleKey key)
         {
             switch (key)
             {
@@ -70,7 +61,7 @@ namespace iobloc
         /// Move current piece down or bring in a new piece if bottom was reached
         /// </summary>
         /// <returns>false if game over</returns>
-        public bool Step()
+        public override bool Step()
         {
             return MoveDown()   // try to move down, if not able then
                 || Next();      // try to bring in a new piece
@@ -93,7 +84,7 @@ namespace iobloc
                     {
                         int gx = piece.X - 1 + i;
                         int gy = piece.Y - 2 + j;
-                        if (gx >= H || gy < 0 || gy >= W ||
+                        if (gx >= Height || gy < 0 || gy >= Width ||
                             (!partiallyEntered && gx < 0) ||
                             (partiallyEntered && gx >= 0 && grid[gx, gy] > 0))
                             return false;
@@ -198,16 +189,16 @@ namespace iobloc
         void RemoveRows()
         {
             int series = 0;
-            for (int i = H - 1; i >= 0; i--)
+            for (int i = Height - 1; i >= 0; i--)
             {
                 bool line = true;
                 int j = 0;
-                while (line && j < W)
+                while (line && j < Width)
                     line &= _grid[i, j++] > 0;
                 if (line)
                 {
                     for (int k = i; k >= 0; k--)
-                        for (int l = 0; l < W; l++)
+                        for (int l = 0; l < Width; l++)
                             _grid[k, l] = k == 0 ? 0 : _grid[k - 1, l];
                     i++;
                     series++;
@@ -222,10 +213,5 @@ namespace iobloc
             else if (series == 1)
                 Score += 1;
         }
-
-        public override string ToString()
-        {
-            return "Tetris";
-        }
-    }
+   }
 }

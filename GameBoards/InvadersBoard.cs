@@ -4,16 +4,24 @@ namespace iobloc
 {
     class InvadersBoard : BaseBoard
     {
-        const int A = Settings.Invaders.ALIEN_WIDTH + Settings.Invaders.ALIEN_SPACE;
-        public override bool Won => Score == Settings.Invaders.ALIEN_ROWS * Settings.Invaders.ALIEN_COLS;
+        int CP => _settings.All.GetInt("PlayerColor");
+        int CE => _settings.All.GetInt("EnemyColor");
+        int CN => _settings.All.GetInt("NeutralColor");
+        int AW => _settings.All.GetInt("AlienWidth");
+        int AS => _settings.All.GetInt("AlienSpace");
+        int AR => _settings.All.GetInt("AlienRows");
+        int AC => _settings.All.GetInt("AlienCols");
+        int BS => _settings.All.GetInt("BulletSpeed");
+        int A => AW + AS;
+        public override bool Won => Score == AR * AC;
         public override int[,] Grid
         {
             get
             {
                 var result = _grid.Copy(Height, Width);
                 for (int i = -1; i <= 1; i++)
-                    result[Height - 1, _ship + i] = Settings.Invaders.COLOR_PLAYER;
-                result[_bulletRow, _bulletCol] = Settings.Invaders.COLOR_NEUTRAL;
+                    result[Height - 1, _ship + i] = CP;
+                result[_bulletRow, _bulletCol] = CN;
                 return result;
             }
         }
@@ -22,17 +30,18 @@ namespace iobloc
         int _ship;
         int _bulletCol;
         int _bulletRow;
-        int _skipFrame = Settings.Invaders.BULLET_SPEED;
+        int _skipFrame;
         bool _shot = false;
         bool _movingRight = true;
 
         internal InvadersBoard() : base(GameOption.Invaders)
         {
+            _skipFrame = BS;
             _grid = new int[Height, Width];
-            for (int row = 0; row < Settings.Invaders.ALIEN_ROWS; row++)
-                for (int col = 0; col < Settings.Invaders.ALIEN_COLS * A; col += A)
-                    for (int i = 0; i < Settings.Invaders.ALIEN_WIDTH; i++)
-                        _grid[row, col + i] = Settings.Invaders.COLOR_ENEMY;
+            for (int row = 0; row < AR; row++)
+                for (int col = 0; col < Width && col < AC * A; col += A)
+                    for (int i = 0; col + i < Width && i < AW; i++)
+                        _grid[row, col + i] = CE;
             _ship = Width / 2 - 1;
             _bulletCol = Width / 2 - 1;
             _bulletRow = Height - 2;
@@ -84,7 +93,7 @@ namespace iobloc
 
             if (_skipFrame <= 0)
             {
-                _skipFrame = Settings.Invaders.BULLET_SPEED;
+                _skipFrame = BS;
                 // animate invaders
                 for (int i = 0; i < Height; i++)
                     if (_movingRight && _grid[i, Width - 1] > 0 ||

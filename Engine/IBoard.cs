@@ -7,6 +7,7 @@ namespace iobloc
     /// </summary>
     interface IBoard
     {
+        string Name { get; }
         /// <summary>
         /// Help text rows to display when game is paused
         /// </summary>

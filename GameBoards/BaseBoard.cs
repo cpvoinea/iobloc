@@ -7,13 +7,14 @@ namespace iobloc
         protected readonly GameSettings _settings;
         protected int Width => _settings.PanelWidth;
         protected int Height => _settings.PanelHeight;
+        public string Name => _settings.Name;
         public string[] Help => _settings.Help;
         public ConsoleKey[] Keys => _settings.Keys;
         public int StepInterval => _settings.StepInterval;
-        public BoardFrame Frame { get; protected set; }
-        public int[] Clip { get; protected set; }
         public int Score { get; protected set; }
         public virtual bool Won { get; protected set; }
+        public BoardFrame Frame { get; protected set; }
+        public int[] Clip { get; protected set; }
         public virtual int[,] Grid { get; }
 
         protected BaseBoard(GameOption gameOption)

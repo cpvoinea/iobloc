@@ -7,8 +7,14 @@ namespace iobloc
     /// </summary>
     class BreakoutBoard : BaseBoard
     {
-        const int B = Settings.Breakout.BLOCK_WIDTH + Settings.Breakout.BLOCK_SPACE;
-        public override bool Won => Score == (Width / B + 1) * Settings.Breakout.BLOCK_ROWS;
+        int CP => _settings.All.GetInt("PlayerColor");
+        int CE => _settings.All.GetInt("EnemyColor");
+        int CN => _settings.All.GetInt("NeutralColor");
+        int BW => _settings.All.GetInt("BlockWidth");
+        int BS => _settings.All.GetInt("BlockSpace");
+        int BR => _settings.All.GetInt("BlockRows");
+        int B => BW + BS;
+        public override bool Won => Score == (Width / B + 1) * BR;
         /// <summary>
         /// Blocks + pad + ball
         /// </summary>
@@ -18,8 +24,8 @@ namespace iobloc
             {
                 var result = _grid.Copy(Height, Width);
                 for (int i = -2; i <= 2; i++)
-                    result[Height - 1, _paddle + i] = Settings.Breakout.COLOR_PLAYER;
-                result[_ballRow, _ballCol] = Settings.Breakout.COLOR_NEUTRAL;
+                    result[Height - 1, _paddle + i] = CP;
+                result[_ballRow, _ballCol] = CN;
                 return result;
             }
         }
@@ -31,38 +37,42 @@ namespace iobloc
         /// <summary>
         /// Pad position from left
         /// </summary>
-        int _paddle = Settings.Breakout.WIDTH / 2 - 2;
+        int _paddle;
         /// <summary>
         /// Ball position from left
         /// </summary>
-        int _ballCol = 0;
+        int _ballCol;
         /// <summary>
         /// Ball position from top
         /// </summary>
-        int _ballRow = 5;
+        int _ballRow;
         /// <summary>
         /// Horizontal grid position
         /// </summary>
-        double _ballX = 0;
+        double _ballX;
         /// <summary>
         /// Vertical grid position
         /// </summary>
-        double _ballY = Settings.Breakout.BLOCK_ROWS;
+        double _ballY;
         /// <summary>
         /// Current ball direction angle
         /// </summary>
-        double _angle = 7 * Math.PI / 4;
+        double _angle;
 
         /// <summary>
         /// Breakout game
         /// </summary>
         internal BreakoutBoard() : base(GameOption.Breakout)
         {
+            _paddle = Width / 2 - 2;
+            _ballX = 5;
+            _ballY = BR;
+            _angle = 7 * Math.PI / 4;
             _grid = new int[Height, Width];
-            for (int row = 0; row < Settings.Breakout.BLOCK_ROWS; row++) // set rows of blocks
+            for (int row = 0; row < BR; row++) // set rows of blocks
                 for (int col = 0; col < Width; col += B)
-                    for (int i = 0; i < Settings.Breakout.BLOCK_WIDTH; i++)
-                        _grid[row, col + i] = Settings.Breakout.COLOR_ENEMY;
+                    for (int i = 0; i < BW; i++)
+                        _grid[row, col + i] = CE;
         }
 
         /// <summary>
@@ -187,7 +197,7 @@ namespace iobloc
         void Break(int row, int col)
         {
             int x = (col / B) * B;
-            for (int i = 0; i < Settings.Breakout.BLOCK_WIDTH; i++)
+            for (int i = 0; i < BW; i++)
                 _grid[row, x + i] = 0;
             Score++;
         }

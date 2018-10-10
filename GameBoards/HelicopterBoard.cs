@@ -7,7 +7,8 @@ namespace iobloc
     /// </summary>
     class HelicopterBoard : RunnerBoard
     {
-        public new int StepInterval =>  2 * base.StepInterval;
+        int CP => _settings.All.GetInt("PlayerColor");
+        int CE => _settings.All.GetInt("EnemyColor");
         /// <summary>
         /// Obstacles + helicopter
         /// </summary>
@@ -18,7 +19,7 @@ namespace iobloc
             {
                 var result = _grid.Copy(Height, Width);
                 if (_distance < Height)
-                    result[_distance, 5] = result[_distance, 6] = Settings.Runner.COLOR_PLAYER;
+                    result[_distance, 5] = result[_distance, 6] = CP;
                 return result;
             }
         }
@@ -27,7 +28,7 @@ namespace iobloc
         /// Helicopter vertical speed: +1 if upwards, 0 if hanging in the air, -1 if downwards
         /// </summary>
         int _speed;
-        
+
         /// <summary>
         /// Helicopter game
         /// </summary>
@@ -44,7 +45,7 @@ namespace iobloc
         {
             if (_distance <= 1) // helicopter is too close to the sky and will burn
             {
-                Clear(Settings.Runner.COLOR_ENEMY); // kill animation
+                Clear(CE); // kill animation
                 _kill = true;
                 return true; // return true to draw
             }
@@ -102,13 +103,13 @@ namespace iobloc
             {
                 up = _random.Next(4);
                 for (int i = 0; i < up; i++)
-                    _grid[i, Width - 1] = Settings.Runner.COLOR_ENEMY;
+                    _grid[i, Width - 1] = CE;
             }
             if ((p & 2) > 0) // bottom obstacle
             {
                 int c = _random.Next(Height - 4 - up);
                 for (int i = Height - 1; i > Height - 1 - c; i--)
-                    _grid[i, Width - 1] = Settings.Runner.COLOR_ENEMY;
+                    _grid[i, Width - 1] = CE;
             }
         }
     }

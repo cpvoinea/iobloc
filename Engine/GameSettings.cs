@@ -19,7 +19,7 @@ namespace iobloc
         {
             Code = (int)gameOption;
             Name = gameOption.ToString();
-            All = Settings.Get((int)gameOption);
+            All = Settings.Get(gameOption);
 
             PanelWidth = All.GetInt("PanelWidth", 10);
             PanelHeight = All.GetInt("PanelHeight", 10);

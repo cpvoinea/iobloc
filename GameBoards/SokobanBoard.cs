@@ -2,172 +2,32 @@ using System;
 
 namespace iobloc
 {
-    class SokobanBoard : IBoard
+    class SokobanBoard : BaseBoard
     {
-        #region Level design
-        const int BW = Settings.Sokoban.BLOCK_WIDTH;
-        const int P = Settings.Sokoban.MARK_PLAYER;
-        const int B = Settings.Sokoban.MARK_BLOCK;
-        const int W = Settings.Sokoban.MARK_WALL;
-        const int T = Settings.Sokoban.MARK_TARGET;
-        const int R = Settings.Sokoban.MARK_TARGET_BLOCK;
-        const int H = Settings.Sokoban.MARK_TARGET_PLAYER;
+        int P => _settings.All.GetInt("PlayerColor");
+        int B => _settings.All.GetInt("BlockColor");
+        int W => _settings.All.GetInt("WallColor");
+        int T => _settings.All.GetInt("TargetColor");
+        int R => _settings.All.GetInt("TargetBlocColor");
+        int H => _settings.All.GetInt("TargetPlayerColor");
+        int BW => _settings.All.GetInt("BlockWidth");
+        int WS => _settings.All.GetInt("WinScore");
+        public override bool Won { get; protected set; }
+        public override int[,] Grid { get { return _grid; } }
 
-        readonly int[][,] Levels = new[]
- {
-            new[,] {
-                {0, 0, 0, 0},
-                {0, 0, T, 0},
-                {0, 0, W, 0},
-                {0, 0, 0, 0},
-                {0, B, P, 0},
-                {0, 0, 0, 0}
-            },
-            new[,] {
-                {T, 0, 0, W},
-                {0, 0, R, 0},
-                {0, B, W, 0},
-                {0, 0, 0, 0},
-                {0, W, P, 0},
-                {0, 0, 0, 0}
-            },
-            new[,] {
-                {T, 0, 0, W},
-                {0, 0, 0, 0},
-                {W, B, 0, 0},
-                {0, R, 0, 0},
-                {P, 0, 0, 0},
-                {0, 0, 0, W}
-            },
-            new[,] {
-                {W, 0, 0, W},
-                {0, 0, B, 0},
-                {T, B, W, T},
-                {0, 0, 0, 0},
-                {P, 0, 0, 0},
-                {W, 0, 0, W}
-            },
-            new[,] {
-                {0, 0, 0, 0},
-                {0, P, 0, 0},
-                {0, B, W, T},
-                {0, B, 0, 0},
-                {0, 0, 0, 0},
-                {T, R, 0, W}
-            },
-            new[,] {
-                {W, 0, 0, 0},
-                {W, T, P, T},
-                {0, T, B, 0},
-                {0, 0, B, W},
-                {0, 0, B, 0},
-                {0, 0, 0, 0}
-            },
-            new[,] {
-                {0, W, 0, 0},
-                {W, 0, 0, 0},
-                {0, R, T, 0},
-                {0, B, B, 0},
-                {0, T, W, 0},
-                {P, 0, 0, 0}
-            },
-            new[,] {
-                {W, T, 0, P},
-                {W, R, W, B},
-                {W, 0, B, T},
-                {W, 0, 0, 0},
-                {0, 0, 0, 0},
-                {0, 0, 0, 0}
-            },
-            new[,] {
-                {W, 0, 0, W},
-                {0, 0, T, 0},
-                {0, 0, 0, 0},
-                {0, W, 0, 0},
-                {R, B, B, 0},
-                {P, 0, 0, T}
-            },
-            new[,] {
-                {W, W, W, W},
-                {0, 0, 0, T},
-                {B, B, B, P},
-                {T, 0, W, 0},
-                {0, 0, T, 0},
-                {W, W, W, W}
-            },
-            new[,] {
-                {W, 0, 0, T},
-                {0, R, B, T},
-                {0, W, 0, B},
-                {0, 0, 0, 0},
-                {0, 0, 0, 0},
-                {0, P, 0, 0}
-            },
-            new[,] {
-                {W, W, W, 0},
-                {P, 0, 0, W},
-                {0, W, B, 0},
-                {0, R, 0, T},
-                {W, 0, 0, B},
-                {W, T, 0, 0}
-            },
-            new[,] {
-                {0, 0, 0, W},
-                {0, W, 0, 0},
-                {T, T, 0, 0},
-                {W, B, B, T},
-                {0, B, 0, 0},
-                {0, 0, P, W}
-            },
-            new[,] {
-                {0, 0, 0, W},
-                {0, W, T, 0},
-                {0, 0, T, 0},
-                {W, B, 0, 0},
-                {P, B, 0, 0},
-                {T, B, 0, 0}
-            },
-            new[,] {
-                {0, 0, W, 0},
-                {0, 0, 0, W},
-                {0, T, R, 0},
-                {0, B, B, 0},
-                {P, W, T, 0},
-                {0, 0, 0, 0}
-            },
-            new[,] {
-                {0, W, W, 0},
-                {W, P, 0, W},
-                {0, B, 0, 0},
-                {W, 0, B, W},
-                {0, R, 0, 0},
-                {0, T, T, 0}
-            },
-        };
-        #endregion
-
-        const int WD = Settings.Sokoban.WIDTH;
-        const int HG = Settings.Sokoban.HEIGHT;
-        public string[] Help => Settings.Sokoban.HELP;
-        public ConsoleKey[] Keys => Settings.Sokoban.KEYS;
-        public int StepInterval => 500;
-        public bool Won { get; private set; }
-        public BoardFrame Frame {get;private set;} = new BoardFrame(WD + 2, HG + 2);
-        public int[] Clip { get; private set; } = new[] { 0, 0, WD, HG };
-        public int Score { get; private set; }
-        public int[,] Grid { get; private set; } = new int[HG, WD];
-
+        readonly int[,] _grid;
         int _startScore = 0;
         int _level = 0;
         int _targets = 100;
         int _row;
         int _col;
 
-        internal SokobanBoard()
+        internal SokobanBoard() : base(GameOption.Sokoban)
         {
+            _grid = new int[Height, Width];
             _level = Settings.Game.Level;
-            if (_level > Levels.Length)
-                _level = Levels.Length - 1;
+            if (_level > SokobanLevels.Count)
+                _level = SokobanLevels.Count - 1;
             InitializeLevel();
         }
 
@@ -179,10 +39,10 @@ namespace iobloc
 
         void InitializeLevel()
         {
-            var board = Levels[_level];
+            var board = SokobanLevels.Get(_level);
             _targets = 0;
-            for (int i = 0; i < HG; i++)
-                for (int j = 0; j < WD; j += BW)
+            for (int i = 0; i < Height && i < 6; i++)
+                for (int j = 0; j < Width && j / BW < 4; j += BW)
                 {
                     int v = board[i, j / BW];
                     SetBlock(i, j, v);
@@ -196,7 +56,7 @@ namespace iobloc
                 }
         }
 
-        public bool Action(ConsoleKey key)
+        public override bool Action(ConsoleKey key)
         {
             if (key == ConsoleKey.R)
             {
@@ -215,7 +75,7 @@ namespace iobloc
                     case ConsoleKey.UpArrow: v = -1; break;
                     case ConsoleKey.DownArrow: v = 1; break;
                 }
-                if (_row + v < 0 || _row + v >= HG || _col + h < 0 || _col + h >= WD)
+                if (_row + v < 0 || _row + v >= Height || _col + h < 0 || _col + h >= Width)
                     return false;
                 int next = Grid[_row + v, _col + h];
                 if (next == W)
@@ -231,7 +91,7 @@ namespace iobloc
                 }
                 if (next == B || next == R)
                 {
-                    if (_row + 2 * v < 0 || _row + 2 * v >= HG || _col + 2 * h < 0 || _col + 2 * h >= WD)
+                    if (_row + 2 * v < 0 || _row + 2 * v >= Height || _col + 2 * h < 0 || _col + 2 * h >= Width)
                         return false;
                     int second = Grid[_row + 2 * v, _col + 2 * h];
                     if (second == W || second == B || second == R)
@@ -255,7 +115,7 @@ namespace iobloc
                             _targets--;
                             if (_targets == 0)
                             {
-                                Score += Settings.Sokoban.LEVEL_SCORE;
+                                Score += WS;
                                 Won = true;
                                 _level++;
                             }
@@ -273,11 +133,11 @@ namespace iobloc
             }
         }
 
-        public bool Step()
+        public override bool Step()
         {
             if (Won)
             {
-                if (_level >= Levels.Length)
+                if (_level >= SokobanLevels.Count)
                     return false;
                 Won = false;
                 InitializeLevel();
@@ -286,11 +146,6 @@ namespace iobloc
             }
             else
                 return true;
-        }
-
-        public override string ToString()
-        {
-            return "Sokoban";
         }
     }
 }
