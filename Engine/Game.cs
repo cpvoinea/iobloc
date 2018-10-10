@@ -83,7 +83,7 @@ namespace iobloc
         {
             _frames = 0;
             UI.Reset();
-            UI.Draw();
+            UI.DrawPanel(Board.Clip);
             IsRunning = true;
             while (IsRunning) // action loop
             {
@@ -95,7 +95,7 @@ namespace iobloc
                         CheckInput();
                         Thread.Sleep(10);
                     }
-                    UI.Draw(); // restore game display
+                    UI.DrawPanel(Board.Clip); // restore game display
                 }
 
                 CheckInput(); // handle any input
@@ -143,7 +143,7 @@ namespace iobloc
             if (Board.Keys.Contains(key)) // perform action on game keys
             {
                 if (Board.Action(key))
-                    UI.Draw(Board.Clip); // redraw if action is performed
+                    UI.DrawPanel(Board.Clip); // redraw if action is performed
             }
             else // or pause on any other key
                 IsPaused = true;
@@ -166,7 +166,7 @@ namespace iobloc
 
                 return;
             }
-            UI.Draw(Board.Clip); // re-draw after each step
+            UI.DrawPanel(Board.Clip); // re-draw after each step
         }
     }
 }

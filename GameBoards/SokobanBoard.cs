@@ -4,14 +4,7 @@ namespace iobloc
 {
     class SokobanBoard : IBoard
     {
-        #region Settings
-        public string[] Help => Settings.Sokoban.HELP;
-        public ConsoleKey[] Keys => Settings.Sokoban.KEYS;
-        public int StepInterval => 1;
-        public int Width => Settings.Sokoban.WIDTH;
-        public int Height => Settings.Sokoban.HEIGHT;
-        public int[] Clip => new[] { 0, 0, Settings.Sokoban.WIDTH, Settings.Sokoban.HEIGHT };
-
+        #region Level design
         const int BW = Settings.Sokoban.BLOCK_WIDTH;
         const int P = Settings.Sokoban.MARK_PLAYER;
         const int B = Settings.Sokoban.MARK_BLOCK;
@@ -19,8 +12,9 @@ namespace iobloc
         const int T = Settings.Sokoban.MARK_TARGET;
         const int R = Settings.Sokoban.MARK_TARGET_BLOCK;
         const int H = Settings.Sokoban.MARK_TARGET_PLAYER;
+
         readonly int[][,] Levels = new[]
-        {
+ {
             new[,] {
                 {0, 0, 0, 0},
                 {0, 0, T, 0},
@@ -152,18 +146,23 @@ namespace iobloc
         };
         #endregion
 
-        readonly int[,] _grid = new int[Settings.Sokoban.HEIGHT, Settings.Sokoban.WIDTH];
-        int _score = 0;
+        const int WD = Settings.Sokoban.WIDTH;
+        const int HG = Settings.Sokoban.HEIGHT;
+        public string[] Help => Settings.Sokoban.HELP;
+        public ConsoleKey[] Keys => Settings.Sokoban.KEYS;
+        public int StepInterval => 500;
+        public bool Won { get; private set; }
+        public BoardFrame Frame {get;private set;} = new BoardFrame(WD + 2, HG + 2);
+        public int[] Clip { get; private set; } = new[] { 0, 0, WD, HG };
+        public int Score { get; private set; }
+        public int[,] Grid { get; private set; } = new int[HG, WD];
+
         int _startScore = 0;
-        bool _won = false;
         int _level = 0;
         int _targets = 100;
         int _row;
         int _col;
 
-        public int[,] Grid { get { return _grid; } }
-        public int Score { get { return _score; } }
-        public bool Won { get { return _won; } }
         internal SokobanBoard()
         {
             _level = Settings.Game.Level;
@@ -175,15 +174,15 @@ namespace iobloc
         void SetBlock(int row, int col, int val)
         {
             for (int i = col; i < col + BW; i++)
-                _grid[row, i] = val;
+                Grid[row, i] = val;
         }
 
         void InitializeLevel()
         {
             var board = Levels[_level];
             _targets = 0;
-            for (int i = 0; i < Height; i++)
-                for (int j = 0; j < Width; j += BW)
+            for (int i = 0; i < HG; i++)
+                for (int j = 0; j < WD; j += BW)
                 {
                     int v = board[i, j / BW];
                     SetBlock(i, j, v);
@@ -202,7 +201,7 @@ namespace iobloc
             if (key == ConsoleKey.R)
             {
                 InitializeLevel();
-                _score = _startScore;
+                Score = _startScore;
                 return true;
             }
             else
@@ -216,48 +215,48 @@ namespace iobloc
                     case ConsoleKey.UpArrow: v = -1; break;
                     case ConsoleKey.DownArrow: v = 1; break;
                 }
-                if (_row + v < 0 || _row + v >= Height || _col + h < 0 || _col + h >= Width)
+                if (_row + v < 0 || _row + v >= HG || _col + h < 0 || _col + h >= WD)
                     return false;
-                int next = _grid[_row + v, _col + h];
+                int next = Grid[_row + v, _col + h];
                 if (next == W)
                     return false;
                 if (next == 0 || next == T)
                 {
-                    SetBlock(_row, _col, _grid[_row, _col] == H ? T : 0);
+                    SetBlock(_row, _col, Grid[_row, _col] == H ? T : 0);
                     _row += v;
                     _col += h;
-                    SetBlock(_row, _col, _grid[_row, _col] == T ? H : P);
-                    _score--;
+                    SetBlock(_row, _col, Grid[_row, _col] == T ? H : P);
+                    Score--;
                     return true;
                 }
                 if (next == B || next == R)
                 {
-                    if (_row + 2 * v < 0 || _row + 2 * v >= Height || _col + 2 * h < 0 || _col + 2 * h >= Width)
+                    if (_row + 2 * v < 0 || _row + 2 * v >= HG || _col + 2 * h < 0 || _col + 2 * h >= WD)
                         return false;
-                    int second = _grid[_row + 2 * v, _col + 2 * h];
+                    int second = Grid[_row + 2 * v, _col + 2 * h];
                     if (second == W || second == B || second == R)
                         return false;
                     if (second == 0 || second == T)
                     {
-                        SetBlock(_row, _col, _grid[_row, _col] == H ? T : 0);
+                        SetBlock(_row, _col, Grid[_row, _col] == H ? T : 0);
                         _row += v;
                         _col += h;
-                        if (_grid[_row, _col] == R)
+                        if (Grid[_row, _col] == R)
                         {
                             _targets++;
                             SetBlock(_row, _col, H);
                         }
                         else
                             SetBlock(_row, _col, P);
-                        _score--;
-                        if (_grid[_row + v, _col + h] == T)
+                        Score--;
+                        if (Grid[_row + v, _col + h] == T)
                         {
                             SetBlock(_row + v, _col + h, R);
                             _targets--;
                             if (_targets == 0)
                             {
-                                _score += Settings.Sokoban.LEVEL_SCORE;
-                                _won = true;
+                                Score += Settings.Sokoban.LEVEL_SCORE;
+                                Won = true;
                                 _level++;
                             }
                             return true;
@@ -276,13 +275,13 @@ namespace iobloc
 
         public bool Step()
         {
-            if (_won)
+            if (Won)
             {
                 if (_level >= Levels.Length)
                     return false;
-                _won = false;
+                Won = false;
                 InitializeLevel();
-                _startScore = _score;
+                _startScore = Score;
                 return true;
             }
             else

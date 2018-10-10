@@ -83,7 +83,6 @@ namespace iobloc
         {
             internal static readonly string[] HELP = { "Restrt:R", "Move:ARW", "Exit:ESC", "Paus:ANY" };
             internal static readonly ConsoleKey[] KEYS = { ConsoleKey.LeftArrow, ConsoleKey.RightArrow, ConsoleKey.UpArrow, ConsoleKey.DownArrow, ConsoleKey.R };
-            internal const int INTERVALS = 100;
             internal const int WIDTH = 4 * BLOCK_WIDTH;
             internal const int HEIGHT = 6;
             internal const int BLOCK_WIDTH = 2;

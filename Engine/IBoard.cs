@@ -24,14 +24,7 @@ namespace iobloc
         /// Game cycle (step) duration in miliseconds
         /// </summary>
         int StepInterval { get; }
-        /// <summary>
-        /// Grid width
-        /// </summary>
-        int Width { get; }
-        /// <summary>
-        /// Grid height
-        /// </summary>
-        int Height { get; }
+        BoardFrame Frame { get; }
         /// <summary>
         /// Grid to display, including static board and player actions
         /// </summary>

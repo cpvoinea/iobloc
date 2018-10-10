@@ -7,18 +7,28 @@ namespace iobloc
     /// </summary>
     class TetrisBoard : IBoard
     {
-        #region Settings
+        const int W = Settings.Tetris.WIDTH;
+        const int H = Settings.Tetris.HEIGHT;
         public string[] Help => Settings.Tetris.HELP;
         public ConsoleKey[] Keys => Settings.Tetris.KEYS;
-        public int Width => Settings.Tetris.WIDTH;
-        public int Height => Settings.Tetris.HEIGHT;
+        public int StepInterval { get; private set; } = Settings.Game.LevelInterval * Settings.Tetris.INTERVALS;
         public bool Won => false;
-        #endregion
-
+        public BoardFrame Frame { get; private set; } = new BoardFrame(W + 2, H + 2);
+        public int[] Clip { get; private set; } = new[] { 0, 0, W, H };
+        public int Score { get; private set; }
         /// <summary>
-        /// Current score
+        /// Fixed pieces + current piece
         /// </summary>
-        int _score;
+        public int[,] Grid
+        {
+            get
+            {
+                var result = _grid.Copy(H, W);
+                CheckGridPiece(result, _piece, true, true);
+                return result;
+            }
+        }
+
         /// <summary>
         /// Used for next piece
         /// </summary>
@@ -32,35 +42,13 @@ namespace iobloc
         /// </summary>
         TetrisPiece _piece;
 
-        public int StepInterval { get { return Settings.Game.LevelInterval * Settings.Tetris.INTERVALS; } }
-
-        /// <summary>
-        /// Fixed pieces + current piece
-        /// </summary>
-        public int[,] Grid
-        {
-            get
-            {
-                var result = _grid.Copy(Height, Width);
-                CheckGridPiece(result, _piece, true, true);
-                return result;
-            }
-        }
-
-        /// <summary>
-        /// Current score
-        /// </summary>
-        public int Score { get { return _score; } }
-
-        public int[] Clip { get { return new[] { 0, 0, Width, Height }; } }
-
         /// <summary>
         /// Tetris game
         /// </summary>
         internal TetrisBoard()
         {
             _piece = NewPiece();
-            _grid = new int[Height, Width];
+            _grid = new int[H, W];
         }
 
         /// <summary>
@@ -105,7 +93,7 @@ namespace iobloc
                     {
                         int gx = piece.X - 1 + i;
                         int gy = piece.Y - 2 + j;
-                        if (gx >= Height || gy < 0 || gy >= Width ||
+                        if (gx >= H || gy < 0 || gy >= W ||
                             (!partiallyEntered && gx < 0) ||
                             (partiallyEntered && gx >= 0 && grid[gx, gy] > 0))
                             return false;
@@ -210,29 +198,29 @@ namespace iobloc
         void RemoveRows()
         {
             int series = 0;
-            for (int i = Height - 1; i >= 0; i--)
+            for (int i = H - 1; i >= 0; i--)
             {
                 bool line = true;
                 int j = 0;
-                while (line && j < Width)
+                while (line && j < W)
                     line &= _grid[i, j++] > 0;
                 if (line)
                 {
                     for (int k = i; k >= 0; k--)
-                        for (int l = 0; l < Width; l++)
+                        for (int l = 0; l < W; l++)
                             _grid[k, l] = k == 0 ? 0 : _grid[k - 1, l];
                     i++;
                     series++;
                 }
             }
             if (series == 4)
-                _score += 10;
+                Score += 10;
             else if (series == 3)
-                _score += 6;
+                Score += 6;
             else if (series == 2)
-                _score += 3;
+                Score += 3;
             else if (series == 1)
-                _score += 1;
+                Score += 1;
         }
 
         public override string ToString()

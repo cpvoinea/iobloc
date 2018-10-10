@@ -7,18 +7,30 @@ namespace iobloc
     /// </summary>
     class RunnerBoard : IBoard
     {
-        #region Settings
+        protected const int W = Settings.Runner.WIDTH;
+        protected const int H = Settings.Runner.HEIGHT;
         public string[] Help => Settings.Runner.HELP;
         public ConsoleKey[] Keys => Settings.Runner.KEYS;
-        public int Width => Settings.Runner.WIDTH;
-        public int Height => Settings.Runner.HEIGHT;
         public bool Won => false;
-        #endregion
+        public virtual int StepInterval { get; private set; } = Settings.Game.LevelInterval * Settings.Runner.INTERVALS;
+        public BoardFrame Frame { get; private set; } = new BoardFrame(W + 2, H + 2);
+        public int[] Clip { get; private set; } = new[] { 0, 0, W, H };
+        public int Score => _highscore;
 
         /// <summary>
-        /// Current score
+        /// Fences + jumper
         /// </summary>
-        protected int _score;
+        public virtual int[,] Grid
+        {
+            get
+            {
+                var result = _grid.Copy(H, W);
+                int h = H - 1 - _distance;
+                result[h, 1] = result[h - 1, 1] = Settings.Game.COLOR_PLAYER;
+                return result;
+            }
+        }
+
         /// <summary>
         /// Used for generating fences
         /// </summary>
@@ -55,36 +67,14 @@ namespace iobloc
         /// Double jump was called during current jump
         /// </summary>
         bool _doubleJump;
-
-        public virtual int StepInterval { get { return Settings.Game.LevelInterval * Settings.Runner.INTERVALS; } }
-
-        /// <summary>
-        /// Fences + jumper
-        /// </summary>
-        public virtual int[,] Grid
-        {
-            get
-            {
-                var result = _grid.Copy(Height, Width);
-                int h = Height - 1 - _distance;
-                result[h, 1] = result[h - 1, 1] = Settings.Game.COLOR_PLAYER;
-                return result;
-            }
-        }
-
-        /// <summary>
-        /// Highest score
-        /// </summary>
-        public int Score { get { return _highscore; } }
-
-        public int[] Clip { get { return new[] { 0, 0, Width, Height }; } }
+        protected int _score;
 
         /// <summary>
         /// Endless runner game
         /// </summary>
         protected internal RunnerBoard()
         {
-            _grid = new int[Height, Width];
+            _grid = new int[H, W];
         }
 
         /// <summary>
@@ -181,7 +171,7 @@ namespace iobloc
         protected virtual bool Collides()
         {
             int fence = 0; // fence height
-            int x = Height - 1;
+            int x = H - 1;
             while (_grid[x--, 1] > 0)
                 fence++;
             return _distance < fence; // collides if fence is higher than jump distance
@@ -206,14 +196,14 @@ namespace iobloc
         protected virtual void CreateFence()
         {
             bool hasSpace = true; // fences should not be to close together; check if there is room for new fence
-            int y = Width - 4;
-            while (hasSpace && y >= Width - 12)
-                hasSpace &= _grid[Height - 1, y--] == 0;
+            int y = W - 4;
+            while (hasSpace && y >= W - 12)
+                hasSpace &= _grid[H - 1, y--] == 0;
             if (!hasSpace) // no room for new fence
                 return;
             int fence = _random.Next(3); // random height, including 0
             for (int i = 0; i < 3; i++)
-                _grid[Height - 1 - i, Width - 2] = i < fence ? Settings.Game.COLOR_ENEMY : 0; // set fence to grid
+                _grid[H - 1 - i, W - 2] = i < fence ? Settings.Game.COLOR_ENEMY : 0; // set fence to grid
         }
 
         /// <summary>
@@ -222,8 +212,8 @@ namespace iobloc
         /// <param name="v">color value</param>
         protected void Clear(int v)
         {
-            for (int i = 0; i < Height; i++)
-                for (int j = 0; j < Width; j++)
+            for (int i = 0; i < H; i++)
+                for (int j = 0; j < W; j++)
                     _grid[i, j] = v;
         }
 
@@ -236,11 +226,11 @@ namespace iobloc
             if (_score > _highscore) // only keep the highscore
                 _highscore = _score;
 
-            for (int j = 1; j < Width - 1; j++) // shift grid to left
-                for (int i = 0; i < Height; i++)
+            for (int j = 1; j < W - 1; j++) // shift grid to left
+                for (int i = 0; i < H; i++)
                     _grid[i, j] = _grid[i, j + 1];
-            for (int i = 0; i < Height; i++)
-                _grid[i, Width - 1] = 0;
+            for (int i = 0; i < H; i++)
+                _grid[i, W - 1] = 0;
             CreateFence();
         }
 

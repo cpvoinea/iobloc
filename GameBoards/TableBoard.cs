@@ -23,21 +23,6 @@ namespace iobloc
 
         internal TableBoard()
         {
-            Console.CursorVisible = false;
-            Console.Clear();
-            for (int i = 0; i < _frame.Height; i++)
-            {
-                string line = string.Empty;
-                for (int j = 0; j < _frame.Width; j++)
-                {
-                    int c = (int)_frame.EmptyFrame[i, j];
-                    line += c == 0 ? ' ' : (char)c;
-                }
-                Console.WriteLine(line);
-            }
-
-            Console.ReadKey();
-            Console.CursorVisible = true;
         }
     }
 }

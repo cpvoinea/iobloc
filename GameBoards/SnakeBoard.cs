@@ -5,14 +5,6 @@ namespace iobloc
 {
     class SnakeBoard : IBoard
     {
-        #region Settings
-        public string[] Help => Settings.Snake.HELP;
-        public ConsoleKey[] Keys => Settings.Snake.KEYS;
-        public int Width => Settings.Snake.WIDTH;
-        public int Height => Settings.Snake.HEIGHT;
-        public bool Won => false;
-        #endregion
-
         struct Position
         {
             internal int Row { get; set; }
@@ -36,22 +28,20 @@ namespace iobloc
             }
         }
 
-        readonly Random _random = new Random();
-        int _score = 0;
-        readonly LinkedList<Position> _snake = new LinkedList<Position>();
-        Position _point;
-        int _h = 1;
-        int _v = 0;
-        int _nextH = 1;
-        int _nextV = 0;
-
-        public int StepInterval { get { return Settings.Game.LevelInterval * Settings.Snake.INTERVALS; } }
-
+        const int W = Settings.Snake.WIDTH;
+        const int H = Settings.Snake.HEIGHT;
+        public string[] Help => Settings.Snake.HELP;
+        public ConsoleKey[] Keys => Settings.Snake.KEYS;
+        public bool Won => false;
+        public int StepInterval { get; private set; } = Settings.Game.LevelInterval * Settings.Snake.INTERVALS;
+        public BoardFrame Frame { get; private set; } = new BoardFrame(W + 2, H + 2);
+        public int[] Clip { get; private set; } = new[] { 0, 0, W, H };
+        public int Score { get; private set; }
         public int[,] Grid
         {
             get
             {
-                var result = new int[Height, Width];
+                var result = new int[H, W];
                 foreach (var p in _snake)
                     result[p.Row, p.Col] = Settings.Game.COLOR_PLAYER;
                 result[_point.Row, _point.Col] = Settings.Game.COLOR_NEUTRAL;
@@ -59,14 +49,18 @@ namespace iobloc
             }
         }
 
-        public int Score { get { return _score; } }
-
-        public int[] Clip { get { return new[] { 0, 0, Width, Height }; } }
+        readonly Random _random = new Random();
+        readonly LinkedList<Position> _snake = new LinkedList<Position>();
+        Position _point;
+        int _h = 1;
+        int _v = 0;
+        int _nextH = 1;
+        int _nextV = 0;
 
         internal SnakeBoard()
         {
-            int v = Height / 2;
-            int h = Width / 2;
+            int v = H / 2;
+            int h = W / 2;
             _snake.AddFirst(new Position(v, h));
             _snake.AddFirst(new Position(v, h + 1));
             _snake.AddFirst(new Position(v, h + 2));
@@ -106,7 +100,7 @@ namespace iobloc
             _snake.AddFirst(next);
             if (_point.Equals(next))
             {
-                _score++;
+                Score++;
                 NewPoint();
             }
             else
@@ -116,7 +110,7 @@ namespace iobloc
 
         void NewPoint()
         {
-            _point = new Position(_random.Next(Height), _random.Next(Width));
+            _point = new Position(_random.Next(H), _random.Next(W));
         }
 
         void SetMove(int h, int v)
@@ -131,12 +125,12 @@ namespace iobloc
             int nextV = head.Row + _nextV;
             int nextH = head.Col + _nextH;
             if (nextV < 0)
-                nextV = Height - 1;
-            else if (nextV >= Height)
+                nextV = H - 1;
+            else if (nextV >= H)
                 nextV = 0;
             if (nextH < 0)
-                nextH = Width - 1;
-            else if (nextH >= Width)
+                nextH = W - 1;
+            else if (nextH >= W)
                 nextH = 0;
             _h = _nextH;
             _v = _nextV;

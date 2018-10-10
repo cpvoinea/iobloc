@@ -6,6 +6,20 @@ namespace iobloc
         internal int Height { get; private set; }
         internal int[,] EmptyFrame { get; private set; }
 
+        internal BoardFrame(int width, int height)
+        {
+            Width = width;
+            Height = height;
+            EmptyFrame = new int[Height, Width];
+
+            AddLines(new[]{
+                new BoardLine(0, width - 1, 0, false, false),
+                new BoardLine(0, height - 1, 0, true, false),
+                new BoardLine(0, width - 1, height - 1, false, false),
+                new BoardLine(0, height - 1, width - 1, true, false)
+            });
+        }
+
         internal BoardFrame(BoardLine[] lines)
         {
             int maxWidth = 0;
@@ -27,10 +41,16 @@ namespace iobloc
                         maxHeight = l.Position;
                 }
             }
+
             Width = maxWidth + 1;
             Height = maxHeight + 1;
             EmptyFrame = new int[Height, Width];
 
+            AddLines(lines);
+        }
+
+        void AddLines(BoardLine[] lines)
+        {
             for (int i1 = 0; i1 < lines.Length; i1++)
             {
                 var line1 = lines[i1];

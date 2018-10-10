@@ -4,46 +4,41 @@ namespace iobloc
 {
     class InvadersBoard : IBoard
     {
-        #region Settings
+        const int W = Settings.Invaders.WIDTH;
+        const int H = Settings.Invaders.HEIGHT;
+        const int A = Settings.Invaders.ALIEN_WIDTH + Settings.Invaders.ALIEN_SPACE;
         public string[] Help => Settings.Invaders.HELP;
         public ConsoleKey[] Keys => Settings.Invaders.KEYS;
-        public int Width => Settings.Invaders.WIDTH;
-        public int Height => Settings.Invaders.HEIGHT;
-        const int ALIEN = Settings.Invaders.ALIEN_WIDTH + Settings.Invaders.ALIEN_SPACE;
-        #endregion
-
-        int _score;
-        readonly int[,] _grid;
-        int[] _clip = new int[4];
-        int _ship = Settings.Invaders.WIDTH / 2 - 1;
-        int _bulletCol = Settings.Invaders.WIDTH / 2 - 1;
-        int _bulletRow = Settings.Invaders.HEIGHT - 2;
-        int _skipFrame = Settings.Invaders.BULLET_SPEED;
-        bool _shot = false;
-        bool _movingRight = true;
-
-        public int StepInterval { get { return Settings.Game.LevelInterval * Settings.Invaders.INTERVALS; } }
-
+        public bool Won => Score == Settings.Invaders.ALIEN_ROWS * Settings.Invaders.ALIEN_COLS;
+        public int StepInterval { get; private set; } = Settings.Game.LevelInterval * Settings.Invaders.INTERVALS;
+        public BoardFrame Frame { get; private set; } = new BoardFrame(W + 2, H + 2);
+        public int[] Clip { get; private set; } = new[] { 0, 0, W, H };
+        public int Score { get; private set; }
         public int[,] Grid
         {
             get
             {
-                var result = _grid.Copy(Height, Width);
+                var result = _grid.Copy(H, W);
                 for (int i = -1; i <= 1; i++)
-                    result[Height - 1, _ship + i] = Settings.Game.COLOR_PLAYER;
+                    result[H - 1, _ship + i] = Settings.Game.COLOR_PLAYER;
                 result[_bulletRow, _bulletCol] = Settings.Game.COLOR_NEUTRAL;
                 return result;
             }
         }
-        public int Score { get { return _score; } }
-        public bool Won { get { return _score == Settings.Invaders.ALIEN_ROWS * Settings.Invaders.ALIEN_COLS; } }
-        public int[] Clip { get { return _clip; } }
+
+        readonly int[,] _grid;
+        int _ship = W / 2 - 1;
+        int _bulletCol = Settings.Invaders.WIDTH / 2 - 1;
+        int _bulletRow = H - 2;
+        int _skipFrame = Settings.Invaders.BULLET_SPEED;
+        bool _shot = false;
+        bool _movingRight = true;
 
         internal InvadersBoard()
         {
-            _grid = new int[Height, Width];
+            _grid = new int[H, W];
             for (int row = 0; row < Settings.Invaders.ALIEN_ROWS; row++)
-                for (int col = 0; col < Settings.Invaders.ALIEN_COLS * ALIEN; col += ALIEN)
+                for (int col = 0; col < Settings.Invaders.ALIEN_COLS * A; col += A)
                     for (int i = 0; i < Settings.Invaders.ALIEN_WIDTH; i++)
                         _grid[row, col + i] = Settings.Game.COLOR_ENEMY;
         }
@@ -58,17 +53,17 @@ namespace iobloc
                         _ship--;
                         if (!_shot)
                             _bulletCol--;
-                        _clip = new[] { 0, Height - 2, Width, Height };
+                        Clip = new[] { 0, H - 2, W, H };
                         return true;
                     }
                     break;
                 case ConsoleKey.RightArrow:
-                    if (_ship < Width - 2)
+                    if (_ship < W - 2)
                     {
                         _ship++;
                         if (!_shot)
                             _bulletCol++;
-                        _clip = new[] { 0, Height - 1, Width, Height };
+                        Clip = new[] { 0, H - 1, W, H };
                         return true;
                     }
                     break;
@@ -88,33 +83,33 @@ namespace iobloc
                 return false;
 
             // lost
-            for (int i = 0; i < Width; i++)
-                if (_grid[Height - 1, i] > 0)
+            for (int i = 0; i < W; i++)
+                if (_grid[H - 1, i] > 0)
                     return false;
 
             if (_skipFrame <= 0)
             {
                 _skipFrame = Settings.Invaders.BULLET_SPEED;
                 // animate invaders
-                for (int i = 0; i < Height; i++)
-                    if (_movingRight && _grid[i, Width - 1] > 0 ||
+                for (int i = 0; i < H; i++)
+                    if (_movingRight && _grid[i, W - 1] > 0 ||
                      !_movingRight && _grid[i, 0] > 0) // switch sides
                     {
-                        for (int k = Height - 1; k >= 0; k--)
-                            for (int j = 0; j < Width; j++)
+                        for (int k = H - 1; k >= 0; k--)
+                            for (int j = 0; j < W; j++)
                                 _grid[k, j] = k == 0 ? 0 : _grid[k - 1, j];
 
                         _movingRight = !_movingRight;
                         break;
                     }
                 if (_movingRight)
-                    for (int i = 0; i < Height; i++)
-                        for (int j = Width - 1; j >= 0; j--)
+                    for (int i = 0; i < H; i++)
+                        for (int j = W - 1; j >= 0; j--)
                             _grid[i, j] = j == 0 ? 0 : _grid[i, j - 1];
                 else
-                    for (int i = 0; i < Height; i++)
-                        for (int j = 0; j < Width; j++)
-                            _grid[i, j] = j == Width - 1 ? 0 : _grid[i, j + 1];
+                    for (int i = 0; i < H; i++)
+                        for (int j = 0; j < W; j++)
+                            _grid[i, j] = j == W - 1 ? 0 : _grid[i, j + 1];
             }
 
             _skipFrame--;
@@ -125,7 +120,7 @@ namespace iobloc
                 {
                     _grid[_bulletRow, _bulletCol] = 0;
                     _shot = false;
-                    _bulletRow = Height - 2;
+                    _bulletRow = H - 2;
                     _bulletCol = _ship;
                 }
                 else
@@ -137,19 +132,19 @@ namespace iobloc
                         int c = _bulletCol;
                         do
                             _grid[_bulletRow, _bulletCol++] = 0;
-                        while (_bulletCol < Width && _grid[_bulletRow, _bulletCol] > 0);
+                        while (_bulletCol < W && _grid[_bulletRow, _bulletCol] > 0);
                         while (c > 0 && _grid[_bulletRow, --c] > 0)
                             _grid[_bulletRow, c] = 0;
 
-                        _score++;
+                        Score++;
                         _shot = false;
-                        _bulletRow = Height - 2;
+                        _bulletRow = H - 2;
                         _bulletCol = _ship;
                     }
                 }
             }
 
-            _clip = new[] { 0, 0, Width, Height };
+            Clip = new[] { 0, 0, W, H };
             return true;
         }
 
