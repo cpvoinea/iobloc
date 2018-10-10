@@ -7,11 +7,6 @@ namespace iobloc
     {
         static Dictionary<string, int> HS = Settings.Game.Highscore;
 
-        /// <summary>
-        /// List of games. Add a new case for each game in this list
-        /// </summary>
-        static readonly string[] _list = { ">>level<<", "tetris", "runner", "helicopter", "breakout", "invaders", "snake", "sokoban", "table (WIP)" };
-
         static string _log = string.Empty;
 
         static void Main(string[] args)
@@ -21,49 +16,10 @@ namespace iobloc
             while (key.Key != ConsoleKey.Escape)
             {
                 int option = key.KeyChar - '0';
-                if (option >= 0 && option < _list.Length || option == 9)
-                {
-                    IBoard board = null;
-                    bool table = false;
-                    switch (option)
-                    {
-                        case 0:
-                            board = new LevelBoard();
-                            break;
-                        case 1:
-                            board = new TetrisBoard();
-                            break;
-                        case 2:
-                            board = new RunnerBoard();
-                            break;
-                        case 3:
-                            board = new HelicopterBoard();
-                            break;
-                        case 4:
-                            board = new BreakoutBoard();
-                            break;
-                        case 5:
-                            board = new InvadersBoard();
-                            break;
-                        case 6:
-                            board = new SnakeBoard();
-                            break;
-                        case 7:
-                            board = new SokobanBoard();
-                            break;
-                        case 8:
-                            table = true;
-                            break;
-                        case 9:
-                            ShowLog();
-                            break;
-                    }
-
-                    if (board != null)
-                        RunGame(board);
-                    else if (table)
-                        RunTable();
-                }
+                if (Enum.IsDefined(typeof(GameOption), option))
+                    RunGame((GameOption)option);
+                else if (option == 9)
+                    ShowLog();
 
                 key = ShowOptions();
             }
@@ -79,10 +35,11 @@ namespace iobloc
             Console.Clear();
             ShowHighscores();
             // Show games options
-            for (int i = 0; i < _list.Length; i++)
+            var options = Enum.GetNames(typeof(GameOption));
+            for (int i = 0; i < options.Length; i++)
             {
                 Console.ForegroundColor = (ConsoleColor)(15 - i);
-                Console.WriteLine("{0}: {1}", i, _list[i]);
+                Console.WriteLine("{0}: {1}", i, options[i]);
             }
             Console.ResetColor();
             Console.Write("Option (ESC to exit): ");
@@ -108,13 +65,13 @@ namespace iobloc
             Console.ReadKey();
         }
 
-        static void RunGame(IBoard board)
+        static void RunGame(GameOption option)
         {
             Game game = null;
             try
             {
-                Log("Start " + board);
-                game = new Game(board);
+                Log("Start " + option);
+                game = new Game(option);
                 game.Ended += GameEnded;
                 game.Start();
             }

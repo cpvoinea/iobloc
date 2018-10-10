@@ -70,10 +70,37 @@ namespace iobloc
         /// Initialize a game
         /// </summary>
         /// <param name="board">Game rules and display grid</param>
-        internal Game(IBoard board)
+        internal Game(GameOption option)
         {
-            Board = board;
-            UI = new ConsoleUI(board);
+            switch (option)
+            {
+                case GameOption.Level:
+                    Board = new LevelBoard();
+                    break;
+                case GameOption.Tetris:
+                    Board = new TetrisBoard();
+                    break;
+                case GameOption.Runner:
+                    Board = new RunnerBoard();
+                    break;
+                case GameOption.Helicopter:
+                    Board = new HelicopterBoard();
+                    break;
+                case GameOption.Breakout:
+                    Board = new BreakoutBoard();
+                    break;
+                case GameOption.Invaders:
+                    Board = new InvadersBoard();
+                    break;
+                case GameOption.Snake:
+                    Board = new SnakeBoard();
+                    break;
+                case GameOption.Sokoban:
+                    Board = new SokobanBoard();
+                    break;
+            }
+
+            UI = new ConsoleUI(Board);
         }
 
         /// <summary>

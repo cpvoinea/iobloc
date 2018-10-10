@@ -6,6 +6,11 @@ namespace iobloc
 {
     static class Settings
     {
+        internal static Dictionary<string, string> Get(int gameCode)
+        {
+            return new Dictionary<string, string>();
+        }
+
         /// <summary>
         /// Game engine settings
         /// </summary>
