@@ -59,7 +59,7 @@ namespace iobloc
                 for (int j = clip[0]; j < clip[2]; j++)
                 {
                     int c = grid[i,j];
-                    Console.ForegroundColor = c == 0 ? Console.BackgroundColor : (ConsoleColor)c;
+                    Console.ForegroundColor = c; // == 0 ? Console.BackgroundColor : (ConsoleColor)c;
                     Console.Write((char)BoxGraphics.BlockFull);
                 }
             }
