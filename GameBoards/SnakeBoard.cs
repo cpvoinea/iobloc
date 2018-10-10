@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace iobloc
 {
-    class SnakeBoard : IBoard
+    class SnakeBoard : BaseBoard
     {
         struct Position
         {
@@ -28,23 +28,14 @@ namespace iobloc
             }
         }
 
-        const int W = Settings.Snake.WIDTH;
-        const int H = Settings.Snake.HEIGHT;
-        public string[] Help => Settings.Snake.HELP;
-        public ConsoleKey[] Keys => Settings.Snake.KEYS;
-        public bool Won => false;
-        public int StepInterval { get; private set; } = Settings.Game.LevelInterval * Settings.Snake.INTERVALS;
-        public BoardFrame Frame { get; private set; } = new BoardFrame(W + 2, H + 2);
-        public int[] Clip { get; private set; } = new[] { 0, 0, W, H };
-        public int Score { get; private set; }
-        public int[,] Grid
+        public override int[,] Grid
         {
             get
             {
-                var result = new int[H, W];
+                var result = new int[Height, Width];
                 foreach (var p in _snake)
-                    result[p.Row, p.Col] = Settings.Game.COLOR_PLAYER;
-                result[_point.Row, _point.Col] = Settings.Game.COLOR_NEUTRAL;
+                    result[p.Row, p.Col] = Settings.Snake.COLOR_PLAYER;
+                result[_point.Row, _point.Col] = Settings.Snake.COLOR_NEUTRAL;
                 return result;
             }
         }
@@ -57,17 +48,17 @@ namespace iobloc
         int _nextH = 1;
         int _nextV = 0;
 
-        internal SnakeBoard()
+        internal SnakeBoard() : base(GameOption.Snake)
         {
-            int v = H / 2;
-            int h = W / 2;
+            int v = Height / 2;
+            int h = Width / 2;
             _snake.AddFirst(new Position(v, h));
             _snake.AddFirst(new Position(v, h + 1));
             _snake.AddFirst(new Position(v, h + 2));
             NewPoint();
         }
 
-        public bool Action(ConsoleKey key)
+        public override bool Action(ConsoleKey key)
         {
             switch (key)
             {
@@ -91,7 +82,7 @@ namespace iobloc
             return false;
         }
 
-        public bool Step()
+        public override bool Step()
         {
             Position next = GetNext();
             if (_snake.Contains(next))
@@ -110,7 +101,7 @@ namespace iobloc
 
         void NewPoint()
         {
-            _point = new Position(_random.Next(H), _random.Next(W));
+            _point = new Position(_random.Next(Height), _random.Next(Width));
         }
 
         void SetMove(int h, int v)
@@ -125,21 +116,16 @@ namespace iobloc
             int nextV = head.Row + _nextV;
             int nextH = head.Col + _nextH;
             if (nextV < 0)
-                nextV = H - 1;
-            else if (nextV >= H)
+                nextV = Height - 1;
+            else if (nextV >= Height)
                 nextV = 0;
             if (nextH < 0)
-                nextH = W - 1;
-            else if (nextH >= W)
+                nextH = Width - 1;
+            else if (nextH >= Width)
                 nextH = 0;
             _h = _nextH;
             _v = _nextV;
             return new Position(nextV, nextH);
-        }
-
-        public override string ToString()
-        {
-            return "Snake";
         }
     }
 }

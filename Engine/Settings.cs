@@ -16,13 +16,6 @@ namespace iobloc
         /// </summary>
         internal static class Game
         {
-            internal static Encoding Encoding { get; set; } = Encoding.Unicode;
-            /// <summary>
-            /// Action cycle (frame) duration in miliseconds
-            /// </summary>
-            internal const int COLOR_PLAYER = (int)ConsoleColor.Blue;
-            internal const int COLOR_ENEMY = (int)ConsoleColor.Red;
-            internal const int COLOR_NEUTRAL = (int)ConsoleColor.Gray;
             internal const int LEVEL_MAX = 16;
             const int STEP_INTERVAL = 5;
 
@@ -47,6 +40,8 @@ namespace iobloc
             internal const int INTERVALS = 1;
             internal const int WIDTH = 20;
             internal const int HEIGHT = 10;
+            internal const int COLOR_PLAYER = (int)ConsoleColor.Blue;
+            internal const int COLOR_ENEMY = (int)ConsoleColor.Red;
         }
 
         internal static class Breakout
@@ -59,6 +54,9 @@ namespace iobloc
             internal const int BLOCK_ROWS = 5;
             internal const int BLOCK_WIDTH = 3;
             internal const int BLOCK_SPACE = 1;
+            internal const int COLOR_PLAYER = (int)ConsoleColor.Blue;
+            internal const int COLOR_ENEMY = (int)ConsoleColor.Red;
+            internal const int COLOR_NEUTRAL = (int)ConsoleColor.Gray;
         }
 
         internal static class Invaders
@@ -73,6 +71,9 @@ namespace iobloc
             internal const int ALIEN_ROWS = 3;
             internal const int ALIEN_COLS = 5;
             internal const int BULLET_SPEED = 2;
+            internal const int COLOR_PLAYER = (int)ConsoleColor.Blue;
+            internal const int COLOR_ENEMY = (int)ConsoleColor.Red;
+            internal const int COLOR_NEUTRAL = (int)ConsoleColor.Gray;
         }
 
         internal static class Snake
@@ -82,6 +83,9 @@ namespace iobloc
             internal const int INTERVALS = 2;
             internal const int WIDTH = 20;
             internal const int HEIGHT = 20;
+            internal const int COLOR_PLAYER = (int)ConsoleColor.Blue;
+            internal const int COLOR_ENEMY = (int)ConsoleColor.Red;
+            internal const int COLOR_NEUTRAL = (int)ConsoleColor.Gray;
         }
 
         internal static class Sokoban

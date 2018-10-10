@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 
 namespace iobloc
 {
@@ -24,7 +25,7 @@ namespace iobloc
         internal void Reset()
         {
             Console.CursorVisible = false;
-            Console.OutputEncoding = Settings.Game.Encoding;
+            Console.OutputEncoding = Encoding.UTF8;
             Console.Clear();
             Console.ForegroundColor = ConsoleColor.White;
             DrawFrame();

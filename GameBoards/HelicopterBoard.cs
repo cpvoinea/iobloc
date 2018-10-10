@@ -7,7 +7,7 @@ namespace iobloc
     /// </summary>
     class HelicopterBoard : RunnerBoard
     {
-        public override int StepInterval =>  2 * base.StepInterval;
+        public new int StepInterval =>  2 * base.StepInterval;
         /// <summary>
         /// Obstacles + helicopter
         /// </summary>
@@ -16,9 +16,9 @@ namespace iobloc
         {
             get
             {
-                var result = _grid.Copy(H, W);
-                if (_distance < H)
-                    result[_distance, 5] = result[_distance, 6] = Settings.Game.COLOR_PLAYER;
+                var result = _grid.Copy(Height, Width);
+                if (_distance < Height)
+                    result[_distance, 5] = result[_distance, 6] = Settings.Runner.COLOR_PLAYER;
                 return result;
             }
         }
@@ -44,7 +44,7 @@ namespace iobloc
         {
             if (_distance <= 1) // helicopter is too close to the sky and will burn
             {
-                Clear(Settings.Game.COLOR_ENEMY); // kill animation
+                Clear(Settings.Runner.COLOR_ENEMY); // kill animation
                 _kill = true;
                 return true; // return true to draw
             }
@@ -73,7 +73,7 @@ namespace iobloc
 
         protected override bool Collides()
         {
-            return _distance >= H // crash to the ground
+            return _distance >= Height // crash to the ground
                 || _grid[_distance, 5] > 0 // obstacle collides with tail
                 || _grid[_distance, 6] > 0; // obstacle collides with cabin
         }
@@ -102,19 +102,14 @@ namespace iobloc
             {
                 up = _random.Next(4);
                 for (int i = 0; i < up; i++)
-                    _grid[i, W - 1] = Settings.Game.COLOR_ENEMY;
+                    _grid[i, Width - 1] = Settings.Runner.COLOR_ENEMY;
             }
             if ((p & 2) > 0) // bottom obstacle
             {
-                int c = _random.Next(H - 4 - up);
-                for (int i = H - 1; i > H - 1 - c; i--)
-                    _grid[i, W - 1] = Settings.Game.COLOR_ENEMY;
+                int c = _random.Next(Height - 4 - up);
+                for (int i = Height - 1; i > Height - 1 - c; i--)
+                    _grid[i, Width - 1] = Settings.Runner.COLOR_ENEMY;
             }
-        }
-
-        public override string ToString()
-        {
-            return "Helicopter";
         }
     }
 }

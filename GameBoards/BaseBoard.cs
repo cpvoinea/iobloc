@@ -2,32 +2,28 @@ using System;
 
 namespace iobloc
 {
-    class BaseBoard : IBoard
+    abstract class BaseBoard : IBoard
     {
-        public string[] Help => throw new NotImplementedException();
+        protected readonly GameSettings _settings;
+        protected int Width => _settings.PanelWidth;
+        protected int Height => _settings.PanelHeight;
+        public string[] Help => _settings.Help;
+        public ConsoleKey[] Keys => _settings.Keys;
+        public int StepInterval => _settings.StepInterval;
+        public BoardFrame Frame { get; protected set; }
+        public int[] Clip { get; protected set; }
+        public int Score { get; protected set; }
+        public virtual bool Won { get; protected set; }
+        public virtual int[,] Grid { get; }
 
-        public int Score => throw new NotImplementedException();
-
-        public bool Won => throw new NotImplementedException();
-
-        public ConsoleKey[] Keys => throw new NotImplementedException();
-
-        public int StepInterval => throw new NotImplementedException();
-
-        public BoardFrame Frame => throw new NotImplementedException();
-
-        public int[,] Grid => throw new NotImplementedException();
-
-        public int[] Clip => throw new NotImplementedException();
-
-        public bool Action(ConsoleKey key)
+        protected BaseBoard(GameOption gameOption)
         {
-            throw new NotImplementedException();
+            _settings = new GameSettings(gameOption);
+            Frame = new BoardFrame(Width + 2, Height + 2);
+            Clip = new int[] { 0, 0, Width, Height };
         }
 
-        public bool Step()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract bool Action(ConsoleKey key);
+        public abstract bool Step();
     }
 }

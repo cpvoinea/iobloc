@@ -5,29 +5,21 @@ namespace iobloc
     /// <summary>
     /// Breakout game
     /// </summary>
-    class BreakoutBoard : IBoard
+    class BreakoutBoard : BaseBoard
     {
-        const int W = Settings.Breakout.WIDTH;
-        const int H = Settings.Breakout.HEIGHT;
         const int B = Settings.Breakout.BLOCK_WIDTH + Settings.Breakout.BLOCK_SPACE;
-        public string[] Help => Settings.Breakout.HELP;
-        public ConsoleKey[] Keys => Settings.Breakout.KEYS;
-        public bool Won => Score == (W / B + 1) * Settings.Breakout.BLOCK_ROWS;
-        public int StepInterval { get; private set; } = Settings.Game.LevelInterval * Settings.Breakout.INTERVALS;
-        public BoardFrame Frame { get; private set; } = new BoardFrame(W + 2, H + 2);
-        public int[] Clip { get; private set; } = new[] { 0, 0, W, H };
-        public int Score { get; private set; }
+        public override bool Won => Score == (Width / B + 1) * Settings.Breakout.BLOCK_ROWS;
         /// <summary>
         /// Blocks + pad + ball
         /// </summary>
-        public int[,] Grid
+        public override int[,] Grid
         {
             get
             {
-                var result = _grid.Copy(H, W);
+                var result = _grid.Copy(Height, Width);
                 for (int i = -2; i <= 2; i++)
-                    result[H - 1, _paddle + i] = Settings.Game.COLOR_PLAYER;
-                result[_ballRow, _ballCol] = Settings.Game.COLOR_NEUTRAL;
+                    result[Height - 1, _paddle + i] = Settings.Breakout.COLOR_PLAYER;
+                result[_ballRow, _ballCol] = Settings.Breakout.COLOR_NEUTRAL;
                 return result;
             }
         }
@@ -64,13 +56,13 @@ namespace iobloc
         /// <summary>
         /// Breakout game
         /// </summary>
-        internal BreakoutBoard()
+        internal BreakoutBoard() : base(GameOption.Breakout)
         {
-            _grid = new int[H, W];
+            _grid = new int[Height, Width];
             for (int row = 0; row < Settings.Breakout.BLOCK_ROWS; row++) // set rows of blocks
-                for (int col = 0; col < W; col += B)
+                for (int col = 0; col < Width; col += B)
                     for (int i = 0; i < Settings.Breakout.BLOCK_WIDTH; i++)
-                        _grid[row, col + i] = Settings.Game.COLOR_ENEMY;
+                        _grid[row, col + i] = Settings.Breakout.COLOR_ENEMY;
         }
 
         /// <summary>
@@ -78,7 +70,7 @@ namespace iobloc
         /// </summary>
         /// <param name="key">direction key</param>
         /// <returns>movement success</returns>
-        public bool Action(ConsoleKey key)
+        public override bool Action(ConsoleKey key)
         {
             switch (key)
             {
@@ -86,15 +78,15 @@ namespace iobloc
                     if (_paddle > 2)
                     {
                         _paddle--;
-                        Clip = new[] { 0, H - 1, W, H };
+                        Clip = new[] { 0, Height - 1, Width, Height };
                         return true;
                     }
                     break;
                 case ConsoleKey.RightArrow:
-                    if (_paddle < W - 3)
+                    if (_paddle < Width - 3)
                     {
                         _paddle++;
-                        Clip = new[] { 0, H - 1, W, H };
+                        Clip = new[] { 0, Height - 1, Width, Height };
                         return true;
                     }
                     break;
@@ -107,7 +99,7 @@ namespace iobloc
         /// Ball movement
         /// </summary>
         /// <returns>false if ball is missed by pad and game is over</returns>
-        public bool Step()
+        public override bool Step()
         {
             if (Won)
                 return false;
@@ -120,8 +112,8 @@ namespace iobloc
             Clip = new[] {
                 _ballCol < 3 ? 0 : _ballCol - 3,
                  _ballRow < 1 ? 0 : _ballRow - 1,
-                 _ballCol > W - 4 ? W : _ballCol + 4,
-                _ballRow > H - 2 ? H : _ballRow + 2 };
+                 _ballCol > Width - 4 ? Width : _ballCol + 4,
+                _ballRow > Height - 2 ? Height : _ballRow + 2 };
             _ballRow = (int)Math.Round(_ballY); ;
             _ballCol = (int)Math.Round(_ballX);
 
@@ -146,7 +138,7 @@ namespace iobloc
                 {
                     if (row < 0) // hitting ceiling
                         newAngle = 2 * Math.PI - newAngle;
-                    else if (col < 0 || col >= W) // hitting walls
+                    else if (col < 0 || col >= Width) // hitting walls
                         newAngle = Math.PI - newAngle;
                     else if (_grid[row, col] > 0) // hitting block
                     {
@@ -159,14 +151,14 @@ namespace iobloc
                 else // moving downwards
                 {
                     // vertical check
-                    if (row >= H) // hitting floor
+                    if (row >= Height) // hitting floor
                     {
                         lost = true;
                         newAngle = 2 * Math.PI - newAngle;
                     }
-                    else if (col < 0 || col >= W) // hitting walls
+                    else if (col < 0 || col >= Width) // hitting walls
                         newAngle = 3 * Math.PI - newAngle;
-                    else if (row == H - 1 && Math.Abs(col - _paddle) <= 2) // hitting paddle
+                    else if (row == Height - 1 && Math.Abs(col - _paddle) <= 2) // hitting paddle
                     {
                         int p = col - _paddle;
                         double a = 2 * Math.PI - newAngle;
@@ -198,11 +190,6 @@ namespace iobloc
             for (int i = 0; i < Settings.Breakout.BLOCK_WIDTH; i++)
                 _grid[row, x + i] = 0;
             Score++;
-        }
-
-        public override string ToString()
-        {
-            return "Breakout";
         }
     }
 }
