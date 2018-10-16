@@ -25,7 +25,6 @@ namespace iobloc
                 case Option.Invaders: _board = new InvadersBoard(); break;
                 case Option.Snake: _board = new SnakeBoard(); break;
                 case Option.Sokoban: _board = new SokobanBoard(); break;
-                case Option.InProgress: _board = null; break;
                 case Option.Log: _board = null; break;
             }
         }

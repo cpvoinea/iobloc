@@ -121,6 +121,7 @@ namespace iobloc
         readonly List<MenuItem> _menuItems = new List<MenuItem>();
 
         internal IEnumerable<MenuItem> MenuItems { get { return _menuItems; } }
+
         internal Config(string configFilePath)
         {
             _configFile = configFilePath ?? CONFIG_FILE;
@@ -175,8 +176,8 @@ namespace iobloc
             {
                 var o = (Option)code;
                 var item = new MenuItem(o, o.ToString());
-                if (o == Option.InProgress || o == Option.Log)
-                    item.Visible = false;
+                // if (o == Option.Log)
+                //     item.Visible = false;
                 _menuItems.Add(item);
             }
         }

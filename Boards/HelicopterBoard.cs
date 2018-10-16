@@ -1,27 +1,21 @@
-using System;
-
 namespace iobloc
 {
-    class HelicopterBoard : SinglePanelBoard
+    class HelicopterBoard : RunnerBoard
     {
         int CP => (int)_config.GetColor("PlayerColor");
         int CE => (int)_config.GetColor("EnemyColor");
-        public override int[,] Grid
-        {
-            get
-            {
-                var result = _grid.Copy(Height, Width);
-                if (_distance < Height)
-                    result[_distance, 5] = result[_distance, 6] = CP;
-                return result;
-            }
-        }
 
         int _speed;
 
         internal HelicopterBoard() : base(Option.Helicopter)
         {
             _speed = -1; // start by falling downwards
+        }
+
+        protected override void Set(bool set)
+        {
+            if (_distance < _height)
+                _mainPanel.Grid[_distance, 5] = _mainPanel.Grid[_distance, 6] = CP;
         }
 
         protected override bool Jump()
@@ -33,7 +27,10 @@ namespace iobloc
                 return true; // return true to draw
             }
 
+            Set(false);
             _distance--; // initial lift
+            Set(true);
+            _mainPanel.HasChanges = true;
             _speed = 1; // upward movement of inertia
 
             return true; // return true to draw
@@ -43,20 +40,28 @@ namespace iobloc
         {
             if (_speed == 1) // is moving upwards
             {
+                Set(false);
                 _distance--;
+                Set(true);
+                _mainPanel.HasChanges = true;
                 _speed--;
             }
             else if (_speed == 0) // is hanging
                 _speed--;
             else // is falling
+            {
+                Set(false);
                 _distance++;
+                Set(true);
+                _mainPanel.HasChanges = true;
+            }
         }
 
         protected override bool Collides()
         {
-            return _distance >= Height // crash to the ground
-                || _grid[_distance, 5] > 0 // obstacle collides with tail
-                || _grid[_distance, 6] > 0; // obstacle collides with cabin
+            return _distance >= _height // crash to the ground
+                || _mainPanel.Grid[_distance, 5] > 0 // obstacle collides with tail
+                || _mainPanel.Grid[_distance, 6] > 0; // obstacle collides with cabin
         }
 
         protected override void Restart()
@@ -77,13 +82,13 @@ namespace iobloc
             {
                 up = _random.Next(4);
                 for (int i = 0; i < up; i++)
-                    _grid[i, Width - 1] = CE;
+                    _mainPanel.Grid[i, _width - 1] = CE;
             }
             if ((p & 2) > 0) // bottom obstacle
             {
-                int c = _random.Next(Height - 4 - up);
-                for (int i = Height - 1; i > Height - 1 - c; i--)
-                    _grid[i, Width - 1] = CE;
+                int c = _random.Next(_height - 4 - up);
+                for (int i = _height - 1; i > _height - 1 - c; i--)
+                    _mainPanel.Grid[i, _width - 1] = CE;
             }
         }
     }
