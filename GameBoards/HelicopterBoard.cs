@@ -2,17 +2,10 @@ using System;
 
 namespace iobloc
 {
-    /// <summary>
-    /// Helicopter game, reuses Endless runner board, changes the Jump mechanic and adds new obstacles from the top of the screen
-    /// </summary>
-    class HelicopterBoard : RunnerBoard
+    class HelicopterBoard : SinglePanelBoard
     {
-        int CP => (int)_settings.All.GetColor("PlayerColor");
-        int CE => (int)_settings.All.GetColor("EnemyColor");
-        /// <summary>
-        /// Obstacles + helicopter
-        /// </summary>
-        /// <value></value>
+        int CP => (int)_config.GetColor("PlayerColor");
+        int CE => (int)_config.GetColor("EnemyColor");
         public override int[,] Grid
         {
             get
@@ -24,23 +17,13 @@ namespace iobloc
             }
         }
 
-        /// <summary>
-        /// Helicopter vertical speed: +1 if upwards, 0 if hanging in the air, -1 if downwards
-        /// </summary>
         int _speed;
 
-        /// <summary>
-        /// Helicopter game
-        /// </summary>
-        /// <returns></returns>
-        internal HelicopterBoard() : base(GameOption.Helicopter)
+        internal HelicopterBoard() : base(Option.Helicopter)
         {
             _speed = -1; // start by falling downwards
         }
 
-        /// <summary>
-        /// Lift action is performed
-        /// </summary>
         protected override bool Jump()
         {
             if (_distance <= 1) // helicopter is too close to the sky and will burn
@@ -56,9 +39,6 @@ namespace iobloc
             return true; // return true to draw
         }
 
-        /// <summary>
-        /// Air movement
-        /// </summary>
         protected override void Move()
         {
             if (_speed == 1) // is moving upwards
@@ -79,9 +59,6 @@ namespace iobloc
                 || _grid[_distance, 6] > 0; // obstacle collides with cabin
         }
 
-        /// <summary>
-        /// Reset the game and the score
-        /// </summary>
         protected override void Restart()
         {
             _distance = 0;
@@ -90,9 +67,6 @@ namespace iobloc
             Clear(0);
         }
 
-        /// <summary>
-        /// Randomly generate obstacles
-        /// </summary>
         protected override void CreateFence()
         {
             int p = _random.Next(4); // 0 = no obstacles, 1 = top only, 2 = bottom only, 3 = both

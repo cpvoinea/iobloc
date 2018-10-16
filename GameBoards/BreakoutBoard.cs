@@ -2,132 +2,89 @@ using System;
 
 namespace iobloc
 {
-    /// <summary>
-    /// Breakout game
-    /// </summary>
-    class BreakoutBoard : BaseBoard
+    class BreakoutBoard : SinglePanelBoard
     {
-        int CP => (int)_settings.All.GetColor("PlayerColor");
-        int CE => (int)_settings.All.GetColor("EnemyColor");
-        int CN => (int)_settings.All.GetColor("NeutralColor");
-        int BW => _settings.All.GetInt("BlockWidth");
-        int BS => _settings.All.GetInt("BlockSpace");
-        int BR => _settings.All.GetInt("BlockRows");
+        int CP => (int)_config.GetColor("PlayerColor");
+        int CE => (int)_config.GetColor("EnemyColor");
+        int CN => (int)_config.GetColor("NeutralColor");
+        int BW => _config.GetInt("BlockWidth");
+        int BS => _config.GetInt("BlockSpace");
+        int BR => _config.GetInt("BlockRows");
         int B => BW + BS;
-        public override bool Won => Score == (Width / B + 1) * BR;
-        /// <summary>
-        /// Blocks + pad + ball
-        /// </summary>
-        public override int[,] Grid
-        {
-            get
-            {
-                var result = _grid.Copy(Height, Width);
-                for (int i = -2; i <= 2; i++)
-                    result[Height - 1, _paddle + i] = CP;
-                result[_ballRow, _ballCol] = CN;
-                return result;
-            }
-        }
 
-        /// <summary>
-        /// Remaining blocks
-        /// </summary>
-        readonly int[,] _grid;
-        /// <summary>
-        /// Pad position from left
-        /// </summary>
         int _paddle;
-        /// <summary>
-        /// Ball position from left
-        /// </summary>
         int _ballCol;
-        /// <summary>
-        /// Ball position from top
-        /// </summary>
         int _ballRow;
-        /// <summary>
-        /// Horizontal grid position
-        /// </summary>
         double _ballX;
-        /// <summary>
-        /// Vertical grid position
-        /// </summary>
         double _ballY;
-        /// <summary>
-        /// Current ball direction angle
-        /// </summary>
         double _angle;
 
-        /// <summary>
-        /// Breakout game
-        /// </summary>
-        internal BreakoutBoard() : base(GameOption.Breakout)
+        public override bool Won => Score == (_width / B + 1) * BR;
+
+        internal BreakoutBoard() : base(Option.Breakout)
         {
-            _paddle = Width / 2 - 2;
+            _paddle = _width / 2 - 2;
             _ballX = 5;
             _ballY = BR;
             _angle = 7 * Math.PI / 4;
-            _grid = new int[Height, Width];
+
             for (int row = 0; row < BR; row++) // set rows of blocks
-                for (int col = 0; col < Width; col += B)
+                for (int col = 0; col < _width; col += B)
                     for (int i = 0; i < BW; i++)
-                        _grid[row, col + i] = CE;
+                        _mainPanel.Grid[row, col + i] = CE;
+            for (int i = -2; i <= 2; i++)
+                _mainPanel.Grid[_height - 1, _paddle + i] = CP;
+            _mainPanel.Grid[_ballRow, _ballCol] = CN;
         }
 
-        /// <summary>
-        /// Pad movement
-        /// </summary>
-        /// <param name="key">direction key</param>
-        /// <returns>movement success</returns>
-        public override bool Action(ConsoleKey key)
+        public override void HandleInput(int key)
         {
-            switch (key)
+            switch ((ConsoleKey)key)
             {
                 case ConsoleKey.LeftArrow:
                     if (_paddle > 2)
                     {
+                        _mainPanel.Grid[_height - 1, _paddle + 2] = 0;
                         _paddle--;
-                        Clip = new[] { 0, Height - 1, Width, Height };
-                        return true;
+                        _mainPanel.Grid[_height - 1, _paddle - 2] = CP;
+                        _mainPanel.HasChanges = true;
                     }
                     break;
                 case ConsoleKey.RightArrow:
-                    if (_paddle < Width - 3)
+                    if (_paddle < _width - 3)
                     {
+                        _mainPanel.Grid[_height - 1, _paddle - 2] = 0;
                         _paddle++;
-                        Clip = new[] { 0, Height - 1, Width, Height };
-                        return true;
+                        _mainPanel.Grid[_height - 1, _paddle + 2] = 0;
+                        _mainPanel.HasChanges = true;
                     }
                     break;
             }
-
-            return false;
         }
 
-        /// <summary>
-        /// Ball movement
-        /// </summary>
-        /// <returns>false if ball is missed by pad and game is over</returns>
-        public override bool Step()
+        public override void NextFrame()
         {
             if (Won)
-                return false;
+            {
+                IsRunning = false;
+                return;
+            }
+
             bool lost;
             _angle = NextAngle(out lost);
             if (lost)
-                return false;
+            {
+                IsRunning = false;
+                return;
+            }
             _ballX += Math.Cos(_angle);
             _ballY -= Math.Sin(_angle);
-            Clip = new[] {
-                _ballCol < 3 ? 0 : _ballCol - 3,
-                 _ballRow < 1 ? 0 : _ballRow - 1,
-                 _ballCol > Width - 4 ? Width : _ballCol + 4,
-                _ballRow > Height - 2 ? Height : _ballRow + 2 };
-            _ballRow = (int)Math.Round(_ballY); ;
-            _ballCol = (int)Math.Round(_ballX);
 
-            return true;
+            _mainPanel.Grid[_ballRow, _ballCol] = 0;
+            _ballRow = (int)Math.Round(_ballY);
+            _ballCol = (int)Math.Round(_ballX);
+            _mainPanel.Grid[_ballRow, _ballCol] = CN;
+            _mainPanel.HasChanges = true;
         }
 
         double NextAngle(out bool lost)
@@ -148,9 +105,9 @@ namespace iobloc
                 {
                     if (row < 0) // hitting ceiling
                         newAngle = 2 * Math.PI - newAngle;
-                    else if (col < 0 || col >= Width) // hitting walls
+                    else if (col < 0 || col >= _width) // hitting walls
                         newAngle = Math.PI - newAngle;
-                    else if (_grid[row, col] > 0) // hitting block
+                    else if (_mainPanel.Grid[row, col] > 0) // hitting block
                     {
                         Break(row, col);
                         newAngle = 2 * Math.PI - newAngle;
@@ -161,14 +118,14 @@ namespace iobloc
                 else // moving downwards
                 {
                     // vertical check
-                    if (row >= Height) // hitting floor
+                    if (row >= _height) // hitting floor
                     {
                         lost = true;
                         newAngle = 2 * Math.PI - newAngle;
                     }
-                    else if (col < 0 || col >= Width) // hitting walls
+                    else if (col < 0 || col >= _width) // hitting walls
                         newAngle = 3 * Math.PI - newAngle;
-                    else if (row == Height - 1 && Math.Abs(col - _paddle) <= 2) // hitting paddle
+                    else if (row == _height - 1 && Math.Abs(col - _paddle) <= 2) // hitting paddle
                     {
                         int p = col - _paddle;
                         double a = 2 * Math.PI - newAngle;
@@ -181,7 +138,7 @@ namespace iobloc
                             case 2: newAngle = Math.PI / 4; break;
                         }
                     }
-                    else if (_grid[row, col] > 0) // hitting block
+                    else if (_mainPanel.Grid[row, col] > 0) // hitting block
                     {
                         Break(row, col);
                         newAngle = 2 * Math.PI - newAngle;
@@ -198,7 +155,7 @@ namespace iobloc
         {
             int x = (col / B) * B;
             for (int i = 0; i < BW; i++)
-                _grid[row, x + i] = 0;
+                _mainPanel.Grid[row, x + i] = 0;
             Score++;
         }
     }

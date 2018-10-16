@@ -2,34 +2,14 @@ namespace iobloc
 {
     struct TetrisPiece
     {
-        /// <summary>
-        /// 1-based list of piece types, each int value has a color corespondent in ConsoleColor
-        /// </summary>
         enum PieceType { I = 1, O, T, L, J, S, Z }
 
-        /// <summary>
-        /// Current orientation
-        /// </summary>
         int Orientation { get; set; }
         internal int Type { get; private set; }
-        /// <summary>
-        /// A 4x4 mask of piece
-        /// </summary>
         internal int[,] Mask { get; private set; }
-        /// <summary>
-        /// Distance from top
-        /// </summary>
         internal int X { get; private set; }
-        /// <summary>
-        /// Distance from left
-        /// </summary>
         internal int Y { get; private set; }
 
-        /// <summary>
-        /// Initialize piece
-        /// </summary>
-        /// <param name="type">only 1-7 values allowed</param>
-        /// <param name="orientation">only 0-3 values allowed</param>
         internal TetrisPiece(int type, int orientation)
         {
             Type = type;
@@ -41,9 +21,6 @@ namespace iobloc
             Y = 5;
         }
 
-        /// <summary>
-        /// Copy constructor
-        /// </summary>
         TetrisPiece(TetrisPiece p)
         {
             Type = p.Type;
@@ -53,10 +30,6 @@ namespace iobloc
             Y = p.Y;
         }
 
-        /// <summary>
-        /// Get piece template mask
-        /// </summary>
-        /// <returns>a 4x4 array</returns>
         static int[,] GetMask(PieceType type, int orientation)
         {
             switch (type)
@@ -233,10 +206,6 @@ namespace iobloc
             return null;
         }
 
-        /// <summary>
-        /// Get a rotated piece
-        /// </summary>
-        /// <returns>a new piece</returns>
         internal TetrisPiece Rotate()
         {
             var p = new TetrisPiece(this);
@@ -246,10 +215,6 @@ namespace iobloc
             return p;
         }
 
-        /// <summary>
-        /// Get a shifted piece
-        /// </summary>
-        /// <returns>a new piece</returns>
         internal TetrisPiece Left()
         {
             var p = new TetrisPiece(this);
@@ -257,10 +222,6 @@ namespace iobloc
             return p;
         }
 
-        /// <summary>
-        /// Get a shifted piece
-        /// </summary>
-        /// <returns>a new piece</returns>
         internal TetrisPiece Right()
         {
             var p = new TetrisPiece(this);
@@ -268,10 +229,6 @@ namespace iobloc
             return p;
         }
 
-        /// <summary>
-        /// Get a shifted piece
-        /// </summary>
-        /// <returns>a new piece</returns>
         internal TetrisPiece Down()
         {
             var p = new TetrisPiece(this);

@@ -2,22 +2,22 @@ using System;
 
 namespace iobloc
 {
-    class SokobanBoard : BaseBoard
+    class SokobanBoard : SinglePanelBoard
     {
-        int P => (int)_settings.All.GetColor("PlayerColor");
-        int B => (int)_settings.All.GetColor("BlockColor");
-        int W => (int)_settings.All.GetColor("WallColor");
-        int T => (int)_settings.All.GetColor("TargetColor");
-        int R => (int)_settings.All.GetColor("TargetBlockColor");
-        int H => (int)_settings.All.GetColor("TargetPlayerColor");
-        int BW => (int)_settings.All.GetInt("BlockWidth");
-        int WS => (int)_settings.All.GetInt("WinScore");
+        int P => (int)_config.GetColor("PlayerColor");
+        int B => (int)_config.GetColor("BlockColor");
+        int W => (int)_config.GetColor("WallColor");
+        int T => (int)_config.GetColor("TargetColor");
+        int R => (int)_config.GetColor("TargetBlockColor");
+        int H => (int)_config.GetColor("TargetPlayerColor");
+        int BW => (int)_config.GetInt("BlockWidth");
+        int WS => (int)_config.GetInt("WinScore");
         int L
         {
-            get { return Settings.Game.Level; }
-            set { Settings.Game.Level = value; }
+            get { return Config.Level; }
+            set { Config.Level = value; }
         }
-        public override bool Won { get; protected set; }
+        public override bool Won { get; set; }
         public override int[,] Grid { get { return _grid; } }
 
         readonly int[,] _grid;
@@ -26,7 +26,7 @@ namespace iobloc
         int _row;
         int _col;
 
-        internal SokobanBoard() : base(GameOption.Sokoban)
+        internal SokobanBoard() : base(Option.Sokoban)
         {
             _grid = new int[Height, Width];
             if (L > SokobanLevels.Count)

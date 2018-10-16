@@ -1,6 +1,6 @@
 namespace iobloc
 {
-    enum GameOption
+    enum Option
     {
         Level = 0,
         Tetris = 1,
@@ -10,5 +10,7 @@ namespace iobloc
         Invaders = 5,
         Snake = 6,
         Sokoban = 7,
+        InProgress = 8,
+        Log = 9,
     }
 }

@@ -5,15 +5,12 @@ namespace iobloc
     /// <summary>
     /// Endless runner game
     /// </summary>
-    class RunnerBoard : BaseBoard
+    class RunnerBoard : SinglePanelBoard
     {
-        int CP => (int)_settings.All.GetColor("PlayerColor");
-        int CE => (int)_settings.All.GetColor("EnemyColor");
-        int JS => _settings.All.GetInt("JumpSpace");
+        int CP => (int)_config.GetColor("PlayerColor");
+        int CE => (int)_config.GetColor("EnemyColor");
+        int JS => _config.GetInt("JumpSpace");
         public override int Score => _highscore;
-        /// <summary>
-        /// Fences + jumper
-        /// </summary>
         public override int[,] Grid
         {
             get
@@ -25,56 +22,23 @@ namespace iobloc
             }
         }
 
-        /// <summary>
-        /// Used for generating fences
-        /// </summary>
         protected readonly Random _random = new Random();
-        /// <summary>
-        /// Current fences
-        /// </summary>
         protected readonly int[,] _grid;
-        /// <summary>
-        /// Current jump distance
-        /// </summary>
         protected int _distance;
-        /// <summary>
-        /// Max score
-        /// </summary>
         protected int _highscore;
-        /// <summary>
-        /// Check half-frame, only move fences once every 2 frames, so the jump is faster than the speed
-        /// </summary>
         protected bool _skipAdvance;
-        /// <summary>
-        /// Collision detected
-        /// </summary>
         protected bool _kill;
-        /// <summary>
-        /// Hang frame counter, starts from 2, ends at 0
-        /// </summary>
         int _hang;
-        /// <summary>
-        /// Is moving upwards
-        /// </summary>
         bool _upwards;
-        /// <summary>
-        /// Double jump was called during current jump
-        /// </summary>
         bool _doubleJump;
         protected int _score;
 
-        protected RunnerBoard(GameOption gameOption) : base(gameOption)
+        protected RunnerBoard(Option option) : base(option)
         {
             _grid = new int[Height, Width];
         }
-        /// <summary>
-        /// Endless runner game
-        /// </summary>
-        protected internal RunnerBoard() : this(GameOption.Runner) { }
+        protected internal RunnerBoard() : this(Option.Runner) { }
 
-        /// <summary>
-        /// Jump action is performed
-        /// </summary>
         public override bool Action(ConsoleKey key)
         {
             if (_kill) // restart on collision
@@ -87,9 +51,6 @@ namespace iobloc
             return Jump();
         }
 
-        /// <summary>
-        /// Move fences and check for collision
-        /// </summary>
         public override bool Step()
         {
             if (_kill)
@@ -111,9 +72,6 @@ namespace iobloc
             return true;
         }
 
-        /// <summary>
-        /// Jump or double jump
-        /// </summary>
         protected virtual bool Jump()
         {
             if (_distance == 0) // is on ground level
@@ -134,9 +92,6 @@ namespace iobloc
             return false;
         }
 
-        /// <summary>
-        /// Air movement
-        /// </summary>
         protected virtual void Move()
         {
             int max = _doubleJump ? 3 : 2; // jump height limit
@@ -159,9 +114,6 @@ namespace iobloc
             }
         }
 
-        /// <summary>
-        /// Check if fence is hit
-        /// </summary>
         /// <returns>true if fence is hit</returns>
         protected virtual bool Collides()
         {
@@ -172,9 +124,6 @@ namespace iobloc
             return _distance < fence; // collides if fence is higher than jump distance
         }
 
-        /// <summary>
-        /// Reset the game and the score
-        /// </summary>
         protected virtual void Restart()
         {
             _distance = 0;
@@ -185,9 +134,6 @@ namespace iobloc
             Clear(0);
         }
 
-        /// <summary>
-        /// Randomly generates a new fence at the end of the grid
-        /// </summary>
         protected virtual void CreateFence()
         {
             bool hasSpace = true; // fences should not be to close together; check if there is room for new fence
@@ -201,10 +147,6 @@ namespace iobloc
                 _grid[Height - 1 - i, Width - 2] = i < fence ? CE : 0; // set fence to grid
         }
 
-        /// <summary>
-        /// Fill grid with color
-        /// </summary>
-        /// <param name="v">color value</param>
         protected void Clear(int v)
         {
             for (int i = 0; i < Height; i++)
@@ -212,9 +154,6 @@ namespace iobloc
                     _grid[i, j] = v;
         }
 
-        /// <summary>
-        /// Move fence to the left to simulate player advance
-        /// </summary>
         protected virtual void Advance()
         {
             _score++; // each step is a score

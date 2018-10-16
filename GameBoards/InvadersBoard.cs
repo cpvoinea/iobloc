@@ -2,16 +2,16 @@ using System;
 
 namespace iobloc
 {
-    class InvadersBoard : BaseBoard
+    class InvadersBoard : SinglePanelBoard
     {
-        int CP => (int)_settings.All.GetColor("PlayerColor");
-        int CE => (int)_settings.All.GetColor("EnemyColor");
-        int CN => (int)_settings.All.GetColor("NeutralColor");
-        int AW => _settings.All.GetInt("AlienWidth");
-        int AS => _settings.All.GetInt("AlienSpace");
-        int AR => _settings.All.GetInt("AlienRows");
-        int AC => _settings.All.GetInt("AlienCols");
-        int BS => _settings.All.GetInt("BulletSpeed");
+        int CP => (int)_config.GetColor("PlayerColor");
+        int CE => (int)_config.GetColor("EnemyColor");
+        int CN => (int)_config.GetColor("NeutralColor");
+        int AW => _config.GetInt("AlienWidth");
+        int AS => _config.GetInt("AlienSpace");
+        int AR => _config.GetInt("AlienRows");
+        int AC => _config.GetInt("AlienCols");
+        int BS => _config.GetInt("BulletSpeed");
         int A => AW + AS;
         public override bool Won => Score == AR * AC;
         public override int[,] Grid
@@ -34,7 +34,7 @@ namespace iobloc
         bool _shot = false;
         bool _movingRight = true;
 
-        internal InvadersBoard() : base(GameOption.Invaders)
+        internal InvadersBoard() : base(Option.Invaders)
         {
             _skipFrame = BS;
             _grid = new int[Height, Width];
@@ -148,7 +148,6 @@ namespace iobloc
                 }
             }
 
-            Clip = new[] { 0, 0, Width, Height };
             return true;
         }
     }

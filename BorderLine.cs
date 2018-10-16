@@ -1,6 +1,6 @@
 namespace iobloc
 {
-    struct BoardLine
+    struct BorderLine
     {
         internal int From { get; private set; }
         internal int To { get; private set; }
@@ -8,7 +8,7 @@ namespace iobloc
         internal bool IsVertical { get; private set; }
         internal bool IsSingle { get; private set; }
 
-        internal BoardLine(int from, int to, int position, bool isVertical, bool isSingle)
+        internal BorderLine(int from, int to, int position, bool isVertical, bool isSingle)
         {
             if (from < to)
             {
@@ -25,7 +25,7 @@ namespace iobloc
             IsSingle = isSingle;
         }
 
-        internal int GetIntersectionSymbol(BoardLine line)
+        internal int GetIntersectionSymbol(BorderLine line)
         {
             if (IsVertical == line.IsVertical || Position < line.From || Position > line.To || line.Position < From || line.Position > To)
                 return BoxGraphics.None;
@@ -81,7 +81,7 @@ namespace iobloc
 
         public override bool Equals(object obj)
         {
-            var l = (BoardLine)obj;
+            var l = (BorderLine)obj;
             return l.From == From && l.To == To && l.Position == Position && l.IsVertical == IsVertical;
         }
  

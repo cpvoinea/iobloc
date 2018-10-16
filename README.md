@@ -20,3 +20,4 @@
 * persistent logging
 * metrics: fps, gameplay
 * settings validation
+* SDK

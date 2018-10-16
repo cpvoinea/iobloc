@@ -13,7 +13,7 @@ namespace iobloc
 
         static SokobanLevels()
         {
-            var settings = Settings.Get(GameOption.Sokoban);
+            var settings = Config.BoardConfig(Option.Sokoban);
             int P = (int)settings.GetColor("PlayerColor");
             int B = (int)settings.GetColor("BlockColor");
             int W = (int)settings.GetColor("WallColor");

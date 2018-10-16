@@ -1,13 +1,12 @@
 using System;
-using System.Text;
 using System.Collections.Generic;
 using System.IO;
 
 namespace iobloc
 {
-    static class Settings
+    class Config : IDisposable
     {
-        #region Default Settings
+        #region Dictionary<int, Dictionary<string, string>> _settings
         static Dictionary<int, Dictionary<string, string>> _settings = new Dictionary<int, Dictionary<string, string>>{
             {1, // Tetris
                 new Dictionary<string, string>{
@@ -104,55 +103,87 @@ namespace iobloc
         };
         #endregion
 
-        internal const string SettingsFile = "iobloc.settings";
-        internal static Dictionary<string, string> Get(GameOption gameOption)
+        internal const int MENU_LEN_KEY = 1;
+        internal const int MENU_LEN_NAME = 10;
+        internal const int MENU_LEN_INFO = 3;
+        internal const string MENU_INPUT_TEXT = "Option (ESC to exit)";
+        internal const int INPUT_EXIT = (int)ConsoleKey.Escape;
+        internal const char BLOCK = (char)BoxGraphics.BlockFull;
+        internal const int LEVEL_MAX = 16;
+
+        const int FRAME_INTERVAL = 5;
+        const string CONFIG_FILE = "iobloc.settings";
+
+        internal static int Level { get; set; }
+        internal static int LevelInterval { get { return FRAME_INTERVAL * (LEVEL_MAX - Level); } }
+
+        readonly string _configFile;
+        readonly List<MenuItem> _menuItems = new List<MenuItem>();
+
+        internal IEnumerable<MenuItem> MenuItems { get { return _menuItems; } }
+        internal Config(string configFilePath)
         {
-            return _settings[(int)gameOption];
+            _configFile = configFilePath ?? CONFIG_FILE;
+            if (File.Exists(_configFile))
+                Load();
+
+            LoadMenuItems();
         }
 
-        internal static void FromFile(string fileName)
+        internal static Dictionary<string, string> BoardConfig(Option option)
         {
-            if (File.Exists(fileName))
-                using (var sr = File.OpenText(fileName))
-                    while (!sr.EndOfStream)
-                    {
-                        string line = sr.ReadLine();
-                        int code = int.Parse(line.Split(' ')[0]);
-                        while (!string.IsNullOrEmpty(line) && !sr.EndOfStream)
-                        {
-                            line = sr.ReadLine();
-                            var attr = line.Split(' ');
-                            if (attr.Length >= 2 && _settings.ContainsKey(code) && _settings[code].ContainsKey(attr[0]))
-                                _settings[code][attr[0]] = attr[1];
-                        }
-                    }
+            if (!_settings.ContainsKey((int)option))
+                return new Dictionary<string, string>();
+            return _settings[(int)option];
         }
 
-        internal static void Save()
+        internal void Save()
         {
-            using(var sw = File.CreateText(SettingsFile))
+            using (var sw = File.CreateText(_configFile))
             {
-                foreach(int code in _settings.Keys)
+                foreach (int code in _settings.Keys)
                 {
-                    sw.WriteLine("{0} {1}", code, (GameOption)code);
-                    foreach(string k in _settings[code].Keys)
+                    sw.WriteLine("{0} {1}", code, (Option)code);
+                    foreach (string k in _settings[code].Keys)
                         sw.WriteLine("{0} {1}", k, _settings[code][k]);
                     sw.WriteLine();
                 }
             }
         }
 
-        /// <summary>
-        /// Game engine settings
-        /// </summary>
-        internal static class Game
+        void Load()
         {
-            internal const int LEVEL_MAX = 16;
-            const int STEP_INTERVAL = 5;
+            using (var sr = File.OpenText(_configFile))
+                while (!sr.EndOfStream)
+                {
+                    string line = sr.ReadLine();
+                    int code = int.Parse(line.Split(' ')[0]);
+                    while (!string.IsNullOrEmpty(line) && !sr.EndOfStream)
+                    {
+                        line = sr.ReadLine();
+                        var attr = line.Split(' ');
+                        if (attr.Length >= 2 && _settings.ContainsKey(code) && _settings[code].ContainsKey(attr[0]))
+                            _settings[code][attr[0]] = attr[1];
+                    }
+                }
+        }
 
-            internal static int Level { get; set; } = 0;
-            internal static int LevelInterval { get { return STEP_INTERVAL * (LEVEL_MAX - Level); } }
-            internal static Dictionary<string, int> Highscore { get; } = new Dictionary<string, int>();
+        void LoadMenuItems()
+        {
+            _menuItems.Clear();
+            foreach (int code in Enum.GetValues(typeof(Option)))
+            {
+                var o = (Option)code;
+                var item = new MenuItem(o, o.ToString());
+                if (o == Option.InProgress || o == Option.Log)
+                    item.Visible = false;
+                _menuItems.Add(item);
+            }
+        }
+
+        public void Dispose()
+        {
+            _menuItems.Clear();
         }
     }
 }

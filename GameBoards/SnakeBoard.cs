@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace iobloc
 {
-    class SnakeBoard : BaseBoard
+    class SnakeBoard : SinglePanelBoard
     {
         struct Position
         {
@@ -28,9 +28,9 @@ namespace iobloc
             }
         }
 
-        int CP => (int)_settings.All.GetColor("PlayerColor");
-        int CE => (int)_settings.All.GetColor("EnemyColor");
-        int CN => (int)_settings.All.GetColor("NeutralColor");
+        int CP => (int)_config.GetColor("PlayerColor");
+        int CE => (int)_config.GetColor("EnemyColor");
+        int CN => (int)_config.GetColor("NeutralColor");
 
         public override int[,] Grid
         {
@@ -52,7 +52,7 @@ namespace iobloc
         int _nextH = 1;
         int _nextV = 0;
 
-        internal SnakeBoard() : base(GameOption.Snake)
+        internal SnakeBoard() : base(Option.Snake)
         {
             int v = Height / 2;
             int h = Width / 2;
