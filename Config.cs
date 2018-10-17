@@ -108,14 +108,6 @@ namespace iobloc
                     {"TargetBlockColor", "DarkBlue"},
                 }
             },
-            {9, // Log
-                new Dictionary<string, string>{
-                    {"Keys", "Enter"},
-                    {"FrameMultiplier", "5"},
-                    {"Width", "32"},
-                    {"Height", "24"},
-                }
-            },
         };
 
         static Dictionary<int, int> _highscores = new Dictionary<int, int>{

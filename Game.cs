@@ -20,7 +20,6 @@ namespace iobloc
                 case Option.Invaders: _board = new InvadersBoard(); break;
                 case Option.Snake: _board = new SnakeBoard(); break;
                 case Option.Sokoban: _board = new SokobanBoard(); break;
-                case Option.Log: _board = null; break;
             }
         }
 
@@ -59,7 +58,7 @@ namespace iobloc
             UI.TextAt(string.Format($"L{Config.Level,2}"), _board.Border.Height - 1, _board.Border.Width / 2 - 2);
             int? hs = Config.Highscore;
             if (hs.HasValue)
-                UI.Text(string.Format($"{hs.Value,Config.LEN_INFO}", 0, 1));
+                UI.TextAt(string.Format($"{hs.Value,Config.LEN_INFO}"), 0, 1);
         }
 
         void DrawBoard()
@@ -105,7 +104,8 @@ namespace iobloc
 
         public void Dispose()
         {
-            _board.Dispose();
+            if(_board != null)
+                _board.Dispose();
         }
     }
 }

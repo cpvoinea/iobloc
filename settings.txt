@@ -82,10 +82,3 @@ BlockColor Blue
 TargetColor DarkYellow
 TargetPlayerColor DarkRed
 TargetBlockColor DarkBlue
-
-9 Log
-Keys Enter
-FrameMultiplier 5
-Width 32
-Height 24
-

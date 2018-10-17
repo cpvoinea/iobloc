@@ -26,19 +26,17 @@ namespace iobloc
             Open(option.Value);
         }
 
-        internal string GetLog()
+        internal void ShowLog()
         {
-            return _log.ToString();
+            UI.Clear();
+            UI.Text(_log.ToString());
+            UI.InputWait();
         }
 
         void Open(Option option)
         {
             if (option == Option.Log)
-            {
-                UI.Clear();
-                UI.Text(_log.ToString());
-                UI.InputWait();
-            }
+                ShowLog();
             else
                 try
                 {

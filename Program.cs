@@ -6,20 +6,21 @@ namespace iobloc
     {
         static void Main(string[] args)
         {
-            var configFilePath = args.Length > 0 ? args[0] : null;
+            var settingsFilePath = args.Length > 0 ? args[0] : null;
             Engine engine = null;
             try
             {
-                using (engine = new Engine(configFilePath))
+                using (engine = new Engine(settingsFilePath))
                 {
                     engine.ShowMenu();
+                    engine.ShowLog();
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
                 if (engine != null)
-                    Console.WriteLine(engine.GetLog());
+                    engine.ShowLog();
                 Console.ReadKey();
             }
         }
