@@ -1,13 +1,26 @@
-﻿namespace iobloc
+﻿using System;
+
+namespace iobloc
 {
     class Program
     {
         static void Main(string[] args)
         {
             var configFilePath = args.Length > 0 ? args[0] : null;
-            using (Engine engine = new Engine(configFilePath))
+            Engine engine = null;
+            try
             {
-                engine.ShowMenu();
+                using (engine = new Engine(configFilePath))
+                {
+                    engine.ShowMenu();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                if (engine != null)
+                    Console.WriteLine(engine.GetLog());
+                Console.ReadKey();
             }
         }
     }

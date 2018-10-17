@@ -10,6 +10,7 @@ namespace iobloc
         string[] Help { get; }
         int FrameInterval { get; }
         bool IsRunning { get; set; }
+        int Score { get; set; }
 
         void NextFrame();
         bool IsValidInput(string key);

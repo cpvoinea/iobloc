@@ -6,15 +6,7 @@ namespace iobloc
         internal string Name { get; private set; }
         internal bool Visible { get; set; }
         internal int Color { get { return 15 - (int)Option; } }
-        internal string Info
-        {
-            get
-            {
-                if (!Highscores.Exists(Option))
-                    return string.Empty;
-                return Highscores.Get(Option).ToString();
-            }
-        }
+        internal int? Info { get { return Config.GetHighscore(Option); } }
 
         internal MenuItem(Option option, string name)
         {

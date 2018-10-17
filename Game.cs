@@ -6,7 +6,7 @@ namespace iobloc
     class Game : IDisposable
     {
         IBoard _board;
-        internal event GameExit OnExit;
+        internal int Score { get { return _board == null ? 0 : _board.Score; } }
 
         internal Game(Option option)
         {
@@ -26,8 +26,10 @@ namespace iobloc
 
         internal void Start()
         {
-            UI.BorderDraw(_board.Border);
+            if (_board == null)
+                return;
 
+            DrawBorder();
             bool paused = false;
             int ticks = 0;
             _board.IsRunning = true;
@@ -49,9 +51,15 @@ namespace iobloc
                     _board.NextFrame();
                 }
             }
+        }
 
-            if (OnExit != null)
-                OnExit(_board);
+        void DrawBorder()
+        {
+            UI.BorderDraw(_board.Border);
+            UI.TextAt(string.Format($"L{Config.Level,2}"), _board.Border.Height - 1, _board.Border.Width / 2 - 2);
+            int? hs = Config.Highscore;
+            if (hs.HasValue)
+                UI.Text(string.Format($"{hs.Value,Config.LEN_INFO}", 0, 1));
         }
 
         void DrawBoard()
@@ -65,6 +73,7 @@ namespace iobloc
                     pnl.HasChanges = false;
                 }
             }
+            UI.TextAt(string.Format($"{_board.Score,Config.LEN_INFO}"), 0, _board.Border.Width / 2 - 2);
         }
 
         bool HandleInput(bool paused)

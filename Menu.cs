@@ -3,10 +3,9 @@ using System.Collections.Generic;
 
 namespace iobloc
 {
-    class Menu : IDisposable
+    class Menu
     {
         readonly Dictionary<int, MenuItem> _items = new Dictionary<int, MenuItem>();
-        internal event MenuItemSelected OnItemSelected;
 
         internal Menu(IEnumerable<MenuItem> menuItems)
         {
@@ -16,30 +15,28 @@ namespace iobloc
 
         internal void Show()
         {
-            ShowOptions();
-            HandleInput();
-        }
-
-        void ShowOptions()
-        {
             foreach (int key in _items.Keys)
-                UI.TextLine($"{key,Config.MENU_LEN_KEY}: {_items[key].Name,-Config.MENU_LEN_NAME} {_items[key].Info,Config.MENU_LEN_INFO}", _items[key].Color);
+            {
+                var item = _items[key];
+                if(item.Visible)
+                UI.TextLine($"{key,Config.LEN_KEY}: {item.Name,-Config.LEN_NAME} {item.Info,Config.LEN_INFO}", _items[key].Color);
+            }
             UI.TextReset();
-            UI.Text($"{Config.MENU_INPUT_TEXT}: ");
+            UI.Text($"{Config.INPUT_TEXT}: ");
         }
 
-        void HandleInput()
+        internal Option? WaitOption()
         {
             string input = UI.InputWait();
-            Option? option = null;
-            while (input != Config.INPUT_EXIT && !option.HasValue)
+            while (input != Config.INPUT_EXIT)
             {
-                option = GetSelection(input);
-                if (option.HasValue && OnItemSelected != null)
-                    OnItemSelected(option.Value);
-                else
-                    input = UI.InputWait();
+                var option = GetSelection(input);
+                if (option.HasValue)
+                    return option;
+                input = UI.InputWait();
             }
+
+            return null;
         }
 
         Option? GetSelection(string input)
@@ -53,11 +50,6 @@ namespace iobloc
             if (key.HasValue && _items.ContainsKey(key.Value))
                 return _items[key.Value].Option;
             return null;
-        }
-
-        public void Dispose()
-        {
-            _items.Clear();
         }
     }
 }

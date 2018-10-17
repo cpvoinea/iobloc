@@ -6,11 +6,10 @@ namespace iobloc
 {
     static class Config
     {
-        #region Settings
         static Dictionary<int, Dictionary<string, string>> _settings = new Dictionary<int, Dictionary<string, string>>{
             {0, // Level
                 new Dictionary<string, string>{
-                    {"Help", "<<Easy   Hard>>"},
+                    {"Help", "<Easy-ENTR-Hard>"},
                     {"Keys", "LeftArrow,RightArrow,Enter"},
                     {"FrameMultiplier", "5"},
                     {"Width", "16"},
@@ -118,23 +117,34 @@ namespace iobloc
                 }
             },
         };
-        #endregion
 
-        internal const int MENU_LEN_KEY = 1;
-        internal const int MENU_LEN_NAME = 10;
-        internal const int MENU_LEN_INFO = 3;
-        internal const string MENU_INPUT_TEXT = "Option (ESC to exit)";
+        static Dictionary<int, int> _highscores = new Dictionary<int, int>{
+            {1, 0},
+            {2, 0},
+            {3, 0},
+            {4, 0},
+            {5, 0},
+            {6, 0},
+            {7, 0},
+        };
+
+        internal const int LEN_KEY = 1;
+        internal const int LEN_NAME = 10;
+        internal const int LEN_INFO = 3;
+        internal const string INPUT_TEXT = "Option (ESC to exit)";
         internal const string INPUT_EXIT = "Escape";
         internal const char BLOCK = (char)BoxGraphics.BlockFull;
         internal const int LEVEL_MAX = 16;
 
         const int FRAME_INTERVAL = 5;
-        const string CONFIG_FILE = "iobloc.settings";
+        const string FILE_SETTINGS = "settings.txt";
+        const string FILE_HIGHSCORES = "highscores.txt";
 
         internal static int Level { get; set; }
+        internal static int? Highscore { get; set; }
         internal static int LevelInterval { get { return FRAME_INTERVAL * (LEVEL_MAX - Level); } }
 
-        static string _configFilePath;
+        static string _settingsFilePath;
         readonly static List<MenuItem> _menuItems = new List<MenuItem>();
 
         internal static IEnumerable<MenuItem> MenuItems { get { return _menuItems; } }
@@ -145,19 +155,54 @@ namespace iobloc
             {
                 var o = (Option)code;
                 var item = new MenuItem(o, o.ToString());
-                // if (o == Option.Log)
-                //     item.Visible = false;
+                if (o == Option.Log)
+                    item.Visible = false;
                 _menuItems.Add(item);
             }
         }
 
-        internal static void Load(string configFilePath)
+        internal static void Load(string settingsFilePath)
         {
-            _configFilePath = configFilePath ?? CONFIG_FILE;
-            if (!File.Exists(_configFilePath))
+            _settingsFilePath = settingsFilePath ?? FILE_SETTINGS;
+            LoadSettings();
+            LoadHighscores();
+        }
+
+        internal static void Save()
+        {
+            SaveSettings();
+            SaveHighscores();
+        }
+
+        internal static Dictionary<string, string> Settings(Option option)
+        {
+            int key = (int)option;
+            if (!_settings.ContainsKey(key))
+                return new Dictionary<string, string>();
+            return _settings[key];
+        }
+
+        internal static int? GetHighscore(Option option)
+        {
+            int key = (int)option;
+            if(_highscores.ContainsKey(key))
+                return _highscores[key];
+            return null;
+        }
+
+        internal static void UpdateHighscore(Option option, int score)
+        {
+            int key = (int)option;
+            if (_highscores.ContainsKey(key) && _highscores[key] < score)
+                _highscores[key] = score;
+        }
+
+        static void LoadSettings()
+        {
+            if (!File.Exists(_settingsFilePath))
                 return;
 
-            using (var sr = File.OpenText(_configFilePath))
+            using (var sr = File.OpenText(_settingsFilePath))
                 while (!sr.EndOfStream)
                 {
                     string line = sr.ReadLine();
@@ -172,25 +217,48 @@ namespace iobloc
                 }
         }
 
-        internal static void Save()
+        static void LoadHighscores()
         {
-            using (var sw = File.CreateText(_configFilePath))
+            if (!File.Exists(FILE_HIGHSCORES))
+                return;
+
+            using (var sr = File.OpenText(FILE_HIGHSCORES))
+                while (!sr.EndOfStream)
+                {
+                    string[] line = sr.ReadLine().Split(' ');
+                    if (line.Length >= 2)
+                    {
+                        int key = int.Parse(line[0]);
+                        if (_highscores.ContainsKey(key))
+                            _highscores[key] = int.Parse(line[1]);
+                    }
+                }
+        }
+
+        static void SaveSettings()
+        {
+            if (File.Exists(_settingsFilePath))
+                return;
+
+            using (var sw = File.CreateText(_settingsFilePath))
             {
                 foreach (int code in _settings.Keys)
                 {
-                    sw.WriteLine("{0} {1}", code, (Option)code);
+                    sw.WriteLine($"{code} {(Option)code}");
                     foreach (string k in _settings[code].Keys)
-                        sw.WriteLine("{0} {1}", k, _settings[code][k]);
+                        sw.WriteLine($"{k} {_settings[code][k]}");
                     sw.WriteLine();
                 }
             }
         }
 
-        internal static Dictionary<string, string> Settings(Option option)
+        static void SaveHighscores()
         {
-            if (!_settings.ContainsKey((int)option))
-                return new Dictionary<string, string>();
-            return _settings[(int)option];
+            using (var sw = File.CreateText(FILE_HIGHSCORES))
+            {
+                foreach (int code in _highscores.Keys)
+                    sw.WriteLine($"{code} {_highscores[code]}");
+            }
         }
 
         internal static int GetInt(this Dictionary<string, string> dic, string key, int defVal = 1)

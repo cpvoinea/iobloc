@@ -1,17 +1,18 @@
 using System;
+using System.Text;
 
 namespace iobloc
 {
     class Engine : IDisposable
     {
+        readonly StringBuilder _log = new StringBuilder();
         readonly Menu _menu;
         Game _currentGame;
 
-        internal Engine(string configFilePath)
+        internal Engine(string settingsFilePath)
         {
-            Config.Load(configFilePath);
+            Config.Load(settingsFilePath);
             _menu = new Menu(Config.MenuItems);
-            _menu.OnItemSelected += MenuItemSelected;
             UI.Open();
         }
 
@@ -19,34 +20,61 @@ namespace iobloc
         {
             UI.Clear();
             _menu.Show();
+            var option = _menu.WaitOption();
+            if (!option.HasValue)
+                return;
+            Open(option.Value);
         }
 
-        void MenuItemSelected(Option option)
+        internal string GetLog()
         {
-            _currentGame = new Game(option);
-            _currentGame.OnExit += GameExit;
-            UI.Clear();
-            _currentGame.Start();
+            return _log.ToString();
         }
 
-        void GameExit(IBoard board)
+        void Open(Option option)
         {
-            if (_currentGame != null)
+            if (option == Option.Log)
             {
-                _currentGame.OnExit -= GameExit;
-                _currentGame.Dispose();
-                _currentGame = null;
+                UI.Clear();
+                UI.Text(_log.ToString());
+                UI.InputWait();
             }
+            else
+                try
+                {
+                    _log.AppendLine($"Start {option}");
+                    Config.Highscore = Config.GetHighscore(option);
+                    UI.Clear();
+
+                    _currentGame = new Game(option);
+                    _currentGame.Start();
+
+                    Config.UpdateHighscore(option, _currentGame.Score);
+                }
+                catch (Exception ex)
+                {
+                    _log.AppendLine($"Error playing {option}: {ex}");
+                }
+                finally
+                {
+                    _log.AppendLine($"Quit {option}");
+                }
 
             ShowMenu();
         }
 
         public void Dispose()
         {
-            _menu.OnItemSelected -= MenuItemSelected;
-            _menu.Dispose();
             Config.Save();
             UI.Close();
+
+            if (_currentGame != null)
+            {
+                _currentGame.Dispose();
+                _currentGame = null;
+            }
+
+            _log.Clear();
         }
     }
 }

@@ -10,7 +10,14 @@ namespace iobloc
         internal TetrisBoard() : base(Option.Tetris)
         {
             _piece = NewPiece();
-            SetPiece();
+            ChangeGrid(true);
+        }
+
+        protected override void ChangeGrid(bool set)
+        {
+            CheckGridPiece(_piece, true, set);
+            if (set)
+                _main.HasChanges = true;
         }
 
         public override void HandleInput(string key)
@@ -27,6 +34,11 @@ namespace iobloc
         public override void NextFrame()
         {
             MoveDown();
+        }
+
+        TetrisPiece NewPiece()
+        {
+            return new TetrisPiece(_random.Next(7) + 1, _random.Next(4));
         }
 
         bool CheckGridPiece(TetrisPiece piece, bool partiallyEntered, bool? set = null)
@@ -55,24 +67,9 @@ namespace iobloc
             return true;
         }
 
-        TetrisPiece NewPiece()
-        {
-            return new TetrisPiece(_random.Next(7) + 1, _random.Next(4));
-        }
-
         bool Collides(TetrisPiece piece)
         {
             return !CheckGridPiece(piece, true, false);
-        }
-
-        void SetPiece()
-        {
-            CheckGridPiece(_piece, true, true);
-        }
-
-        void UnsetPiece()
-        {
-            CheckGridPiece(_piece, true, false);
         }
 
         void Rotate()
@@ -81,10 +78,9 @@ namespace iobloc
             if (Collides(p))
                 return;
 
-            UnsetPiece();
+            ChangeGrid(false);
             _piece = p;
-            SetPiece();
-            _main.HasChanges = true;
+            ChangeGrid(true);
         }
 
         void MoveLeft()
@@ -93,10 +89,9 @@ namespace iobloc
             if (Collides(p))
                 return;
 
-            UnsetPiece();
+            ChangeGrid(false);
             _piece = p;
-            SetPiece();
-            _main.HasChanges = true;
+            ChangeGrid(true);
         }
 
         void MoveRight()
@@ -105,10 +100,9 @@ namespace iobloc
             if (Collides(p))
                 return;
 
-            UnsetPiece();
+            ChangeGrid(false);
             _piece = p;
-            SetPiece();
-            _main.HasChanges = true;
+            ChangeGrid(true);
         }
 
         void MoveDown()
@@ -134,10 +128,9 @@ namespace iobloc
                 return;
             }
 
-            UnsetPiece();
+            ChangeGrid(false);
             _piece = p;
-            SetPiece();
-            _main.HasChanges = true;
+            ChangeGrid(true);
         }
 
         void RemoveRows()

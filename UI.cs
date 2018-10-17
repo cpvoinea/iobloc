@@ -34,6 +34,12 @@ namespace iobloc
             Console.WriteLine();
         }
 
+        internal static void TextAt(string text, int row, int col)
+        {
+            Console.SetCursorPosition(col, row);
+            Text(text);
+        }
+
         internal static void BorderDraw(Border border)
         {
             for (int i = 0; i < border.Height; i++)
@@ -75,6 +81,7 @@ namespace iobloc
                     }
                 }
             }
+            TextReset();
         }
 
         internal static void PanelTextLines(Panel panel, string[] lines)

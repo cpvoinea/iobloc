@@ -20,7 +20,6 @@ namespace iobloc
         public string[] Help { get { return _help; } }
         public int FrameInterval { get; private set; }
         public bool IsRunning { get; set; }
-
         public virtual int Score { get; set; }
         public virtual bool Won { get { return false; } }
 
@@ -34,7 +33,6 @@ namespace iobloc
             _border = new Border(_width + 2, _height + 2);
             _main = new Panel(1, 1, _height, _width);
             _panels = new[] { _main };
-
             FrameInterval = _settings.GetInt("FrameMultiplier", 1) * Config.LevelInterval;
         }
 
