@@ -13,8 +13,8 @@ Width 10
 Height 20
 
 2 Runner
-Help Jump:SPACE,Exit:ESC,Pause:ANY
-Keys Spacebar
+Help Jump:Up,Exit:ESC,Pause:ANY
+Keys UpArrow
 FrameMultiplier 1
 Width 20
 Height 10

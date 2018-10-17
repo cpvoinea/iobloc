@@ -9,13 +9,18 @@ namespace iobloc
 
         internal HelicopterBoard() : base(Option.Helicopter)
         {
-            _speed = -1; // start by falling downwards
+            _speed = -1;
+            ChangeGrid(true);
         }
 
-        protected override void Set(bool set)
+        protected override void ChangeGrid(bool set)
         {
-            if (_distance < _height)
-                _main.Grid[_distance, 5] = _main.Grid[_distance, 6] = CP;
+            if (_distance >= 0 && _distance < _height)
+            {
+                _main.Grid[_distance, 5] = _main.Grid[_distance, 6] = set ? CP : 0;
+                if (set)
+                    _main.HasChanges = true;
+            }
         }
 
         protected override bool Jump()
@@ -27,10 +32,9 @@ namespace iobloc
                 return true; // return true to draw
             }
 
-            Set(false);
+            ChangeGrid(false);
             _distance--; // initial lift
-            Set(true);
-            _main.HasChanges = true;
+            ChangeGrid(true);
             _speed = 1; // upward movement of inertia
 
             return true; // return true to draw
@@ -40,28 +44,30 @@ namespace iobloc
         {
             if (_speed == 1) // is moving upwards
             {
-                Set(false);
+                ChangeGrid(false);
                 _distance--;
-                Set(true);
-                _main.HasChanges = true;
+                ChangeGrid(true);
                 _speed--;
             }
             else if (_speed == 0) // is hanging
                 _speed--;
             else // is falling
             {
-                Set(false);
+                ChangeGrid(false);
                 _distance++;
-                Set(true);
-                _main.HasChanges = true;
+                ChangeGrid(true);
             }
         }
 
-        protected override bool Collides()
+        protected override bool AdvanceCollides()
         {
-            return _distance >= _height // crash to the ground
+            ChangeGrid(false);
+            Advance();
+            bool collides = _distance >= _height // crash to the ground
                 || _main.Grid[_distance, 5] > 0 // obstacle collides with tail
                 || _main.Grid[_distance, 6] > 0; // obstacle collides with cabin
+            ChangeGrid(true);
+            return collides;
         }
 
         protected override void Restart()

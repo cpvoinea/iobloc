@@ -15,13 +15,22 @@ namespace iobloc
 
         protected override void ChangeGrid(bool set)
         {
-            CheckGridPiece(_piece, true, set);
+            for (int i = 0; i < 4; i++)
+                for (int j = 0; j < 4; j++)
+                    if (_piece.Mask[i, j] > 0)
+                    {
+                        int gx = _piece.X - 1 + i;
+                        int gy = _piece.Y - 2 + j;
+                        if (gx >= 0 && gx < _height && gy >= 0 && gy < _width)
+                            _main.Grid[gx, gy] = set ? (int)_piece.Type : 0;
+                    }
             if (set)
                 _main.HasChanges = true;
         }
 
         public override void HandleInput(string key)
         {
+            ChangeGrid(false);
             switch (key)
             {
                 case "UpArrow": Rotate(); break;
@@ -29,11 +38,14 @@ namespace iobloc
                 case "RightArrow": MoveRight(); break;
                 case "DownArrow": MoveDown(); break;
             }
+            ChangeGrid(true);
         }
 
         public override void NextFrame()
         {
+            ChangeGrid(false);
             MoveDown();
+            ChangeGrid(true);
         }
 
         TetrisPiece NewPiece()
@@ -41,10 +53,9 @@ namespace iobloc
             return new TetrisPiece(_random.Next(7) + 1, _random.Next(4));
         }
 
-        bool CheckGridPiece(TetrisPiece piece, bool partiallyEntered, bool? set = null)
+        bool CanSet(TetrisPiece piece, bool partiallyEntered = true)
         {
             for (int i = 0; i < 4; i++)
-            {
                 for (int j = 0; j < 4; j++)
                     if (piece.Mask[i, j] > 0)
                     {
@@ -52,85 +63,60 @@ namespace iobloc
                         int gy = piece.Y - 2 + j;
                         if (gx >= _height || gy < 0 || gy >= _width ||
                             (!partiallyEntered && gx < 0) ||
-                            (partiallyEntered && gx >= 0 && _main.Grid[gx, gy] > 0))
+                            (gx >= 0 && _main.Grid[gx, gy] > 0))
                             return false;
-                        if (gx >= 0 && set.HasValue)
-                        {
-                            if (set.Value)
-                                _main.Grid[gx, gy] = (int)piece.Type;
-                            else
-                                _main.Grid[gx, gy] = 0;
-                        }
                     }
-            }
 
             return true;
-        }
-
-        bool Collides(TetrisPiece piece)
-        {
-            return !CheckGridPiece(piece, true, false);
         }
 
         void Rotate()
         {
             var p = _piece.Rotate();
-            if (Collides(p))
-                return;
-
-            ChangeGrid(false);
-            _piece = p;
-            ChangeGrid(true);
+            if (CanSet(p))
+                _piece = p;
         }
 
         void MoveLeft()
         {
             var p = _piece.Left();
-            if (Collides(p))
-                return;
-
-            ChangeGrid(false);
-            _piece = p;
-            ChangeGrid(true);
+            if (CanSet(p))
+                _piece = p;
         }
 
         void MoveRight()
         {
             var p = _piece.Right();
-            if (Collides(p))
-                return;
-
-            ChangeGrid(false);
-            _piece = p;
-            ChangeGrid(true);
+            if (CanSet(p))
+                _piece = p;
         }
 
         void MoveDown()
         {
             var p = _piece.Down();
-            if (Collides(p))
+            if (CanSet(p))
+                _piece = p;
+            else
             {
-                if (!CheckGridPiece(_piece, false, true))
+                if (!CanSet(_piece, false))
                 {
                     IsRunning = false;
                     return;
                 }
+                ChangeGrid(true);
 
                 RemoveRows();
                 _piece = NewPiece();
-                if (!CheckGridPiece(_piece, true, true))
+                if (!CanSet(_piece))
                 {
                     IsRunning = false;
                     return;
                 }
 
+                ChangeGrid(true);
                 _main.HasChanges = true;
                 return;
             }
-
-            ChangeGrid(false);
-            _piece = p;
-            ChangeGrid(true);
         }
 
         void RemoveRows()

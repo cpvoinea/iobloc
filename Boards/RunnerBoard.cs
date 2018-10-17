@@ -25,11 +25,19 @@ namespace iobloc
 
         protected RunnerBoard(Option option) : base(option)
         {
-            Set(true);
         }
 
         protected internal RunnerBoard() : this(Option.Runner)
         {
+            ChangeGrid(true);
+        }
+
+        protected override void ChangeGrid(bool set)
+        {
+            int h = _height - 1 - _distance;
+            _main.Grid[h, 1] = _main.Grid[h - 1, 1] = set ? CP : 0;
+            if (set)
+                _main.HasChanges = true;
         }
 
         public override void HandleInput(string key)
@@ -39,8 +47,8 @@ namespace iobloc
                 _kill = false;
                 Restart();
             }
-
-            Jump();
+            else
+                Jump();
         }
 
         public override void NextFrame()
@@ -48,24 +56,16 @@ namespace iobloc
             if (_kill)
                 return;
 
-            Move(); // air move
-
-            _skipAdvance = !_skipAdvance; // skip a frame before moving fences
+            Move();
+            _skipAdvance = !_skipAdvance;
             if (!_skipAdvance)
             {
-                Advance(); // move fences (player advances)
-                if (Collides()) // check if player collides with a fence
+                if (AdvanceCollides())
                 {
-                    Clear(CE); // kill animation
+                    Clear(CE);
                     _kill = true;
                 }
             }
-        }
-
-        protected virtual void Set(bool set)
-        {
-            int h = _height - 1 - _distance;
-            _main.Grid[h, 1] = _main.Grid[h - 1, 1] = set ? CP : 0;
         }
 
         protected virtual bool Jump()
@@ -93,10 +93,9 @@ namespace iobloc
             int max = _doubleJump ? 3 : 2; // jump height limit
             if (_upwards && _distance < max) // move upwards
             {
-                Set(false);
+                ChangeGrid(false);
                 _distance++;
-                Set(true);
-                _main.HasChanges = true;
+                ChangeGrid(true);
             }
             else
             {
@@ -109,10 +108,9 @@ namespace iobloc
 
                     if (_distance > 0) // move downwards
                     {
-                        Set(false);
+                        ChangeGrid(false);
                         _distance--;
-                        Set(true);
-                        _main.HasChanges = true;
+                        ChangeGrid(true);
                     }
                     else
                         _doubleJump = false; // landed, double jump is available again
@@ -120,14 +118,24 @@ namespace iobloc
             }
         }
 
-        /// <returns>true if fence is hit</returns>
-        protected virtual bool Collides()
+        protected virtual bool AdvanceCollides()
         {
-            int fence = 0; // fence height
-            int x = _height - 1;
-            while (_main.Grid[x--, 1] > 0)
+            ChangeGrid(false);
+            Advance();
+            int fence = 0;
+            while (_main.Grid[_height - 1 - fence, 1] == CE)
                 fence++;
-            return _distance < fence; // collides if fence is higher than jump distance
+            ChangeGrid(true);
+
+            if (fence > 0)
+            {
+                if (fence > _distance)
+                    return true;
+                _score++;
+                if (_score > _highscore)
+                    _highscore = _score;
+            }
+            return false;
         }
 
         protected virtual void Restart()
@@ -153,25 +161,23 @@ namespace iobloc
                 _main.Grid[_height - 1 - i, _width - 2] = i < fence ? CE : 0; // set fence to grid
         }
 
+        protected void Advance()
+        {
+            for (int j = 1; j < _width - 1; j++)
+                for (int i = 0; i < _height; i++)
+                    _main.Grid[i, j] = _main.Grid[i, j + 1];
+
+            for (int i = 0; i < _height; i++)
+                _main.Grid[i, _width - 1] = 0;
+            CreateFence();
+        }
+
         protected void Clear(int v)
         {
             for (int i = 0; i < _height; i++)
                 for (int j = 0; j < _width; j++)
                     _main.Grid[i, j] = v;
-        }
-
-        protected virtual void Advance()
-        {
-            _score++; // each step is a score
-            if (_score > _highscore) // only keep the highscore
-                _highscore = _score;
-
-            for (int j = 1; j < _width - 1; j++) // shift grid to left
-                for (int i = 0; i < _height; i++)
-                    _main.Grid[i, j] = _main.Grid[i, j + 1];
-            for (int i = 0; i < _height; i++)
-                _main.Grid[i, _width - 1] = 0;
-            CreateFence();
+            ChangeGrid(true);
         }
     }
 }
