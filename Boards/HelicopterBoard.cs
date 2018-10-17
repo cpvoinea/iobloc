@@ -2,8 +2,8 @@ namespace iobloc
 {
     class HelicopterBoard : RunnerBoard
     {
-        int CP => (int)_config.GetColor("PlayerColor");
-        int CE => (int)_config.GetColor("EnemyColor");
+        int CP => _settings.GetColor("PlayerColor");
+        int CE => _settings.GetColor("EnemyColor");
 
         int _speed;
 
@@ -15,7 +15,7 @@ namespace iobloc
         protected override void Set(bool set)
         {
             if (_distance < _height)
-                _mainPanel.Grid[_distance, 5] = _mainPanel.Grid[_distance, 6] = CP;
+                _main.Grid[_distance, 5] = _main.Grid[_distance, 6] = CP;
         }
 
         protected override bool Jump()
@@ -30,7 +30,7 @@ namespace iobloc
             Set(false);
             _distance--; // initial lift
             Set(true);
-            _mainPanel.HasChanges = true;
+            _main.HasChanges = true;
             _speed = 1; // upward movement of inertia
 
             return true; // return true to draw
@@ -43,7 +43,7 @@ namespace iobloc
                 Set(false);
                 _distance--;
                 Set(true);
-                _mainPanel.HasChanges = true;
+                _main.HasChanges = true;
                 _speed--;
             }
             else if (_speed == 0) // is hanging
@@ -53,15 +53,15 @@ namespace iobloc
                 Set(false);
                 _distance++;
                 Set(true);
-                _mainPanel.HasChanges = true;
+                _main.HasChanges = true;
             }
         }
 
         protected override bool Collides()
         {
             return _distance >= _height // crash to the ground
-                || _mainPanel.Grid[_distance, 5] > 0 // obstacle collides with tail
-                || _mainPanel.Grid[_distance, 6] > 0; // obstacle collides with cabin
+                || _main.Grid[_distance, 5] > 0 // obstacle collides with tail
+                || _main.Grid[_distance, 6] > 0; // obstacle collides with cabin
         }
 
         protected override void Restart()
@@ -82,13 +82,13 @@ namespace iobloc
             {
                 up = _random.Next(4);
                 for (int i = 0; i < up; i++)
-                    _mainPanel.Grid[i, _width - 1] = CE;
+                    _main.Grid[i, _width - 1] = CE;
             }
             if ((p & 2) > 0) // bottom obstacle
             {
                 int c = _random.Next(_height - 4 - up);
                 for (int i = _height - 1; i > _height - 1 - c; i--)
-                    _mainPanel.Grid[i, _width - 1] = CE;
+                    _main.Grid[i, _width - 1] = CE;
             }
         }
     }

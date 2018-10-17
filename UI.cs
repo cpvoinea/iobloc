@@ -3,42 +3,38 @@ using System.Text;
 
 namespace iobloc
 {
-    class UI : IDisposable
+    static class UI
     {
-        readonly Config _config;
-
-        internal UI(Config config)
-        {
-            _config = config;
-        }
-
-        internal void Clear()
+        internal static void Open()
         {
             Console.OutputEncoding = Encoding.UTF8;
             Console.CursorVisible = false;
-            TextReset();
+        }
+
+        internal static void Clear()
+        {
             Console.Clear();
         }
 
-        internal void TextReset()
+        internal static void TextReset()
         {
             Console.ResetColor();
         }
 
-        internal void Text(string text, int? color = null)
+        internal static void Text(string text, int? color = null)
         {
             if (color.HasValue)
                 Console.ForegroundColor = (ConsoleColor)color.Value;
             Console.Write(text);
         }
 
-        internal void TextLine(string text, int? color = null)
+        internal static void TextLine(string text, int? color = null)
         {
             Text(text, color);
             Console.WriteLine();
         }
 
-        internal void BorderDraw(Border border)
+        internal static void BorderDraw(Border border)
         {
             for (int i = 0; i < border.Height; i++)
             {
@@ -52,7 +48,7 @@ namespace iobloc
             }
         }
 
-        internal void PanelClear(Panel panel)
+        internal static void PanelClear(Panel panel)
         {
             string row = new String(' ', panel.Width);
             for (int i = panel.FromRow; i <= panel.ToRow; i++)
@@ -62,15 +58,15 @@ namespace iobloc
             }
         }
 
-        internal void PanelDraw(Panel panel)
+        internal static void PanelDraw(Panel panel)
         {
-            for (int i = panel.FromRow; i <= panel.ToRow; i++)
+            for (int i = panel.FromRow, x = 0; i <= panel.ToRow && x < panel.Height; i++, x++)
             {
                 Console.SetCursorPosition(panel.FromCol, i);
-                for(int j = panel.FromCol; j <= panel.ToCol; j++)
+                for (int y = 0; y < panel.Width; y++)
                 {
-                    int c = panel.Grid[i,j];
-                    if(c == 0)
+                    int c = panel.Grid[x, y];
+                    if (c == 0)
                         Console.Write(' ');
                     else
                     {
@@ -81,7 +77,7 @@ namespace iobloc
             }
         }
 
-        internal void PanelTextLines(Panel panel, string[] lines)
+        internal static void PanelTextLines(Panel panel, string[] lines)
         {
             for (int i = 0; i < lines.Length; i++)
             {
@@ -90,19 +86,19 @@ namespace iobloc
             }
         }
 
-        internal int InputWait()
+        internal static string InputWait()
         {
-            return (int)Console.ReadKey(true).Key;
+            return Console.ReadKey(true).Key.ToString();
         }
 
-        internal int? Input()
+        internal static string Input()
         {
             if (Console.KeyAvailable)
                 return InputWait();
             return null;
         }
 
-        public void Dispose()
+        internal static void Close()
         {
             TextReset();
             Console.CursorVisible = true;

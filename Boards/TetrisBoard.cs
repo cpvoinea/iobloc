@@ -13,14 +13,14 @@ namespace iobloc
             SetPiece();
         }
 
-        public override void HandleInput(int key)
+        public override void HandleInput(string key)
         {
-            switch ((ConsoleKey)key)
+            switch (key)
             {
-                case ConsoleKey.UpArrow: Rotate(); break;
-                case ConsoleKey.LeftArrow: MoveLeft(); break;
-                case ConsoleKey.RightArrow: MoveRight(); break;
-                case ConsoleKey.DownArrow: MoveDown(); break;
+                case "UpArrow": Rotate(); break;
+                case "LeftArrow": MoveLeft(); break;
+                case "RightArrow": MoveRight(); break;
+                case "DownArrow": MoveDown(); break;
             }
         }
 
@@ -40,14 +40,14 @@ namespace iobloc
                         int gy = piece.Y - 2 + j;
                         if (gx >= _height || gy < 0 || gy >= _width ||
                             (!partiallyEntered && gx < 0) ||
-                            (partiallyEntered && gx >= 0 && _mainPanel.Grid[gx, gy] > 0))
+                            (partiallyEntered && gx >= 0 && _main.Grid[gx, gy] > 0))
                             return false;
                         if (gx >= 0 && set.HasValue)
                         {
                             if (set.Value)
-                                _mainPanel.Grid[gx, gy] = (int)piece.Type;
+                                _main.Grid[gx, gy] = (int)piece.Type;
                             else
-                                _mainPanel.Grid[gx, gy] = 0;
+                                _main.Grid[gx, gy] = 0;
                         }
                     }
             }
@@ -84,7 +84,7 @@ namespace iobloc
             UnsetPiece();
             _piece = p;
             SetPiece();
-            _mainPanel.HasChanges = true;
+            _main.HasChanges = true;
         }
 
         void MoveLeft()
@@ -96,7 +96,7 @@ namespace iobloc
             UnsetPiece();
             _piece = p;
             SetPiece();
-            _mainPanel.HasChanges = true;
+            _main.HasChanges = true;
         }
 
         void MoveRight()
@@ -108,7 +108,7 @@ namespace iobloc
             UnsetPiece();
             _piece = p;
             SetPiece();
-            _mainPanel.HasChanges = true;
+            _main.HasChanges = true;
         }
 
         void MoveDown()
@@ -130,14 +130,14 @@ namespace iobloc
                     return;
                 }
 
-                _mainPanel.HasChanges = true;
+                _main.HasChanges = true;
                 return;
             }
 
             UnsetPiece();
             _piece = p;
             SetPiece();
-            _mainPanel.HasChanges = true;
+            _main.HasChanges = true;
         }
 
         void RemoveRows()
@@ -148,12 +148,12 @@ namespace iobloc
                 bool line = true;
                 int j = 0;
                 while (line && j < _width)
-                    line &= _mainPanel.Grid[i, j++] > 0;
+                    line &= _main.Grid[i, j++] > 0;
                 if (line)
                 {
                     for (int k = i; k >= 0; k--)
                         for (int l = 0; l < _width; l++)
-                            _mainPanel.Grid[k, l] = k == 0 ? 0 : _mainPanel.Grid[k - 1, l];
+                            _main.Grid[k, l] = k == 0 ? 0 : _main.Grid[k - 1, l];
                     i++;
                     series++;
                 }

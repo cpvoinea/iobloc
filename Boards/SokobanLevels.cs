@@ -2,7 +2,7 @@ namespace iobloc
 {
     static class SokobanLevels
     {
-        static int[][,] _levels;
+        static readonly int[][,] _levels;
 
         internal static int Count => _levels == null ? 0 : _levels.Length;
 
@@ -13,12 +13,12 @@ namespace iobloc
 
         static SokobanLevels()
         {
-            var settings = Config.BoardConfig(Option.Sokoban);
-            int P = (int)settings.GetColor("PlayerColor");
-            int B = (int)settings.GetColor("BlockColor");
-            int W = (int)settings.GetColor("WallColor");
-            int T = (int)settings.GetColor("TargetColor");
-            int R = (int)settings.GetColor("TargetBlockColor");
+            var settings = Config.Settings(Option.Sokoban);
+            int P = settings.GetColor("PlayerColor");
+            int B = settings.GetColor("BlockColor");
+            int W = settings.GetColor("WallColor");
+            int T = settings.GetColor("TargetColor");
+            int R = settings.GetColor("TargetBlockColor");
 
             _levels = new[]{
                 new[,] {

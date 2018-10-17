@@ -5,16 +5,11 @@ namespace iobloc
 {
     class Game : IDisposable
     {
-        Config _config;
-        UI _ui;
         IBoard _board;
         internal event GameExit OnExit;
 
-        internal Game(Config config, UI ui, Option option)
+        internal Game(Option option)
         {
-            _config = config;
-            _ui = ui;
-
             switch (option)
             {
                 case Option.Level: _board = new LevelBoard(); break;
@@ -31,24 +26,21 @@ namespace iobloc
 
         internal void Start()
         {
-            _ui.Clear();
-            _ui.BorderDraw(_board.Border);
+            UI.BorderDraw(_board.Border);
 
             bool paused = false;
             int ticks = 0;
             _board.IsRunning = true;
             while (_board.IsRunning)
             {
-                for(int i = 0; i < _board.Panels.Length; i++)
+                DrawBoard();
+                paused = HandleInput(paused);
+                if (paused)
                 {
-                    var pnl = _board.Panels[i];
-                    if (pnl.HasChanges)
-                    {
-                        _ui.PanelDraw(pnl);
-                        pnl.HasChanges = false;
-                    }
+                    WaitScreen();
+                    paused = false;
                 }
-                
+
                 Thread.Sleep(1);
                 ticks++;
                 if (ticks >= _board.FrameInterval)
@@ -56,31 +48,50 @@ namespace iobloc
                     ticks = 0;
                     _board.NextFrame();
                 }
-
-                var key = _ui.Input();
-                if (key.HasValue)
-                {
-                    if (paused)
-                        paused = false;
-                    else if (key == Config.INPUT_EXIT)
-                        _board.IsRunning = false;
-                    else if (_board.IsValidInput(key.Value))
-                        _board.HandleInput(key.Value);
-                    else
-                        paused = true;
-                }
-
-                if (paused)
-                {
-                    _ui.PanelClear(_board.MainPanel);
-                    _ui.PanelTextLines(_board.MainPanel, _board.Help);
-                    _ui.InputWait();
-                    _ui.PanelDraw(_board.MainPanel);
-                }
             }
 
             if (OnExit != null)
                 OnExit(_board);
+        }
+
+        void DrawBoard()
+        {
+            for (int i = 0; i < _board.Panels.Length; i++)
+            {
+                var pnl = _board.Panels[i];
+                if (pnl.HasChanges)
+                {
+                    UI.PanelDraw(pnl);
+                    pnl.HasChanges = false;
+                }
+            }
+        }
+
+        bool HandleInput(bool paused)
+        {
+            string key = UI.Input();
+            if (key != null)
+            {
+                if (paused)
+                    return false;
+
+                if (key == Config.INPUT_EXIT)
+                    _board.IsRunning = false;
+                else if (_board.IsValidInput(key))
+                    _board.HandleInput(key);
+                else
+                    return true;
+            }
+
+            return paused;
+        }
+
+        void WaitScreen()
+        {
+            UI.PanelClear(_board.MainPanel);
+            UI.PanelTextLines(_board.MainPanel, _board.Help);
+            UI.InputWait();
+            UI.PanelDraw(_board.MainPanel);
         }
 
         public void Dispose()

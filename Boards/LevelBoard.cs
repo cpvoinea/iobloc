@@ -5,48 +5,62 @@ namespace iobloc
     class LevelBoard : SinglePanelBoard
     {
         const int MAX = Config.LEVEL_MAX;
-        public string Name => "Level";
-        public string[] Help => new[] { "<<Easy   Hard>>" };
-        public ConsoleKey[] Keys { get; private set; } = new[] { ConsoleKey.LeftArrow, ConsoleKey.RightArrow, ConsoleKey.Enter };
-        public bool Won => false;
-        public int StepInterval => 200;
-        public Border Frame { get; private set; } = new Border(MAX + 2, 3);
-        public int[] Clip { get; private set; } = new[] { 0, 0, MAX, 1 };
-        public int Score => Config.Level;
-        public int[,] Grid => _levels;
-
-        readonly int[,] _levels;
-        bool _exit = false;
+        public override int Score => Config.Level;
+        int _level;
 
         internal LevelBoard() : base(Option.Level)
         {
-            _levels = new int[1, MAX];
+            _level = Score;
+            InitializeGrid();
+            ChangeGrid(true);
+        }
+
+        protected override void InitializeGrid()
+        {
             for (int i = 0; i < MAX; i++)
-                _levels[0, i] = 15 - i;
-            _levels[0, Score] = 15;
+                _main.Grid[0, i] = 15 - i;
         }
 
-        public bool Action(ConsoleKey key)
+        protected override void ChangeGrid(bool set)
         {
-            int lvl = Config.Level;
-            _levels[0, lvl] = 15 - lvl;
-            if (key == ConsoleKey.RightArrow && lvl < MAX - 1)
-                lvl++;
-            else if (key == ConsoleKey.LeftArrow && lvl > 0)
-                lvl--;
-            else if (key == ConsoleKey.Enter)
-                _exit = true;
-
-            Config.Level = lvl;
-            _levels[0, lvl] = 15;
-            return true;
+            if (set)
+            {
+                _main.Grid[0, _level] = 15;
+                _main.HasChanges = true;
+            }
+            else
+                _main.Grid[0, _level] = 15 - _level;
         }
 
-        public bool Step()
+        public override void HandleInput(string key)
         {
-            if (_exit)
-                return false;
-            return true;
+            switch (key)
+            {
+                case "RightArrow":
+                    if (_level < MAX - 1)
+                    {
+                        ChangeGrid(false);
+                        _level++;
+                        ChangeGrid(true);
+                    }
+                    break;
+                case "LeftArrow":
+                    if (_level > 0)
+                    {
+                        ChangeGrid(false);
+                        _level--;
+                        ChangeGrid(true);
+                    }
+                    break;
+                case "Enter":
+                    Score = _level;
+                    IsRunning = false;
+                    break;
+            }
+        }
+
+        public override void NextFrame()
+        {
         }
     }
 }

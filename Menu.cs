@@ -5,19 +5,13 @@ namespace iobloc
 {
     class Menu : IDisposable
     {
-        readonly Config _config;
-        readonly Dictionary<Option, MenuItem> _items = new Dictionary<Option, MenuItem>();
-        readonly UI _ui;
+        readonly Dictionary<int, MenuItem> _items = new Dictionary<int, MenuItem>();
         internal event MenuItemSelected OnItemSelected;
-        internal event MenuExit OnExit;
 
-        internal Menu(Config config, UI ui)
+        internal Menu(IEnumerable<MenuItem> menuItems)
         {
-            _config = config;
-            _ui = ui;
-
-            foreach (var item in _config.MenuItems)
-                _items.Add(item.Option, item);
+            foreach (var item in menuItems)
+                _items.Add((int)item.Option, item);
         }
 
         internal void Show()
@@ -28,33 +22,37 @@ namespace iobloc
 
         void ShowOptions()
         {
-            _ui.Clear();
-            foreach (var key in _items.Keys)
-                _ui.TextLine($"{key,Config.MENU_LEN_KEY}: {_items[key].Name,-Config.MENU_LEN_NAME} {_items[key].Info,Config.MENU_LEN_INFO}", _items[key].Color);
-            _ui.TextReset();
-            _ui.Text($"{Config.MENU_INPUT_TEXT}: ");
+            foreach (int key in _items.Keys)
+                UI.TextLine($"{key,Config.MENU_LEN_KEY}: {_items[key].Name,-Config.MENU_LEN_NAME} {_items[key].Info,Config.MENU_LEN_INFO}", _items[key].Color);
+            UI.TextReset();
+            UI.Text($"{Config.MENU_INPUT_TEXT}: ");
         }
 
         void HandleInput()
         {
-            int input = _ui.InputWait();
-            while (input != Config.INPUT_EXIT)
+            string input = UI.InputWait();
+            Option? option = null;
+            while (input != Config.INPUT_EXIT && !option.HasValue)
             {
-                MenuItem? item = GetSelection(input);
-                if (OnItemSelected != null && item.HasValue)
-                    OnItemSelected(item.Value);
-                input = _ui.InputWait();
+                option = GetSelection(input);
+                if (option.HasValue && OnItemSelected != null)
+                    OnItemSelected(option.Value);
+                else
+                    input = UI.InputWait();
             }
-            if (OnExit != null)
-                OnExit();
         }
 
-        MenuItem? GetSelection(int input)
+        Option? GetSelection(string input)
         {
-            var key = (Option)(input - '0');
-            if (!_items.ContainsKey(key))
-                return null;
-            return _items[key];
+            int code = (int)Enum.Parse(typeof(ConsoleKey), input);
+            int? key = null;
+            if (code >= (int)ConsoleKey.D0 && code <= (int)ConsoleKey.D9)
+                key = code - (int)ConsoleKey.D0;
+            else if (code >= (int)ConsoleKey.NumPad0 && code <= (int)ConsoleKey.NumPad9)
+                key = code - (int)ConsoleKey.NumPad0;
+            if (key.HasValue && _items.ContainsKey(key.Value))
+                return _items[key.Value].Option;
+            return null;
         }
 
         public void Dispose()

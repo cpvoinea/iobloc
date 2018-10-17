@@ -4,12 +4,12 @@ namespace iobloc
 {
     class BreakoutBoard : SinglePanelBoard
     {
-        int CP => (int)_config.GetColor("PlayerColor");
-        int CE => (int)_config.GetColor("EnemyColor");
-        int CN => (int)_config.GetColor("NeutralColor");
-        int BW => _config.GetInt("BlockWidth");
-        int BS => _config.GetInt("BlockSpace");
-        int BR => _config.GetInt("BlockRows");
+        int CP => _settings.GetColor("PlayerColor");
+        int CE => _settings.GetColor("EnemyColor");
+        int CN => _settings.GetColor("NeutralColor");
+        int BW => _settings.GetInt("BlockWidth");
+        int BS => _settings.GetInt("BlockSpace");
+        int BR => _settings.GetInt("BlockRows");
         int B => BW + BS;
 
         int _paddle;
@@ -31,32 +31,32 @@ namespace iobloc
             for (int row = 0; row < BR; row++) // set rows of blocks
                 for (int col = 0; col < _width; col += B)
                     for (int i = 0; i < BW; i++)
-                        _mainPanel.Grid[row, col + i] = CE;
+                        _main.Grid[row, col + i] = CE;
             for (int i = -2; i <= 2; i++)
-                _mainPanel.Grid[_height - 1, _paddle + i] = CP;
-            _mainPanel.Grid[_ballRow, _ballCol] = CN;
+                _main.Grid[_height - 1, _paddle + i] = CP;
+            _main.Grid[_ballRow, _ballCol] = CN;
         }
 
-        public override void HandleInput(int key)
+        public override void HandleInput(string key)
         {
-            switch ((ConsoleKey)key)
+            switch (key)
             {
-                case ConsoleKey.LeftArrow:
+                case "LeftArrow":
                     if (_paddle > 2)
                     {
-                        _mainPanel.Grid[_height - 1, _paddle + 2] = 0;
+                        _main.Grid[_height - 1, _paddle + 2] = 0;
                         _paddle--;
-                        _mainPanel.Grid[_height - 1, _paddle - 2] = CP;
-                        _mainPanel.HasChanges = true;
+                        _main.Grid[_height - 1, _paddle - 2] = CP;
+                        _main.HasChanges = true;
                     }
                     break;
-                case ConsoleKey.RightArrow:
+                case "RightArrow":
                     if (_paddle < _width - 3)
                     {
-                        _mainPanel.Grid[_height - 1, _paddle - 2] = 0;
+                        _main.Grid[_height - 1, _paddle - 2] = 0;
                         _paddle++;
-                        _mainPanel.Grid[_height - 1, _paddle + 2] = 0;
-                        _mainPanel.HasChanges = true;
+                        _main.Grid[_height - 1, _paddle + 2] = 0;
+                        _main.HasChanges = true;
                     }
                     break;
             }
@@ -80,11 +80,11 @@ namespace iobloc
             _ballX += Math.Cos(_angle);
             _ballY -= Math.Sin(_angle);
 
-            _mainPanel.Grid[_ballRow, _ballCol] = 0;
+            _main.Grid[_ballRow, _ballCol] = 0;
             _ballRow = (int)Math.Round(_ballY);
             _ballCol = (int)Math.Round(_ballX);
-            _mainPanel.Grid[_ballRow, _ballCol] = CN;
-            _mainPanel.HasChanges = true;
+            _main.Grid[_ballRow, _ballCol] = CN;
+            _main.HasChanges = true;
         }
 
         double NextAngle(out bool lost)
@@ -107,7 +107,7 @@ namespace iobloc
                         newAngle = 2 * Math.PI - newAngle;
                     else if (col < 0 || col >= _width) // hitting walls
                         newAngle = Math.PI - newAngle;
-                    else if (_mainPanel.Grid[row, col] > 0) // hitting block
+                    else if (_main.Grid[row, col] > 0) // hitting block
                     {
                         Break(row, col);
                         newAngle = 2 * Math.PI - newAngle;
@@ -138,7 +138,7 @@ namespace iobloc
                             case 2: newAngle = Math.PI / 4; break;
                         }
                     }
-                    else if (_mainPanel.Grid[row, col] > 0) // hitting block
+                    else if (_main.Grid[row, col] > 0) // hitting block
                     {
                         Break(row, col);
                         newAngle = 2 * Math.PI - newAngle;
@@ -155,7 +155,7 @@ namespace iobloc
         {
             int x = (col / B) * B;
             for (int i = 0; i < BW; i++)
-                _mainPanel.Grid[row, x + i] = 0;
+                _main.Grid[row, x + i] = 0;
             Score++;
         }
     }

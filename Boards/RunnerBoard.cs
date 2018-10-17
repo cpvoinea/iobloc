@@ -7,9 +7,9 @@ namespace iobloc
     /// </summary>
     class RunnerBoard : SinglePanelBoard
     {
-        int CP => (int)_config.GetColor("PlayerColor");
-        int CE => (int)_config.GetColor("EnemyColor");
-        int JS => _config.GetInt("JumpSpace");
+        int CP => _settings.GetColor("PlayerColor");
+        int CE => _settings.GetColor("EnemyColor");
+        int JS => _settings.GetInt("JumpSpace");
 
         public override int Score => _highscore;
 
@@ -32,7 +32,7 @@ namespace iobloc
         {
         }
 
-        public override void HandleInput(int key)
+        public override void HandleInput(string key)
         {
             if (_kill)
             {
@@ -65,7 +65,7 @@ namespace iobloc
         protected virtual void Set(bool set)
         {
             int h = _height - 1 - _distance;
-            _mainPanel.Grid[h, 1] = _mainPanel.Grid[h - 1, 1] = set ? CP : 0;
+            _main.Grid[h, 1] = _main.Grid[h - 1, 1] = set ? CP : 0;
         }
 
         protected virtual bool Jump()
@@ -96,7 +96,7 @@ namespace iobloc
                 Set(false);
                 _distance++;
                 Set(true);
-                _mainPanel.HasChanges = true;
+                _main.HasChanges = true;
             }
             else
             {
@@ -112,7 +112,7 @@ namespace iobloc
                         Set(false);
                         _distance--;
                         Set(true);
-                        _mainPanel.HasChanges = true;
+                        _main.HasChanges = true;
                     }
                     else
                         _doubleJump = false; // landed, double jump is available again
@@ -125,7 +125,7 @@ namespace iobloc
         {
             int fence = 0; // fence height
             int x = _height - 1;
-            while (_mainPanel.Grid[x--, 1] > 0)
+            while (_main.Grid[x--, 1] > 0)
                 fence++;
             return _distance < fence; // collides if fence is higher than jump distance
         }
@@ -145,19 +145,19 @@ namespace iobloc
             bool hasSpace = true; // fences should not be to close together; check if there is room for new fence
             int y = _width - 4;
             while (hasSpace && y >= 0 && y >= _width - JS)
-                hasSpace &= _mainPanel.Grid[_height - 1, y--] == 0;
+                hasSpace &= _main.Grid[_height - 1, y--] == 0;
             if (!hasSpace) // no room for new fence
                 return;
             int fence = _random.Next(3); // random height, including 0
             for (int i = 0; i < 3; i++)
-                _mainPanel.Grid[_height - 1 - i, _width - 2] = i < fence ? CE : 0; // set fence to grid
+                _main.Grid[_height - 1 - i, _width - 2] = i < fence ? CE : 0; // set fence to grid
         }
 
         protected void Clear(int v)
         {
             for (int i = 0; i < _height; i++)
                 for (int j = 0; j < _width; j++)
-                    _mainPanel.Grid[i, j] = v;
+                    _main.Grid[i, j] = v;
         }
 
         protected virtual void Advance()
@@ -168,9 +168,9 @@ namespace iobloc
 
             for (int j = 1; j < _width - 1; j++) // shift grid to left
                 for (int i = 0; i < _height; i++)
-                    _mainPanel.Grid[i, j] = _mainPanel.Grid[i, j + 1];
+                    _main.Grid[i, j] = _main.Grid[i, j + 1];
             for (int i = 0; i < _height; i++)
-                _mainPanel.Grid[i, _width - 1] = 0;
+                _main.Grid[i, _width - 1] = 0;
             CreateFence();
         }
     }

@@ -4,35 +4,29 @@ namespace iobloc
 {
     class Engine : IDisposable
     {
-        readonly Config _config;
-        readonly UI _ui;
         readonly Menu _menu;
-        Game _currentGame = null;
+        Game _currentGame;
 
         internal Engine(string configFilePath)
         {
-            _config = new Config(configFilePath);
-            _ui = new UI(_config);
-            _menu = new Menu(_config, _ui);
+            Config.Load(configFilePath);
+            _menu = new Menu(Config.MenuItems);
             _menu.OnItemSelected += MenuItemSelected;
-            _menu.OnExit += MenuExit;
+            UI.Open();
         }
 
         internal void ShowMenu()
         {
+            UI.Clear();
             _menu.Show();
         }
 
-        void MenuItemSelected(MenuItem item)
+        void MenuItemSelected(Option option)
         {
-            _currentGame = new Game(_config, _ui, item.Option);
+            _currentGame = new Game(option);
             _currentGame.OnExit += GameExit;
+            UI.Clear();
             _currentGame.Start();
-        }
-
-        void MenuExit()
-        {
-            _config.Save();
         }
 
         void GameExit(IBoard board)
@@ -51,8 +45,8 @@ namespace iobloc
         {
             _menu.OnItemSelected -= MenuItemSelected;
             _menu.Dispose();
-            _ui.Dispose();
-            _config.Dispose();
+            Config.Save();
+            UI.Close();
         }
     }
 }

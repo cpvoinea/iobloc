@@ -4,10 +4,19 @@ using System.IO;
 
 namespace iobloc
 {
-    class Config : IDisposable
+    static class Config
     {
-        #region Dictionary<int, Dictionary<string, string>> _settings
+        #region Settings
         static Dictionary<int, Dictionary<string, string>> _settings = new Dictionary<int, Dictionary<string, string>>{
+            {0, // Level
+                new Dictionary<string, string>{
+                    {"Help", "<<Easy   Hard>>"},
+                    {"Keys", "LeftArrow,RightArrow,Enter"},
+                    {"FrameMultiplier", "5"},
+                    {"Width", "16"},
+                    {"Height", "1"},
+                }
+            },
             {1, // Tetris
                 new Dictionary<string, string>{
                     {"Help", "Play:ARROW,Exit:ESC,Pause:ANY"},
@@ -99,7 +108,15 @@ namespace iobloc
                     {"TargetPlayerColor", "DarkRed"},
                     {"TargetBlockColor", "DarkBlue"},
                 }
-            }
+            },
+            {9, // Log
+                new Dictionary<string, string>{
+                    {"Keys", "Enter"},
+                    {"FrameMultiplier", "5"},
+                    {"Width", "32"},
+                    {"Height", "24"},
+                }
+            },
         };
         #endregion
 
@@ -107,7 +124,7 @@ namespace iobloc
         internal const int MENU_LEN_NAME = 10;
         internal const int MENU_LEN_INFO = 3;
         internal const string MENU_INPUT_TEXT = "Option (ESC to exit)";
-        internal const int INPUT_EXIT = (int)ConsoleKey.Escape;
+        internal const string INPUT_EXIT = "Escape";
         internal const char BLOCK = (char)BoxGraphics.BlockFull;
         internal const int LEVEL_MAX = 16;
 
@@ -117,44 +134,30 @@ namespace iobloc
         internal static int Level { get; set; }
         internal static int LevelInterval { get { return FRAME_INTERVAL * (LEVEL_MAX - Level); } }
 
-        readonly string _configFile;
-        readonly List<MenuItem> _menuItems = new List<MenuItem>();
+        static string _configFilePath;
+        readonly static List<MenuItem> _menuItems = new List<MenuItem>();
 
-        internal IEnumerable<MenuItem> MenuItems { get { return _menuItems; } }
+        internal static IEnumerable<MenuItem> MenuItems { get { return _menuItems; } }
 
-        internal Config(string configFilePath)
+        static Config()
         {
-            _configFile = configFilePath ?? CONFIG_FILE;
-            if (File.Exists(_configFile))
-                Load();
-
-            LoadMenuItems();
-        }
-
-        internal static Dictionary<string, string> BoardConfig(Option option)
-        {
-            if (!_settings.ContainsKey((int)option))
-                return new Dictionary<string, string>();
-            return _settings[(int)option];
-        }
-
-        internal void Save()
-        {
-            using (var sw = File.CreateText(_configFile))
+            foreach (int code in Enum.GetValues(typeof(Option)))
             {
-                foreach (int code in _settings.Keys)
-                {
-                    sw.WriteLine("{0} {1}", code, (Option)code);
-                    foreach (string k in _settings[code].Keys)
-                        sw.WriteLine("{0} {1}", k, _settings[code][k]);
-                    sw.WriteLine();
-                }
+                var o = (Option)code;
+                var item = new MenuItem(o, o.ToString());
+                // if (o == Option.Log)
+                //     item.Visible = false;
+                _menuItems.Add(item);
             }
         }
 
-        void Load()
+        internal static void Load(string configFilePath)
         {
-            using (var sr = File.OpenText(_configFile))
+            _configFilePath = configFilePath ?? CONFIG_FILE;
+            if (!File.Exists(_configFilePath))
+                return;
+
+            using (var sr = File.OpenText(_configFilePath))
                 while (!sr.EndOfStream)
                 {
                     string line = sr.ReadLine();
@@ -169,22 +172,46 @@ namespace iobloc
                 }
         }
 
-        void LoadMenuItems()
+        internal static void Save()
         {
-            _menuItems.Clear();
-            foreach (int code in Enum.GetValues(typeof(Option)))
+            using (var sw = File.CreateText(_configFilePath))
             {
-                var o = (Option)code;
-                var item = new MenuItem(o, o.ToString());
-                // if (o == Option.Log)
-                //     item.Visible = false;
-                _menuItems.Add(item);
+                foreach (int code in _settings.Keys)
+                {
+                    sw.WriteLine("{0} {1}", code, (Option)code);
+                    foreach (string k in _settings[code].Keys)
+                        sw.WriteLine("{0} {1}", k, _settings[code][k]);
+                    sw.WriteLine();
+                }
             }
         }
 
-        public void Dispose()
+        internal static Dictionary<string, string> Settings(Option option)
         {
-            _menuItems.Clear();
+            if (!_settings.ContainsKey((int)option))
+                return new Dictionary<string, string>();
+            return _settings[(int)option];
+        }
+
+        internal static int GetInt(this Dictionary<string, string> dic, string key, int defVal = 1)
+        {
+            if (!dic.ContainsKey(key))
+                return defVal;
+            return int.Parse(dic[key]);
+        }
+
+        internal static string[] GetList(this Dictionary<string, string> dic, string key)
+        {
+            if (!dic.ContainsKey(key))
+                return new string[0];
+            return dic[key].Split(',');
+        }
+
+        internal static int GetColor(this Dictionary<string, string> dic, string key)
+        {
+            if (!dic.ContainsKey(key))
+                return 0;
+            return (int)Enum.Parse(typeof(ConsoleColor), dic[key]);
         }
     }
 }

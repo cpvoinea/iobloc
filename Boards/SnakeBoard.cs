@@ -28,21 +28,9 @@ namespace iobloc
             }
         }
 
-        int CP => (int)_config.GetColor("PlayerColor");
-        int CE => (int)_config.GetColor("EnemyColor");
-        int CN => (int)_config.GetColor("NeutralColor");
-
-        public override int[,] Grid
-        {
-            get
-            {
-                var result = new int[Height, Width];
-                foreach (var p in _snake)
-                    result[p.Row, p.Col] = CP;
-                result[_point.Row, _point.Col] = CN;
-                return result;
-            }
-        }
+        int CP => _settings.GetColor("PlayerColor");
+        int CE => _settings.GetColor("EnemyColor");
+        int CN => _settings.GetColor("NeutralColor");
 
         readonly Random _random = new Random();
         readonly LinkedList<Position> _snake = new LinkedList<Position>();
@@ -54,58 +42,74 @@ namespace iobloc
 
         internal SnakeBoard() : base(Option.Snake)
         {
-            int v = Height / 2;
-            int h = Width / 2;
-            _snake.AddFirst(new Position(v, h));
-            _snake.AddFirst(new Position(v, h + 1));
-            _snake.AddFirst(new Position(v, h + 2));
+            int v = _height / 2;
+            int h = _width / 2;
+            for (int i = 0; i < 3; i++)
+            {
+                var p = new Position(v, h);
+                _snake.AddFirst(p);
+                _main.Grid[p.Row, p.Col] = CP;
+            }
+
             NewPoint();
         }
 
-        public override bool Action(ConsoleKey key)
+        public override void HandleInput(string key)
         {
             switch (key)
             {
-                case ConsoleKey.LeftArrow:
+                case "LeftArrow":
                     if (_h != 1)
                         SetMove(-1, 0);
                     break;
-                case ConsoleKey.RightArrow:
+                case "RightArrow":
                     if (_h != -1)
                         SetMove(1, 0);
                     break;
-                case ConsoleKey.UpArrow:
+                case "UpArrow":
                     if (_v != 1)
                         SetMove(0, -1);
                     break;
-                case ConsoleKey.DownArrow:
+                case "DownArrow":
                     if (_v != -1)
                         SetMove(0, 1);
                     break;
             }
-            return false;
         }
 
-        public override bool Step()
+        public override void NextFrame()
         {
             Position next = GetNext();
             if (_snake.Contains(next))
-                return false;
+            {
+                IsRunning = false;
+                return;
+            }
 
             _snake.AddFirst(next);
+            _main.Grid[next.Row, next.Col] = CP;
+            _main.HasChanges = true;
             if (_point.Equals(next))
             {
                 Score++;
                 NewPoint();
             }
             else
+            {
+                var last = _snake.Last.Value;
+                if (last.Equals(_point))
+                    _main.Grid[last.Row, last.Col] = CN;
+                else
+                    _main.Grid[last.Row, last.Col] = 0;
                 _snake.RemoveLast();
-            return true;
+            }
         }
 
         void NewPoint()
         {
-            _point = new Position(_random.Next(Height), _random.Next(Width));
+            _point = new Position(_random.Next(_height), _random.Next(_width));
+            _main.Grid[_point.Row, _point.Col] = CN;
+            _main.HasChanges = true;
         }
 
         void SetMove(int h, int v)
@@ -120,12 +124,12 @@ namespace iobloc
             int nextV = head.Row + _nextV;
             int nextH = head.Col + _nextH;
             if (nextV < 0)
-                nextV = Height - 1;
-            else if (nextV >= Height)
+                nextV = _height - 1;
+            else if (nextV >= _height)
                 nextV = 0;
             if (nextH < 0)
-                nextH = Width - 1;
-            else if (nextH >= Width)
+                nextH = _width - 1;
+            else if (nextH >= _width)
                 nextH = 0;
             _h = _nextH;
             _v = _nextV;

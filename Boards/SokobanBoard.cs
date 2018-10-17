@@ -4,23 +4,23 @@ namespace iobloc
 {
     class SokobanBoard : SinglePanelBoard
     {
-        int P => (int)_config.GetColor("PlayerColor");
-        int B => (int)_config.GetColor("BlockColor");
-        int W => (int)_config.GetColor("WallColor");
-        int T => (int)_config.GetColor("TargetColor");
-        int R => (int)_config.GetColor("TargetBlockColor");
-        int H => (int)_config.GetColor("TargetPlayerColor");
-        int BW => (int)_config.GetInt("BlockWidth");
-        int WS => (int)_config.GetInt("WinScore");
+        int P => (int)_settings.GetColor("PlayerColor");
+        int B => (int)_settings.GetColor("BlockColor");
+        int W => (int)_settings.GetColor("WallColor");
+        int T => (int)_settings.GetColor("TargetColor");
+        int R => (int)_settings.GetColor("TargetBlockColor");
+        int H => (int)_settings.GetColor("TargetPlayerColor");
+        int BW => (int)_settings.GetInt("BlockWidth");
+        int WS => (int)_settings.GetInt("WinScore");
         int L
         {
             get { return Config.Level; }
             set { Config.Level = value; }
         }
-        public override bool Won { get; set; }
-        public override int[,] Grid { get { return _grid; } }
 
-        readonly int[,] _grid;
+        public override bool Won => _won;
+
+        bool _won;
         int _startScore = 0;
         int _targets = 100;
         int _row;
@@ -28,7 +28,6 @@ namespace iobloc
 
         internal SokobanBoard() : base(Option.Sokoban)
         {
-            _grid = new int[Height, Width];
             if (L > SokobanLevels.Count)
                 L = SokobanLevels.Count - 1;
             InitializeLevel();
@@ -37,15 +36,15 @@ namespace iobloc
         void SetBlock(int row, int col, int val)
         {
             for (int i = col; i < col + BW; i++)
-                Grid[row, i] = val;
+                _main.Grid[row, i] = val;
         }
 
         void InitializeLevel()
         {
             var board = SokobanLevels.Get(L);
             _targets = 0;
-            for (int i = 0; i < Height && i < 6; i++)
-                for (int j = 0; j < Width && j / BW < 4; j += BW)
+            for (int i = 0; i < _height && i < 6; i++)
+                for (int j = 0; j < _width && j / BW < 4; j += BW)
                 {
                     int v = board[i, j / BW];
                     SetBlock(i, j, v);
@@ -57,15 +56,15 @@ namespace iobloc
                     else if (v == T)
                         _targets++;
                 }
+                _main.HasChanges = true;
         }
 
-        public override bool Action(ConsoleKey key)
+        public override void HandleInput(string key)
         {
-            if (key == ConsoleKey.R)
+            if (key == "R")
             {
                 InitializeLevel();
                 Score = _startScore;
-                return true;
             }
             else
             {
@@ -73,38 +72,38 @@ namespace iobloc
                 int v = 0;
                 switch (key)
                 {
-                    case ConsoleKey.LeftArrow: h = -BW; break;
-                    case ConsoleKey.RightArrow: h = BW; break;
-                    case ConsoleKey.UpArrow: v = -1; break;
-                    case ConsoleKey.DownArrow: v = 1; break;
+                    case "LeftArrow": h = -BW; break;
+                    case "RightArrow": h = BW; break;
+                    case "UpArrow": v = -1; break;
+                    case "DownArrow": v = 1; break;
                 }
-                if (_row + v < 0 || _row + v >= Height || _col + h < 0 || _col + h >= Width)
-                    return false;
-                int next = Grid[_row + v, _col + h];
+                if (_row + v < 0 || _row + v >= _height || _col + h < 0 || _col + h >= _width)
+                    return;
+                int next = _main.Grid[_row + v, _col + h];
                 if (next == W)
-                    return false;
+                    return;
                 if (next == 0 || next == T)
                 {
-                    SetBlock(_row, _col, Grid[_row, _col] == H ? T : 0);
+                    SetBlock(_row, _col, _main.Grid[_row, _col] == H ? T : 0);
                     _row += v;
                     _col += h;
-                    SetBlock(_row, _col, Grid[_row, _col] == T ? H : P);
+                    SetBlock(_row, _col, _main.Grid[_row, _col] == T ? H : P);
                     Score--;
-                    return true;
+                    return;
                 }
                 if (next == B || next == R)
                 {
-                    if (_row + 2 * v < 0 || _row + 2 * v >= Height || _col + 2 * h < 0 || _col + 2 * h >= Width)
-                        return false;
-                    int second = Grid[_row + 2 * v, _col + 2 * h];
+                    if (_row + 2 * v < 0 || _row + 2 * v >= _height || _col + 2 * h < 0 || _col + 2 * h >= _width)
+                        return;
+                    int second = _main.Grid[_row + 2 * v, _col + 2 * h];
                     if (second == W || second == B || second == R)
-                        return false;
+                        return;
                     if (second == 0 || second == T)
                     {
-                        SetBlock(_row, _col, Grid[_row, _col] == H ? T : 0);
+                        SetBlock(_row, _col, _main.Grid[_row, _col] == H ? T : 0);
                         _row += v;
                         _col += h;
-                        if (Grid[_row, _col] == R)
+                        if (_main.Grid[_row, _col] == R)
                         {
                             _targets++;
                             SetBlock(_row, _col, H);
@@ -112,43 +111,43 @@ namespace iobloc
                         else
                             SetBlock(_row, _col, P);
                         Score--;
-                        if (Grid[_row + v, _col + h] == T)
+                        if (_main.Grid[_row + v, _col + h] == T)
                         {
                             SetBlock(_row + v, _col + h, R);
                             _targets--;
                             if (_targets == 0)
                             {
                                 Score += WS;
-                                Won = true;
+                                _won = true;
                                 L++;
                             }
-                            return true;
+                            return;
                         }
                         else
                         {
                             SetBlock(_row + v, _col + h, B);
-                            return true;
+                            return;
                         }
                     }
                 }
 
-                return false;
+                return;
             }
         }
 
-        public override bool Step()
+        public override void NextFrame()
         {
             if (Won)
             {
                 if (L >= SokobanLevels.Count)
-                    return false;
-                Won = false;
+                {
+                    IsRunning = false;
+                    return;
+                }
+                _won = false;
                 InitializeLevel();
                 _startScore = Score;
-                return true;
             }
-            else
-                return true;
         }
     }
 }

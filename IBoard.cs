@@ -8,12 +8,11 @@ namespace iobloc
         Panel[] Panels { get; }
         Panel MainPanel { get; }
         string[] Help { get; }
-
+        int FrameInterval { get; }
         bool IsRunning { get; set; }
-        int FrameInterval { get; set; }
 
         void NextFrame();
-        bool IsValidInput(int key);
-        void HandleInput(int key);
+        bool IsValidInput(string key);
+        void HandleInput(string key);
     }
 }
