@@ -7,12 +7,11 @@
 * rudimentary logging
 ## v2.0 (in development)
 * 7th game: sokoban **done**
-* multi-panel box drawing with custom colored symbol **partial**
+* multi-panel box drawing with custom colored symbol **done**
 * editable settings **done**
 * level progression **partial**
-* persistent highscores
+* persistent highscores **done**
 * event animations
-* output agnostic: background color, window size, encoding **partial**
 ## v3.0 (planned)
 * 8th game: ???
 * AI opponent
@@ -20,4 +19,6 @@
 * persistent logging
 * metrics: fps, gameplay
 * settings validation
+## v4.0 (planned)
 * SDK
+* multi-platform

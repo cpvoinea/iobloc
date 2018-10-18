@@ -105,7 +105,7 @@ namespace iobloc
                 _main.Grid[i, _width - 1] = 0;
             CreateFence();
 
-            if (_main.Grid[1, _height - 1] == CE)
+            if (_main.Grid[_height - 1, 1] == CE)
             {
                 _score++;
                 if (_score > _highscore)

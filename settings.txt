@@ -13,8 +13,8 @@ Width 10
 Height 20
 
 2 Runner
-Help Jump:Up,Exit:ESC,Pause:ANY
-Keys UpArrow
+Help Jump:SPACE,Exit:ESC,Pause:ANY
+Keys Spacebar
 FrameMultiplier 1
 Width 20
 Height 10
@@ -23,8 +23,8 @@ EnemyColor Red
 JumpSpace 12
 
 3 Helicopter
-Help Lift:Up,Exit:ESC,Pause:ANY
-Keys UpArrow
+Help Lift:SPACE,Exit:ESC,Pause:ANY
+Keys Spacebar
 FrameMultiplier 2
 Width 20
 Height 10
@@ -82,3 +82,4 @@ BlockColor Blue
 TargetColor DarkYellow
 TargetPlayerColor DarkRed
 TargetBlockColor DarkBlue
+
