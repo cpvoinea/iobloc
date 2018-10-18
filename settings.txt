@@ -23,8 +23,8 @@ EnemyColor Red
 JumpSpace 12
 
 3 Helicopter
-Help Lift:SPACE,Exit:ESC,Pause:ANY
-Keys Spacebar
+Help Lift:Up,Exit:ESC,Pause:ANY
+Keys UpArrow
 FrameMultiplier 2
 Width 20
 Height 10
