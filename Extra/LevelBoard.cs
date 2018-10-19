@@ -4,7 +4,7 @@ namespace iobloc
 {
     class LevelBoard : SinglePanelBoard
     {
-        const int MAX = Config.LEVEL_MAX - 1;
+        int MAX => Config.LEVEL_MAX;
 
         internal LevelBoard() : base(Option.Level)
         {
@@ -13,7 +13,7 @@ namespace iobloc
 
         protected override void InitializeGrid()
         {
-            for (int i = 0; i <= MAX; i++)
+            for (int i = 0; i < MAX; i++)
                 _main.Grid[0, i] = 15 - i;
             ChangeGrid(true);
         }
@@ -34,7 +34,7 @@ namespace iobloc
             switch (key)
             {
                 case "RightArrow":
-                    if (Level < MAX)
+                    if (Level < MAX - 1)
                     {
                         ChangeGrid(false);
                         Level++;

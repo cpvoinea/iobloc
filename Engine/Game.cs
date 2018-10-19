@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Threading;
 
 namespace iobloc
@@ -43,8 +44,8 @@ namespace iobloc
 
             UI.BorderDraw(_board.Border);
             bool paused = false;
-            int ticks = 0;
             _board.IsRunning = true;
+            DateTime start = DateTime.Now;
             while (_board.IsRunning)
             {
                 Draw();
@@ -56,11 +57,11 @@ namespace iobloc
                 }
 
                 Thread.Sleep(1);
-                ticks++;
-                if (ticks >= _board.FrameInterval)
+                double ticks = DateTime.Now.Subtract(start).TotalMilliseconds;
+                if (ticks > _board.FrameInterval)
                 {
-                    ticks = 0;
                     _board.NextFrame();
+                    start = DateTime.Now;
                 }
             }
         }

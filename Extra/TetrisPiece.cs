@@ -9,6 +9,7 @@ namespace iobloc
         internal int[,] Mask { get; private set; }
         internal int X { get; private set; }
         internal int Y { get; private set; }
+        internal int Color { get{ return 15 - Type; } }
 
         internal TetrisPiece(int type, int orientation)
         {

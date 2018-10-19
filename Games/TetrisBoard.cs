@@ -22,7 +22,7 @@ namespace iobloc
                         int gx = _piece.X - 1 + i;
                         int gy = _piece.Y - 2 + j;
                         if (gx >= 0 && gx < _height && gy >= 0 && gy < _width)
-                            _main.Grid[gx, gy] = set ? (int)_piece.Type : 0;
+                            _main.Grid[gx, gy] = set ? (int)_piece.Color : 0;
                     }
             if (set)
                 _main.HasChanges = true;

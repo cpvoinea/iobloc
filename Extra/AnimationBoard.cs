@@ -12,7 +12,7 @@ namespace iobloc
         public Panel MainPanel => _main;
         public Panel[] Panels => _panels;
         public string[] Help => new[] { "WINNER!" };
-        public int FrameInterval => 50;
+        public int FrameInterval => 250;
         public int? Highscore => null;
         public int Score => 0;
         public int Level => Config.Level;

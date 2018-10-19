@@ -132,14 +132,14 @@ namespace iobloc
             {8, 0}
         };
 
+        internal static int LEVEL_MAX = _settings[0].GetInt("Width", 10);
         internal const int LEN_KEY = 1;
         internal const int LEN_NAME = 10;
         internal const int LEN_INFO = 3;
         internal const string INPUT_TEXT = "Option (ESC to exit)";
         internal const string INPUT_EXIT = "Escape";
         internal const char BLOCK = (char)BoxGraphics.BlockFull;
-        internal const int LEVEL_MAX = 12;
-        internal const int FRAME_INTERVAL = 5;
+        internal const int FRAME_INTERVAL = 25;
         const string FILE_SETTINGS = "settings.txt";
         const string FILE_HIGHSCORES = "highscores.txt";
         internal static int Level { get; set; }
@@ -172,7 +172,7 @@ namespace iobloc
 
         internal static int LevelInterval(int frameMultiplier, int level)
         {
-            return FRAME_INTERVAL * frameMultiplier * (15 - level);
+            return FRAME_INTERVAL * frameMultiplier * (LEVEL_MAX - level);
         }
 
         internal static Dictionary<string, string> Settings(Option option)

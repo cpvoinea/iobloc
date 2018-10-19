@@ -9,8 +9,8 @@ namespace iobloc
             var animation = All[code];
             int len = animation.Length;
             int[][,] result = new int[len][,];
-            int fromRow = (height - SIZE) / 2;
-            int fromCol = (height - SIZE) / 2;
+            int fromRow = height - SIZE;
+            int fromCol = (width - SIZE) / 2;
             for (int i = 0; i < len; i++)
             {
                 result[i] = new int[height, width];
