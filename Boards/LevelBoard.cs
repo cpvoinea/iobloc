@@ -9,24 +9,24 @@ namespace iobloc
         internal LevelBoard() : base(Option.Level)
         {
             InitializeGrid();
-            ChangeGrid(true);
         }
 
         protected override void InitializeGrid()
         {
             for (int i = 0; i <= MAX; i++)
-                _main.Grid[0, i] = MAX - i;
+                _main.Grid[0, i] = 15 - i;
+            ChangeGrid(true);
         }
 
         protected override void ChangeGrid(bool set)
         {
             if (set)
             {
-                _main.Grid[0, Level] = MAX;
+                _main.Grid[0, Level] = 15;
                 _main.HasChanges = true;
             }
             else
-                _main.Grid[0, Level] = MAX - Level;
+                _main.Grid[0, Level] = 15 - Level;
         }
 
         public override void HandleInput(string key)

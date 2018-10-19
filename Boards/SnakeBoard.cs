@@ -42,9 +42,8 @@ namespace iobloc
 
         internal SnakeBoard() : base(Option.Snake)
         {
-            InitializeGrid();
             NewPoint();
-            ChangeGrid(true);
+            InitializeGrid();
         }
 
         protected override void InitializeGrid()
@@ -56,6 +55,7 @@ namespace iobloc
                 var p = new Position(v, h + i);
                 _snake.AddFirst(p);
             }
+            ChangeGrid(true);
         }
 
         protected override void ChangeGrid(bool set)

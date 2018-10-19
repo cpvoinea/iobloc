@@ -43,6 +43,13 @@ namespace iobloc
 
         public override void NextFrame()
         {
+            if (Level >= Config.LEVEL_MAX)
+            {
+                Win = true;
+                IsRunning = false;
+                return;
+            }
+
             ChangeGrid(false);
             MoveDown();
             ChangeGrid(true);

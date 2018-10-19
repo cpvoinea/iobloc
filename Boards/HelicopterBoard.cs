@@ -40,6 +40,13 @@ namespace iobloc
 
         public override void NextFrame()
         {
+            if (Level >= Config.LEVEL_MAX)
+            {
+                Win = true;
+                IsRunning = false;
+                return;
+            }
+
             if (Win == false) return;
             Move();
             if (Win == false) return;

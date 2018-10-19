@@ -11,7 +11,8 @@ namespace iobloc
         int BS => _settings.GetInt("BlockSpace");
         int BR => _settings.GetInt("BlockRows");
         int B => BW + BS;
-
+        int WinScore => (_width / B + 1) * BR;
+        int _targets;
         int _paddle;
         int _ballCol;
         int _ballRow;
@@ -21,21 +22,23 @@ namespace iobloc
 
         internal BreakoutBoard() : base(Option.Breakout)
         {
-            _paddle = _width / 2 - 2;
-            _ballX = _ballCol = 2;
-            _ballY = _ballRow = BR + 2;
-            _angle = 7 * Math.PI / 4;
-
             InitializeGrid();
-            ChangeGrid(true);
         }
 
         protected override void InitializeGrid()
         {
+            _paddle = _width / 2 - 2;
+            _ballX = _ballCol = 2;
+            _ballY = _ballRow = BR + 2;
+            _angle = 7 * Math.PI / 4;
+            _targets = WinScore;
+
             for (int row = 0; row < BR; row++)
                 for (int col = 0; col < _width; col += B)
                     for (int i = 0; i < BW; i++)
                         _main.Grid[row, col + i] = CE;
+
+            ChangeGrid(true);
         }
 
         protected override void ChangeGrid(bool set)
@@ -72,10 +75,16 @@ namespace iobloc
 
         public override void NextFrame()
         {
-            if (Score == (_width / B + 1) * BR)
+            if (_targets == 0)
             {
-                Win = true;
-                IsRunning = false;
+                Level++;
+                if (Level >= Config.LEVEL_MAX)
+                {
+                    Win = true;
+                    IsRunning = false;
+                }
+                else
+                    InitializeGrid();
                 return;
             }
 
@@ -166,6 +175,7 @@ namespace iobloc
             for (int i = 0; i < BW; i++)
                 _main.Grid[row, x + i] = 0;
             Score++;
+            _targets--;
         }
     }
 }

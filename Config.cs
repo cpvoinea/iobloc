@@ -12,7 +12,8 @@ namespace iobloc
                     {"Help", "<Easy-ENTR-Hard>"},
                     {"Keys", "LeftArrow,RightArrow,Enter"},
                     {"FrameMultiplier", "5"},
-                    {"Width", "16"},
+                    {"LevelThreshold", "0"},
+                    {"Width", "12"},
                     {"Height", "1"},
                 }
             },
@@ -21,6 +22,7 @@ namespace iobloc
                     {"Help", ",,,,,,Left:LEFT,Rght:RIGHT,Rotate:UP,Speed:DOWN,Exit:ESC,Pause:ANY"},
                     {"Keys", "LeftArrow,RightArrow,UpArrow,DownArrow"},
                     {"FrameMultiplier", "4"},
+                    {"LevelThreshold", "10"},
                     {"Width", "10"},
                     {"Height", "20"},
                 }
@@ -30,6 +32,7 @@ namespace iobloc
                     {"Help", "Jump:UP,Dble-jump:UP,Exit:ESC,Pause:ANY"},
                     {"Keys", "UpArrow"},
                     {"FrameMultiplier", "1"},
+                    {"LevelThreshold", "10"},
                     {"Width", "13"},
                     {"Height", "5"},
                     {"PlayerColor", "Blue"},
@@ -42,6 +45,7 @@ namespace iobloc
                     {"Help", ",,Lift:UP,Exit:ESC,Pause:ANY"},
                     {"Keys", "UpArrow"},
                     {"FrameMultiplier", "2"},
+                    {"LevelThreshold", "20"},
                     {"Width", "13"},
                     {"Height", "7"},
                     {"PlayerPosition", "1"},
@@ -55,6 +59,7 @@ namespace iobloc
                     {"Help", ",,,,Move:LEFT-RIGHT,Exit:ESC,Pause:ANY" },
                     {"Keys", "LeftArrow,RightArrow"},
                     {"FrameMultiplier", "2"},
+                    {"LevelThreshold", "0"},
                     {"Width", "19"},
                     {"Height", "11"},
                     {"PlayerColor", "Blue"},
@@ -70,6 +75,7 @@ namespace iobloc
                     {"Help", ",,,Move:LEFT-RIGHT,Shoot:UP,Exit:ESC,Pause:ANY"},
                     {"Keys", "LeftArrow,RightArrow,UpArrow"},
                     {"FrameMultiplier", "1"},
+                    {"LevelThreshold", "0"},
                     {"Width", "19"},
                     {"Height", "11"},
                     {"PlayerColor", "Blue"},
@@ -87,6 +93,7 @@ namespace iobloc
                     {"Help", ",,,Move:ARROWS,Exit:ESC,Pause:ANY"},
                     {"Keys", "LeftArrow,RightArrow,UpArrow,DownArrow"},
                     {"FrameMultiplier", "2"},
+                    {"LevelThreshold", "5"},
                     {"Width", "10"},
                     {"Height", "10"},
                     {"PlayerColor", "Blue"},
@@ -98,6 +105,7 @@ namespace iobloc
                     {"Help", "Mov:,ARRW,R:Re,strt,Ext:,ESC"}, //"Restrt:R,Move:ARW,Exit:ESC,Paus:ANY"},
                     {"Keys", "LeftArrow,RightArrow,UpArrow,DownArrow,R"},
                     {"FrameMultiplier", "5"},
+                    {"LevelThreshold", "0"},
                     {"Width", "4"},
                     {"Height", "6"},
                     {"BlockWidth", "1"},
@@ -129,15 +137,11 @@ namespace iobloc
         internal const string INPUT_TEXT = "Option (ESC to exit)";
         internal const string INPUT_EXIT = "Escape";
         internal const char BLOCK = (char)BoxGraphics.BlockFull;
-        internal const int LEVEL_MAX = 16;
-
-        const int FRAME_INTERVAL = 5;
+        internal const int LEVEL_MAX = 12;
+        internal const int FRAME_INTERVAL = 5;
         const string FILE_SETTINGS = "settings.txt";
         const string FILE_HIGHSCORES = "highscores.txt";
-
         internal static int Level { get; set; }
-        internal static int LevelInterval { get { return FRAME_INTERVAL * (LEVEL_MAX - Level); } }
-
         static string _settingsFilePath;
         readonly static List<MenuItem> _menuItems = new List<MenuItem>();
 
@@ -163,6 +167,11 @@ namespace iobloc
             if (settings)
                 SaveSettings();
             SaveHighscores();
+        }
+
+        internal static int LevelInterval(int frameMultiplier, int level)
+        {
+            return FRAME_INTERVAL * frameMultiplier * (15 - level);
         }
 
         internal static Dictionary<string, string> Settings(Option option)

@@ -6,7 +6,19 @@ namespace iobloc
     class Game : IDisposable
     {
         IBoard _board;
-        internal int Score { get { return _board == null ? 0 : _board.Score; } }
+        internal string EndedMessage
+        {
+            get
+            {
+                if (_board == null)
+                    return string.Empty;
+                if (!_board.Win.HasValue)
+                    return "Quit";
+                if (!_board.Win.Value)
+                    return "Game Over";
+                return "WINNER";
+            }
+        }
 
         internal Game(Option option)
         {

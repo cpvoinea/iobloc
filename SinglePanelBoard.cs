@@ -14,7 +14,10 @@ namespace iobloc
         readonly Border _border;
         protected Panel _main;
         readonly Panel[] _panels;
+        int _frameMultiplier;
+        int _levelThreshold;
         int _score;
+        int _level;
 
         public Border Border { get { return _border; } }
         public Panel MainPanel { get { return _main; } }
@@ -33,9 +36,19 @@ namespace iobloc
                     Highscore = _score;
                     Config.UpdateHighscore(_option, _score);
                 }
+                if(_levelThreshold > 0 && _score >= _levelThreshold * (Level + 1))
+                    Level++;
             }
         }
-        public int Level { get; protected set; }
+        public int Level
+        {
+            get { return _level; }
+            protected set
+            {
+                _level = value;
+                FrameInterval = Config.LevelInterval(_frameMultiplier, _level);
+            }
+        }
         public bool? Win { get; protected set; }
         public bool IsRunning { get; set; }
 
@@ -43,6 +56,8 @@ namespace iobloc
         {
             _option = option;
             _settings = Config.Settings(option);
+            _frameMultiplier = _settings.GetInt("FrameMultiplier", 1);
+            _levelThreshold = _settings.GetInt("LevelThreshold", 0);
             _help = _settings.GetList("Help");
             _keys = _settings.GetList("Keys");
             _width = _settings.GetInt("Width", 10);
@@ -51,7 +66,6 @@ namespace iobloc
             _main = new Panel(1, 1, _height, _width);
             _panels = new[] { _main };
 
-            FrameInterval = _settings.GetInt("FrameMultiplier", 1) * Config.LevelInterval;
             Highscore = Config.GetHighscore(option);
             Level = Config.Level;
         }

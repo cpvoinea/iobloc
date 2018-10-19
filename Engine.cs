@@ -7,7 +7,6 @@ namespace iobloc
     {
         readonly StringBuilder _log = new StringBuilder();
         readonly Menu _menu;
-        Game _currentGame;
         bool _saveSettings;
 
         internal Engine(string settingsFilePath)
@@ -45,13 +44,16 @@ namespace iobloc
             if (option == Option.Log)
                 ShowLog();
             else
+            {
+                Game game = null;
                 try
                 {
                     _log.AppendLine($"Start {option}");
                     UI.Clear();
 
-                    _currentGame = new Game(option);
-                    _currentGame.Start();
+                    game = new Game(option);
+                    game.Start();
+                    _log.AppendLine($"{game.EndedMessage} {option}");
                 }
                 catch (Exception ex)
                 {
@@ -59,8 +61,10 @@ namespace iobloc
                 }
                 finally
                 {
-                    _log.AppendLine($"Quit {option}");
+                    if (game != null)
+                        game.Dispose();
                 }
+            }
 
             ShowMenu();
         }
@@ -69,13 +73,6 @@ namespace iobloc
         {
             Config.Save(_saveSettings);
             UI.Close();
-
-            if (_currentGame != null)
-            {
-                _currentGame.Dispose();
-                _currentGame = null;
-            }
-
             _log.Clear();
         }
     }

@@ -13,7 +13,8 @@ namespace iobloc
         int AC => _settings.GetInt("AlienCols");
         int BS => _settings.GetInt("BulletSpeed");
         int A => AW + AS;
-
+        int WinScore => AR * AC;
+        int _targets;
         int _ship;
         int _bulletCol;
         int _bulletRow;
@@ -23,21 +24,23 @@ namespace iobloc
 
         internal InvadersBoard() : base(Option.Invaders)
         {
-            _skipFrame = BS;
-            _ship = _width / 2 - 1;
-            _bulletCol = _width / 2 - 1;
-            _bulletRow = _height - 2;
-
             InitializeGrid();
-            ChangeGrid(true);
         }
 
         protected override void InitializeGrid()
         {
+            _skipFrame = BS;
+            _ship = _width / 2 - 1;
+            _bulletCol = _width / 2 - 1;
+            _bulletRow = _height - 2;
+            _targets = WinScore;
+
             for (int row = 0; row < AR; row++)
                 for (int col = 0; col < _width && col < AC * A; col += A)
                     for (int i = 0; col + i < _width && i < AW; i++)
                         _main.Grid[row, col + i] = CE;
+
+            ChangeGrid(true);
         }
 
         protected override void ChangeGrid(bool set)
@@ -81,10 +84,16 @@ namespace iobloc
 
         public override void NextFrame()
         {
-            if (Score == AR * AC)
+            if (_targets == 0)
             {
-                Win = true;
-                IsRunning = false;
+                Level++;
+                if (Level >= Config.LEVEL_MAX)
+                {
+                    Win = true;
+                    IsRunning = false;
+                }
+                else
+                    InitializeGrid();
                 return;
             }
 
@@ -145,6 +154,7 @@ namespace iobloc
                             _main.Grid[_bulletRow, c] = 0;
 
                         Score++;
+                        _targets--;
 
                         _shot = false;
                         _bulletRow = _height - 2;
