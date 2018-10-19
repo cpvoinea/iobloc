@@ -18,7 +18,7 @@ namespace iobloc
             },
             {1, // Tetris
                 new Dictionary<string, string>{
-                    {"Help", "Play:ARROW,Exit:ESC,Pause:ANY"},
+                    {"Help", ",,,,,,Left:LEFT,Rght:RIGHT,Rotate:UP,Speed:DOWN,Exit:ESC,Pause:ANY"},
                     {"Keys", "LeftArrow,RightArrow,UpArrow,DownArrow"},
                     {"FrameMultiplier", "4"},
                     {"Width", "10"},
@@ -27,79 +27,81 @@ namespace iobloc
             },
             {2, // Runner
                 new Dictionary<string, string>{
-                    {"Help", "Jump:SPACE,Exit:ESC,Pause:ANY"},
-                    {"Keys", "Spacebar"},
+                    {"Help", "Jump:UP,Dble-jump:UP,Exit:ESC,Pause:ANY"},
+                    {"Keys", "UpArrow"},
                     {"FrameMultiplier", "1"},
-                    {"Width", "20"},
-                    {"Height", "10"},
+                    {"Width", "13"},
+                    {"Height", "5"},
                     {"PlayerColor", "Blue"},
                     {"EnemyColor", "Red"},
-                    {"JumpSpace", "12"},
+                    {"FenceSpace", "7"},
                 }
             },
             {3, // Helicopter
                 new Dictionary<string, string>{
-                    {"Help", "Lift:SPACE,Exit:ESC,Pause:ANY"},
-                    {"Keys", "Spacebar"},
+                    {"Help", ",,Lift:UP,Exit:ESC,Pause:ANY"},
+                    {"Keys", "UpArrow"},
                     {"FrameMultiplier", "2"},
-                    {"Width", "20"},
-                    {"Height", "10"},
+                    {"Width", "13"},
+                    {"Height", "7"},
+                    {"PlayerPosition", "1"},
+                    {"ObstacleSpace", "4"},
                     {"PlayerColor", "Blue"},
                     {"EnemyColor", "Red"},
                 }
             },
             {4, // Breakout
                 new Dictionary<string, string>{
-                    {"Help", "Move:ARROWS,Exit:ESC,Pause:ANY" },
+                    {"Help", ",,,,Move:LEFT-RIGHT,Exit:ESC,Pause:ANY" },
                     {"Keys", "LeftArrow,RightArrow"},
                     {"FrameMultiplier", "2"},
-                    {"Width", "31"},
-                    {"Height", "20"},
+                    {"Width", "19"},
+                    {"Height", "11"},
                     {"PlayerColor", "Blue"},
                     {"EnemyColor", "Red"},
                     {"NeutralColor", "Gray"},
                     {"BlockWidth", "3"},
                     {"BlockSpace", "1"},
-                    {"BlockRows", "5"},
+                    {"BlockRows", "3"},
                 }
             },
             {5, // Invaders
                 new Dictionary<string, string>{
-                    {"Help", "Move:ARROWS,Shoot:SPACE,Exit:ESC,Pause:ANY"},
-                    {"Keys", "LeftArrow,RightArrow,Spacebar"},
+                    {"Help", ",,,Move:LEFT-RIGHT,Shoot:UP,Exit:ESC,Pause:ANY"},
+                    {"Keys", "LeftArrow,RightArrow,UpArrow"},
                     {"FrameMultiplier", "1"},
-                    {"Width", "31"},
-                    {"Height", "20"},
+                    {"Width", "19"},
+                    {"Height", "11"},
                     {"PlayerColor", "Blue"},
                     {"EnemyColor", "Red"},
                     {"NeutralColor", "Gray"},
                     {"AlienWidth", "3"},
                     {"AlienSpace", "1"},
                     {"AlienRows", "3"},
-                    {"AlienCols", "5"},
+                    {"AlienCols", "3"},
                     {"BulletSpeed", "2"},
                 }
             },
             {6, // Snake
                 new Dictionary<string, string>{
-                    {"Help", "Move:ARROWS,Exit:ESC,Pause:ANY"},
+                    {"Help", ",,,Move:ARROWS,Exit:ESC,Pause:ANY"},
                     {"Keys", "LeftArrow,RightArrow,UpArrow,DownArrow"},
                     {"FrameMultiplier", "2"},
-                    {"Width", "20"},
-                    {"Height", "20"},
+                    {"Width", "10"},
+                    {"Height", "10"},
                     {"PlayerColor", "Blue"},
                     {"NeutralColor", "Gray"},
                 }
             },
             {7, // Sokoban
                 new Dictionary<string, string>{
-                    {"Help", "R:Re,strt"}, //"Restrt:R,Move:ARW,Exit:ESC,Paus:ANY"},
+                    {"Help", "Mov:,ARRW,R:Re,strt,Ext:,ESC"}, //"Restrt:R,Move:ARW,Exit:ESC,Paus:ANY"},
                     {"Keys", "LeftArrow,RightArrow,UpArrow,DownArrow,R"},
                     {"FrameMultiplier", "5"},
                     {"Width", "4"},
                     {"Height", "6"},
                     {"BlockWidth", "1"},
-                    {"WinScore", "100"},
+                    {"WinScore", "50"},
                     {"WallColor", "DarkGray"},
                     {"PlayerColor", "Red"},
                     {"BlockColor", "Blue"},
@@ -118,6 +120,7 @@ namespace iobloc
             {5, 0},
             {6, 0},
             {7, 0},
+            {8, 0}
         };
 
         internal const int LEN_KEY = 1;
@@ -153,16 +156,17 @@ namespace iobloc
             }
         }
 
-        internal static void Load(string settingsFilePath)
+        internal static void Load(string settingsFilePath = null)
         {
             _settingsFilePath = settingsFilePath ?? FILE_SETTINGS;
             LoadSettings();
             LoadHighscores();
         }
 
-        internal static void Save()
+        internal static void Save(bool settings)
         {
-            SaveSettings();
+            if (settings)
+                SaveSettings();
             SaveHighscores();
         }
 
@@ -177,7 +181,7 @@ namespace iobloc
         internal static int? GetHighscore(Option option)
         {
             int key = (int)option;
-            if(_highscores.ContainsKey(key))
+            if (_highscores.ContainsKey(key))
                 return _highscores[key];
             return null;
         }

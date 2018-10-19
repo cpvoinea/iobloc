@@ -26,17 +26,29 @@ namespace iobloc
         internal InvadersBoard() : base(Option.Invaders)
         {
             _skipFrame = BS;
-            for (int row = 0; row < AR; row++)
-                for (int col = 0; col < _width && col < AC * A; col += A)
-                    for (int i = 0; col + i < _width && i < AW; i++)
-                        _main.Grid[row, col + i] = CE;
             _ship = _width / 2 - 1;
             _bulletCol = _width / 2 - 1;
             _bulletRow = _height - 2;
 
+            InitializeGrid();
+            ChangeGrid(true);
+        }
+
+        protected override void InitializeGrid()
+        {
+            for (int row = 0; row < AR; row++)
+                for (int col = 0; col < _width && col < AC * A; col += A)
+                    for (int i = 0; col + i < _width && i < AW; i++)
+                        _main.Grid[row, col + i] = CE;
+        }
+
+        protected override void ChangeGrid(bool set)
+        {
             for (int i = -1; i <= 1; i++)
-                _main.Grid[_height - 1, _ship + i] = CP;
-            _main.Grid[_bulletRow, _bulletCol] = CN;
+                _main.Grid[_height - 1, _ship + i] = set ? CP : 0;
+            _main.Grid[_bulletRow, _bulletCol] = set ? CN : 0;
+            if (set)
+                _main.HasChanges = true;
         }
 
         public override void HandleInput(string key)
@@ -46,34 +58,24 @@ namespace iobloc
                 case "LeftArrow":
                     if (_ship > 1)
                     {
-                        _main.Grid[_height - 1, _ship + 1] = 0;
+                        ChangeGrid(false);
                         _ship--;
-                        _main.Grid[_height - 1, _ship - 1] = CP;
                         if (!_shot)
-                        {
-                            _main.Grid[_bulletRow, _bulletCol] = 0;
                             _bulletCol--;
-                            _main.Grid[_bulletRow, _bulletCol] = CN;
-                        }
-                        _main.HasChanges = true;
+                        ChangeGrid(true);
                     }
                     break;
                 case "RightArrow":
                     if (_ship < _width - 2)
                     {
-                        _main.Grid[_height - 1, _ship - 1] = 0;
+                        ChangeGrid(false);
                         _ship++;
-                        _main.Grid[_height - 1, _ship + 1] = CP;
                         if (!_shot)
-                        {
-                            _main.Grid[_bulletRow, _bulletCol] = 0;
                             _bulletCol++;
-                            _main.Grid[_bulletRow, _bulletCol] = CN;
-                        }
-                        _main.HasChanges = true;
+                        ChangeGrid(true);
                     }
                     break;
-                case "Spacebar":
+                case "UpArrow":
                     _shot = true;
                     break;
             }
@@ -87,7 +89,6 @@ namespace iobloc
                 return;
             }
 
-            // lost
             for (int i = 0; i < _width; i++)
                 if (_main.Grid[_height - 1, i] == CE)
                 {
@@ -95,13 +96,13 @@ namespace iobloc
                     return;
                 }
 
+            ChangeGrid(false);
             if (_skipFrame <= 0)
             {
                 _skipFrame = BS;
-                // animate invaders
                 for (int i = 0; i < _height; i++)
                     if (_movingRight && _main.Grid[i, _width - 1] > 0 ||
-                     !_movingRight && _main.Grid[i, 0] > 0) // switch sides
+                     !_movingRight && _main.Grid[i, 0] > 0)
                     {
                         for (int k = _height - 1; k >= 0; k--)
                             for (int j = 0; j < _width; j++)
@@ -123,29 +124,28 @@ namespace iobloc
             _skipFrame--;
             if (_shot)
             {
-                // animate bullet
                 if (_bulletRow <= 0)
                 {
-                    _main.Grid[_bulletRow, _bulletCol] = 0;
                     _shot = false;
                     _bulletRow = _height - 2;
                     _bulletCol = _ship;
-                    _main.Grid[_bulletRow, _bulletCol] = CN;
                 }
                 else
                 {
                     _bulletRow--;
-                    // hit
-                    if (_main.Grid[_bulletRow, _bulletCol] > 0)
+                    if (_main.Grid[_bulletRow, _bulletCol] == CE)
                     {
                         int c = _bulletCol;
                         do
-                            _main.Grid[_bulletRow, _bulletCol++] = 0;
-                        while (_bulletCol < _width && _main.Grid[_bulletRow, _bulletCol] > 0);
-                        while (c > 0 && _main.Grid[_bulletRow, --c] > 0)
+                            _main.Grid[_bulletRow, c++] = 0;
+                        while (c < _width && _main.Grid[_bulletRow, c] == CE);
+
+                        c = _bulletCol;
+                        while (c > 0 && _main.Grid[_bulletRow, --c] == CE)
                             _main.Grid[_bulletRow, c] = 0;
 
                         Score++;
+
                         _shot = false;
                         _bulletRow = _height - 2;
                         _bulletCol = _ship;
@@ -154,7 +154,7 @@ namespace iobloc
                 }
             }
 
-            _main.HasChanges = true;
+            ChangeGrid(true);
         }
     }
 }

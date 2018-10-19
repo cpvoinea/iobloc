@@ -6,7 +6,7 @@ namespace iobloc
     {
         int CP => _settings.GetColor("PlayerColor");
         int CE => _settings.GetColor("EnemyColor");
-        int JS => _settings.GetInt("JumpSpace");
+        int FS => _settings.GetInt("FenceSpace");
 
         public override int Score => _highscore;
 
@@ -140,9 +140,9 @@ namespace iobloc
         {
             bool hasSpace = true;
             int y = _width - 4;
-            while (hasSpace && y >= 0 && y >= _width - JS)
+            while (hasSpace && y >= 0 && y >= _width - FS)
                 hasSpace &= _main.Grid[_height - 1, y--] == 0;
-            if (!hasSpace) // no room for new fence
+            if (!hasSpace)
                 return;
             int fence = _random.Next(3);
             for (int i = 0; i < 3; i++)

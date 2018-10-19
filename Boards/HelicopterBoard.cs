@@ -6,6 +6,8 @@ namespace iobloc
     {
         int CP => _settings.GetColor("PlayerColor");
         int CE => _settings.GetColor("EnemyColor");
+        int PP => _settings.GetInt("PlayerPosition");
+        int OS => _settings.GetInt("ObstacleSpace");
 
         public override int Score => _highscore;
 
@@ -25,11 +27,9 @@ namespace iobloc
         protected override void ChangeGrid(bool set)
         {
             if (_distance >= 0 && _distance < _height)
-            {
-                _main.Grid[_distance, 5] = _main.Grid[_distance, 6] = set ? CP : 0;
-                if (set)
-                    _main.HasChanges = true;
-            }
+                _main.Grid[_distance, PP] = _main.Grid[_distance, PP + 1] = set ? CP : 0;
+            if (set)
+                _main.HasChanges = true;
         }
 
         public override void HandleInput(string key)
@@ -81,12 +81,15 @@ namespace iobloc
         {
             ChangeGrid(false);
             Advance();
-            bool collides = _main.Grid[_distance, 5] > 0 || _main.Grid[_distance, 6] > 0;
+            bool collides = _main.Grid[_distance, PP] > 0 || _main.Grid[_distance, PP + 1] > 0;
             ChangeGrid(true);
 
-            _score++;
-            if (_score > _highscore)
-                _highscore = _score;
+            if (_skipAdvance)
+            {
+                _score++;
+                if (_score > _highscore)
+                    _highscore = _score;
+            }
             return collides;
         }
 
@@ -111,7 +114,7 @@ namespace iobloc
         bool CheckDead()
         {
             _dead = _distance < 0 || _distance >= _height ||
-                _main.Grid[_distance, 5] == CE || _main.Grid[_distance, 6] == CE;
+                _main.Grid[_distance, PP] == CE || _main.Grid[_distance, PP + 1] == CE;
             if (_dead)
                 Clear(CE);
 
@@ -128,20 +131,27 @@ namespace iobloc
 
         void CreateObstacles()
         {
+            bool hasSpace = true;
+            int y = _width - 2;
+            while (hasSpace && y >= 0 && y >= _width - OS)
+                hasSpace &= (_main.Grid[_height - 1, y] == 0 && _main.Grid[0, y--] == 0);
+            if (!hasSpace)
+                return;
+
             int p = _random.Next(4);
             if (p == 0)
                 return;
-            int up = 0;
+            int fence = 0;
             if ((p & 1) > 0)
             {
-                up = _random.Next(4);
-                for (int i = 0; i < up; i++)
+                fence = _random.Next(_height - 3);
+                for (int i = _height - 1; i > _height - 1 - fence; i--)
                     _main.Grid[i, _width - 1] = CE;
             }
             if ((p & 2) > 0)
             {
-                int c = _random.Next(_height - 4 - up);
-                for (int i = _height - 1; i > _height - 1 - c; i--)
+                int ceil = _random.Next(_height - 3 - fence);
+                for (int i = 0; i < ceil; i++)
                     _main.Grid[i, _width - 1] = CE;
             }
         }

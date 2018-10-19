@@ -42,16 +42,29 @@ namespace iobloc
 
         internal SnakeBoard() : base(Option.Snake)
         {
+            InitializeGrid();
+            NewPoint();
+            ChangeGrid(true);
+        }
+
+        protected override void InitializeGrid()
+        {
             int v = _height / 2;
             int h = _width / 2;
             for (int i = 0; i < 3; i++)
             {
-                var p = new Position(v, h);
+                var p = new Position(v, h + i);
                 _snake.AddFirst(p);
-                _main.Grid[p.Row, p.Col] = CP;
             }
+        }
 
-            NewPoint();
+        protected override void ChangeGrid(bool set)
+        {
+            foreach (var p in _snake)
+                _main.Grid[p.Row, p.Col] = set ? CP : 0;
+            _main.Grid[_point.Row, _point.Col] = set ? CN : 0;
+            if (set)
+                _main.HasChanges = true;
         }
 
         public override void HandleInput(string key)
@@ -79,6 +92,7 @@ namespace iobloc
 
         public override void NextFrame()
         {
+            ChangeGrid(false);
             Position next = GetNext();
             if (_snake.Contains(next))
             {
@@ -87,29 +101,19 @@ namespace iobloc
             }
 
             _snake.AddFirst(next);
-            _main.Grid[next.Row, next.Col] = CP;
-            _main.HasChanges = true;
             if (_point.Equals(next))
             {
                 Score++;
                 NewPoint();
             }
             else
-            {
-                var last = _snake.Last.Value;
-                if (last.Equals(_point))
-                    _main.Grid[last.Row, last.Col] = CN;
-                else
-                    _main.Grid[last.Row, last.Col] = 0;
                 _snake.RemoveLast();
-            }
+            ChangeGrid(true);
         }
 
         void NewPoint()
         {
             _point = new Position(_random.Next(_height), _random.Next(_width));
-            _main.Grid[_point.Row, _point.Col] = CN;
-            _main.HasChanges = true;
         }
 
         void SetMove(int h, int v)

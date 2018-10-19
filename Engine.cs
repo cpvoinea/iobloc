@@ -8,10 +8,17 @@ namespace iobloc
         readonly StringBuilder _log = new StringBuilder();
         readonly Menu _menu;
         Game _currentGame;
+        bool _saveSettings;
 
         internal Engine(string settingsFilePath)
         {
-            Config.Load(settingsFilePath);
+            if (!string.IsNullOrEmpty(settingsFilePath))
+            {
+                Config.Load(settingsFilePath);
+                _saveSettings = true;
+            }
+            else
+                Config.Load();
             _menu = new Menu(Config.MenuItems);
             UI.Open();
         }
@@ -63,7 +70,7 @@ namespace iobloc
 
         public void Dispose()
         {
-            Config.Save();
+            Config.Save(_saveSettings);
             UI.Close();
 
             if (_currentGame != null)

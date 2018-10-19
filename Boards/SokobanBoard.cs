@@ -33,32 +33,6 @@ namespace iobloc
             InitializeLevel();
         }
 
-        void SetBlock(int row, int col, int val)
-        {
-            for (int i = col; i < col + BW; i++)
-                _main.Grid[row, i] = val;
-        }
-
-        void InitializeLevel()
-        {
-            var board = SokobanLevels.Get(L);
-            _targets = 0;
-            for (int i = 0; i < _height && i < 6; i++)
-                for (int j = 0; j < _width && j / BW < 4; j += BW)
-                {
-                    int v = board[i, j / BW];
-                    SetBlock(i, j, v);
-                    if (v == P)
-                    {
-                        _row = i;
-                        _col = j;
-                    }
-                    else if (v == T)
-                        _targets++;
-                }
-                _main.HasChanges = true;
-        }
-
         public override void HandleInput(string key)
         {
             if (key == "R")
@@ -77,11 +51,14 @@ namespace iobloc
                     case "UpArrow": v = -1; break;
                     case "DownArrow": v = 1; break;
                 }
+
                 if (_row + v < 0 || _row + v >= _height || _col + h < 0 || _col + h >= _width)
                     return;
                 int next = _main.Grid[_row + v, _col + h];
                 if (next == W)
                     return;
+                _main.HasChanges = true;
+
                 if (next == 0 || next == T)
                 {
                     SetBlock(_row, _col, _main.Grid[_row, _col] == H ? T : 0);
@@ -130,8 +107,6 @@ namespace iobloc
                         }
                     }
                 }
-
-                return;
             }
         }
 
@@ -148,6 +123,32 @@ namespace iobloc
                 InitializeLevel();
                 _startScore = Score;
             }
+        }
+
+        void InitializeLevel()
+        {
+            var board = SokobanLevels.Get(L);
+            _targets = 0;
+            for (int i = 0; i < _height && i < 6; i++)
+                for (int j = 0; j < _width && j / BW < 4; j += BW)
+                {
+                    int v = board[i, j / BW];
+                    SetBlock(i, j, v);
+                    if (v == P)
+                    {
+                        _row = i;
+                        _col = j;
+                    }
+                    else if (v == T)
+                        _targets++;
+                }
+            _main.HasChanges = true;
+        }
+
+        void SetBlock(int row, int col, int val)
+        {
+            for (int i = col; i < col + BW; i++)
+                _main.Grid[row, i] = val;
         }
     }
 }

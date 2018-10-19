@@ -72,7 +72,7 @@ namespace iobloc
                     pnl.HasChanges = false;
                 }
             }
-            UI.TextAt(string.Format($"{_board.Score,Config.LEN_INFO}"), 0, _board.Border.Width / 2 - 2);
+            UI.TextAt(string.Format($"{_board.Score,Config.LEN_INFO}"), 0, _board.Border.Width - 1 - Config.LEN_INFO);
         }
 
         bool HandleInput(bool paused)
