@@ -5,12 +5,9 @@ namespace iobloc
     class LevelBoard : SinglePanelBoard
     {
         const int MAX = Config.LEVEL_MAX - 1;
-        public override int Score { get { return _level; } }
-        int _level;
 
         internal LevelBoard() : base(Option.Level)
         {
-            _level = Config.Level;
             InitializeGrid();
             ChangeGrid(true);
         }
@@ -25,11 +22,11 @@ namespace iobloc
         {
             if (set)
             {
-                _main.Grid[0, _level] = MAX;
+                _main.Grid[0, Level] = MAX;
                 _main.HasChanges = true;
             }
             else
-                _main.Grid[0, _level] = MAX - _level;
+                _main.Grid[0, Level] = MAX - Level;
         }
 
         public override void HandleInput(string key)
@@ -37,23 +34,23 @@ namespace iobloc
             switch (key)
             {
                 case "RightArrow":
-                    if (_level < MAX)
+                    if (Level < MAX)
                     {
                         ChangeGrid(false);
-                        _level++;
+                        Level++;
                         ChangeGrid(true);
                     }
                     break;
                 case "LeftArrow":
-                    if (_level > 0)
+                    if (Level > 0)
                     {
                         ChangeGrid(false);
-                        _level--;
+                        Level--;
                         ChangeGrid(true);
                     }
                     break;
                 case "Enter":
-                    Config.Level = _level;
+                    Config.Level = Level;
                     IsRunning = false;
                     break;
             }

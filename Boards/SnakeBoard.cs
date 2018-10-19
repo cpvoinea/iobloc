@@ -96,6 +96,7 @@ namespace iobloc
             Position next = GetNext();
             if (_snake.Contains(next))
             {
+                Win = false;
                 IsRunning = false;
                 return;
             }

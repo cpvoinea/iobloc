@@ -136,7 +136,6 @@ namespace iobloc
         const string FILE_HIGHSCORES = "highscores.txt";
 
         internal static int Level { get; set; }
-        internal static int? Highscore { get; set; }
         internal static int LevelInterval { get { return FRAME_INTERVAL * (LEVEL_MAX - Level); } }
 
         static string _settingsFilePath;

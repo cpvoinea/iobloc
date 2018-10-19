@@ -100,6 +100,7 @@ namespace iobloc
             {
                 if (!CanSet(_piece, false))
                 {
+                    Win = false;
                     IsRunning = false;
                     return;
                 }
@@ -109,6 +110,7 @@ namespace iobloc
                 _piece = NewPiece();
                 if (!CanSet(_piece))
                 {
+                    Win = false;
                     IsRunning = false;
                     return;
                 }

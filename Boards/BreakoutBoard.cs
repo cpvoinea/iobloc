@@ -19,8 +19,6 @@ namespace iobloc
         double _ballY;
         double _angle;
 
-        public override bool Won => Score == (_width / B + 1) * BR;
-
         internal BreakoutBoard() : base(Option.Breakout)
         {
             _paddle = _width / 2 - 2;
@@ -74,8 +72,9 @@ namespace iobloc
 
         public override void NextFrame()
         {
-            if (Won)
+            if (Score == (_width / B + 1) * BR)
             {
+                Win = true;
                 IsRunning = false;
                 return;
             }
@@ -88,6 +87,7 @@ namespace iobloc
             _angle = NextAngle(out lost);
             if (lost)
             {
+                Win = false;
                 IsRunning = false;
                 return;
             }

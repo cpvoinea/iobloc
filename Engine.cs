@@ -48,13 +48,10 @@ namespace iobloc
                 try
                 {
                     _log.AppendLine($"Start {option}");
-                    Config.Highscore = Config.GetHighscore(option);
                     UI.Clear();
 
                     _currentGame = new Game(option);
                     _currentGame.Start();
-
-                    Config.UpdateHighscore(option, _currentGame.Score);
                 }
                 catch (Exception ex)
                 {

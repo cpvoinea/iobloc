@@ -9,15 +9,10 @@ namespace iobloc
         int PP => _settings.GetInt("PlayerPosition");
         int OS => _settings.GetInt("ObstacleSpace");
 
-        public override int Score => _highscore;
-
         readonly Random _random = new Random();
         int _speed;
         int _distance;
-        int _score;
-        int _highscore;
         bool _skipAdvance;
-        bool _dead;
 
         internal HelicopterBoard() : base(Option.Helicopter)
         {
@@ -34,9 +29,9 @@ namespace iobloc
 
         public override void HandleInput(string key)
         {
-            if (_dead)
+            if (Win == false)
             {
-                _dead = false;
+                Win = null;
                 Restart();
             }
             else
@@ -45,9 +40,9 @@ namespace iobloc
 
         public override void NextFrame()
         {
-            if (_dead) return;
+            if (Win == false) return;
             Move();
-            if (_dead) return;
+            if (Win == false) return;
 
             _skipAdvance = !_skipAdvance;
             if (!_skipAdvance)
@@ -77,22 +72,6 @@ namespace iobloc
             }
         }
 
-        bool AdvanceCollides()
-        {
-            ChangeGrid(false);
-            Advance();
-            bool collides = _main.Grid[_distance, PP] > 0 || _main.Grid[_distance, PP + 1] > 0;
-            ChangeGrid(true);
-
-            if (_skipAdvance)
-            {
-                _score++;
-                if (_score > _highscore)
-                    _highscore = _score;
-            }
-            return collides;
-        }
-
         void Advance()
         {
             ChangeGrid(false);
@@ -103,29 +82,30 @@ namespace iobloc
             for (int i = 0; i < _height; i++)
                 _main.Grid[i, _width - 1] = 0;
             CreateObstacles();
+            Score++;
 
-            _score++;
-            if (_score > _highscore)
-                _highscore = _score;
             if (!CheckDead())
                 ChangeGrid(true);
         }
 
         bool CheckDead()
         {
-            _dead = _distance < 0 || _distance >= _height ||
-                _main.Grid[_distance, PP] == CE || _main.Grid[_distance, PP + 1] == CE;
-            if (_dead)
+            if (_distance < 0 || _distance >= _height ||
+                _main.Grid[_distance, PP] == CE || _main.Grid[_distance, PP + 1] == CE)
+            {
+                Win = false;
                 Clear(CE);
+                return true;
+            }
 
-            return _dead;
+            return false;
         }
 
         void Restart()
         {
             _distance = 0;
-            _score = 0;
             _speed = 0;
+            Score = 0;
             Clear(0);
         }
 

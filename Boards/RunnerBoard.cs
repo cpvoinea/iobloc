@@ -8,14 +8,9 @@ namespace iobloc
         int CE => _settings.GetColor("EnemyColor");
         int FS => _settings.GetInt("FenceSpace");
 
-        public override int Score => _highscore;
-
         readonly Random _random = new Random();
         int _distance;
-        int _score;
-        int _highscore;
         bool _skipAdvance;
-        bool _dead;
         int _hang;
         bool _upwards;
         bool _doubleJump;
@@ -35,9 +30,9 @@ namespace iobloc
 
         public override void HandleInput(string key)
         {
-            if (_dead)
+            if (Win == false)
             {
-                _dead = false;
+                Win = null;
                 Restart();
             }
             else
@@ -54,9 +49,9 @@ namespace iobloc
 
         public override void NextFrame()
         {
-            if (_dead) return;
+            if (Win == false) return;
             Move();
-            if (_dead) return;
+            if (Win == false) return;
 
             _skipAdvance = !_skipAdvance;
             if (_skipAdvance)
@@ -106,11 +101,7 @@ namespace iobloc
             CreateFence();
 
             if (_main.Grid[_height - 1, 1] == CE)
-            {
-                _score++;
-                if (_score > _highscore)
-                    _highscore = _score;
-            }
+                Score++;
 
             if (!CheckDead())
                 ChangeGrid(true);
@@ -119,20 +110,23 @@ namespace iobloc
         bool CheckDead()
         {
             int h = _height - 1 - _distance;
-            _dead = _main.Grid[h, 1] == CE || _main.Grid[h - 1, 1] == CE;
-            if (_dead)
+            if (_main.Grid[h, 1] == CE || _main.Grid[h - 1, 1] == CE)
+            {
+                Win = false;
                 Clear(CE);
+                return true;
+            }
 
-            return _dead;
+            return false;
         }
 
         void Restart()
         {
             _distance = 0;
-            _score = 0;
             _hang = 0;
             _upwards = false;
             _doubleJump = false;
+            Score = 0;
             Clear(0);
         }
 

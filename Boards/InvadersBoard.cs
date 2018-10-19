@@ -14,8 +14,6 @@ namespace iobloc
         int BS => _settings.GetInt("BulletSpeed");
         int A => AW + AS;
 
-        public override bool Won => Score == AR * AC;
-
         int _ship;
         int _bulletCol;
         int _bulletRow;
@@ -83,8 +81,9 @@ namespace iobloc
 
         public override void NextFrame()
         {
-            if (Won)
+            if (Score == AR * AC)
             {
+                Win = true;
                 IsRunning = false;
                 return;
             }
@@ -92,6 +91,7 @@ namespace iobloc
             for (int i = 0; i < _width; i++)
                 if (_main.Grid[_height - 1, i] == CE)
                 {
+                    Win = false;
                     IsRunning = false;
                     return;
                 }

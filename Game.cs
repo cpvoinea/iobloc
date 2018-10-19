@@ -28,13 +28,13 @@ namespace iobloc
             if (_board == null)
                 return;
 
-            DrawBorder();
+            UI.BorderDraw(_board.Border);
             bool paused = false;
             int ticks = 0;
             _board.IsRunning = true;
             while (_board.IsRunning)
             {
-                DrawBoard();
+                Draw();
                 paused = HandleInput(paused);
                 if (paused)
                 {
@@ -52,16 +52,7 @@ namespace iobloc
             }
         }
 
-        void DrawBorder()
-        {
-            UI.BorderDraw(_board.Border);
-            UI.TextAt(string.Format($"L{Config.Level,2}"), _board.Border.Height - 1, _board.Border.Width / 2 - 2);
-            int? hs = Config.Highscore;
-            if (hs.HasValue)
-                UI.TextAt(string.Format($"{hs.Value,Config.LEN_INFO}"), 0, 1);
-        }
-
-        void DrawBoard()
+        void Draw()
         {
             for (int i = 0; i < _board.Panels.Length; i++)
             {
@@ -72,7 +63,14 @@ namespace iobloc
                     pnl.HasChanges = false;
                 }
             }
-            UI.TextAt(string.Format($"{_board.Score,Config.LEN_INFO}"), 0, _board.Border.Width - 1 - Config.LEN_INFO);
+
+            if (_board.Highscore.HasValue)
+            {
+                if (2 * Config.LEN_INFO < _board.Border.Width - 2)
+                    UI.TextAt(string.Format($"{_board.Highscore.Value,Config.LEN_INFO}"), 0, 1);
+                UI.TextAt(string.Format($"{_board.Score,Config.LEN_INFO}"), 0, _board.Border.Width - 1 - Config.LEN_INFO);
+            }
+            UI.TextAt(string.Format($"L{_board.Level,2}"), _board.Border.Height - 1, _board.Border.Width / 2 - 2);
         }
 
         bool HandleInput(bool paused)
@@ -104,7 +102,7 @@ namespace iobloc
 
         public void Dispose()
         {
-            if(_board != null)
+            if (_board != null)
                 _board.Dispose();
         }
     }
