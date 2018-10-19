@@ -2,7 +2,7 @@
 ## v2.0 (released)
 * 7 games: tetris, runner, helicopter, breakout, invaders, snake, sokoban
 * level progression
-* persistent highscores
+* persistent high-scores
 * editable settings
 * multi-panel box drawing with custom colored symbol
 ## v3.0
