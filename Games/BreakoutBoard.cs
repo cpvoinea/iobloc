@@ -84,7 +84,10 @@ namespace iobloc
                     IsRunning = false;
                 }
                 else
+                {
+                    ChangeGrid(false);
                     InitializeGrid();
+                }
                 return;
             }
 

@@ -10,7 +10,7 @@ namespace iobloc
         internal Menu(IEnumerable<MenuItem> menuItems)
         {
             foreach (var item in menuItems)
-                _items.Add((int)item.Option, item);
+                _items.Add(item.Code, item);
         }
 
         internal void Show()
@@ -19,7 +19,7 @@ namespace iobloc
             {
                 var item = _items[key];
                 if(item.Visible)
-                UI.TextLine($"{key,Config.LEN_KEY}: {item.Name,-Config.LEN_NAME} {item.Info,Config.LEN_INFO}", _items[key].Color);
+                UI.TextLine($"{key,Config.LEN_KEY}: {item.Name,-Config.LEN_NAME}", _items[key].Color);
             }
             UI.TextReset();
             UI.Text($"{Config.INPUT_TEXT}: ");
@@ -48,7 +48,7 @@ namespace iobloc
             else if (code >= (int)ConsoleKey.NumPad0 && code <= (int)ConsoleKey.NumPad9)
                 key = code - (int)ConsoleKey.NumPad0;
             if (key.HasValue && _items.ContainsKey(key.Value))
-                return _items[key.Value].Option;
+                return (Option)_items[key.Value].Code;
             return null;
         }
     }

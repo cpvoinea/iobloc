@@ -6,7 +6,7 @@ namespace iobloc
         internal int FromCol { get; private set; }
         internal int ToRow { get; private set; }
         internal int ToCol { get; private set; }
-        internal int[,] Grid { get; private set; }
+        internal int[,] Grid { get; set; }
         internal bool HasChanges { get; set; }
         internal int Width { get{return ToCol - FromCol + 1;} }
         internal int Height { get{return ToRow - FromRow + 1;} }

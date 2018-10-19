@@ -45,24 +45,18 @@ namespace iobloc
                 ShowLog();
             else
             {
-                Game game = null;
                 try
                 {
                     _log.AppendLine($"Start {option}");
                     UI.Clear();
 
-                    game = new Game(option);
+                    var game = new Game(option);
                     game.Start();
                     _log.AppendLine($"{game.EndedMessage} {option}");
                 }
                 catch (Exception ex)
                 {
                     _log.AppendLine($"Error playing {option}: {ex}");
-                }
-                finally
-                {
-                    if (game != null)
-                        game.Dispose();
                 }
             }
 

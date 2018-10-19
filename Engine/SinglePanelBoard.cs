@@ -36,7 +36,7 @@ namespace iobloc
                     Highscore = _score;
                     Config.UpdateHighscore(_option, _score);
                 }
-                if(_levelThreshold > 0 && _score >= _levelThreshold * (Level + 1))
+                if (_levelThreshold > 0 && _score >= _levelThreshold * (Level + 1))
                     Level++;
             }
         }
@@ -75,20 +75,12 @@ namespace iobloc
             return Array.Exists(_keys, x => x == key);
         }
 
-        protected virtual void InitializeGrid()
-        {
-        }
+        protected virtual void InitializeGrid() { }
 
-        protected virtual void ChangeGrid(bool set)
-        {
-        }
+        protected virtual void ChangeGrid(bool set) { }
 
         public abstract void HandleInput(string key);
 
         public abstract void NextFrame();
-
-        public virtual void Dispose()
-        {
-        }
     }
 }

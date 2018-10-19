@@ -118,6 +118,7 @@ namespace iobloc
                     {"TargetBlockColor", "DarkBlue"},
                 }
             },
+            {8, new Dictionary<string, string>() }
         };
 
         static Dictionary<int, int> _highscores = new Dictionary<int, int>{

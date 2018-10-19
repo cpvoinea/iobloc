@@ -2,7 +2,7 @@ using System;
 
 namespace iobloc
 {
-    interface IBoard : IDisposable
+    interface IBoard
     {
         Border Border { get; }
         Panel[] Panels { get; }

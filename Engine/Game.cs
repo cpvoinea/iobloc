@@ -3,7 +3,7 @@ using System.Threading;
 
 namespace iobloc
 {
-    class Game : IDisposable
+    class Game
     {
         IBoard _board;
         internal string EndedMessage
@@ -32,6 +32,7 @@ namespace iobloc
                 case Option.Invaders: _board = new InvadersBoard(); break;
                 case Option.Snake: _board = new SnakeBoard(); break;
                 case Option.Sokoban: _board = new SokobanBoard(); break;
+                case Option.Animation: _board = new AnimationBoard(0, new Border(10, 10)); break;
             }
         }
 
@@ -110,12 +111,6 @@ namespace iobloc
             UI.PanelTextLines(_board.MainPanel, _board.Help);
             UI.InputWait();
             UI.PanelDraw(_board.MainPanel);
-        }
-
-        public void Dispose()
-        {
-            if (_board != null)
-                _board.Dispose();
         }
     }
 }
