@@ -2,21 +2,19 @@ namespace iobloc
 {
     static class Animation
     {
-        const int SIZE = 7;
+        internal const int SIZE = 7;
 
-        internal static int[][,] Get(int code, int height, int width)
+        internal static int[][,] Get(int code)
         {
             var animation = All[code];
             int len = animation.Length;
             int[][,] result = new int[len][,];
-            int fromRow = height - SIZE;
-            int fromCol = (width - SIZE) / 2;
             for (int i = 0; i < len; i++)
             {
-                result[i] = new int[height, width];
-                for (int r = fromRow; r < fromRow + SIZE; r++)
-                    for (int c = fromCol; c < fromCol + SIZE; c++)
-                        result[i][r, c] = animation[i][r - fromRow, c - fromCol];
+                result[i] = new int[SIZE, SIZE];
+                for (int r = 0; r < SIZE; r++)
+                    for (int c = 0; c < SIZE; c++)
+                        result[i][r, c] = animation[i][r, c];
             }
 
             return result;
@@ -79,8 +77,8 @@ namespace iobloc
                     {0, 0, 0, 0, 0, 0, 0}
                 },
                 new int[,]{
-                    {0, 0, 0, 0, 0, 0, 0},
                     {0, 0, 0, 11, 0, 0, 0},
+                    {0, 0, 0, 0, 0, 0, 0},
                     {12, 0, 0, 0, 0, 0, 10},
                     {0, 0, 0, 0, 0, 0, 0},
                     {13, 0, 0, 0, 0, 0, 9},

@@ -16,16 +16,16 @@ namespace iobloc
         public int? Highscore => null;
         public int Score => 0;
         public int Level => Config.Level;
-        public bool? Win => true;
+        public bool? Win => null;
         public bool IsRunning { get; set; }
 
-        internal AnimationBoard(int animationCode, Border border)
+        internal AnimationBoard(int animationCode)
         {
             _code = animationCode;
-            _border = border;
-            _main = new Panel(1, 1, border.Height - 2, border.Width - 2);
+            _border = new Border(Animation.SIZE + 2, Animation.SIZE + 2);
+            _main = new Panel(1, 1, Animation.SIZE, Animation.SIZE);
             _panels = new[] { _main };
-            _animation = Animation.Get(animationCode, _main.Height, _main.Width);
+            _animation = Animation.Get(animationCode);
         }
 
         public bool IsValidInput(string key) { return false; }

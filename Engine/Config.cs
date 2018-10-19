@@ -118,7 +118,6 @@ namespace iobloc
                     {"TargetBlockColor", "DarkBlue"},
                 }
             },
-            {8, new Dictionary<string, string>() }
         };
 
         static Dictionary<int, int> _highscores = new Dictionary<int, int>{
@@ -172,7 +171,10 @@ namespace iobloc
 
         internal static int LevelInterval(int frameMultiplier, int level)
         {
-            return FRAME_INTERVAL * frameMultiplier * (LEVEL_MAX - level);
+            double levelMultiplier = LEVEL_MAX - level;
+            if (levelMultiplier == 1)
+                levelMultiplier = 1.5;
+            return (int)(FRAME_INTERVAL * frameMultiplier * levelMultiplier);
         }
 
         internal static Dictionary<string, string> Settings(Option option)

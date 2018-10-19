@@ -33,7 +33,7 @@ namespace iobloc
                 case Option.Invaders: _board = new InvadersBoard(); break;
                 case Option.Snake: _board = new SnakeBoard(); break;
                 case Option.Sokoban: _board = new SokobanBoard(); break;
-                case Option.Animation: _board = new AnimationBoard(0, new Border(10, 10)); break;
+                case Option.Animation: _board = new AnimationBoard(0); break;
             }
         }
 
@@ -63,6 +63,13 @@ namespace iobloc
                     _board.NextFrame();
                     start = DateTime.Now;
                 }
+            }
+
+            if (_board.Win == true)
+            {
+                var congrats = new Game(Option.Animation);
+                UI.Clear();
+                congrats.Start();
             }
         }
 

@@ -114,7 +114,16 @@ namespace iobloc
 
         void NewPoint()
         {
-            _point = new Position(_random.Next(_height), _random.Next(_width));
+            List<Position> candidates = new List<Position>();
+            for (int r = 0; r < _height; r++)
+                for (int c = 0; c < _width; c++)
+                {
+                    var p = new Position(r, c);
+                    if (!_snake.Contains(p))
+                        candidates.Add(p);
+                }
+            _point = candidates[_random.Next(candidates.Count)];
+            candidates = null;
         }
 
         void SetMove(int h, int v)
