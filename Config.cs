@@ -146,14 +146,10 @@ namespace iobloc
 
         static Config()
         {
-            foreach (int code in Enum.GetValues(typeof(Option)))
-            {
-                var o = (Option)code;
-                var item = new MenuItem(o, o.ToString());
-                if (o == Option.Log)
-                    item.Visible = false;
-                _menuItems.Add(item);
-            }
+            foreach (int code in _settings.Keys)
+                _menuItems.Add(new MenuItem((Option)code));
+
+            _menuItems.Add(new MenuItem(Option.Log, false));
         }
 
         internal static void Load(string settingsFilePath = null)
