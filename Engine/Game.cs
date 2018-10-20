@@ -16,9 +16,14 @@ namespace iobloc
                 if (!_board.Win.HasValue)
                     return "Quit";
                 if (!_board.Win.Value)
-                    return "Game Over";
-                return "WINNER";
+                    return "Loser:(";
+                return "WINNER!";
             }
+        }
+
+        Game(AnimationType animation, string message)
+        {
+            _board = new AnimationBoard(animation, message);
         }
 
         internal Game(Option option)
@@ -33,7 +38,6 @@ namespace iobloc
                 case Option.Invaders: _board = new InvadersBoard(); break;
                 case Option.Snake: _board = new SnakeBoard(); break;
                 case Option.Sokoban: _board = new SokobanBoard(); break;
-                case Option.Animation: _board = new AnimationBoard(0); break;
             }
         }
 
@@ -65,11 +69,11 @@ namespace iobloc
                 }
             }
 
-            if (_board.Win == true)
+            if(_board.Win.HasValue)
             {
-                var congrats = new Game(Option.Animation);
+                var animation = new Game(_board.Win.Value ? AnimationType.Fireworks : AnimationType.Rain, EndedMessage);
                 UI.Clear();
-                congrats.Start();
+                animation.Start();
             }
         }
 
@@ -91,7 +95,9 @@ namespace iobloc
                     UI.TextAt(string.Format($"{_board.Highscore.Value,Config.LEN_INFO}"), 0, 1);
                 UI.TextAt(string.Format($"{_board.Score,Config.LEN_INFO}"), 0, _board.Border.Width - 1 - Config.LEN_INFO);
             }
-            UI.TextAt(string.Format($"L{_board.Level,2}"), _board.Border.Height - 1, _board.Border.Width / 2 - 2);
+            UI.TextAt(string.Format($"L{_board.Level,2}"),
+                _board.Border.Height - 1, (_board.Border.Width + 1) / 2 - 2,
+                15 - (_board.Level >= 15 ? 0 : _board.Level));
         }
 
         bool HandleInput(bool paused)

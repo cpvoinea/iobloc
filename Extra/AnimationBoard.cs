@@ -2,16 +2,17 @@ namespace iobloc
 {
     class AnimationBoard : IBoard
     {
-        int _code;
+        AnimationType _type;
         Border _border;
         protected Panel _main;
         readonly Panel[] _panels;
-        int[][,] _animation;
+        readonly int[][,] _animation;
+        readonly string _message;
         int _currentFrame;
         public Border Border => _border;
         public Panel MainPanel => _main;
         public Panel[] Panels => _panels;
-        public string[] Help => new[] { "", "", "", "WINNER!" };
+        public string[] Help => new[] { "", "", "", _message };
         public int FrameInterval => 200;
         public int? Highscore => null;
         public int Score => 0;
@@ -19,13 +20,14 @@ namespace iobloc
         public bool? Win => null;
         public bool IsRunning { get; set; }
 
-        internal AnimationBoard(int animationCode)
+        internal AnimationBoard(AnimationType type, string message)
         {
-            _code = animationCode;
+            _type = type;
+            _message = message;
             _border = new Border(Animation.SIZE + 2, Animation.SIZE + 2);
             _main = new Panel(1, 1, Animation.SIZE, Animation.SIZE);
             _panels = new[] { _main };
-            _animation = Animation.Get(animationCode);
+            _animation = Animation.Get((int)type);
         }
 
         public bool IsValidInput(string key) { return false; }

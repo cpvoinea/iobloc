@@ -102,7 +102,7 @@ namespace iobloc
             }
 
             for (int i = 0; i < _width; i++)
-                if (_main.Grid[_height - 1, i] == CE)
+                if (_main.Grid[_height - 2, i] == CE)
                 {
                     Win = false;
                     IsRunning = false;

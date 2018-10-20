@@ -137,7 +137,6 @@ namespace iobloc
         internal const string INPUT_TEXT = "Option (ESC to exit)";
         internal const string INPUT_EXIT = "Escape";
         internal const char BLOCK = (char)BoxGraphics.BlockFull;
-        const string FILE_SETTINGS = "settings.txt";
         const string FILE_HIGHSCORES = "highscores.txt";
         const int INTERVAL_MIN = 50;
         const int INTERVAL_MAX = 200;
@@ -159,7 +158,7 @@ namespace iobloc
 
         internal static void Load(string settingsFilePath = null)
         {
-            _settingsFilePath = settingsFilePath ?? FILE_SETTINGS;
+            _settingsFilePath = settingsFilePath;
             LoadSettings();
             LoadHighscores();
         }
@@ -201,7 +200,7 @@ namespace iobloc
 
         static void LoadSettings()
         {
-            if (!File.Exists(_settingsFilePath))
+            if (string.IsNullOrEmpty(_settingsFilePath) || !File.Exists(_settingsFilePath))
                 return;
 
             using (var sr = File.OpenText(_settingsFilePath))

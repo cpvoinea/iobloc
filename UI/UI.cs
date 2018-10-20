@@ -35,10 +35,11 @@ namespace iobloc
             Console.WriteLine();
         }
 
-        internal static void TextAt(string text, int row, int col)
+        internal static void TextAt(string text, int row, int col, int? color = null)
         {
             Console.SetCursorPosition(col, row);
-            Text(text);
+            Text(text, color);
+            TextReset();
         }
 
         internal static void BorderDraw(Border border)
