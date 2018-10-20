@@ -37,7 +37,14 @@ namespace iobloc
                     Config.UpdateHighscore(_option, _score);
                 }
                 if (_levelThreshold > 0 && _score >= _levelThreshold * (Level + 1))
+                {
                     Level++;
+                    if(Level >= Config.LEVEL_MAX)
+                    {
+                        Win = true;
+                        IsRunning = false;
+                    }
+                }
             }
         }
         public int Level

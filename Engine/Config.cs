@@ -13,7 +13,7 @@ namespace iobloc
                     {"Keys", "LeftArrow,RightArrow,Enter"},
                     {"FrameMultiplier", "5"},
                     {"LevelThreshold", "0"},
-                    {"Width", "12"},
+                    {"Width", "16"},
                     {"Height", "1"},
                 }
             },
@@ -131,20 +131,22 @@ namespace iobloc
             {8, 0}
         };
 
-        internal static int LEVEL_MAX = _settings[0].GetInt("Width", 10);
         internal const int LEN_KEY = 1;
         internal const int LEN_NAME = 10;
         internal const int LEN_INFO = 3;
         internal const string INPUT_TEXT = "Option (ESC to exit)";
         internal const string INPUT_EXIT = "Escape";
         internal const char BLOCK = (char)BoxGraphics.BlockFull;
-        internal const int FRAME_INTERVAL = 25;
         const string FILE_SETTINGS = "settings.txt";
         const string FILE_HIGHSCORES = "highscores.txt";
+        const int INTERVAL_MIN = 50;
+        const int INTERVAL_MAX = 200;
+        internal const int LEVEL_MAX = 16;
+        static int INTERVAL_LEVEL = (INTERVAL_MAX - INTERVAL_MIN) / (LEVEL_MAX - 1);
         internal static int Level { get; set; }
+        internal static bool SokobanComplete { get; set; }
         static string _settingsFilePath;
         readonly static List<MenuItem> _menuItems = new List<MenuItem>();
-
         internal static IEnumerable<MenuItem> MenuItems { get { return _menuItems; } }
 
         static Config()
@@ -171,10 +173,7 @@ namespace iobloc
 
         internal static int LevelInterval(int frameMultiplier, int level)
         {
-            double levelMultiplier = LEVEL_MAX - level;
-            if (levelMultiplier == 1)
-                levelMultiplier = 1.5;
-            return (int)(FRAME_INTERVAL * frameMultiplier * levelMultiplier);
+            return frameMultiplier * (INTERVAL_MAX - level * INTERVAL_LEVEL);
         }
 
         internal static Dictionary<string, string> Settings(Option option)

@@ -19,8 +19,8 @@ namespace iobloc
         int _bulletCol;
         int _bulletRow;
         int _skipFrame;
-        bool _shot = false;
-        bool _movingRight = true;
+        bool _shot;
+        bool _movingRight;
 
         internal InvadersBoard() : base(Option.Invaders)
         {
@@ -33,6 +33,7 @@ namespace iobloc
             _ship = _width / 2 - 1;
             _bulletCol = _width / 2 - 1;
             _bulletRow = _height - 2;
+            _movingRight = true;
             _targets = WinScore;
 
             for (int row = 0; row < AR; row++)

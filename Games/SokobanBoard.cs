@@ -99,7 +99,13 @@ namespace iobloc
 
             Score += WS;
             Level++;
-            if (Level >= SokobanLevels.Count)
+            if (!Config.SokobanComplete && Level >= Config.LEVEL_MAX)
+            {
+                Win = true;
+                IsRunning = false;
+                Config.SokobanComplete = true;
+            }
+            else if(Config.SokobanComplete && Level >= SokobanLevels.Count)
             {
                 Win = true;
                 IsRunning = false;

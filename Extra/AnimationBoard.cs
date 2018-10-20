@@ -11,8 +11,8 @@ namespace iobloc
         public Border Border => _border;
         public Panel MainPanel => _main;
         public Panel[] Panels => _panels;
-        public string[] Help => new[] { "WINNER!" };
-        public int FrameInterval => 250;
+        public string[] Help => new[] { "", "", "", "WINNER!" };
+        public int FrameInterval => 200;
         public int? Highscore => null;
         public int Score => 0;
         public int Level => Config.Level;
