@@ -11,7 +11,7 @@ namespace iobloc
         int BS => _settings.GetInt("BlockSpace");
         int BR => _settings.GetInt("BlockRows");
         int B => BW + BS;
-        int WinScore => (_width / B + 1) * BR;
+        int WinScore => (_width + BS) / B * BR;
         int _targets;
         int _paddle;
         int _ballCol;
