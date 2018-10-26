@@ -24,7 +24,6 @@ namespace iobloc
 
         internal void ShowMenu()
         {
-            UI.Clear();
             _menu.Show();
             var option = _menu.WaitOption();
             if (!option.HasValue)

@@ -12,9 +12,28 @@ namespace iobloc
             Console.CursorVisible = false;
         }
 
+        internal static void Close()
+        {
+            TextReset();
+            Console.CursorVisible = true;
+        }
+
         internal static void Clear()
         {
             Console.Clear();
+        }
+
+        internal static void Resize(int width, int height)
+        {
+            int w = width < 15 ? 15 : width + 1;
+            Console.SetWindowSize(w, height);
+            Console.SetBufferSize(w, height);
+        }
+
+        internal static void GetSize(out int width, out int height)
+        {
+            width = Console.WindowWidth;
+            height = Console.WindowHeight;
         }
 
         internal static void TextReset()
@@ -29,12 +48,6 @@ namespace iobloc
             Console.Write(text);
         }
 
-        internal static void TextLine(string text, int? color = null)
-        {
-            Text(text, color);
-            Console.WriteLine();
-        }
-
         internal static void TextAt(string text, int row, int col, int? color = null)
         {
             Console.SetCursorPosition(col, row);
@@ -44,6 +57,7 @@ namespace iobloc
 
         internal static void BorderDraw(Border border)
         {
+            Resize(border.Width, border.Height);
             for (int i = 0; i < border.Height; i++)
             {
                 StringBuilder line = new StringBuilder();
@@ -52,7 +66,8 @@ namespace iobloc
                     int c = border.Grid[i, j];
                     line.Append(c == 0 ? ' ' : (char)c);
                 }
-                TextLine(line.ToString());
+                Console.SetCursorPosition(0, i);
+                Text(line.ToString());
             }
         }
 
@@ -76,10 +91,14 @@ namespace iobloc
                     int c = panel.Grid[x, y];
                     if (c == 0)
                         Console.Write(' ');
+                    else if (panel.Symbol == 0)
+                    {
+                        Console.Write(c);
+                    }
                     else
                     {
                         Console.ForegroundColor = (ConsoleColor)c;
-                        Console.Write(Config.BLOCK);
+                        Console.Write(panel.Symbol);
                     }
                 }
             }
@@ -105,12 +124,6 @@ namespace iobloc
             if (Console.KeyAvailable)
                 return InputWait();
             return null;
-        }
-
-        internal static void Close()
-        {
-            TextReset();
-            Console.CursorVisible = true;
         }
     }
 }

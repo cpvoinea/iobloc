@@ -10,7 +10,7 @@ namespace iobloc
         Invaders = 5,
         Snake = 6,
         Sokoban = 7,
-        Animation = 8,
+        Table = 8,
         Log = 9,
     }
 }

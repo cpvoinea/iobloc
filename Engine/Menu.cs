@@ -15,11 +15,13 @@ namespace iobloc
 
         internal void Show()
         {
+            UI.Clear();
+            int row = 0;
             foreach (int key in _items.Keys)
             {
                 var item = _items[key];
                 if(item.Visible)
-                UI.TextLine($"{key,Config.LEN_KEY}: {item.Name,-Config.LEN_NAME}", _items[key].Color);
+                UI.TextAt($"{key,Config.LEN_KEY}: {item.Name,-Config.LEN_NAME}", row++, 0, _items[key].Color);
             }
             UI.TextReset();
             UI.Text($"{Config.INPUT_TEXT}: ");

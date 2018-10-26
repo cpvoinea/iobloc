@@ -1,11 +1,12 @@
 using System;
+using System.Collections.Generic;
 
 namespace iobloc
 {
     interface IBoard
     {
         Border Border { get; }
-        Panel[] Panels { get; }
+        Dictionary<string, Panel> Panels { get; }
         Panel MainPanel { get; }
         string[] Help { get; }
         int FrameInterval { get; }

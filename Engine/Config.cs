@@ -118,6 +118,17 @@ namespace iobloc
                     {"TargetBlockColor", "DarkBlue"},
                 }
             },
+            {8, // Table
+                new Dictionary<string, string>{
+                    {"Help", "Action:ENTER,Move:ARROWS,Exit:ESC,Pause:ANY"},
+                    {"Keys", "LeftArrow,RightArrow,Spacebar"},
+                    {"Height", "30"},
+                    {"PieceWidth", "2"},
+                    {"PlayerColor", "Blue"},
+                    {"EnemyColor", "Red"},
+                    {"NeutralColor", "Gray"},
+                }
+            }
         };
 
         static Dictionary<int, int> _highscores = new Dictionary<int, int>{
@@ -136,7 +147,6 @@ namespace iobloc
         internal const int LEN_INFO = 3;
         internal const string INPUT_TEXT = "Option (ESC to exit)";
         internal const string INPUT_EXIT = "Escape";
-        internal const char BLOCK = (char)BoxGraphics.BlockFull;
         const string FILE_HIGHSCORES = "highscores.txt";
         const int INTERVAL_MIN = 50;
         const int INTERVAL_MAX = 200;

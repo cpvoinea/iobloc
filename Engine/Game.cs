@@ -7,6 +7,7 @@ namespace iobloc
     class Game
     {
         IBoard _board;
+
         internal string EndedMessage
         {
             get
@@ -38,6 +39,7 @@ namespace iobloc
                 case Option.Invaders: _board = new InvadersBoard(); break;
                 case Option.Snake: _board = new SnakeBoard(); break;
                 case Option.Sokoban: _board = new SokobanBoard(); break;
+                case Option.Table: _board = new TableBoard(); break;
             }
         }
 
@@ -46,6 +48,8 @@ namespace iobloc
             if (_board == null)
                 return;
 
+            int width, height;
+            UI.GetSize(out width, out height);
             UI.BorderDraw(_board.Border);
             bool paused = false;
             _board.IsRunning = true;
@@ -75,13 +79,14 @@ namespace iobloc
                 UI.Clear();
                 animation.Start();
             }
+
+            UI.Resize(width, height);
         }
 
         void Draw()
         {
-            for (int i = 0; i < _board.Panels.Length; i++)
+            foreach(var pnl in _board.Panels.Values)
             {
-                var pnl = _board.Panels[i];
                 if (pnl.HasChanges)
                 {
                     UI.PanelDraw(pnl);
@@ -95,9 +100,10 @@ namespace iobloc
                     UI.TextAt(string.Format($"{_board.Highscore.Value,Config.LEN_INFO}"), 0, 1);
                 UI.TextAt(string.Format($"{_board.Score,Config.LEN_INFO}"), 0, _board.Border.Width - 1 - Config.LEN_INFO);
             }
-            UI.TextAt(string.Format($"L{_board.Level,2}"),
-                _board.Border.Height - 1, (_board.Border.Width + 1) / 2 - 2,
-                15 - (_board.Level >= 15 ? 0 : _board.Level));
+            if(_board.Level >= 0)
+                UI.TextAt(string.Format($"L{_board.Level,2}"),
+                    _board.Border.Height - 1, (_board.Border.Width + 1) / 2 - 2,
+                    15 - (_board.Level >= 15 ? 0 : _board.Level));
         }
 
         bool HandleInput(bool paused)

@@ -13,7 +13,7 @@ namespace iobloc
         protected readonly int _height;
         readonly Border _border;
         protected Panel _main;
-        readonly Panel[] _panels;
+        readonly Dictionary<string, Panel> _panels;
         int _frameMultiplier;
         int _levelThreshold;
         int _score;
@@ -21,7 +21,7 @@ namespace iobloc
 
         public Border Border { get { return _border; } }
         public Panel MainPanel { get { return _main; } }
-        public Panel[] Panels { get { return _panels; } }
+        public Dictionary<string, Panel> Panels { get { return _panels; } }
         public string[] Help { get { return _help; } }
         public int FrameInterval { get; private set; }
         public int? Highscore { get; private set; }
@@ -39,7 +39,7 @@ namespace iobloc
                 if (_levelThreshold > 0 && _score >= _levelThreshold * (Level + 1))
                 {
                     Level++;
-                    if(Level >= Config.LEVEL_MAX)
+                    if (Level >= Config.LEVEL_MAX)
                     {
                         Win = true;
                         IsRunning = false;
@@ -71,7 +71,7 @@ namespace iobloc
             _height = _settings.GetInt("Height", 10);
             _border = new Border(_width + 2, _height + 2);
             _main = new Panel(1, 1, _height, _width);
-            _panels = new[] { _main };
+            _panels = new Dictionary<string, Panel> { { "main", _main } };
 
             Highscore = Config.GetHighscore(option);
             Level = Config.Level;
