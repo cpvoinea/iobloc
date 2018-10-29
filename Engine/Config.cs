@@ -120,13 +120,21 @@ namespace iobloc
             },
             {8, // Table
                 new Dictionary<string, string>{
-                    {"Help", "Action:ENTER,Move:ARROWS,Exit:ESC,Pause:ANY"},
-                    {"Keys", "LeftArrow,RightArrow,Spacebar"},
-                    {"Height", "30"},
-                    {"PieceWidth", "2"},
+                    {"Help", "Move_cursor:,LEFT-RIGHT,Take_piece:,UP_ARROW,Put_piece:,DOWN_ARROW,Exit:ESC,Pause:ANY"},
+                    {"Keys", "LeftArrow,RightArrow,UpArrow,DownArrow"},
+                    {"Height", "36"},
+                    {"PieceWidth", "4"},
                     {"PlayerColor", "Blue"},
                     {"EnemyColor", "Red"},
                     {"NeutralColor", "Gray"},
+                }
+            },
+            {9, //Paint
+                new Dictionary<string, string>{
+                    {"Help", ""},
+                    {"Keys", ""},
+                    {"Width", ""},
+                    {"Height", ""},
                 }
             }
         };
@@ -142,11 +150,6 @@ namespace iobloc
             {8, 0}
         };
 
-        internal const int LEN_KEY = 1;
-        internal const int LEN_NAME = 10;
-        internal const int LEN_INFO = 3;
-        internal const string INPUT_TEXT = "Option (ESC to exit)";
-        internal const string INPUT_EXIT = "Escape";
         const string FILE_HIGHSCORES = "highscores.txt";
         const int INTERVAL_MIN = 50;
         const int INTERVAL_MAX = 200;
@@ -162,8 +165,6 @@ namespace iobloc
         {
             foreach (int code in _settings.Keys)
                 _menuItems.Add(new MenuItem((Option)code));
-
-            _menuItems.Add(new MenuItem(Option.Log, false));
         }
 
         internal static void Load(string settingsFilePath = null)

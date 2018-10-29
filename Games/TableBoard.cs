@@ -12,8 +12,8 @@ namespace iobloc
             internal const string LowerLeft = "lowerLeft";
             internal const string UpperRight = "upperRight";
             internal const string LowerRight = "lowerRight";
-            internal const string UpperJail = "upperJail";
-            internal const string LowerJail = "lowerJail";
+            internal const string UpperTaken = "upperTaken";
+            internal const string LowerTaken = "lowerTaken";
             internal const string Dice = "dice";
             internal const string UpperOut = "upperOut";
             internal const string LowerOut = "lowerOut";
@@ -72,9 +72,9 @@ namespace iobloc
             {
                 {Pnl.UpperLeft, new Panel(1, 1, H / 2 - 1, 6 * PW, (char)BoxGraphics.BlockUpper)},
                 {Pnl.LowerLeft, new Panel(H / 2, 1, H - 2, 6 * PW, (char)BoxGraphics.BlockLower)},
-                {Pnl.UpperJail, new Panel(1, 6 * PW + 2, H / 2 - 3, 7 * PW + 1, (char)BoxGraphics.BlockUpper)},
-                {Pnl.Dice, new Panel(H / 2 - 2, 6 * PW + 2, H / 2, 7 * PW + 1, (char)0)},
-                {Pnl.LowerJail, new Panel(H / 2 + 1, 6 * PW + 2, H - 2, 7 * PW + 1, (char)BoxGraphics.BlockLower)},
+                {Pnl.UpperTaken, new Panel(1, 6 * PW + 2, H / 2 - 4, 7 * PW + 1, (char)BoxGraphics.BlockUpper)},
+                {Pnl.Dice, new Panel(H / 2 - 2, 6 * PW + 2, H / 2 + 1, 7 * PW + 1, (char)0)},
+                {Pnl.LowerTaken, new Panel(H / 2 + 3, 6 * PW + 2, H - 2, 7 * PW + 1, (char)BoxGraphics.BlockLower)},
                 {Pnl.UpperRight, new Panel(1, 7 * PW + 3, H / 2 - 1, 13 * PW + 2, (char)BoxGraphics.BlockUpper)},
                 {Pnl.LowerRight, new Panel(H / 2, 7 * PW + 3, H - 2, 13 * PW + 2, (char)BoxGraphics.BlockLower)},
                 {Pnl.UpperOut, new Panel(1, 13 * PW + 4, H / 2 - 1, 14 * PW + 3, (char)BoxGraphics.BlockUpper)},
@@ -108,7 +108,8 @@ namespace iobloc
                     else if (_position > 12 && _position < 25)
                         _position++;
                     break;
-                case "Spacebar": break;
+                case "UpArrow": break;
+                case "DownArrow": break;
             }
             Set();
         }
@@ -131,20 +132,20 @@ namespace iobloc
             {
                 for (int i = 0; i < 5; i++)
                 {
-                    PLR.Grid[PLR.Height - 1 - i, j] = CP;
-                    PLL.Grid[PLL.Height - 1 - i, j] = CE;
-                    PUL.Grid[i, j] = CP;
-                    PUR.Grid[i, j] = CE;
+                    PLR.Grid[PLR.Height - 2 - i, j] = CP;
+                    PLL.Grid[PLL.Height - 2 - i, j] = CE;
+                    PUL.Grid[i + 1, j] = CP;
+                    PUR.Grid[i + 1, j] = CE;
                 }
                 for (int i = 0; i < 3; i++)
                 {
-                    PLL.Grid[PLL.Height - 1 - i, 4 * PW + j] = CP;
-                    PUL.Grid[i, 4 * PW + j] = CE;
+                    PLL.Grid[PLL.Height - 2 - i, 4 * PW + j] = CP;
+                    PUL.Grid[i + 1, 4 * PW + j] = CE;
                 }
                 for (int i = 0; i < 2; i++)
                 {
-                    PLR.Grid[PLR.Height - 1 - i, 5 * PW + j] = CE;
-                    PUR.Grid[i, 5 * PW + j] = CP;
+                    PLR.Grid[PLR.Height - 2 - i, 5 * PW + j] = CE;
+                    PUR.Grid[i + 1, 5 * PW + j] = CP;
                 }
             }
         }
@@ -182,7 +183,7 @@ namespace iobloc
             }
             else if (_position >= 25)
             {
-                pnl = white ? _panels[Pnl.UpperJail] : _panels[Pnl.LowerJail];
+                pnl = white ? _panels[Pnl.UpperTaken] : _panels[Pnl.LowerTaken];
                 row = white ? 0 : pnl.Height - 1;
             }
 

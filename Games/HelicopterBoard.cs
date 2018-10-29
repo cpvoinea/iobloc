@@ -14,7 +14,7 @@ namespace iobloc
         int _distance;
         bool _skipAdvance;
 
-        internal HelicopterBoard() : base(Option.Helicopter)
+        internal HelicopterBoard() : base(Option.Helicopt)
         {
             ChangeGrid(true);
         }

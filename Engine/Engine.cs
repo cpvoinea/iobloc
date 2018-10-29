@@ -40,23 +40,18 @@ namespace iobloc
 
         void Open(Option option)
         {
-            if (option == Option.Log)
-                ShowLog();
-            else
+            try
             {
-                try
-                {
-                    _log.AppendLine($"Start {option}");
-                    UI.Clear();
+                _log.AppendLine($"Start {option}");
+                UI.Clear();
 
-                    var game = new Game(option);
-                    game.Start();
-                    _log.AppendLine($"{game.EndedMessage} {option}");
-                }
-                catch (Exception ex)
-                {
-                    _log.AppendLine($"Error playing {option}: {ex}");
-                }
+                var game = new Game(option);
+                game.Start();
+                _log.AppendLine($"{game.EndedMessage} {option}");
+            }
+            catch (Exception ex)
+            {
+                _log.AppendLine($"Error playing {option}: {ex}");
             }
 
             ShowMenu();

@@ -34,12 +34,13 @@ namespace iobloc
                 case Option.Level: _board = new LevelBoard(); break;
                 case Option.Tetris: _board = new TetrisBoard(); break;
                 case Option.Runner: _board = new RunnerBoard(); break;
-                case Option.Helicopter: _board = new HelicopterBoard(); break;
+                case Option.Helicopt: _board = new HelicopterBoard(); break;
                 case Option.Breakout: _board = new BreakoutBoard(); break;
                 case Option.Invaders: _board = new InvadersBoard(); break;
                 case Option.Snake: _board = new SnakeBoard(); break;
                 case Option.Sokoban: _board = new SokobanBoard(); break;
                 case Option.Table: _board = new TableBoard(); break;
+                case Option.Paint: break;
             }
         }
 
@@ -96,9 +97,9 @@ namespace iobloc
 
             if (_board.Highscore.HasValue)
             {
-                if (2 * Config.LEN_INFO < _board.Border.Width - 2)
-                    UI.TextAt(string.Format($"{_board.Highscore.Value,Config.LEN_INFO}"), 0, 1);
-                UI.TextAt(string.Format($"{_board.Score,Config.LEN_INFO}"), 0, _board.Border.Width - 1 - Config.LEN_INFO);
+                if (_board.Border.Width > 8)
+                    UI.TextAt(string.Format($"{_board.Highscore.Value,3}"), 0, 1);
+                UI.TextAt(string.Format($"{_board.Score,3}"), 0, _board.Border.Width - 4);
             }
             if(_board.Level >= 0)
                 UI.TextAt(string.Format($"L{_board.Level,2}"),
@@ -114,7 +115,7 @@ namespace iobloc
                 if (paused)
                     return false;
 
-                if (key == Config.INPUT_EXIT)
+                if (key == "Escape")
                     _board.IsRunning = false;
                 else if (_board.IsValidInput(key))
                     _board.HandleInput(key);

@@ -21,16 +21,15 @@ namespace iobloc
             {
                 var item = _items[key];
                 if(item.Visible)
-                UI.TextAt($"{key,Config.LEN_KEY}: {item.Name,-Config.LEN_NAME}", row++, 0, _items[key].Color);
+                UI.TextAt($"{key}:{item.Name,-8}", row++, 0, _items[key].Color);
             }
             UI.TextReset();
-            UI.Text($"{Config.INPUT_TEXT}: ");
         }
 
         internal Option? WaitOption()
         {
             string input = UI.InputWait();
-            while (input != Config.INPUT_EXIT)
+            while (input != "Escape")
             {
                 var option = GetSelection(input);
                 if (option.HasValue)

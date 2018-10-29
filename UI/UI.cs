@@ -6,15 +6,21 @@ namespace iobloc
 {
     static class UI
     {
+        const int MIN_WIDTH = 10;
+        const int MIN_HEIGHT = 10;
+
         internal static void Open()
         {
             Console.OutputEncoding = Encoding.UTF8;
             Console.CursorVisible = false;
+            if (Console.WindowWidth < MIN_WIDTH)
+                Resize(MIN_WIDTH, Console.WindowHeight);
+            if (Console.WindowHeight < MIN_HEIGHT)
+                Resize(Console.WindowWidth, MIN_HEIGHT);
         }
 
         internal static void Close()
         {
-            TextReset();
             Console.CursorVisible = true;
         }
 
@@ -25,9 +31,9 @@ namespace iobloc
 
         internal static void Resize(int width, int height)
         {
-            int w = width < 15 ? 15 : width + 1;
-            Console.SetWindowSize(w, height);
-            Console.SetBufferSize(w, height);
+            Console.SetWindowSize(width, height);
+            if (Console.BufferWidth > width || Console.BufferHeight > height)
+                Console.SetBufferSize(width, height);
         }
 
         internal static void GetSize(out int width, out int height)
@@ -52,7 +58,6 @@ namespace iobloc
         {
             Console.SetCursorPosition(col, row);
             Text(text, color);
-            TextReset();
         }
 
         internal static void BorderDraw(Border border)
