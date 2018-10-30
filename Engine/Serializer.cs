@@ -127,6 +127,9 @@ namespace iobloc
             },
             {10, // Menu
                 new Dictionary<string, string>{
+                    {"Help", ""},
+                    {"Keys", "D0,D1,D2,D3,D4,D5,D6,D7,D8,D9,L,F,R"},
+                    {"MenuItems", "0:Level,1:Tetris,2:Runner,3:Helicopt,4:Breakout,5:Invaders,6:Snake,7:Sokoban,8:Table,9:Paint"},
                 }
             },
             {11, // Log

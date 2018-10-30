@@ -11,36 +11,26 @@ namespace iobloc
 
         public override void HandleInput(string key)
         {
-            var option = GetSelection(key);
             IBoard board = null;
-            switch(option)
+            switch (key)
             {
-                case BoardType.Level: board = new LevelBoard(); break;
+                case "D0": board = new LevelBoard(); break;
+                case "D1": board = new TetrisBoard(); break;
+                case "D2": board = new RunnerBoard(); break;
+                case "D3": board = new HelicopterBoard(); break;
+                case "D4": board = new BreakoutBoard(); break;
+                case "D5": board = new InvadersBoard(); break;
+                case "D6": board = new SnakeBoard(); break;
+                case "D7": board = new SokobanBoard(); break;
+                case "D8": board = new TableBoard(); break;
+                case "D9": board = new PaintBoard(); break;
+                case "L": board = new LogBoard(); break;
+                case "F": board = new AnimationBoard(BoardType.Fireworks); break;
+                case "R": board = new AnimationBoard(BoardType.RainingBlood); break;
             }
-        }
 
-        public override void NextFrame(){}
-
-        BoardType? GetSelection(string input)
-        {
-            ConsoleKey key = (ConsoleKey)Enum.Parse(typeof(ConsoleKey), input);
-
-            if (key == ConsoleKey.L)
-                return BoardType.Log;
-            if (key == ConsoleKey.F)
-                return BoardType.Fireworks;
-            if (key == ConsoleKey.R)
-                return BoardType.RainingBlood;
-
-            int? val = null;
-            if (key >= ConsoleKey.D0 && key <= ConsoleKey.D9)
-                val = key - ConsoleKey.D0;
-            else if (key >= ConsoleKey.NumPad0 && key <= ConsoleKey.NumPad9)
-                val = key - ConsoleKey.NumPad0;
-            if (val.HasValue)
-                return (BoardType)val.Value;
-
-            return null;
+            if (board != null)
+                BoardRunner.Run(board);
         }
     }
 }

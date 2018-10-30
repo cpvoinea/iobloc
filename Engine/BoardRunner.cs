@@ -5,91 +5,63 @@ using System.Threading;
 
 namespace iobloc
 {
-    class BoardRunner
+    static class BoardRunner
     {
-        readonly StringBuilder _log;
-        readonly IBoard _board;
-        readonly int _winWidth, _winHeight;
-        bool _paused;
-
-        internal BoardRunner(IBoard board, StringBuilder log)
+        internal static void Run(IBoard board)
         {
-            _board = board;
-            _log = log;
-            UIPainter.GetSize(out _winWidth, out _winHeight);
-            UIPainter.DrawBorder(_board.UIBorder);
-        }
+            UIPainter.DrawBorder(board.UIBorder);
 
-        internal void Run()
-        {
+            bool paused = false;
             DateTime start = DateTime.Now;
-            _board.IsRunning = true;
-            while (_board.IsRunning)
+            board.IsRunning = true;
+            while (board.IsRunning)
             {
-                Draw();
-                HandleInput();
+                Draw(board);
+                paused = HandleInput(board, paused);
 
-                if (_paused)
+                if (paused)
                 {
-                    WaitScreen();
-                    _paused = false;
+                    WaitScreen(board);
+                    paused = false;
                 }
 
-                if (_board.FrameInterval > 0)
+                if (board.FrameInterval > 0)
                 {
                     Thread.Sleep(1);
                     double ticks = DateTime.Now.Subtract(start).TotalMilliseconds;
-                    if (ticks > _board.FrameInterval)
+                    if (ticks > board.FrameInterval)
                     {
-                        _board.NextFrame();
+                        board.NextFrame();
                         start = DateTime.Now;
                     }
                 }
             }
 
-            End();
+            if (board.Next != null)
+                Run(board.Next);
         }
 
-        void HandleInput()
+        static bool HandleInput(IBoard board, bool paused)
         {
             string key = UIPainter.Input();
             if (key == null)
-                return;
+                return paused;
 
-            if (_paused)
-                _paused = false;
-            else if (key == "Escape")
-                _board.IsRunning = false;
-            else if (_board.IsValidInput(key))
-                _board.HandleInput(key);
+            if (paused)
+                return false;
+            if (key == "Escape")
+                board.IsRunning = false;
+            else if (board.IsValidInput(key))
+                board.HandleInput(key);
             else
-                _paused = true;
+                return true;
+
+            return paused;
         }
 
-        void WaitScreen()
+        static void Draw(IBoard board)
         {
-            UIPainter.ClearPanel(_board.Main);
-            UIPainter.DrawPanelText(_board.Main, _board.Help);
-            UIPainter.InputWait();
-            UIPainter.DrawPanel(_board.Main);
-        }
-
-        void End()
-        {
-            if (_board.Win.HasValue)
-            {
-                var runner = _board.Win.Value ?
-                    new BoardRunner(new FireworksBoard(), _log) :
-                    new BoardRunner(new RainingBloodBoard(), _log);
-                runner.Run();
-            }
-
-            UIPainter.Resize(_winWidth, _winHeight);
-        }
-
-        void Draw()
-        {
-            foreach (var pnl in _board.Panels.Values)
+            foreach (var pnl in board.Panels.Values)
             {
                 if (pnl.HasChanges)
                 {
@@ -98,27 +70,23 @@ namespace iobloc
                 }
             }
 
-            DrawScore();
-            DrawLevel();
-        }
-
-        void DrawScore()
-        {
-            if (_board.Highscore.HasValue)
+            if (board.Highscore.HasValue)
             {
-                if (_board.UIBorder.Width > 8)
-                    UIPainter.TextAt(0, 1, string.Format($"{_board.Highscore.Value,3}"));
-                UIPainter.TextAt(0, _board.UIBorder.Width - 4, string.Format($"{_board.Score,3}"));
+                if (board.UIBorder.Width > 8)
+                    UIPainter.TextAt(0, 1, string.Format($"{board.Highscore.Value,3}"));
+                UIPainter.TextAt(0, board.UIBorder.Width - 4, string.Format($"{board.Score,3}"));
             }
+
+            if (board.Level >= 0)
+                UIPainter.TextAt(board.UIBorder.Height - 1, (board.UIBorder.Width + 1) / 2 - 2, string.Format($"L{board.Level,2}"));
         }
 
-        void DrawLevel()
+        static void WaitScreen(IBoard board)
         {
-            if (_board.Level >= 0)
-                UIPainter.TextAt(
-                    _board.UIBorder.Height - 1,
-                    (_board.UIBorder.Width + 1) / 2 - 2,
-                    string.Format($"L{_board.Level,2}"));
+            UIPainter.ClearPanel(board.Main);
+            UIPainter.DrawPanelText(board.Main, board.Help);
+            UIPainter.InputWait();
+            UIPainter.DrawPanel(board.Main);
         }
     }
 }

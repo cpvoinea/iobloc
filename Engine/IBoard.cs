@@ -15,6 +15,7 @@ namespace iobloc
         int Level { get; }
         bool? Win { get; }
         bool IsRunning { get; set; }
+        IBoard Next { get; set; }
 
         bool IsValidInput(string key);
         void HandleInput(string key);

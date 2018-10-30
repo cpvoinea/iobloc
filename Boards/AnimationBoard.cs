@@ -9,27 +9,31 @@ namespace iobloc
         protected UIPanel _main;
         readonly Dictionary<string, UIPanel> _panels;
         readonly int[][,] _animation;
-        readonly string _message;
         int _currentFrame;
         public UIBorder UIBorder => _border;
         public UIPanel Main => _main;
         public Dictionary<string, UIPanel> Panels => _panels;
-        public string[] Help => new[] { "", "", "", _message };
+        public string[] Help => new string[0];
         public int FrameInterval => 200;
         public int? Highscore => null;
         public int Score => 0;
         public int Level => Serializer.Level;
         public bool? Win => null;
         public bool IsRunning { get; set; }
+        public IBoard Next { get; set; }
 
-        internal AnimationBoard(BoardType type, string message)
+        internal AnimationBoard(BoardType type)
         {
             _type = type;
-            _message = message;
             _border = new UIBorder(Animation.SIZE + 2, Animation.SIZE + 2);
             _main = new UIPanel(1, 1, Animation.SIZE, Animation.SIZE);
             _panels = new Dictionary<string, UIPanel> { { "main", _main } };
-            _animation = Animation.Get((int)type);
+            switch(type)
+            {
+                case BoardType.Fireworks: _animation = Animation.Get(0); break;
+                case BoardType.RainingBlood: _animation = Animation.Get(1); break;
+            }
+            Next = new MenuBoard();
         }
 
         public bool IsValidInput(string key) { return false; }

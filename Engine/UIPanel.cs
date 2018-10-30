@@ -30,6 +30,7 @@ namespace iobloc
         {
             Text = text;
             IsText = true;
+            HasChanges = true;
         }
     }
 }

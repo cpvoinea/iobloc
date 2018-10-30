@@ -50,6 +50,7 @@ namespace iobloc
         public int Score { get { return _score; } }
         public bool? Win { get; private set; }
         public bool IsRunning { get; set; }
+        public IBoard Next { get; set; }
 
         internal TableBoard()
         {
@@ -83,6 +84,7 @@ namespace iobloc
             _main = _panels[Pnl.Main];
 
             _random = new Random();
+            Next = new MenuBoard();
             Restart();
         }
 

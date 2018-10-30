@@ -6,17 +6,10 @@ namespace iobloc
 {
     static class UIPainter
     {
-        const int MIN_WIDTH = 10;
-        const int MIN_HEIGHT = 10;
-
         internal static void Initialize()
         {
             Console.OutputEncoding = Encoding.UTF8;
             Console.CursorVisible = false;
-            if (Console.WindowWidth < MIN_WIDTH)
-                Resize(MIN_WIDTH, Console.WindowHeight);
-            if (Console.WindowHeight < MIN_HEIGHT)
-                Resize(Console.WindowWidth, MIN_HEIGHT);
         }
 
         internal static void Exit()
@@ -24,19 +17,12 @@ namespace iobloc
             Console.CursorVisible = true;
         }
 
-        internal static void Clear()
-        {
-            Console.Clear();
-        }
-
-        internal static void GetSize(out int width, out int height)
-        {
-            width = Console.WindowWidth;
-            height = Console.WindowHeight;
-        }
-
         internal static void Resize(int width, int height)
         {
+            width = width < 15 ? 15 : width;
+            height = height + 1;
+
+            Console.Clear();
             Console.SetWindowSize(width, height);
             if (Console.BufferWidth > width || Console.BufferHeight > height)
                 Console.SetBufferSize(width, height);
@@ -55,7 +41,6 @@ namespace iobloc
 
         internal static void DrawBorder(UIBorder border)
         {
-            Clear();
             Resize(border.Width, border.Height);
             for (int i = 0; i < border.Height; i++)
             {

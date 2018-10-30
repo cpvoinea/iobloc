@@ -18,6 +18,7 @@ namespace iobloc
         int _levelThreshold;
         int _score;
         int _level;
+        bool _isRunning;
 
         public UIBorder UIBorder { get { return _border; } }
         public Dictionary<string, UIPanel> Panels { get { return _panels; } }
@@ -58,7 +59,24 @@ namespace iobloc
             }
         }
         public bool? Win { get; protected set; }
-        public bool IsRunning { get; set; }
+        public bool IsRunning
+        {
+            get { return _isRunning; }
+            set
+            {
+                _isRunning = value;
+                if (!_isRunning)
+                {
+                    if (Win == true)
+                        Next = new AnimationBoard(BoardType.Fireworks);
+                    else if (Win == false)
+                        Next = new AnimationBoard(BoardType.RainingBlood);
+                    else
+                        Next = new MenuBoard();
+                }
+            }
+        }
+        public IBoard Next { get; set; }
 
         protected internal BaseBoard(BoardType type)
         {
