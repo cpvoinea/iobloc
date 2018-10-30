@@ -3,25 +3,25 @@ using System.Collections.Generic;
 
 namespace iobloc
 {
-    abstract class SinglePanelBoard : IBoard
+    abstract class BaseBoard : IBoard
     {
-        Option _option;
+        BoardType _type;
         protected readonly Dictionary<string, string> _settings;
+        readonly UIBorder _border;
+        readonly Dictionary<string, UIPanel> _panels;
+        protected UIPanel _main;
         readonly string[] _help;
         readonly string[] _keys;
         protected readonly int _width;
         protected readonly int _height;
-        readonly Border _border;
-        protected Panel _main;
-        readonly Dictionary<string, Panel> _panels;
         int _frameMultiplier;
         int _levelThreshold;
         int _score;
         int _level;
 
-        public Border Border { get { return _border; } }
-        public Panel MainPanel { get { return _main; } }
-        public Dictionary<string, Panel> Panels { get { return _panels; } }
+        public UIBorder UIBorder { get { return _border; } }
+        public Dictionary<string, UIPanel> Panels { get { return _panels; } }
+        public UIPanel Main { get { return _main; } }
         public string[] Help { get { return _help; } }
         public int FrameInterval { get; private set; }
         public int? Highscore { get; private set; }
@@ -34,15 +34,16 @@ namespace iobloc
                 if (Highscore.HasValue && _score > Highscore.Value)
                 {
                     Highscore = _score;
-                    Config.UpdateHighscore(_option, _score);
+                    Serializer.UpdateHighscore((int)_type, _score);
                 }
                 if (_levelThreshold > 0 && _score >= _levelThreshold * (Level + 1))
                 {
                     Level++;
-                    if (Level >= Config.LEVEL_MAX)
+                    if (Level > 15)
                     {
                         Win = true;
-                        IsRunning = false;
+                        if (_type != BoardType.Sokoban || Level >= SokobanLevels.Count)
+                            IsRunning = false;
                     }
                 }
             }
@@ -53,41 +54,38 @@ namespace iobloc
             protected set
             {
                 _level = value;
-                FrameInterval = Config.LevelInterval(_frameMultiplier, _level);
+                FrameInterval = Serializer.GetLevelInterval(_frameMultiplier, _level);
             }
         }
         public bool? Win { get; protected set; }
         public bool IsRunning { get; set; }
 
-        protected internal SinglePanelBoard(Option option)
+        protected internal BaseBoard(BoardType type)
         {
-            _option = option;
-            _settings = Config.Settings(option);
-            _frameMultiplier = _settings.GetInt("FrameMultiplier", 1);
+            _type = type;
+            int key = (int)type;
+            _settings = Serializer.Settings[key];
+
+            _frameMultiplier = _settings.GetInt("FrameMultiplier", 0);
             _levelThreshold = _settings.GetInt("LevelThreshold", 0);
             _help = _settings.GetList("Help");
             _keys = _settings.GetList("Keys");
             _width = _settings.GetInt("Width", 10);
             _height = _settings.GetInt("Height", 10);
-            _border = new Border(_width + 2, _height + 2);
-            _main = new Panel(1, 1, _height, _width);
-            _panels = new Dictionary<string, Panel> { { "main", _main } };
 
-            Highscore = Config.GetHighscore(option);
-            Level = Config.Level;
+            _border = new UIBorder(_width + 2, _height + 2);
+            _main = new UIPanel(1, 1, _height, _width);
+            _panels = new Dictionary<string, UIPanel> { { "main", _main } };
+
+            if (Serializer.Highscores.ContainsKey(key))
+                Highscore = Serializer.Highscores[key];
+            Level = Serializer.Level;
         }
 
-        public bool IsValidInput(string key)
-        {
-            return Array.Exists(_keys, x => x == key);
-        }
-
+        public bool IsValidInput(string key) { return Array.Exists(_keys, x => x == key); }
         protected virtual void InitializeGrid() { }
-
         protected virtual void ChangeGrid(bool set) { }
-
+        public virtual void NextFrame() { }
         public abstract void HandleInput(string key);
-
-        public abstract void NextFrame();
     }
 }

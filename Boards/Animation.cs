@@ -4,9 +4,9 @@ namespace iobloc
     {
         internal const int SIZE = 7;
 
-        internal static int[][,] Get(int code)
+        internal static int[][,] Get(int type)
         {
-            var animation = All[code];
+            var animation = All[type];
             int len = animation.Length;
             int[][,] result = new int[len][,];
             for (int i = 0; i < len; i++)

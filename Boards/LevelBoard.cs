@@ -2,19 +2,17 @@ using System;
 
 namespace iobloc
 {
-    class LevelBoard : SinglePanelBoard
+    class LevelBoard : BaseBoard
     {
-        int MAX => Config.LEVEL_MAX;
-
-        internal LevelBoard() : base(Option.Level)
+        internal LevelBoard() : base(BoardType.Level)
         {
             InitializeGrid();
         }
 
         protected override void InitializeGrid()
         {
-            for (int i = 0; i < MAX; i++)
-                _main.Grid[0, i] = 15 - i;
+            for (int i = 0; i < 16; i++)
+                _main[0, i] = 15 - i;
             ChangeGrid(true);
         }
 
@@ -22,11 +20,11 @@ namespace iobloc
         {
             if (set)
             {
-                _main.Grid[0, Level] = 15;
+                _main[0, Level] = 15;
                 _main.HasChanges = true;
             }
             else
-                _main.Grid[0, Level] = 15 - Level;
+                _main[0, Level] = 15 - Level;
         }
 
         public override void HandleInput(string key)
@@ -34,7 +32,7 @@ namespace iobloc
             switch (key)
             {
                 case "RightArrow":
-                    if (Level < MAX - 1)
+                    if (Level < 15)
                     {
                         ChangeGrid(false);
                         Level++;
@@ -50,14 +48,10 @@ namespace iobloc
                     }
                     break;
                 case "Enter":
-                    Config.Level = Level;
+                    Serializer.Level = Level;
                     IsRunning = false;
                     break;
             }
-        }
-
-        public override void NextFrame()
-        {
         }
     }
 }

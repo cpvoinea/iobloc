@@ -2,7 +2,7 @@ using System;
 
 namespace iobloc
 {
-    class InvadersBoard : SinglePanelBoard
+    class InvadersBoard : BaseBoard
     {
         int CP => _settings.GetColor("PlayerColor");
         int CE => _settings.GetColor("EnemyColor");
@@ -22,7 +22,7 @@ namespace iobloc
         bool _shot;
         bool _movingRight;
 
-        internal InvadersBoard() : base(Option.Invaders)
+        internal InvadersBoard() : base(BoardType.Invaders)
         {
             InitializeGrid();
         }
@@ -39,7 +39,7 @@ namespace iobloc
             for (int row = 0; row < AR; row++)
                 for (int col = 0; col < _width && col < AC * A; col += A)
                     for (int i = 0; col + i < _width && i < AW; i++)
-                        _main.Grid[row, col + i] = CE;
+                        _main[row, col + i] = CE;
 
             ChangeGrid(true);
         }
@@ -47,8 +47,8 @@ namespace iobloc
         protected override void ChangeGrid(bool set)
         {
             for (int i = -1; i <= 1; i++)
-                _main.Grid[_height - 1, _ship + i] = set ? CP : 0;
-            _main.Grid[_bulletRow, _bulletCol] = set ? CN : 0;
+                _main[_height - 1, _ship + i] = set ? CP : 0;
+            _main[_bulletRow, _bulletCol] = set ? CN : 0;
             if (set)
                 _main.HasChanges = true;
         }
@@ -88,7 +88,7 @@ namespace iobloc
             if (_targets == 0)
             {
                 Level++;
-                if (Level >= Config.LEVEL_MAX)
+                if (Level > 15)
                 {
                     Win = true;
                     IsRunning = false;
@@ -102,7 +102,7 @@ namespace iobloc
             }
 
             for (int i = 0; i < _width; i++)
-                if (_main.Grid[_height - 2, i] == CE)
+                if (_main[_height - 2, i] == CE)
                 {
                     Win = false;
                     IsRunning = false;
@@ -114,12 +114,12 @@ namespace iobloc
             {
                 _skipFrame = BS;
                 for (int i = 0; i < _height; i++)
-                    if (_movingRight && _main.Grid[i, _width - 1] > 0 ||
-                     !_movingRight && _main.Grid[i, 0] > 0)
+                    if (_movingRight && _main[i, _width - 1] > 0 ||
+                     !_movingRight && _main[i, 0] > 0)
                     {
                         for (int k = _height - 1; k >= 0; k--)
                             for (int j = 0; j < _width; j++)
-                                _main.Grid[k, j] = k == 0 ? 0 : _main.Grid[k - 1, j];
+                                _main[k, j] = k == 0 ? 0 : _main[k - 1, j];
 
                         _movingRight = !_movingRight;
                         break;
@@ -127,11 +127,11 @@ namespace iobloc
                 if (_movingRight)
                     for (int i = 0; i < _height; i++)
                         for (int j = _width - 1; j >= 0; j--)
-                            _main.Grid[i, j] = j == 0 ? 0 : _main.Grid[i, j - 1];
+                            _main[i, j] = j == 0 ? 0 : _main[i, j - 1];
                 else
                     for (int i = 0; i < _height; i++)
                         for (int j = 0; j < _width; j++)
-                            _main.Grid[i, j] = j == _width - 1 ? 0 : _main.Grid[i, j + 1];
+                            _main[i, j] = j == _width - 1 ? 0 : _main[i, j + 1];
             }
 
             _skipFrame--;
@@ -146,16 +146,16 @@ namespace iobloc
                 else
                 {
                     _bulletRow--;
-                    if (_main.Grid[_bulletRow, _bulletCol] == CE)
+                    if (_main[_bulletRow, _bulletCol] == CE)
                     {
                         int c = _bulletCol;
                         do
-                            _main.Grid[_bulletRow, c++] = 0;
-                        while (c < _width && _main.Grid[_bulletRow, c] == CE);
+                            _main[_bulletRow, c++] = 0;
+                        while (c < _width && _main[_bulletRow, c] == CE);
 
                         c = _bulletCol;
-                        while (c > 0 && _main.Grid[_bulletRow, --c] == CE)
-                            _main.Grid[_bulletRow, c] = 0;
+                        while (c > 0 && _main[_bulletRow, --c] == CE)
+                            _main[_bulletRow, c] = 0;
 
                         Score++;
                         _targets--;
@@ -163,7 +163,7 @@ namespace iobloc
                         _shot = false;
                         _bulletRow = _height - 2;
                         _bulletCol = _ship;
-                        _main.Grid[_bulletRow, _bulletCol] = CN;
+                        _main[_bulletRow, _bulletCol] = CN;
                     }
                 }
             }

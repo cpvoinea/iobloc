@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace iobloc
 {
-    class SnakeBoard : SinglePanelBoard
+    class SnakeBoard : BaseBoard
     {
         struct Position
         {
@@ -40,7 +40,7 @@ namespace iobloc
         int _nextH = 1;
         int _nextV = 0;
 
-        internal SnakeBoard() : base(Option.Snake)
+        internal SnakeBoard() : base(BoardType.Snake)
         {
             NewPoint();
             InitializeGrid();
@@ -61,8 +61,8 @@ namespace iobloc
         protected override void ChangeGrid(bool set)
         {
             foreach (var p in _snake)
-                _main.Grid[p.Row, p.Col] = set ? CP : 0;
-            _main.Grid[_point.Row, _point.Col] = set ? CN : 0;
+                _main[p.Row, p.Col] = set ? CP : 0;
+            _main[_point.Row, _point.Col] = set ? CN : 0;
             if (set)
                 _main.HasChanges = true;
         }

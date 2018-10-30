@@ -25,24 +25,24 @@ namespace iobloc
         int CP => (int)_settings.GetColor("PlayerColor");
         int CE => (int)_settings.GetColor("EnemyColor");
         int CN => (int)_settings.GetColor("NeutralColor");
-        Panel PLR => _panels[Pnl.LowerRight];
-        Panel PLL => _panels[Pnl.LowerLeft];
-        Panel PUR => _panels[Pnl.UpperRight];
-        Panel PUL => _panels[Pnl.UpperLeft];
+        UIPanel PLR => _panels[Pnl.LowerRight];
+        UIPanel PLL => _panels[Pnl.LowerLeft];
+        UIPanel PUR => _panels[Pnl.UpperRight];
+        UIPanel PUL => _panels[Pnl.UpperLeft];
 
         readonly Dictionary<string, string> _settings;
         readonly string[] _help;
         readonly string[] _keys;
-        readonly Border _border;
-        Panel _main;
-        readonly Dictionary<string, Panel> _panels;
+        readonly UIBorder _border;
+        UIPanel _main;
+        readonly Dictionary<string, UIPanel> _panels;
         int _score;
         readonly Random _random;
         int _position;
 
-        public Border Border { get { return _border; } }
-        public Panel MainPanel { get { return _main; } }
-        public Dictionary<string, Panel> Panels { get { return _panels; } }
+        public UIBorder UIBorder { get { return _border; } }
+        public UIPanel Main { get { return _main; } }
+        public Dictionary<string, UIPanel> Panels { get { return _panels; } }
         public string[] Help { get { return _help; } }
         public int FrameInterval { get { return 250; } }
         public int? Highscore { get { return null; } }
@@ -53,32 +53,32 @@ namespace iobloc
 
         internal TableBoard()
         {
-            _settings = Config.Settings(Option.Table);
+            _settings = Serializer.Settings[(int)BoardType.Table];
             _help = _settings.GetList("Help");
             _keys = _settings.GetList("Keys");
-            _border = new Border(new[]
+            _border = new UIBorder(new[]
             {
-                new BorderLine(0, W - 1, 0, false, false),
-                new BorderLine(0, W - 1, H - 1, false, false),
-                new BorderLine(0, H - 1, 0, true, false),
-                new BorderLine(0, H - 1, W - 1, true, false),
-                new BorderLine(0, H - 1, 6 * PW + 1, true, true),
-                new BorderLine(0, H - 1, 7 * PW + 2, true, true),
-                new BorderLine(0, H - 1, 13 * PW + 3, true, true),
-                new BorderLine(6 * PW + 1, 7 * PW + 2, H / 2 - 3, false, true),
-                new BorderLine(6 * PW + 1, 7 * PW + 2, H / 2 + 2, false, true)
+                new UIBorderLine(0, W - 1, 0, false, false),
+                new UIBorderLine(0, W - 1, H - 1, false, false),
+                new UIBorderLine(0, H - 1, 0, true, false),
+                new UIBorderLine(0, H - 1, W - 1, true, false),
+                new UIBorderLine(0, H - 1, 6 * PW + 1, true, true),
+                new UIBorderLine(0, H - 1, 7 * PW + 2, true, true),
+                new UIBorderLine(0, H - 1, 13 * PW + 3, true, true),
+                new UIBorderLine(6 * PW + 1, 7 * PW + 2, H / 2 - 3, false, true),
+                new UIBorderLine(6 * PW + 1, 7 * PW + 2, H / 2 + 2, false, true)
             });
-            _panels = new Dictionary<string, Panel>
+            _panels = new Dictionary<string, UIPanel>
             {
-                {Pnl.UpperLeft, new Panel(1, 1, H / 2 - 1, 6 * PW, (char)BoxGraphics.BlockUpper)},
-                {Pnl.LowerLeft, new Panel(H / 2, 1, H - 2, 6 * PW, (char)BoxGraphics.BlockLower)},
-                {Pnl.UpperTaken, new Panel(1, 6 * PW + 2, H / 2 - 4, 7 * PW + 1, (char)BoxGraphics.BlockUpper)},
-                {Pnl.Dice, new Panel(H / 2 - 2, 6 * PW + 2, H / 2 + 1, 7 * PW + 1, (char)0)},
-                {Pnl.LowerTaken, new Panel(H / 2 + 3, 6 * PW + 2, H - 2, 7 * PW + 1, (char)BoxGraphics.BlockLower)},
-                {Pnl.UpperRight, new Panel(1, 7 * PW + 3, H / 2 - 1, 13 * PW + 2, (char)BoxGraphics.BlockUpper)},
-                {Pnl.LowerRight, new Panel(H / 2, 7 * PW + 3, H - 2, 13 * PW + 2, (char)BoxGraphics.BlockLower)},
-                {Pnl.UpperOut, new Panel(1, 13 * PW + 4, H / 2 - 1, 14 * PW + 3, (char)BoxGraphics.BlockUpper)},
-                {Pnl.LowerOut, new Panel(H / 2, 13 * PW + 4, H - 2, 14 * PW + 3, (char)BoxGraphics.BlockLower)}
+                {Pnl.UpperLeft, new UIPanel(1, 1, H / 2 - 1, 6 * PW, (char)UISymbolType.BlockUpper)},
+                {Pnl.LowerLeft, new UIPanel(H / 2, 1, H - 2, 6 * PW, (char)UISymbolType.BlockLower)},
+                {Pnl.UpperTaken, new UIPanel(1, 6 * PW + 2, H / 2 - 4, 7 * PW + 1, (char)UISymbolType.BlockUpper)},
+                {Pnl.Dice, new UIPanel(H / 2 - 2, 6 * PW + 2, H / 2 + 1, 7 * PW + 1, (char)0)},
+                {Pnl.LowerTaken, new UIPanel(H / 2 + 3, 6 * PW + 2, H - 2, 7 * PW + 1, (char)UISymbolType.BlockLower)},
+                {Pnl.UpperRight, new UIPanel(1, 7 * PW + 3, H / 2 - 1, 13 * PW + 2, (char)UISymbolType.BlockUpper)},
+                {Pnl.LowerRight, new UIPanel(H / 2, 7 * PW + 3, H - 2, 13 * PW + 2, (char)UISymbolType.BlockLower)},
+                {Pnl.UpperOut, new UIPanel(1, 13 * PW + 4, H / 2 - 1, 14 * PW + 3, (char)UISymbolType.BlockUpper)},
+                {Pnl.LowerOut, new UIPanel(H / 2, 13 * PW + 4, H - 2, 14 * PW + 3, (char)UISymbolType.BlockLower)}
             };
             _main = _panels[Pnl.Main];
 
@@ -124,7 +124,7 @@ namespace iobloc
             {
                 for (int i = 0; i < pnl.Height; i++)
                     for (int j = 0; j < pnl.Width; j++)
-                        pnl.Grid[i, j] = 0;
+                        pnl[i, j] = 0;
                 pnl.HasChanges = true;
             }
 
@@ -132,27 +132,27 @@ namespace iobloc
             {
                 for (int i = 0; i < 5; i++)
                 {
-                    PLR.Grid[PLR.Height - 2 - i, j] = CP;
-                    PLL.Grid[PLL.Height - 2 - i, j] = CE;
-                    PUL.Grid[i + 1, j] = CP;
-                    PUR.Grid[i + 1, j] = CE;
+                    PLR[PLR.Height - 2 - i, j] = CP;
+                    PLL[PLL.Height - 2 - i, j] = CE;
+                    PUL[i + 1, j] = CP;
+                    PUR[i + 1, j] = CE;
                 }
                 for (int i = 0; i < 3; i++)
                 {
-                    PLL.Grid[PLL.Height - 2 - i, 4 * PW + j] = CP;
-                    PUL.Grid[i + 1, 4 * PW + j] = CE;
+                    PLL[PLL.Height - 2 - i, 4 * PW + j] = CP;
+                    PUL[i + 1, 4 * PW + j] = CE;
                 }
                 for (int i = 0; i < 2; i++)
                 {
-                    PLR.Grid[PLR.Height - 2 - i, 5 * PW + j] = CE;
-                    PUR.Grid[i + 1, 5 * PW + j] = CP;
+                    PLR[PLR.Height - 2 - i, 5 * PW + j] = CE;
+                    PUR[i + 1, 5 * PW + j] = CP;
                 }
             }
         }
 
         void Set(bool select = true, bool white = true)
         {
-            Panel pnl = null;
+            UIPanel pnl = null;
             int row = 0, col = 0;
             if (_position <= 0)
             {
@@ -190,7 +190,7 @@ namespace iobloc
             if (pnl != null)
             {
                 for (int i = col * PW; i < (col + 1) * PW; i++)
-                    pnl.Grid[row, i] = select ? CN : 0;
+                    pnl[row, i] = select ? CN : 0;
                 pnl.HasChanges = true;
             }
         }

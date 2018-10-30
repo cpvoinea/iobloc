@@ -2,7 +2,7 @@ using System;
 
 namespace iobloc
 {
-    static class BoxGraphics
+    static class UISymbolType
     {
         internal const int None = 0;
         internal const int HorizontalLine = 0x2550;
@@ -34,24 +34,5 @@ namespace iobloc
         internal const int BlockLight = 0x2591;
         internal const int BlockMedium = 0x2592;
         internal const int BlockDark = 0x2593;
-
-        internal static void List()
-        {
-            Console.WriteLine("BOX DRAWING");
-            for (int i = 0x2500; i < 0x2580; i++)
-                Console.WriteLine("{0:X}: {1}", i, (char)i);
-            Console.WriteLine();
-            Console.WriteLine("BLOCK ELEMENTS");
-            for (int i = 0x2580; i < 0x25A0; i++)
-                Console.WriteLine("{0:X}: {1}", i, (char)i);
-            // Console.WriteLine();
-            // Console.WriteLine("GEOMETRIC SHAPES");
-            // for (int i = 0x25A0; i < 0x2600; i++)
-            //     Console.WriteLine("{0:X}: {1}", i, (char)i);
-            // Console.WriteLine();
-            // Console.WriteLine("MISC SYMBOLS");
-            // for (int i = 0x2600; i < 0x2700; i++)
-            //     Console.WriteLine("{0:X}: {1}", i, (char)i);
-        }
     }
 }

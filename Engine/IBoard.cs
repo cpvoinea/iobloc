@@ -5,9 +5,9 @@ namespace iobloc
 {
     interface IBoard
     {
-        Border Border { get; }
-        Dictionary<string, Panel> Panels { get; }
-        Panel MainPanel { get; }
+        UIBorder UIBorder { get; }
+        Dictionary<string, UIPanel> Panels { get; }
+        UIPanel Main { get; }
         string[] Help { get; }
         int FrameInterval { get; }
         int? Highscore { get; }
@@ -16,8 +16,8 @@ namespace iobloc
         bool? Win { get; }
         bool IsRunning { get; set; }
 
-        void NextFrame();
         bool IsValidInput(string key);
         void HandleInput(string key);
+        void NextFrame();
     }
 }

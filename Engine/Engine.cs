@@ -6,62 +6,31 @@ namespace iobloc
     class Engine : IDisposable
     {
         readonly StringBuilder _log = new StringBuilder();
-        readonly Menu _menu;
-        bool _saveSettings;
 
         internal Engine(string settingsFilePath)
         {
-            if (!string.IsNullOrEmpty(settingsFilePath))
-            {
-                Config.Load(settingsFilePath);
-                _saveSettings = true;
-            }
-            else
-                Config.Load();
-            _menu = new Menu(Config.MenuItems);
-            UI.Open();
+            Serializer.LoadSettings(settingsFilePath);
+            Serializer.LoadHighscores();
+            UIPainter.Initialize();
         }
 
         internal void ShowMenu()
         {
-            _menu.Show();
-            var option = _menu.WaitOption();
-            if (!option.HasValue)
-                return;
-            Open(option.Value);
+            var runner = new BoardRunner(new MenuBoard(), _log);
+            runner.Run();
         }
 
         internal void ShowLog()
         {
-            UI.Clear();
-            UI.Text(_log.ToString());
-            UI.InputWait();
-        }
-
-        void Open(Option option)
-        {
-            try
-            {
-                _log.AppendLine($"Start {option}");
-                UI.Clear();
-
-                var game = new Game(option);
-                game.Start();
-                _log.AppendLine($"{game.EndedMessage} {option}");
-            }
-            catch (Exception ex)
-            {
-                _log.AppendLine($"Error playing {option}: {ex}");
-            }
-
-            ShowMenu();
+            var runner = new BoardRunner(new LogBoard(), _log);
+            runner.Run();
         }
 
         public void Dispose()
         {
-            Config.Save(_saveSettings);
-            UI.Close();
-            _log.Clear();
+            Serializer.SaveSettings();
+            Serializer.SaveHighscores();
+            UIPainter.Exit();
         }
     }
 }

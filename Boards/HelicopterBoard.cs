@@ -2,7 +2,7 @@ using System;
 
 namespace iobloc
 {
-    class HelicopterBoard : SinglePanelBoard
+    class HelicopterBoard : BaseBoard
     {
         int CP => _settings.GetColor("PlayerColor");
         int CE => _settings.GetColor("EnemyColor");
@@ -14,7 +14,7 @@ namespace iobloc
         int _distance;
         bool _skipAdvance;
 
-        internal HelicopterBoard() : base(Option.Helicopt)
+        internal HelicopterBoard() : base(BoardType.Helicopt)
         {
             ChangeGrid(true);
         }
@@ -22,7 +22,7 @@ namespace iobloc
         protected override void ChangeGrid(bool set)
         {
             if (_distance >= 0 && _distance < _height)
-                _main.Grid[_distance, PP] = _main.Grid[_distance, PP + 1] = set ? CP : 0;
+                _main[_distance, PP] = _main[_distance, PP + 1] = set ? CP : 0;
             if (set)
                 _main.HasChanges = true;
         }
@@ -77,10 +77,10 @@ namespace iobloc
             ChangeGrid(false);
             for (int j = 1; j < _width - 1; j++)
                 for (int i = 0; i < _height; i++)
-                    _main.Grid[i, j] = _main.Grid[i, j + 1];
+                    _main[i, j] = _main[i, j + 1];
 
             for (int i = 0; i < _height; i++)
-                _main.Grid[i, _width - 1] = 0;
+                _main[i, _width - 1] = 0;
             CreateObstacles();
             Score++;
 
@@ -91,7 +91,7 @@ namespace iobloc
         bool CheckDead()
         {
             if (_distance < 0 || _distance >= _height ||
-                _main.Grid[_distance, PP] == CE || _main.Grid[_distance, PP + 1] == CE)
+                _main[_distance, PP] == CE || _main[_distance, PP + 1] == CE)
             {
                 Win = false;
                 Clear(CE);
@@ -114,7 +114,7 @@ namespace iobloc
             bool hasSpace = true;
             int y = _width - 2;
             while (hasSpace && y >= 0 && y >= _width - OS)
-                hasSpace &= (_main.Grid[_height - 1, y] == 0 && _main.Grid[0, y--] == 0);
+                hasSpace &= (_main[_height - 1, y] == 0 && _main[0, y--] == 0);
             if (!hasSpace)
                 return;
 
@@ -126,13 +126,13 @@ namespace iobloc
             {
                 fence = _random.Next(_height - 3);
                 for (int i = _height - 1; i > _height - 1 - fence; i--)
-                    _main.Grid[i, _width - 1] = CE;
+                    _main[i, _width - 1] = CE;
             }
             if ((p & 2) > 0)
             {
                 int ceil = _random.Next(_height - 3 - fence);
                 for (int i = 0; i < ceil; i++)
-                    _main.Grid[i, _width - 1] = CE;
+                    _main[i, _width - 1] = CE;
             }
         }
 
@@ -140,7 +140,7 @@ namespace iobloc
         {
             for (int i = 0; i < _height; i++)
                 for (int j = 0; j < _width; j++)
-                    _main.Grid[i, j] = v;
+                    _main[i, j] = v;
             ChangeGrid(true);
         }
     }

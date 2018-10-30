@@ -2,12 +2,12 @@ using System;
 
 namespace iobloc
 {
-    class TetrisBoard : SinglePanelBoard
+    class TetrisBoard : BaseBoard
     {
         readonly Random _random = new Random();
         TetrisPiece _piece;
 
-        internal TetrisBoard() : base(Option.Tetris)
+        internal TetrisBoard() : base(BoardType.Tetris)
         {
             _piece = NewPiece();
             ChangeGrid(true);
@@ -22,7 +22,7 @@ namespace iobloc
                         int gx = _piece.X - 1 + i;
                         int gy = _piece.Y - 2 + j;
                         if (gx >= 0 && gx < _height && gy >= 0 && gy < _width)
-                            _main.Grid[gx, gy] = set ? (int)_piece.Color : 0;
+                            _main[gx, gy] = set ? (int)_piece.Color : 0;
                     }
             if (set)
                 _main.HasChanges = true;
@@ -63,7 +63,7 @@ namespace iobloc
                         int gy = piece.Y - 2 + j;
                         if (gx >= _height || gy < 0 || gy >= _width ||
                             (!partiallyEntered && gx < 0) ||
-                            (gx >= 0 && _main.Grid[gx, gy] > 0))
+                            (gx >= 0 && _main[gx, gy] > 0))
                             return false;
                     }
 
@@ -129,12 +129,12 @@ namespace iobloc
                 bool line = true;
                 int j = 0;
                 while (line && j < _width)
-                    line &= _main.Grid[i, j++] > 0;
+                    line &= _main[i, j++] > 0;
                 if (line)
                 {
                     for (int k = i; k >= 0; k--)
                         for (int l = 0; l < _width; l++)
-                            _main.Grid[k, l] = k == 0 ? 0 : _main.Grid[k - 1, l];
+                            _main[k, l] = k == 0 ? 0 : _main[k - 1, l];
                     i++;
                     series++;
                 }

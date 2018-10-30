@@ -4,12 +4,12 @@ using System.Text;
 
 namespace iobloc
 {
-    static class UI
+    static class UIPainter
     {
         const int MIN_WIDTH = 10;
         const int MIN_HEIGHT = 10;
 
-        internal static void Open()
+        internal static void Initialize()
         {
             Console.OutputEncoding = Encoding.UTF8;
             Console.CursorVisible = false;
@@ -19,7 +19,7 @@ namespace iobloc
                 Resize(Console.WindowWidth, MIN_HEIGHT);
         }
 
-        internal static void Close()
+        internal static void Exit()
         {
             Console.CursorVisible = true;
         }
@@ -29,6 +29,12 @@ namespace iobloc
             Console.Clear();
         }
 
+        internal static void GetSize(out int width, out int height)
+        {
+            width = Console.WindowWidth;
+            height = Console.WindowHeight;
+        }
+
         internal static void Resize(int width, int height)
         {
             Console.SetWindowSize(width, height);
@@ -36,39 +42,27 @@ namespace iobloc
                 Console.SetBufferSize(width, height);
         }
 
-        internal static void GetSize(out int width, out int height)
+        internal static void Text(string text)
         {
-            width = Console.WindowWidth;
-            height = Console.WindowHeight;
-        }
-
-        internal static void TextReset()
-        {
-            Console.ResetColor();
-        }
-
-        internal static void Text(string text, int? color = null)
-        {
-            if (color.HasValue)
-                Console.ForegroundColor = (ConsoleColor)color.Value;
             Console.Write(text);
         }
 
-        internal static void TextAt(string text, int row, int col, int? color = null)
+        internal static void TextAt(int row, int col, string text)
         {
             Console.SetCursorPosition(col, row);
-            Text(text, color);
+            Text(text);
         }
 
-        internal static void BorderDraw(Border border)
+        internal static void DrawBorder(UIBorder border)
         {
+            Clear();
             Resize(border.Width, border.Height);
             for (int i = 0; i < border.Height; i++)
             {
                 StringBuilder line = new StringBuilder();
                 for (int j = 0; j < border.Width; j++)
                 {
-                    int c = border.Grid[i, j];
+                    int c = border[i, j];
                     line.Append(c == 0 ? ' ' : (char)c);
                 }
                 Console.SetCursorPosition(0, i);
@@ -76,7 +70,7 @@ namespace iobloc
             }
         }
 
-        internal static void PanelClear(Panel panel)
+        internal static void ClearPanel(UIPanel panel)
         {
             string row = new String(' ', panel.Width);
             for (int i = panel.FromRow; i <= panel.ToRow; i++)
@@ -86,14 +80,26 @@ namespace iobloc
             }
         }
 
-        internal static void PanelDraw(Panel panel)
+        internal static void DrawPanelText(UIPanel panel, string[] lines)
         {
+            for (int i = 0; i < lines.Length; i++)
+                TextAt(panel.FromRow + i, panel.FromCol, lines[i]);
+        }
+
+        internal static void DrawPanel(UIPanel panel)
+        {
+            if (panel.IsText)
+            {
+                DrawPanelText(panel, panel.Text);
+                return;
+            }
+
             for (int i = panel.FromRow, x = 0; i <= panel.ToRow && x < panel.Height; i++, x++)
             {
                 Console.SetCursorPosition(panel.FromCol, i);
                 for (int y = 0; y < panel.Width; y++)
                 {
-                    int c = panel.Grid[x, y];
+                    int c = panel[x, y];
                     if (c == 0)
                         Console.Write(' ');
                     else if (panel.Symbol == 0)
@@ -107,16 +113,8 @@ namespace iobloc
                     }
                 }
             }
-            TextReset();
-        }
 
-        internal static void PanelTextLines(Panel panel, string[] lines)
-        {
-            for (int i = 0; i < lines.Length; i++)
-            {
-                Console.SetCursorPosition(panel.FromCol, panel.FromRow + i);
-                Text(lines[i]);
-            }
+            Console.ResetColor();
         }
 
         internal static string InputWait()

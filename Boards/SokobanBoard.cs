@@ -2,7 +2,7 @@ using System;
 
 namespace iobloc
 {
-    class SokobanBoard : SinglePanelBoard
+    class SokobanBoard : BaseBoard
     {
         int P => (int)_settings.GetColor("PlayerColor");
         int B => (int)_settings.GetColor("BlockColor");
@@ -18,7 +18,7 @@ namespace iobloc
         int _row;
         int _col;
 
-        internal SokobanBoard() : base(Option.Sokoban)
+        internal SokobanBoard() : base(BoardType.Sokoban)
         {
             InitializeLevel();
         }
@@ -43,16 +43,16 @@ namespace iobloc
 
             if (_row + v < 0 || _row + v >= _height || _col + h < 0 || _col + h >= _width)
                 return;
-            int next = _main.Grid[_row + v, _col + h];
+            int next = _main[_row + v, _col + h];
             if (next == W)
                 return;
 
             if (next == 0 || next == T)
             {
-                SetBlock(_row, _col, _main.Grid[_row, _col] == H ? T : 0);
+                SetBlock(_row, _col, _main[_row, _col] == H ? T : 0);
                 _row += v;
                 _col += h;
-                SetBlock(_row, _col, _main.Grid[_row, _col] == T ? H : P);
+                SetBlock(_row, _col, _main[_row, _col] == T ? H : P);
 
                 Score--;
                 _main.HasChanges = true;
@@ -61,16 +61,16 @@ namespace iobloc
             {
                 if (_row + 2 * v < 0 || _row + 2 * v >= _height || _col + 2 * h < 0 || _col + 2 * h >= _width)
                     return;
-                int second = _main.Grid[_row + 2 * v, _col + 2 * h];
+                int second = _main[_row + 2 * v, _col + 2 * h];
                 if (second == W || second == B || second == R)
                     return;
 
                 if (second == 0 || second == T)
                 {
-                    SetBlock(_row, _col, _main.Grid[_row, _col] == H ? T : 0);
+                    SetBlock(_row, _col, _main[_row, _col] == H ? T : 0);
                     _row += v;
                     _col += h;
-                    if (_main.Grid[_row, _col] == R)
+                    if (_main[_row, _col] == R)
                     {
                         _targets++;
                         SetBlock(_row, _col, H);
@@ -78,7 +78,7 @@ namespace iobloc
                     else
                         SetBlock(_row, _col, P);
 
-                    if (_main.Grid[_row + v, _col + h] == T)
+                    if (_main[_row + v, _col + h] == T)
                     {
                         SetBlock(_row + v, _col + h, R);
                         _targets--;
@@ -99,18 +99,7 @@ namespace iobloc
 
             Score += WS;
             Level++;
-            if (!Config.SokobanComplete && Level >= Config.LEVEL_MAX)
-            {
-                Win = true;
-                IsRunning = false;
-                Config.SokobanComplete = true;
-            }
-            else if(Config.SokobanComplete && Level >= SokobanLevels.Count)
-            {
-                Win = true;
-                IsRunning = false;
-            }
-            else
+            if(IsRunning)
             {
                 _startScore = Score;
                 InitializeLevel();
@@ -142,7 +131,7 @@ namespace iobloc
         void SetBlock(int row, int col, int val)
         {
             for (int i = col; i < col + BW; i++)
-                _main.Grid[row, i] = val;
+                _main[row, i] = val;
         }
     }
 }

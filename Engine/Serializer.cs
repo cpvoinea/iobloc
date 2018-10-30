@@ -4,15 +4,13 @@ using System.IO;
 
 namespace iobloc
 {
-    static class Config
+    static class Serializer
     {
-        static Dictionary<int, Dictionary<string, string>> _settings = new Dictionary<int, Dictionary<string, string>>{
+        internal static Dictionary<int, Dictionary<string, string>> Settings = new Dictionary<int, Dictionary<string, string>>{
             {0, // Level
                 new Dictionary<string, string>{
                     {"Help", "<Easy-ENTR-Hard>"},
                     {"Keys", "LeftArrow,RightArrow,Enter"},
-                    {"FrameMultiplier", "5"},
-                    {"LevelThreshold", "0"},
                     {"Width", "16"},
                     {"Height", "1"},
                 }
@@ -59,7 +57,6 @@ namespace iobloc
                     {"Help", ",,,,Move:LEFT-RIGHT,Exit:ESC,Pause:ANY" },
                     {"Keys", "LeftArrow,RightArrow"},
                     {"FrameMultiplier", "2"},
-                    {"LevelThreshold", "0"},
                     {"Width", "25"},
                     {"Height", "15"},
                     {"PlayerColor", "Blue"},
@@ -75,7 +72,6 @@ namespace iobloc
                     {"Help", ",,,Move:LEFT-RIGHT,Shoot:UP,Exit:ESC,Pause:ANY"},
                     {"Keys", "LeftArrow,RightArrow,UpArrow"},
                     {"FrameMultiplier", "1"},
-                    {"LevelThreshold", "0"},
                     {"Width", "19"},
                     {"Height", "11"},
                     {"PlayerColor", "Blue"},
@@ -94,8 +90,6 @@ namespace iobloc
                     {"Keys", "LeftArrow,RightArrow,UpArrow,DownArrow"},
                     {"FrameMultiplier", "2"},
                     {"LevelThreshold", "5"},
-                    {"Width", "10"},
-                    {"Height", "10"},
                     {"PlayerColor", "Blue"},
                     {"NeutralColor", "Gray"},
                 }
@@ -104,8 +98,6 @@ namespace iobloc
                 new Dictionary<string, string>{
                     {"Help", "Mov:,ARRW,R:Re,strt,Ext:,ESC"}, //"Restrt:R,Move:ARW,Exit:ESC,Paus:ANY"},
                     {"Keys", "LeftArrow,RightArrow,UpArrow,DownArrow,R"},
-                    {"FrameMultiplier", "5"},
-                    {"LevelThreshold", "0"},
                     {"Width", "4"},
                     {"Height", "6"},
                     {"BlockWidth", "1"},
@@ -129,148 +121,115 @@ namespace iobloc
                     {"NeutralColor", "Gray"},
                 }
             },
-            {9, //Paint
+            {9, // Paint
                 new Dictionary<string, string>{
-                    {"Help", ""},
-                    {"Keys", ""},
-                    {"Width", ""},
-                    {"Height", ""},
+                }
+            },
+            {10, // Menu
+                new Dictionary<string, string>{
+                }
+            },
+            {11, // Log
+                new Dictionary<string, string>{
+                }
+            },
+            {12, // Fireworks
+                new Dictionary<string, string>{
+                }
+            },
+            {13, // RainingBlood
+                new Dictionary<string, string>{
                 }
             }
         };
-
-        static Dictionary<int, int> _highscores = new Dictionary<int, int>{
-            {1, 0},
-            {2, 0},
-            {3, 0},
-            {4, 0},
-            {5, 0},
-            {6, 0},
-            {7, 0},
-            {8, 0}
-        };
-
-        const string FILE_HIGHSCORES = "highscores.txt";
-        const int INTERVAL_MIN = 50;
-        const int INTERVAL_MAX = 200;
-        internal const int LEVEL_MAX = 16;
-        static int INTERVAL_LEVEL = (INTERVAL_MAX - INTERVAL_MIN) / (LEVEL_MAX - 1);
+        internal static Dictionary<int, int> Highscores = new Dictionary<int, int> { { 1, 0 }, { 2, 0 }, { 3, 0 }, { 4, 0 }, { 5, 0 }, { 6, 0 }, { 7, 0 }, { 8, 0 } };
+        static string SettingsFileName;
+        const string HighscoresFileName = "highscores.txt";
         internal static int Level { get; set; }
-        internal static bool SokobanComplete { get; set; }
-        static string _settingsFilePath;
-        readonly static List<MenuItem> _menuItems = new List<MenuItem>();
-        internal static IEnumerable<MenuItem> MenuItems { get { return _menuItems; } }
 
-        static Config()
+        internal static void LoadSettings(string settingsFilePath = null)
         {
-            foreach (int code in _settings.Keys)
-                _menuItems.Add(new MenuItem((Option)code));
-        }
-
-        internal static void Load(string settingsFilePath = null)
-        {
-            _settingsFilePath = settingsFilePath;
-            LoadSettings();
-            LoadHighscores();
-        }
-
-        internal static void Save(bool settings)
-        {
-            if (settings)
-                SaveSettings();
-            SaveHighscores();
-        }
-
-        internal static int LevelInterval(int frameMultiplier, int level)
-        {
-            return frameMultiplier * (INTERVAL_MAX - level * INTERVAL_LEVEL);
-        }
-
-        internal static Dictionary<string, string> Settings(Option option)
-        {
-            int key = (int)option;
-            if (!_settings.ContainsKey(key))
-                return new Dictionary<string, string>();
-            return _settings[key];
-        }
-
-        internal static int? GetHighscore(Option option)
-        {
-            int key = (int)option;
-            if (_highscores.ContainsKey(key))
-                return _highscores[key];
-            return null;
-        }
-
-        internal static void UpdateHighscore(Option option, int score)
-        {
-            int key = (int)option;
-            if (_highscores.ContainsKey(key) && _highscores[key] < score)
-                _highscores[key] = score;
-        }
-
-        static void LoadSettings()
-        {
-            if (string.IsNullOrEmpty(_settingsFilePath) || !File.Exists(_settingsFilePath))
+            SettingsFileName = settingsFilePath;
+            if (string.IsNullOrEmpty(settingsFilePath) || !File.Exists(settingsFilePath))
                 return;
 
-            using (var sr = File.OpenText(_settingsFilePath))
+            using (var sr = File.OpenText(settingsFilePath))
                 while (!sr.EndOfStream)
                 {
                     string line = sr.ReadLine();
-                    int code = int.Parse(line.Split(' ')[0]);
+                    int key = int.Parse(line.Split(' ')[0]);
                     while (!string.IsNullOrEmpty(line) && !sr.EndOfStream)
                     {
                         line = sr.ReadLine();
                         var attr = line.Split(' ');
-                        if (attr.Length >= 2 && _settings.ContainsKey(code) && _settings[code].ContainsKey(attr[0]))
-                            _settings[code][attr[0]] = attr[1];
+                        if (attr.Length >= 2 && Settings.ContainsKey(key) && Settings[key].ContainsKey(attr[0]))
+                            Settings[key][attr[0]] = attr[1];
                     }
                 }
         }
 
-        static void LoadHighscores()
+        internal static void SaveSettings()
         {
-            if (!File.Exists(FILE_HIGHSCORES))
+            if (string.IsNullOrEmpty(SettingsFileName) || File.Exists(SettingsFileName))
                 return;
 
-            using (var sr = File.OpenText(FILE_HIGHSCORES))
+            using (var sw = File.CreateText(SettingsFileName))
+            {
+                foreach (int key in Settings.Keys)
+                {
+                    sw.WriteLine($"{key} {(BoardType)key}");
+                    foreach (string k in Settings[key].Keys)
+                        sw.WriteLine($"{k} {Settings[key][k]}");
+                    sw.WriteLine();
+                }
+            }
+        }
+
+        internal static void LoadHighscores()
+        {
+            if (!File.Exists(HighscoresFileName))
+                return;
+
+            using (var sr = File.OpenText(HighscoresFileName))
                 while (!sr.EndOfStream)
                 {
                     string[] line = sr.ReadLine().Split(' ');
                     if (line.Length >= 2)
                     {
                         int key = int.Parse(line[0]);
-                        if (_highscores.ContainsKey(key))
-                            _highscores[key] = int.Parse(line[1]);
+                        if (Highscores.ContainsKey(key))
+                            Highscores[key] = int.Parse(line[1]);
                     }
                 }
         }
 
-        static void SaveSettings()
+        internal static void SaveHighscores()
         {
-            if (File.Exists(_settingsFilePath))
-                return;
-
-            using (var sw = File.CreateText(_settingsFilePath))
+            using (var sw = File.CreateText(HighscoresFileName))
             {
-                foreach (int code in _settings.Keys)
-                {
-                    sw.WriteLine($"{code} {(Option)code}");
-                    foreach (string k in _settings[code].Keys)
-                        sw.WriteLine($"{k} {_settings[code][k]}");
-                    sw.WriteLine();
-                }
+                foreach (int key in Highscores.Keys)
+                    sw.WriteLine($"{key} {Highscores[key]}");
             }
         }
 
-        static void SaveHighscores()
+        internal static void UpdateHighscore(int key, int score)
         {
-            using (var sw = File.CreateText(FILE_HIGHSCORES))
-            {
-                foreach (int code in _highscores.Keys)
-                    sw.WriteLine($"{code} {_highscores[code]}");
-            }
+            if (Highscores.ContainsKey(key) && Highscores[key] < score)
+                Highscores[key] = score;
+        }
+
+        internal static int GetLevelInterval(int frameMultiplier, int level)
+        {
+            return frameMultiplier * (200 - 10 * level);
+        }
+
+        internal static string GetMessage(bool? win)
+        {
+            if (!win.HasValue)
+                return "Quit";
+            if (!win.Value)
+                return "Loser:(";
+            return "WINNER!";
         }
 
         internal static int GetInt(this Dictionary<string, string> dic, string key, int defVal = 1)

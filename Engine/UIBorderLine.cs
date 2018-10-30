@@ -1,6 +1,6 @@
 namespace iobloc
 {
-    struct BorderLine
+    struct UIBorderLine
     {
         internal int From { get; private set; }
         internal int To { get; private set; }
@@ -8,7 +8,7 @@ namespace iobloc
         internal bool IsVertical { get; private set; }
         internal bool IsSingle { get; private set; }
 
-        internal BorderLine(int from, int to, int position, bool isVertical, bool isSingle)
+        internal UIBorderLine(int from, int to, int position, bool isVertical, bool isSingle)
         {
             if (from < to)
             {
@@ -25,31 +25,31 @@ namespace iobloc
             IsSingle = isSingle;
         }
 
-        internal int GetIntersectionSymbol(BorderLine line)
+        internal int GetIntersectionSymbol(UIBorderLine line)
         {
             if (IsVertical == line.IsVertical || Position < line.From || Position > line.To || line.Position < From || line.Position > To)
-                return BoxGraphics.None;
+                return UISymbolType.None;
             if (IsVertical)
             {
                 if (Position == line.From)
                 {
                     if (line.Position == From)
-                        return BoxGraphics.UpperLeftCorner;
+                        return UISymbolType.UpperLeftCorner;
                     if (line.Position == To)
-                        return BoxGraphics.LowerLeftCorner;
+                        return UISymbolType.LowerLeftCorner;
                     if (IsSingle)
-                        return BoxGraphics.SingleLeftSplit;
-                    return BoxGraphics.LeftSplit;
+                        return UISymbolType.SingleLeftSplit;
+                    return UISymbolType.LeftSplit;
                 }
                 if (Position == line.To)
                 {
                     if (line.Position == From)
-                        return BoxGraphics.UpperRightCorner;
+                        return UISymbolType.UpperRightCorner;
                     if (line.Position == To)
-                        return BoxGraphics.LowerRightCorner;
+                        return UISymbolType.LowerRightCorner;
                     if (IsSingle)
-                        return BoxGraphics.SingleRightSplit;
-                    return BoxGraphics.RightSplit;
+                        return UISymbolType.SingleRightSplit;
+                    return UISymbolType.RightSplit;
                 }
             }
             else
@@ -57,37 +57,37 @@ namespace iobloc
                 if (Position == line.From)
                 {
                     if (line.Position == From)
-                        return BoxGraphics.UpperLeftCorner;
+                        return UISymbolType.UpperLeftCorner;
                     if (line.Position == To)
-                        return BoxGraphics.UpperRightCorner;
+                        return UISymbolType.UpperRightCorner;
                     if (IsSingle)
-                        return BoxGraphics.SingleUppperSplit;
-                    return BoxGraphics.UpperSplit;
+                        return UISymbolType.SingleUppperSplit;
+                    return UISymbolType.UpperSplit;
                 }
                 if (Position == line.To)
                 {
                     if (line.Position == From)
-                        return BoxGraphics.LowerLeftCorner;
+                        return UISymbolType.LowerLeftCorner;
                     if (line.Position == To)
-                        return BoxGraphics.LowerRightCorner;
+                        return UISymbolType.LowerRightCorner;
                     if (IsSingle)
-                        return BoxGraphics.SingleLowerSplit;
-                    return BoxGraphics.LowerSplit;
+                        return UISymbolType.SingleLowerSplit;
+                    return UISymbolType.LowerSplit;
                 }
             }
 
-            return BoxGraphics.SingleIntersection;
+            return UISymbolType.SingleIntersection;
         }
 
         public override bool Equals(object obj)
         {
-            var l = (BorderLine)obj;
+            var l = (UIBorderLine)obj;
             return l.From == From && l.To == To && l.Position == Position && l.IsVertical == IsVertical;
         }
- 
+
         public override int GetHashCode()
         {
             return To * From * Position * (IsVertical ? -1 : 1);
         }
-   }
+    }
 }

@@ -1,6 +1,6 @@
 namespace iobloc
 {
-    enum Option
+    enum BoardType
     {
         Level = 0,
         Tetris = 1,
@@ -11,6 +11,10 @@ namespace iobloc
         Snake = 6,
         Sokoban = 7,
         Table = 8,
-        Paint = 9
+        Paint = 9,
+        Menu = 10,
+        Log = 11,
+        Fireworks = 12,
+        RainingBlood = 13,
     }
 }

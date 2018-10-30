@@ -10,18 +10,21 @@ namespace iobloc
             Engine engine = null;
             try
             {
-                using (engine = new Engine(settingsFilePath))
-                {
-                    engine.ShowMenu();
-                    engine.ShowLog();
-                }
+                engine = new Engine(settingsFilePath);
+                engine.ShowMenu();
+                engine.ShowLog();
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
                 if (engine != null)
                     engine.ShowLog();
-                Console.ReadKey();
+                Console.ReadKey(true);
+            }
+            finally
+            {
+                if (engine != null)
+                    engine.Dispose();
             }
         }
     }

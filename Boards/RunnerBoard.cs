@@ -2,7 +2,7 @@ using System;
 
 namespace iobloc
 {
-    class RunnerBoard : SinglePanelBoard
+    class RunnerBoard : BaseBoard
     {
         int CP => _settings.GetColor("PlayerColor");
         int CE => _settings.GetColor("EnemyColor");
@@ -15,7 +15,7 @@ namespace iobloc
         bool _upwards;
         bool _doubleJump;
 
-        internal RunnerBoard() : base(Option.Runner)
+        internal RunnerBoard() : base(BoardType.Runner)
         {
             ChangeGrid(true);
         }
@@ -23,7 +23,7 @@ namespace iobloc
         protected override void ChangeGrid(bool set)
         {
             int h = _height - 1 - _distance;
-            _main.Grid[h, 1] = _main.Grid[h - 1, 1] = set ? CP : 0;
+            _main[h, 1] = _main[h - 1, 1] = set ? CP : 0;
             if (set)
                 _main.HasChanges = true;
         }
@@ -94,13 +94,13 @@ namespace iobloc
             ChangeGrid(false);
             for (int j = 1; j < _width - 1; j++)
                 for (int i = 0; i < _height; i++)
-                    _main.Grid[i, j] = _main.Grid[i, j + 1];
+                    _main[i, j] = _main[i, j + 1];
 
             for (int i = 0; i < _height; i++)
-                _main.Grid[i, _width - 1] = 0;
+                _main[i, _width - 1] = 0;
             CreateFence();
 
-            if (_main.Grid[_height - 1, 1] == CE)
+            if (_main[_height - 1, 1] == CE)
                 Score++;
 
             if (!CheckDead())
@@ -110,7 +110,7 @@ namespace iobloc
         bool CheckDead()
         {
             int h = _height - 1 - _distance;
-            if (_main.Grid[h, 1] == CE || _main.Grid[h - 1, 1] == CE)
+            if (_main[h, 1] == CE || _main[h - 1, 1] == CE)
             {
                 Win = false;
                 Clear(CE);
@@ -135,19 +135,19 @@ namespace iobloc
             bool hasSpace = true;
             int y = _width - 4;
             while (hasSpace && y >= 0 && y >= _width - FS)
-                hasSpace &= _main.Grid[_height - 1, y--] == 0;
+                hasSpace &= _main[_height - 1, y--] == 0;
             if (!hasSpace)
                 return;
             int fence = _random.Next(3);
             for (int i = 0; i < 3; i++)
-                _main.Grid[_height - 1 - i, _width - 2] = i < fence ? CE : 0;
+                _main[_height - 1 - i, _width - 2] = i < fence ? CE : 0;
         }
 
         void Clear(int v)
         {
             for (int i = 0; i < _height; i++)
                 for (int j = 0; j < _width; j++)
-                    _main.Grid[i, j] = v;
+                    _main[i, j] = v;
             ChangeGrid(true);
         }
     }

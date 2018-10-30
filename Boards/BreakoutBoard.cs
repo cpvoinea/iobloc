@@ -2,7 +2,7 @@ using System;
 
 namespace iobloc
 {
-    class BreakoutBoard : SinglePanelBoard
+    class BreakoutBoard : BaseBoard
     {
         int CP => _settings.GetColor("PlayerColor");
         int CE => _settings.GetColor("EnemyColor");
@@ -20,7 +20,7 @@ namespace iobloc
         double _ballY;
         double _angle;
 
-        internal BreakoutBoard() : base(Option.Breakout)
+        internal BreakoutBoard() : base(BoardType.Breakout)
         {
             InitializeGrid();
         }
@@ -36,7 +36,7 @@ namespace iobloc
             for (int row = 0; row < BR; row++)
                 for (int col = 0; col < _width; col += B)
                     for (int i = 0; i < BW; i++)
-                        _main.Grid[row, col + i] = CE;
+                        _main[row, col + i] = CE;
 
             ChangeGrid(true);
         }
@@ -44,8 +44,8 @@ namespace iobloc
         protected override void ChangeGrid(bool set)
         {
             for (int i = -2; i <= 2; i++)
-                _main.Grid[_height - 1, _paddle + i] = set ? CP : 0;
-            _main.Grid[_ballRow, _ballCol] = set ? CN : 0;
+                _main[_height - 1, _paddle + i] = set ? CP : 0;
+            _main[_ballRow, _ballCol] = set ? CN : 0;
             if (set)
                 _main.HasChanges = true;
         }
@@ -78,7 +78,7 @@ namespace iobloc
             if (_targets == 0)
             {
                 Level++;
-                if (Level >= Config.LEVEL_MAX)
+                if (Level > 15)
                 {
                     Win = true;
                     IsRunning = false;
@@ -129,7 +129,7 @@ namespace iobloc
                         newAngle = 2 * Math.PI - newAngle;
                     else if (col < 0 || col >= _width)
                         newAngle = Math.PI - newAngle;
-                    else if (_main.Grid[row, col] == CE)
+                    else if (_main[row, col] == CE)
                     {
                         Break(row, col);
                         newAngle = 2 * Math.PI - newAngle;
@@ -159,7 +159,7 @@ namespace iobloc
                             case 2: newAngle = Math.PI / 4; break;
                         }
                     }
-                    else if (_main.Grid[row, col] > 0)
+                    else if (_main[row, col] > 0)
                     {
                         Break(row, col);
                         newAngle = 2 * Math.PI - newAngle;
@@ -176,7 +176,7 @@ namespace iobloc
         {
             int x = (col / B) * B;
             for (int i = 0; i < BW; i++)
-                _main.Grid[row, x + i] = 0;
+                _main[row, x + i] = 0;
             Score++;
             _targets--;
         }
