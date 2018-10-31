@@ -9,21 +9,16 @@ namespace iobloc
             try
             {
                 var settingsFilePath = args.Length > 0 ? args[0] : null;
-                Serializer.LoadSettings(settingsFilePath);
-                Serializer.LoadHighscores();
-                UIPainter.Initialize();
-
-                BoardRunner.Run(new MenuBoard());
+                Engine.Start(settingsFilePath);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
+                Console.ReadKey(true);
             }
             finally
             {
-                Serializer.SaveSettings();
-                Serializer.SaveHighscores();
-                UIPainter.Exit();
+                Engine.Stop();
             }
         }
     }

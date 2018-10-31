@@ -7,10 +7,15 @@ namespace iobloc
         readonly Random _random = new Random();
         TetrisPiece _piece;
 
-        internal TetrisBoard() : base(BoardType.Tetris)
+        internal TetrisBoard() : base(BoardType.Tetris) { }
+
+        protected override void InitializeGrid()
         {
+            Main.Clear();
+            Score = 0;
             _piece = NewPiece();
-            ChangeGrid(true);
+
+            base.InitializeGrid();
         }
 
         protected override void ChangeGrid(bool set)
@@ -21,11 +26,11 @@ namespace iobloc
                     {
                         int gx = _piece.X - 1 + i;
                         int gy = _piece.Y - 2 + j;
-                        if (gx >= 0 && gx < _height && gy >= 0 && gy < _width)
-                            _main[gx, gy] = set ? (int)_piece.Color : 0;
+                        if (gx >= 0 && gx < Height && gy >= 0 && gy < Width)
+                            Main[gx, gy] = set ? (int)_piece.Color : 0;
                     }
-            if (set)
-                _main.HasChanges = true;
+
+            base.ChangeGrid(set);
         }
 
         public override void HandleInput(string key)
@@ -61,9 +66,9 @@ namespace iobloc
                     {
                         int gx = piece.X - 1 + i;
                         int gy = piece.Y - 2 + j;
-                        if (gx >= _height || gy < 0 || gy >= _width ||
+                        if (gx >= Height || gy < 0 || gy >= Width ||
                             (!partiallyEntered && gx < 0) ||
-                            (gx >= 0 && _main[gx, gy] > 0))
+                            (gx >= 0 && Main[gx, gy] > 0))
                             return false;
                     }
 
@@ -100,7 +105,7 @@ namespace iobloc
             {
                 if (!CanSet(_piece, false))
                 {
-                    Win = false;
+                    IsWinner = false;
                     IsRunning = false;
                     return;
                 }
@@ -110,13 +115,13 @@ namespace iobloc
                 _piece = NewPiece();
                 if (!CanSet(_piece))
                 {
-                    Win = false;
+                    IsWinner = false;
                     IsRunning = false;
                     return;
                 }
 
                 ChangeGrid(true);
-                _main.HasChanges = true;
+                Main.HasChanges = true;
                 return;
             }
         }
@@ -124,17 +129,17 @@ namespace iobloc
         void RemoveRows()
         {
             int series = 0;
-            for (int i = _height - 1; i >= 0; i--)
+            for (int i = Height - 1; i >= 0; i--)
             {
                 bool line = true;
                 int j = 0;
-                while (line && j < _width)
-                    line &= _main[i, j++] > 0;
+                while (line && j < Width)
+                    line &= Main[i, j++] > 0;
                 if (line)
                 {
                     for (int k = i; k >= 0; k--)
-                        for (int l = 0; l < _width; l++)
-                            _main[k, l] = k == 0 ? 0 : _main[k - 1, l];
+                        for (int l = 0; l < Width; l++)
+                            Main[k, l] = k == 0 ? 0 : Main[k - 1, l];
                     i++;
                     series++;
                 }

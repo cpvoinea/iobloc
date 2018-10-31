@@ -4,14 +4,15 @@ namespace iobloc
 {
     class BreakoutBoard : BaseBoard
     {
-        int CP => _settings.GetColor("PlayerColor");
-        int CE => _settings.GetColor("EnemyColor");
-        int CN => _settings.GetColor("NeutralColor");
-        int BW => _settings.GetInt("BlockWidth");
-        int BS => _settings.GetInt("BlockSpace");
-        int BR => _settings.GetInt("BlockRows");
+        int CP => Settings.GetColor("PlayerColor");
+        int CE => Settings.GetColor("EnemyColor");
+        int CN => Settings.GetColor("NeutralColor");
+        int BW => Settings.GetInt("BlockWidth");
+        int BS => Settings.GetInt("BlockSpace");
+        int BR => Settings.GetInt("BlockRows");
         int B => BW + BS;
-        int WinScore => (_width + BS) / B * BR;
+        int WinScore => (Width + BS) / B * BR;
+
         int _targets;
         int _paddle;
         int _ballCol;
@@ -20,34 +21,34 @@ namespace iobloc
         double _ballY;
         double _angle;
 
-        internal BreakoutBoard() : base(BoardType.Breakout)
-        {
-            InitializeGrid();
-        }
+        internal BreakoutBoard() : base(BoardType.Breakout) { }
 
         protected override void InitializeGrid()
         {
-            _paddle = _width / 2 - 2;
+            if (_paddle > 0)
+                ChangeGrid(false);
+
+            _paddle = Width / 2 - 2;
             _ballX = _ballCol = 2;
             _ballY = _ballRow = BR + 2;
             _angle = 7 * Math.PI / 4;
             _targets = WinScore;
 
             for (int row = 0; row < BR; row++)
-                for (int col = 0; col < _width; col += B)
+                for (int col = 0; col < Width; col += B)
                     for (int i = 0; i < BW; i++)
-                        _main[row, col + i] = CE;
+                        Main[row, col + i] = CE;
 
-            ChangeGrid(true);
+            base.InitializeGrid();
         }
 
         protected override void ChangeGrid(bool set)
         {
             for (int i = -2; i <= 2; i++)
-                _main[_height - 1, _paddle + i] = set ? CP : 0;
-            _main[_ballRow, _ballCol] = set ? CN : 0;
-            if (set)
-                _main.HasChanges = true;
+                Main[Height - 1, _paddle + i] = set ? CP : 0;
+            Main[_ballRow, _ballCol] = set ? CN : 0;
+
+            base.ChangeGrid(set);
         }
 
         public override void HandleInput(string key)
@@ -63,7 +64,7 @@ namespace iobloc
                     }
                     break;
                 case "RightArrow":
-                    if (_paddle < _width - 3)
+                    if (_paddle < Width - 3)
                     {
                         ChangeGrid(false);
                         _paddle++;
@@ -80,8 +81,9 @@ namespace iobloc
                 Level++;
                 if (Level > 15)
                 {
-                    Win = true;
+                    IsWinner = true;
                     IsRunning = false;
+                    InitializeGrid();
                 }
                 else
                 {
@@ -99,7 +101,7 @@ namespace iobloc
             _angle = NextAngle(out lost);
             if (lost)
             {
-                Win = false;
+                IsWinner = false;
                 IsRunning = false;
                 return;
             }
@@ -127,9 +129,9 @@ namespace iobloc
                 {
                     if (row < 0)
                         newAngle = 2 * Math.PI - newAngle;
-                    else if (col < 0 || col >= _width)
+                    else if (col < 0 || col >= Width)
                         newAngle = Math.PI - newAngle;
-                    else if (_main[row, col] == CE)
+                    else if (Main[row, col] == CE)
                     {
                         Break(row, col);
                         newAngle = 2 * Math.PI - newAngle;
@@ -139,14 +141,14 @@ namespace iobloc
                 }
                 else
                 {
-                    if (row >= _height)
+                    if (row >= Height)
                     {
                         lost = true;
                         newAngle = 2 * Math.PI - newAngle;
                     }
-                    else if (col < 0 || col >= _width)
+                    else if (col < 0 || col >= Width)
                         newAngle = 3 * Math.PI - newAngle;
-                    else if (row == _height - 1 && Math.Abs(col - _paddle) <= 2)
+                    else if (row == Height - 1 && Math.Abs(col - _paddle) <= 2)
                     {
                         int p = col - _paddle;
                         double a = 2 * Math.PI - newAngle;
@@ -159,7 +161,7 @@ namespace iobloc
                             case 2: newAngle = Math.PI / 4; break;
                         }
                     }
-                    else if (_main[row, col] > 0)
+                    else if (Main[row, col] > 0)
                     {
                         Break(row, col);
                         newAngle = 2 * Math.PI - newAngle;
@@ -176,7 +178,7 @@ namespace iobloc
         {
             int x = (col / B) * B;
             for (int i = 0; i < BW; i++)
-                _main[row, x + i] = 0;
+                Main[row, x + i] = 0;
             Score++;
             _targets--;
         }

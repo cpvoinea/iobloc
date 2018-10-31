@@ -1,24 +1,8 @@
 namespace iobloc
 {
-    static class Animation
+    static class Animations
     {
-        internal const int SIZE = 7;
-
-        internal static int[][,] Get(int type)
-        {
-            var animation = All[type];
-            int len = animation.Length;
-            int[][,] result = new int[len][,];
-            for (int i = 0; i < len; i++)
-            {
-                result[i] = new int[SIZE, SIZE];
-                for (int r = 0; r < SIZE; r++)
-                    for (int c = 0; c < SIZE; c++)
-                        result[i][r, c] = animation[i][r, c];
-            }
-
-            return result;
-        }
+        internal static int[][,] Get(BoardType type) { return All[type - BoardType.Fireworks]; }
 
         static readonly int[][][,] All = new int[][][,]{
             new int[][,]{

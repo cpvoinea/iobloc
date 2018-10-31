@@ -4,45 +4,50 @@ namespace iobloc
 {
     class HelicopterBoard : BaseBoard
     {
-        int CP => _settings.GetColor("PlayerColor");
-        int CE => _settings.GetColor("EnemyColor");
-        int PP => _settings.GetInt("PlayerPosition");
-        int OS => _settings.GetInt("ObstacleSpace");
+        int CP => Settings.GetColor("PlayerColor");
+        int CE => Settings.GetColor("EnemyColor");
+        int PP => Settings.GetInt("PlayerPosition");
+        int OS => Settings.GetInt("ObstacleSpace");
 
         readonly Random _random = new Random();
         int _speed;
         int _distance;
         bool _skipAdvance;
 
-        internal HelicopterBoard() : base(BoardType.Helicopt)
+        internal HelicopterBoard() : base(BoardType.Helicopt) { }
+
+        protected override void InitializeGrid()
         {
-            ChangeGrid(true);
+            Main.Clear();
+            _distance = 0;
+            _speed = 0;
+            Score = 0;
+            IsWinner = null;
+
+            base.InitializeGrid();
         }
 
         protected override void ChangeGrid(bool set)
         {
-            if (_distance >= 0 && _distance < _height)
-                _main[_distance, PP] = _main[_distance, PP + 1] = set ? CP : 0;
-            if (set)
-                _main.HasChanges = true;
+            if (_distance >= 0 && _distance < Height)
+                Main[_distance, PP] = Main[_distance, PP + 1] = set ? CP : 0;
+
+            base.ChangeGrid(set);
         }
 
         public override void HandleInput(string key)
         {
-            if (Win == false)
-            {
-                Win = null;
-                Restart();
-            }
+            if (IsWinner == false)
+                InitializeGrid();
             else
                 _speed = 2;
         }
 
         public override void NextFrame()
         {
-            if (Win == false) return;
+            if (IsWinner == false) return;
             Move();
-            if (Win == false) return;
+            if (IsWinner == false) return;
 
             _skipAdvance = !_skipAdvance;
             if (!_skipAdvance)
@@ -75,12 +80,12 @@ namespace iobloc
         void Advance()
         {
             ChangeGrid(false);
-            for (int j = 1; j < _width - 1; j++)
-                for (int i = 0; i < _height; i++)
-                    _main[i, j] = _main[i, j + 1];
+            for (int j = 1; j < Width - 1; j++)
+                for (int i = 0; i < Height; i++)
+                    Main[i, j] = Main[i, j + 1];
 
-            for (int i = 0; i < _height; i++)
-                _main[i, _width - 1] = 0;
+            for (int i = 0; i < Height; i++)
+                Main[i, Width - 1] = 0;
             CreateObstacles();
             Score++;
 
@@ -90,31 +95,23 @@ namespace iobloc
 
         bool CheckDead()
         {
-            if (_distance < 0 || _distance >= _height ||
-                _main[_distance, PP] == CE || _main[_distance, PP + 1] == CE)
+            if (_distance < 0 || _distance >= Height ||
+                Main[_distance, PP] == CE || Main[_distance, PP + 1] == CE)
             {
-                Win = false;
-                Clear(CE);
+                IsWinner = false;
+                Main.Clear(CE);
                 return true;
             }
 
             return false;
         }
 
-        void Restart()
-        {
-            _distance = 0;
-            _speed = 0;
-            Score = 0;
-            Clear(0);
-        }
-
         void CreateObstacles()
         {
             bool hasSpace = true;
-            int y = _width - 2;
-            while (hasSpace && y >= 0 && y >= _width - OS)
-                hasSpace &= (_main[_height - 1, y] == 0 && _main[0, y--] == 0);
+            int y = Width - 2;
+            while (hasSpace && y >= 0 && y >= Width - OS)
+                hasSpace &= (Main[Height - 1, y] == 0 && Main[0, y--] == 0);
             if (!hasSpace)
                 return;
 
@@ -124,24 +121,16 @@ namespace iobloc
             int fence = 0;
             if ((p & 1) > 0)
             {
-                fence = _random.Next(_height - 3);
-                for (int i = _height - 1; i > _height - 1 - fence; i--)
-                    _main[i, _width - 1] = CE;
+                fence = _random.Next(Height - 3);
+                for (int i = Height - 1; i > Height - 1 - fence; i--)
+                    Main[i, Width - 1] = CE;
             }
             if ((p & 2) > 0)
             {
-                int ceil = _random.Next(_height - 3 - fence);
+                int ceil = _random.Next(Height - 3 - fence);
                 for (int i = 0; i < ceil; i++)
-                    _main[i, _width - 1] = CE;
+                    Main[i, Width - 1] = CE;
             }
-        }
-
-        void Clear(int v)
-        {
-            for (int i = 0; i < _height; i++)
-                for (int j = 0; j < _width; j++)
-                    _main[i, j] = v;
-            ChangeGrid(true);
         }
     }
 }

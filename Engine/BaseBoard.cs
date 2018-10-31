@@ -5,60 +5,47 @@ namespace iobloc
 {
     abstract class BaseBoard : IBoard
     {
-        BoardType _type;
-        protected readonly Dictionary<string, string> _settings;
+        protected readonly BoardType Type;
+        protected readonly Dictionary<string, string> Settings;
+        protected readonly int Width;
+        protected readonly int Height;
+
         readonly UIBorder _border;
         readonly Dictionary<string, UIPanel> _panels;
-        protected UIPanel _main;
+        UIPanel _main;
         readonly string[] _help;
         readonly string[] _keys;
-        protected readonly int _width;
-        protected readonly int _height;
-        int _frameMultiplier;
-        int _levelThreshold;
+        readonly int _frameMultiplier;
+        readonly int _levelThreshold;
+
         int _score;
+        int? _highscore;
         int _level;
         bool _isRunning;
 
-        public UIBorder UIBorder { get { return _border; } }
+        protected bool? IsWinner;
+        public UIBorder Border { get { return _border; } }
         public Dictionary<string, UIPanel> Panels { get { return _panels; } }
         public UIPanel Main { get { return _main; } }
         public string[] Help { get { return _help; } }
+        public IBoard Next { get; set; }
         public int FrameInterval { get; private set; }
-        public int? Highscore { get; private set; }
-        public int Score
-        {
-            get { return _score; }
-            set
-            {
-                _score = value;
-                if (Highscore.HasValue && _score > Highscore.Value)
-                {
-                    Highscore = _score;
-                    Serializer.UpdateHighscore((int)_type, _score);
-                }
-                if (_levelThreshold > 0 && _score >= _levelThreshold * (Level + 1))
-                {
-                    Level++;
-                    if (Level > 15)
-                    {
-                        Win = true;
-                        if (_type != BoardType.Sokoban || Level >= SokobanLevels.Count)
-                            IsRunning = false;
-                    }
-                }
-            }
-        }
+
         public int Level
         {
             get { return _level; }
             protected set
             {
-                _level = value;
                 FrameInterval = Serializer.GetLevelInterval(_frameMultiplier, _level);
+                if (value == Level)
+                    return;
+
+                _level = value;
+                if (_panels.ContainsKey(Pnl.Level))
+                    _panels[Pnl.Level].SetText(string.Format($"L{_level,2}"));
             }
         }
-        public bool? Win { get; protected set; }
+
         public bool IsRunning
         {
             get { return _isRunning; }
@@ -67,43 +54,122 @@ namespace iobloc
                 _isRunning = value;
                 if (!_isRunning)
                 {
-                    if (Win == true)
-                        Next = new AnimationBoard(BoardType.Fireworks);
-                    else if (Win == false)
-                        Next = new AnimationBoard(BoardType.RainingBlood);
+                    if (IsWinner.HasValue)
+                    {
+                        if (IsWinner.Value)
+                            Next = Serializer.GetBoard(BoardType.Fireworks);
+                        else
+                            Next = Serializer.GetBoard(BoardType.RainingBlood);
+
+                        IsWinner = null;
+                        InitializeGrid();
+                    }
                     else
-                        Next = new MenuBoard();
+                    {
+                        if (Type != BoardType.Menu)
+                            Next = Serializer.GetBoard(BoardType.Menu);
+                        else
+                            Next = null;
+                    }
                 }
             }
         }
-        public IBoard Next { get; set; }
+        public int? Highscore
+        {
+            get { return _highscore; }
+            private set
+            {
+                if (value == _highscore)
+                    return;
+
+                _highscore = value;
+                if (_highscore.HasValue && _panels.ContainsKey(Pnl.Highscore))
+                    _panels[Pnl.Highscore].SetText(string.Format($"{_highscore.Value,3}"));
+            }
+        }
+
+        public int Score
+        {
+            get { return _score; }
+            set
+            {
+                if (value == _score)
+                    return;
+
+                _score = value;
+                if (_panels.ContainsKey(Pnl.Score))
+                    _panels[Pnl.Score].SetText(string.Format($"{_score,3}"));
+
+                if (Highscore.HasValue && _score > Highscore.Value)
+                {
+                    Highscore = _score;
+                    Serializer.UpdateHighscore(Type, _score);
+                }
+                if (_levelThreshold > 0 && _score >= _levelThreshold * (Level + 1))
+                {
+                    Level++;
+                    if (Level > 15)
+                    {
+                        IsWinner = true;
+                        if (Type != BoardType.Sokoban || Level >= SokobanLevels.Count)
+                            IsRunning = false;
+                    }
+                }
+            }
+        }
 
         protected internal BaseBoard(BoardType type)
         {
-            _type = type;
+            Type = type;
             int key = (int)type;
-            _settings = Serializer.Settings[key];
+            Settings = Serializer.Settings[key];
+            Width = Settings.GetInt("Width", 10);
+            Height = Settings.GetInt("Height", 10);
 
-            _frameMultiplier = _settings.GetInt("FrameMultiplier", 0);
-            _levelThreshold = _settings.GetInt("LevelThreshold", 0);
-            _help = _settings.GetList("Help");
-            _keys = _settings.GetList("Keys");
-            _width = _settings.GetInt("Width", 10);
-            _height = _settings.GetInt("Height", 10);
+            _frameMultiplier = Settings.GetInt("FrameMultiplier", 0);
+            _levelThreshold = Settings.GetInt("LevelThreshold", 0);
+            _help = Settings.GetList("Help");
+            _keys = Settings.GetList("Keys");
 
-            _border = new UIBorder(_width + 2, _height + 2);
-            _main = new UIPanel(1, 1, _height, _width);
-            _panels = new Dictionary<string, UIPanel> { { "main", _main } };
-
+            _border = new UIBorder(Width + 2, Height + 2);
+            _main = new UIPanel(1, 1, Height, Width);
+            _panels = new Dictionary<string, UIPanel> { { Pnl.Main, _main } };
+            _panels.Add(Pnl.Level, new UIPanel(_border.Height - 1, (_border.Width + 1) / 2 - 2, _border.Height - 1, (_border.Width + 1) / 2));
             if (Serializer.Highscores.ContainsKey(key))
+            {
+                if (_border.Width > 8)
+                    _panels.Add(Pnl.Highscore, new UIPanel(0, 1, 0, 3));
+                _panels.Add(Pnl.Score, new UIPanel(0, _border.Width - 4, 0, _border.Width - 2));
+
                 Highscore = Serializer.Highscores[key];
+            }
             Level = Serializer.Level;
+
+            InitializeGrid();
         }
 
-        public bool IsValidInput(string key) { return Array.Exists(_keys, x => x == key); }
-        protected virtual void InitializeGrid() { }
-        protected virtual void ChangeGrid(bool set) { }
+        protected virtual void InitializeGrid()
+        {
+            ChangeGrid(true);
+        }
+
+        protected virtual void ChangeGrid(bool set)
+        {
+            if (set)
+                foreach (var p in Panels.Values)
+                    p.HasChanges = true;
+        }
+
         public virtual void NextFrame() { }
+
+        public bool IsValidInput(string key)
+        {
+            foreach (string k in _keys)
+                if (k == key)
+                    return true;
+            return false;
+        }
+
         public abstract void HandleInput(string key);
     }
 }

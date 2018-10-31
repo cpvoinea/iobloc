@@ -28,9 +28,8 @@ namespace iobloc
             }
         }
 
-        int CP => _settings.GetColor("PlayerColor");
-        int CE => _settings.GetColor("EnemyColor");
-        int CN => _settings.GetColor("NeutralColor");
+        int CP => Settings.GetColor("PlayerColor");
+        int CN => Settings.GetColor("NeutralColor");
 
         readonly Random _random = new Random();
         readonly LinkedList<Position> _snake = new LinkedList<Position>();
@@ -40,31 +39,40 @@ namespace iobloc
         int _nextH = 1;
         int _nextV = 0;
 
-        internal SnakeBoard() : base(BoardType.Snake)
-        {
-            NewPoint();
-            InitializeGrid();
-        }
+        internal SnakeBoard() : base(BoardType.Snake) { }
 
         protected override void InitializeGrid()
         {
-            int v = _height / 2;
-            int h = _width / 2;
+            if (_snake.Count > 0)
+            {
+                Main.Clear();
+                _snake.Clear();
+                Score = 0;
+                _h = 1;
+                _v = 0;
+                _nextH = 1;
+                _nextV = 0;
+            }
+
+            int v = Height / 2;
+            int h = Width / 2;
             for (int i = 0; i < 3; i++)
             {
                 var p = new Position(v, h + i);
                 _snake.AddFirst(p);
             }
-            ChangeGrid(true);
+            NewPoint();
+
+            base.InitializeGrid();
         }
 
         protected override void ChangeGrid(bool set)
         {
             foreach (var p in _snake)
-                _main[p.Row, p.Col] = set ? CP : 0;
-            _main[_point.Row, _point.Col] = set ? CN : 0;
-            if (set)
-                _main.HasChanges = true;
+                Main[p.Row, p.Col] = set ? CP : 0;
+            Main[_point.Row, _point.Col] = set ? CN : 0;
+
+            base.ChangeGrid(set);
         }
 
         public override void HandleInput(string key)
@@ -96,7 +104,7 @@ namespace iobloc
             Position next = GetNext();
             if (_snake.Contains(next))
             {
-                Win = false;
+                IsWinner = false;
                 IsRunning = false;
                 return;
             }
@@ -115,8 +123,8 @@ namespace iobloc
         void NewPoint()
         {
             List<Position> candidates = new List<Position>();
-            for (int r = 0; r < _height; r++)
-                for (int c = 0; c < _width; c++)
+            for (int r = 0; r < Height; r++)
+                for (int c = 0; c < Width; c++)
                 {
                     var p = new Position(r, c);
                     if (!_snake.Contains(p))
@@ -138,12 +146,12 @@ namespace iobloc
             int nextV = head.Row + _nextV;
             int nextH = head.Col + _nextH;
             if (nextV < 0)
-                nextV = _height - 1;
-            else if (nextV >= _height)
+                nextV = Height - 1;
+            else if (nextV >= Height)
                 nextV = 0;
             if (nextH < 0)
-                nextH = _width - 1;
-            else if (nextH >= _width)
+                nextH = Width - 1;
+            else if (nextH >= Width)
                 nextH = 0;
             _h = _nextH;
             _v = _nextV;

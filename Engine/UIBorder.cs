@@ -22,35 +22,6 @@ namespace iobloc
             });
         }
 
-        internal UIBorder(UIBorderLine[] lines)
-        {
-            int maxWidth = 0;
-            int maxHeight = 0;
-            foreach (var l in lines)
-            {
-                if (l.IsVertical)
-                {
-                    if (l.To > maxHeight)
-                        maxHeight = l.To;
-                    if (l.Position > maxWidth)
-                        maxWidth = l.Position;
-                }
-                else
-                {
-                    if (l.To > maxWidth)
-                        maxWidth = l.To;
-                    if (l.Position > maxHeight)
-                        maxHeight = l.Position;
-                }
-            }
-
-            Width = maxWidth + 1;
-            Height = maxHeight + 1;
-            _grid = new int[Height, Width];
-
-            AddLines(lines);
-        }
-
         internal void AddLines(UIBorderLine[] lines)
         {
             for (int i1 = 0; i1 < lines.Length; i1++)

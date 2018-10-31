@@ -1,6 +1,4 @@
 using System;
-using System.Diagnostics;
-using System.Text;
 using System.Threading;
 
 namespace iobloc
@@ -9,7 +7,7 @@ namespace iobloc
     {
         internal static void Run(IBoard board)
         {
-            UIPainter.DrawBorder(board.UIBorder);
+            UIPainter.DrawBorder(board.Border);
 
             bool paused = false;
             DateTime start = DateTime.Now;
@@ -36,9 +34,6 @@ namespace iobloc
                     }
                 }
             }
-
-            if (board.Next != null)
-                Run(board.Next);
         }
 
         static bool HandleInput(IBoard board, bool paused)
@@ -69,16 +64,6 @@ namespace iobloc
                     pnl.HasChanges = false;
                 }
             }
-
-            if (board.Highscore.HasValue)
-            {
-                if (board.UIBorder.Width > 8)
-                    UIPainter.TextAt(0, 1, string.Format($"{board.Highscore.Value,3}"));
-                UIPainter.TextAt(0, board.UIBorder.Width - 4, string.Format($"{board.Score,3}"));
-            }
-
-            if (board.Level >= 0)
-                UIPainter.TextAt(board.UIBorder.Height - 1, (board.UIBorder.Width + 1) / 2 - 2, string.Format($"L{board.Level,2}"));
         }
 
         static void WaitScreen(IBoard board)

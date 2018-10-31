@@ -13,8 +13,7 @@ namespace iobloc
         Table = 8,
         Paint = 9,
         Menu = 10,
-        Log = 11,
-        Fireworks = 12,
-        RainingBlood = 13,
+        Fireworks = 11,
+        RainingBlood = 12,
     }
 }

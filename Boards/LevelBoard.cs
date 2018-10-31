@@ -1,30 +1,26 @@
-using System;
-
 namespace iobloc
 {
     class LevelBoard : BaseBoard
     {
-        internal LevelBoard() : base(BoardType.Level)
-        {
-            InitializeGrid();
-        }
+        internal LevelBoard() : base(BoardType.Level) { }
 
         protected override void InitializeGrid()
         {
             for (int i = 0; i < 16; i++)
-                _main[0, i] = 15 - i;
-            ChangeGrid(true);
+                Main[0, i] = 15 - i;
+
+            base.InitializeGrid();
         }
 
         protected override void ChangeGrid(bool set)
         {
             if (set)
             {
-                _main[0, Level] = 15;
-                _main.HasChanges = true;
+                Main[0, Level] = 15;
+                Main.HasChanges = true;
             }
             else
-                _main[0, Level] = 15 - Level;
+                Main[0, Level] = 15 - Level;
         }
 
         public override void HandleInput(string key)

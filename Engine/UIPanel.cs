@@ -32,5 +32,17 @@ namespace iobloc
             IsText = true;
             HasChanges = true;
         }
+
+        internal void SetText(string text)
+        {
+            SetText(new[] { text });
+        }
+
+        internal void Clear(int val = 0)
+        {
+            for (int i = 0; i < Height; i++)
+                for (int j = 0; j < Width; j++)
+                    this[i, j] = val;
+        }
     }
 }

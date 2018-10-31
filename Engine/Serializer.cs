@@ -96,7 +96,7 @@ namespace iobloc
             },
             {7, // Sokoban
                 new Dictionary<string, string>{
-                    {"Help", "Mov:,ARRW,R:Re,strt,Ext:,ESC"}, //"Restrt:R,Move:ARW,Exit:ESC,Paus:ANY"},
+                    {"Help", "Mov:,ARRW,R:Re,strt,Ext:,ESC"},
                     {"Keys", "LeftArrow,RightArrow,UpArrow,DownArrow,R"},
                     {"Width", "4"},
                     {"Height", "6"},
@@ -123,29 +123,38 @@ namespace iobloc
             },
             {9, // Paint
                 new Dictionary<string, string>{
+                    {"Help", ""},
+                    {"Keys", ""}
                 }
             },
             {10, // Menu
                 new Dictionary<string, string>{
-                    {"Help", ""},
-                    {"Keys", "D0,D1,D2,D3,D4,D5,D6,D7,D8,D9,L,F,R"},
+                    {"Help", ",,,Select:0-9,Exit:ESC,Help:Any"},
+                    {"Keys", "D0,D1,D2,D3,D4,D5,D6,D7,D8,D9,NumPad0,NumPad1,NumPad2,NumPad3,NumPad4,NumPad5,NumPad6,NumPad7,NumPad8,NumPad9,F,R"},
                     {"MenuItems", "0:Level,1:Tetris,2:Runner,3:Helicopt,4:Breakout,5:Invaders,6:Snake,7:Sokoban,8:Table,9:Paint"},
                 }
             },
-            {11, // Log
+            {11, // Fireworks
                 new Dictionary<string, string>{
+                    {"Help", ",,,WINNER!"},
+                    {"FrameMultiplier", "1"},
+                    {"Keys", ""},
+                    {"Width", "7"},
+                    {"Height", "7"}
                 }
             },
-            {12, // Fireworks
+            {12, // RainingBlood
                 new Dictionary<string, string>{
-                }
-            },
-            {13, // RainingBlood
-                new Dictionary<string, string>{
+                    {"Help", ",,GAME,OVER"},
+                    {"Keys", ""},
+                    {"FrameMultiplier", "1"},
+                    {"Width", "7"},
+                    {"Height", "7"}
                 }
             }
         };
         internal static Dictionary<int, int> Highscores = new Dictionary<int, int> { { 1, 0 }, { 2, 0 }, { 3, 0 }, { 4, 0 }, { 5, 0 }, { 6, 0 }, { 7, 0 }, { 8, 0 } };
+        static Dictionary<int, IBoard> Boards = new Dictionary<int, IBoard>();
         static string SettingsFileName;
         const string HighscoresFileName = "highscores.txt";
         internal static int Level { get; set; }
@@ -215,8 +224,9 @@ namespace iobloc
             }
         }
 
-        internal static void UpdateHighscore(int key, int score)
+        internal static void UpdateHighscore(BoardType type, int score)
         {
+            int key = (int)type;
             if (Highscores.ContainsKey(key) && Highscores[key] < score)
                 Highscores[key] = score;
         }
@@ -226,13 +236,32 @@ namespace iobloc
             return frameMultiplier * (200 - 10 * level);
         }
 
-        internal static string GetMessage(bool? win)
+        internal static IBoard GetBoard(BoardType type)
         {
-            if (!win.HasValue)
-                return "Quit";
-            if (!win.Value)
-                return "Loser:(";
-            return "WINNER!";
+            int key = (int)type;
+            if (Boards.ContainsKey(key))
+                return Boards[key];
+            IBoard board = null;
+            switch (type)
+            {
+                case BoardType.Level: board = new LevelBoard(); break;
+                case BoardType.Tetris: board = new TetrisBoard(); break;
+                case BoardType.Runner: board = new RunnerBoard(); break;
+                case BoardType.Helicopt: board = new HelicopterBoard(); break;
+                case BoardType.Breakout: board = new BreakoutBoard(); break;
+                case BoardType.Invaders: board = new InvadersBoard(); break;
+                case BoardType.Snake: board = new SnakeBoard(); break;
+                case BoardType.Sokoban: board = new SokobanBoard(); break;
+                case BoardType.Table: board = new TableBoard(); break;
+                case BoardType.Paint: board = new PaintBoard(); break;
+                case BoardType.Menu: board = new MenuBoard(); break;
+                case BoardType.Fireworks: board = new AnimationBoard(BoardType.Fireworks); break;
+                case BoardType.RainingBlood: board = new AnimationBoard(BoardType.RainingBlood); break;
+            }
+            if (board == null)
+                return null;
+            Boards.Add(key, board);
+            return board;
         }
 
         internal static int GetInt(this Dictionary<string, string> dic, string key, int defVal = 1)
