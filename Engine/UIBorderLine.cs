@@ -2,13 +2,13 @@ namespace iobloc
 {
     struct UIBorderLine
     {
-        internal int From { get; private set; }
-        internal int To { get; private set; }
-        internal int Position { get; private set; }
-        internal bool IsVertical { get; private set; }
-        internal bool IsSingle { get; private set; }
+        public int From { get; private set; }
+        public int To { get; private set; }
+        public int Position { get; private set; }
+        public bool IsVertical { get; private set; }
+        public bool IsSingle { get; private set; }
 
-        internal UIBorderLine(int from, int to, int position, bool isVertical, bool isSingle)
+        public UIBorderLine(int from, int to, int position, bool isVertical, bool isSingle)
         {
             if (from < to)
             {
@@ -25,7 +25,7 @@ namespace iobloc
             IsSingle = isSingle;
         }
 
-        internal int GetIntersectionSymbol(UIBorderLine line)
+        public int GetIntersectionSymbol(UIBorderLine line)
         {
             if (IsVertical == line.IsVertical || Position < line.From || Position > line.To || line.Position < From || line.Position > To)
                 return UISymbolType.None;

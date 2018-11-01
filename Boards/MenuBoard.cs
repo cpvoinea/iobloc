@@ -2,19 +2,36 @@ namespace iobloc
 {
     class MenuBoard : BaseBoard
     {
-        internal MenuBoard() : base(BoardType.Menu) { }
+        public MenuBoard() : base(BoardType.Menu) { }
 
-        protected override void Initialize()
+        protected override void InitializeMain()
         {
-            Level = Serializer.Level;
-            Main.SetText(Settings.GetList("MenuItems"));
+            Main.Text = Settings.GetList("MenuItems");
+            Main.IsText = true;
+            Refresh();
         }
 
         protected override void Refresh()
         {
+            Next = null;
             Level = Serializer.Level;
             Main.HasChanges = true;
-            Next = null;
+        }
+
+        string[] _menuItems;
+        public override void TogglePause()
+        {
+            if (_menuItems == null)
+            {
+                _menuItems = Main.Text;
+                Main.Text = Help;
+            }
+            else
+            {
+                Main.Text = _menuItems;
+                _menuItems = null;
+            }
+            Main.HasChanges = true;
         }
 
         public override void HandleInput(string key)
@@ -39,7 +56,7 @@ namespace iobloc
             if (type != BoardType.Menu)
             {
                 Next = Serializer.GetBoard(type);
-                IsRunning = false;
+                Stop();
             }
         }
     }

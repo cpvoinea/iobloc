@@ -1,22 +1,23 @@
 using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace iobloc
 {
     static class UIPainter
     {
-        internal static void Initialize()
+        public static void Initialize()
         {
             Console.OutputEncoding = Encoding.UTF8;
             //Console.CursorVisible = false;
         }
 
-        internal static void Exit()
+        public static void Exit()
         {
             Console.CursorVisible = true;
         }
 
-        internal static void Resize(int width, int height)
+        public static void Resize(int width, int height)
         {
             width = width < 15 ? 15 : width;
             height = height + 1;
@@ -27,18 +28,7 @@ namespace iobloc
                 Console.SetBufferSize(width, height);
         }
 
-        internal static void Text(string text)
-        {
-            Console.Write(text);
-        }
-
-        internal static void TextAt(int row, int col, string text)
-        {
-            Console.SetCursorPosition(col, row);
-            Text(text);
-        }
-
-        internal static void DrawBorder(UIBorder border)
+        public static void DrawBorder(UIBorder border)
         {
             Resize(border.Width, border.Height);
             for (int i = 0; i < border.Height; i++)
@@ -50,63 +40,74 @@ namespace iobloc
                     line.Append(c == 0 ? ' ' : (char)c);
                 }
                 Console.SetCursorPosition(0, i);
-                Text(line.ToString());
+                Console.Write(line.ToString());
             }
         }
 
-        internal static void ClearPanel(UIPanel panel)
+        public static void ClearPanel(UIPanel panel)
         {
             string row = new String(' ', panel.Width);
             for (int i = panel.FromRow; i <= panel.ToRow; i++)
             {
                 Console.SetCursorPosition(panel.FromCol, i);
-                Text(row);
+                Console.Write(row);
             }
         }
 
-        internal static void DrawPanelText(UIPanel panel, string[] lines)
+        public static void DrawPanelText(UIPanel panel, string[] lines)
         {
+            ClearPanel(panel);
+            if (lines == null)
+                return;
             for (int i = 0; i < lines.Length; i++)
-                TextAt(panel.FromRow + i, panel.FromCol, lines[i]);
+            {
+                Console.SetCursorPosition(panel.FromCol, panel.FromRow + i);
+                Console.Write(lines[i]);
+            }
         }
 
-        internal static void DrawPanel(UIPanel panel)
+        public static void DrawPanel(UIPanel panel)
         {
             if (panel.IsText)
-            {
                 DrawPanelText(panel, panel.Text);
-                return;
-            }
-
-            for (int i = panel.FromRow, x = 0; i <= panel.ToRow && x < panel.Height; i++, x++)
+            else
             {
-                Console.SetCursorPosition(panel.FromCol, i);
-                for (int y = 0; y < panel.Width; y++)
+                for (int i = panel.FromRow, x = 0; i <= panel.ToRow && x < panel.Height; i++, x++)
                 {
-                    int c = panel[x, y];
-                    if (c == 0)
-                        Console.Write(' ');
-                    else if (panel.Symbol == 0)
+                    Console.SetCursorPosition(panel.FromCol, i);
+                    for (int y = 0; y < panel.Width; y++)
                     {
-                        Console.Write(c);
-                    }
-                    else
-                    {
-                        Console.ForegroundColor = (ConsoleColor)c;
-                        Console.Write(panel.Symbol);
+                        int c = panel[x, y];
+                        if (c == 0)
+                            Console.Write(' ');
+                        else
+                        {
+                            Console.ForegroundColor = (ConsoleColor)c;
+                            Console.Write(panel.Symbol);
+                        }
                     }
                 }
-            }
 
-            Console.ResetColor();
+                Console.ResetColor();
+            }
         }
 
-        internal static string InputWait()
+        public static void DrawPanels(IEnumerable<UIPanel> panels)
+        {
+            foreach (var p in panels)
+                if (p.HasChanges)
+                {
+                    DrawPanel(p);
+                    p.HasChanges = false;
+                }
+        }
+
+        public static string InputWait()
         {
             return Console.ReadKey(true).Key.ToString();
         }
 
-        internal static string Input()
+        public static string Input()
         {
             if (Console.KeyAvailable)
                 return InputWait();

@@ -154,9 +154,9 @@ namespace iobloc
             }
         };
 
-        internal Dictionary<string, string> this[int key] { get { return _all[key]; } set { _all[key] = value; } }
-        internal IEnumerable<int> Keys { get { return _all.Keys; } }
+        public Dictionary<string, string> this[int key] => _all[key];
+        public IEnumerable<int> Keys { get { return _all.Keys; } }
 
-        internal bool ContainsKey(int key) { return _all.ContainsKey(key); }
+        public bool ContainsKey(int key) { return _all.ContainsKey(key); }
     }
 }

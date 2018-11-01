@@ -16,7 +16,7 @@ namespace iobloc
         bool _doubleJump;
         bool _restart;
 
-        internal RunnerBoard() : base(BoardType.Runner) { }
+        public RunnerBoard() : base(BoardType.Runner) { }
 
         protected override void Restart()
         {
@@ -29,7 +29,7 @@ namespace iobloc
             Score = 0;
         }
 
-        protected override void Change(bool set)
+        protected override void ChangeMain(bool set)
         {
             int h = Height - 1 - _distance;
             Main[h, 1] = Main[h - 1, 1] = set ? CP : 0;
@@ -69,9 +69,9 @@ namespace iobloc
             int max = _doubleJump ? 3 : 2;
             if (_upwards && _distance < max)
             {
-                Change(false);
+                ChangeMain(false);
                 _distance++;
-                Change(true);
+                ChangeMain(true);
             }
             else
             {
@@ -84,10 +84,10 @@ namespace iobloc
 
                     if (_distance > 0)
                     {
-                        Change(false);
+                        ChangeMain(false);
                         _distance--;
                         if (!CheckDead())
-                            Change(true);
+                            ChangeMain(true);
                     }
                     else
                         _doubleJump = false;
@@ -97,7 +97,7 @@ namespace iobloc
 
         void Advance()
         {
-            Change(false);
+            ChangeMain(false);
             for (int j = 1; j < Width - 1; j++)
                 for (int i = 0; i < Height; i++)
                     Main[i, j] = Main[i, j + 1];
@@ -110,7 +110,7 @@ namespace iobloc
                 Score++;
 
             if (!CheckDead())
-                Change(true);
+                ChangeMain(true);
         }
 
         bool CheckDead()

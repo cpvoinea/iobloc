@@ -5,13 +5,13 @@ namespace iobloc
 {
     static class BoardRunner
     {
-        internal static void Run(IBoard board)
+        public static void Run(IBoard board)
         {
             UIPainter.DrawBorder(board.Border);
 
             bool paused = false;
             DateTime start = DateTime.Now;
-            board.IsRunning = true;
+            board.Start();
             while (board.IsRunning)
             {
                 Draw(board);
@@ -19,7 +19,9 @@ namespace iobloc
 
                 if (paused)
                 {
-                    WaitScreen(board);
+                    Draw(board, true);
+                    UIPainter.InputWait();
+                    Draw(board, true);
                     paused = false;
                 }
 
@@ -45,7 +47,7 @@ namespace iobloc
             if (paused)
                 return false;
             if (key == "Escape")
-                board.IsRunning = false;
+                board.Stop();
             else if (board.IsValidInput(key))
                 board.HandleInput(key);
             else
@@ -54,24 +56,11 @@ namespace iobloc
             return paused;
         }
 
-        static void Draw(IBoard board)
+        static void Draw(IBoard board, bool toggle = false)
         {
-            foreach (var pnl in board.Panels.Values)
-            {
-                if (pnl.HasChanges)
-                {
-                    UIPainter.DrawPanel(pnl);
-                    pnl.HasChanges = false;
-                }
-            }
-        }
-
-        static void WaitScreen(IBoard board)
-        {
-            UIPainter.ClearPanel(board.Main);
-            UIPainter.DrawPanelText(board.Main, board.Help);
-            UIPainter.InputWait();
-            UIPainter.DrawPanel(board.Main);
+            if (toggle)
+                board.TogglePause();
+            UIPainter.DrawPanels(board.Panels.Values);
         }
     }
 }

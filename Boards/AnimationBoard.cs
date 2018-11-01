@@ -5,12 +5,12 @@ namespace iobloc
         int[][,] _animation;
         int _currentFrame;
 
-        internal AnimationBoard(BoardType type) : base(type) { }
+        public AnimationBoard(BoardType type) : base(type) { }
 
-        protected override void Initialize()
+        protected override void InitializeMain()
         {
             Level = Serializer.Level;
-            _animation = Animations.Get(Type);
+            _animation = Animations.Get(ID);
             _currentFrame = 0;
         }
 

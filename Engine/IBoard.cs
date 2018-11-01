@@ -7,12 +7,13 @@ namespace iobloc
     {
         UIBorder Border { get; }
         Dictionary<string, UIPanel> Panels { get; }
-        UIPanel Main { get; }
-        string[] Help { get; }
         int FrameInterval { get; }
-        bool IsRunning { get; set; }
-        IBoard Next { get; set; }
+        bool IsRunning { get; }
+        IBoard Next { get; }
 
+        void Start();
+        void Stop();
+        void TogglePause();
         bool IsValidInput(string key);
         void HandleInput(string key);
         void NextFrame();

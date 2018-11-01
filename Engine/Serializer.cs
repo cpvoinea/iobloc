@@ -6,14 +6,14 @@ namespace iobloc
 {
     static class Serializer
     {
-        internal static Settings Settings = new Settings();
-        internal static Dictionary<int, int> Highscores = new Dictionary<int, int> { { 1, 0 }, { 2, 0 }, { 3, 0 }, { 4, 0 }, { 5, 0 }, { 6, 0 }, { 7, 0 }, { 8, 0 } };
+        public static Settings Settings = new Settings();
+        public static Dictionary<int, int> Highscores = new Dictionary<int, int> { { 1, 0 }, { 2, 0 }, { 3, 0 }, { 4, 0 }, { 5, 0 }, { 6, 0 }, { 7, 0 }, { 8, 0 } };
         static Dictionary<int, IBoard> Boards = new Dictionary<int, IBoard>();
         static string SettingsFileName;
         const string HighscoresFileName = "highscores.txt";
-        internal static int Level { get; set; }
+        public static int Level { get; set; }
 
-        internal static void LoadSettings(string settingsFilePath = null)
+        public static void LoadSettings(string settingsFilePath = null)
         {
             SettingsFileName = settingsFilePath;
             if (string.IsNullOrEmpty(settingsFilePath) || !File.Exists(settingsFilePath))
@@ -34,7 +34,7 @@ namespace iobloc
                 }
         }
 
-        internal static void SaveSettings()
+        public static void SaveSettings()
         {
             if (string.IsNullOrEmpty(SettingsFileName) || File.Exists(SettingsFileName))
                 return;
@@ -51,7 +51,7 @@ namespace iobloc
             }
         }
 
-        internal static void LoadHighscores()
+        public static void LoadHighscores()
         {
             if (!File.Exists(HighscoresFileName))
                 return;
@@ -69,7 +69,7 @@ namespace iobloc
                 }
         }
 
-        internal static void SaveHighscores()
+        public static void SaveHighscores()
         {
             using (var sw = File.CreateText(HighscoresFileName))
             {
@@ -78,19 +78,23 @@ namespace iobloc
             }
         }
 
-        internal static void UpdateHighscore(BoardType type, int score)
+        public static void UpdateHighscore(int key, int score)
         {
-            int key = (int)type;
             if (Highscores.ContainsKey(key) && Highscores[key] < score)
                 Highscores[key] = score;
         }
 
-        internal static int GetLevelInterval(int frameMultiplier, int level)
+        public static int GetLevelInterval(int frameMultiplier, int level)
         {
             return frameMultiplier * (200 - 10 * level);
         }
 
-        internal static IBoard GetBoard(BoardType type)
+        public static int GetLevelInterval(int frameMultiplier)
+        {
+            return GetLevelInterval(frameMultiplier, Level);
+        }
+
+        public static IBoard GetBoard(BoardType type)
         {
             int key = (int)type;
             if (Boards.ContainsKey(key))
@@ -118,21 +122,21 @@ namespace iobloc
             return board;
         }
 
-        internal static int GetInt(this Dictionary<string, string> dic, string key, int defVal = 1)
+        public static int GetInt(this Dictionary<string, string> dic, string key, int defVal = 1)
         {
             if (!dic.ContainsKey(key))
                 return defVal;
             return int.Parse(dic[key]);
         }
 
-        internal static string[] GetList(this Dictionary<string, string> dic, string key)
+        public static string[] GetList(this Dictionary<string, string> dic, string key)
         {
             if (!dic.ContainsKey(key))
                 return new string[0];
             return dic[key].Split(',');
         }
 
-        internal static int GetColor(this Dictionary<string, string> dic, string key)
+        public static int GetColor(this Dictionary<string, string> dic, string key)
         {
             if (!dic.ContainsKey(key))
                 return 0;

@@ -5,177 +5,154 @@ namespace iobloc
 {
     abstract class BaseBoard : IBoard
     {
-        protected readonly BoardType Type;
-        protected readonly Dictionary<string, string> Settings;
-        protected readonly int Width;
-        protected readonly int Height;
+        private BoardType Type { get; set; }
+        private string[] Keys { get; set; }
+        private int FrameMultiplier { get; set; }
+        private int LevelThreshold { get; set; }
+        private int? _highscore;
+        private int _score = int.MinValue;
+        private int _level = int.MinValue;
 
-        readonly UIBorder _border;
-        readonly Dictionary<string, UIPanel> _panels;
-        UIPanel _main;
-        readonly string[] _help;
-        readonly string[] _keys;
-        readonly int _frameMultiplier;
-        readonly int _levelThreshold;
+        protected int ID => (int)Type;
+        protected Dictionary<string, string> Settings { get; private set; }
+        protected string[] Help { get; private set; }
+        protected int Width { get; private set; }
+        protected int Height { get; private set; }
+        protected UIPanel Main { get; private set; }
+        protected int Score { get { return _score; } set { SetScore(value); } }
+        protected int Level { get { return _level; } set { SetLevel(value); } }
 
-        int _score = int.MinValue;
-        int? _highscore = int.MinValue;
-        int _level = int.MinValue;
-        bool _isRunning;
-
-        public UIBorder Border { get { return _border; } }
-        public Dictionary<string, UIPanel> Panels { get { return _panels; } }
-        public UIPanel Main { get { return _main; } }
-        public string[] Help { get { return _help; } }
+        public UIBorder Border { get; private set; }
+        public Dictionary<string, UIPanel> Panels { get; private set; }
         public int FrameInterval { get; private set; }
-        public IBoard Next { get; set; }
+        public bool IsRunning { get; private set; }
+        public IBoard Next { get; protected set; }
 
-        public int Level
-        {
-            get { return _level; }
-            protected set
-            {
-                FrameInterval = Serializer.GetLevelInterval(_frameMultiplier, value);
-                if (value == _level)
-                    return;
-
-                _level = value;
-                if (_panels.ContainsKey(Pnl.Level))
-                    _panels[Pnl.Level].SetText(string.Format($"L{_level,2}"));
-            }
-        }
-
-        public int? Highscore
-        {
-            get { return _highscore; }
-            private set
-            {
-                if (value == _highscore)
-                    return;
-
-                _highscore = value;
-                if (_highscore.HasValue && _panels.ContainsKey(Pnl.Highscore))
-                    _panels[Pnl.Highscore].SetText(string.Format($"{_highscore.Value,3}"));
-            }
-        }
-
-        public int Score
-        {
-            get { return _score; }
-            set
-            {
-                if (value == _score)
-                    return;
-
-                _score = value;
-                if (_panels.ContainsKey(Pnl.Score))
-                    _panels[Pnl.Score].SetText(string.Format($"{_score,3}"));
-
-                if (_score == 0)
-                    return;
-
-                if (Highscore.HasValue && _score > Highscore.Value)
-                {
-                    Highscore = _score;
-                    Serializer.UpdateHighscore(Type, _score);
-                }
-
-                if (_levelThreshold > 0 && _score >= _levelThreshold * (_level + 1))
-                    NextLevel();
-            }
-        }
-
-        public bool IsRunning
-        {
-            get { return _isRunning; }
-            set
-            {
-                if (value == _isRunning)
-                    return;
-
-                _isRunning = value;
-                if (_isRunning)
-                    Refresh();
-                else if (Next == null && Type != BoardType.Menu)
-                    Next = Serializer.GetBoard(BoardType.Menu);
-            }
-        }
-
-        protected internal BaseBoard(BoardType type)
+        protected BaseBoard(BoardType type)
         {
             Type = type;
-            int key = (int)type;
-            Settings = Serializer.Settings[key];
+            InitializeSettings();
+            InitializeUI();
+            InitializeStats();
+            InitializeMain();
+        }
+
+        private void SetScore(int score)
+        {
+            if (score == _score)
+                return;
+            _score = score;
+
+            Panels[Pnl.Score].Text[0] = string.Format($"{score,3}");
+            Panels[Pnl.Score].HasChanges = true;
+
+            if (score > _highscore.Value)
+            {
+                _highscore = score;
+                if (Panels.ContainsKey(Pnl.Highscore))
+                {
+                    Panels[Pnl.Highscore].Text[0] = string.Format($"{score,3}");
+                    Panels[Pnl.Highscore].HasChanges = true;
+                }
+                Serializer.UpdateHighscore(ID, score);
+            }
+
+            if (LevelThreshold > 0 && _level >= 0 && score >= LevelThreshold * (_level + 1))
+                SetLevel(_level + 1);
+        }
+
+        private void SetLevel(int level)
+        {
+            if (level == _level)
+                return;
+
+            if (level == 16)
+                Next = Serializer.GetBoard(BoardType.Fireworks);
+            if (level < 16 || Type == BoardType.Sokoban && level < SokobanLevels.Count)
+                _level = level;
+
+            Panels[Pnl.Level].Text[0] = string.Format($"L{_level,2}");
+            Panels[Pnl.Level].HasChanges = true;
+        }
+
+        private void InitializeSettings()
+        {
+            Settings = Serializer.Settings[ID];
+
             Width = Settings.GetInt("Width", 10);
             Height = Settings.GetInt("Height", 10);
-
-            _frameMultiplier = Settings.GetInt("FrameMultiplier", 0);
-            _levelThreshold = Settings.GetInt("LevelThreshold", 0);
-            _help = Settings.GetList("Help");
-            _keys = Settings.GetList("Keys");
-
-            _border = new UIBorder(Width + 2, Height + 2);
-            _main = new UIPanel(1, 1, Height, Width);
-            _panels = new Dictionary<string, UIPanel> { { Pnl.Main, _main } };
-            _panels.Add(Pnl.Level, new UIPanel(_border.Height - 1, (_border.Width + 1) / 2 - 2, _border.Height - 1, (_border.Width + 1) / 2));
-            if (Serializer.Highscores.ContainsKey(key))
-            {
-                if (_border.Width > 8)
-                    _panels.Add(Pnl.Highscore, new UIPanel(0, 1, 0, 3));
-                _panels.Add(Pnl.Score, new UIPanel(0, _border.Width - 4, 0, _border.Width - 2));
-            }
-
-            Initialize();
+            Help = Settings.GetList("Help");
+            Keys = Settings.GetList("Keys");
+            FrameMultiplier = Settings.GetInt("FrameMultiplier", 0);
+            FrameInterval = Serializer.GetLevelInterval(FrameMultiplier);
+            LevelThreshold = Settings.GetInt("LevelThreshold", 0);
         }
 
-        protected virtual void Initialize()
+        private void InitializeUI()
         {
-            int key = (int)Type;
-            if (Serializer.Highscores.ContainsKey(key))
+            Border = new UIBorder(Width + 2, Height + 2);
+
+            Main = new UIPanel(1, 1, Height, Width);
+            Main.Text = Help;
+            var pnlLevel = new UIPanel(Border.Height - 1, (Border.Width + 1) / 2 - 2, Border.Height - 1, (Border.Width + 1) / 2, 1);
+
+            Panels = new Dictionary<string, UIPanel> { { Pnl.Main, Main }, { Pnl.Level, pnlLevel } };
+            if (Serializer.Highscores.ContainsKey(ID))
             {
-                Highscore = Serializer.Highscores[key];
-                Score = 0;
+                if (Border.Width > 8)
+                    Panels.Add(Pnl.Highscore, new UIPanel(0, 1, 0, 3, 1));
+                Panels.Add(Pnl.Score, new UIPanel(0, Border.Width - 4, 0, Border.Width - 2, 1));
             }
-            Level = Serializer.Level;
         }
 
+        private void InitializeStats()
+        {
+            if (Serializer.Highscores.ContainsKey(ID))
+            {
+                _highscore = Serializer.Highscores[ID];
+                SetScore(0);
+            }
+            SetLevel(Serializer.Level);
+        }
+
+        protected virtual void InitializeMain() { }
         protected virtual void Refresh()
         {
-            foreach (var p in _panels.Values)
+            foreach (var p in Panels.Values)
                 p.HasChanges = true;
         }
-
-        protected virtual void NextLevel()
-        {
-            if (Level == 15)
-                Next = Serializer.GetBoard(BoardType.Fireworks);
-            if (Level < 15 || Type == BoardType.Sokoban && Level < SokobanLevels.Count - 1)
-                Level++;
-        }
-
-
-        protected virtual void Lose()
-        {
-            Next = Serializer.GetBoard(BoardType.RainingBlood);
-            Clear();
-            Initialize();
-        }
-
-        protected void Clear()
-        {
-            foreach (var p in _panels.Values)
-                if (!p.IsText)
-                    p.Clear();
-        }
-
+        protected virtual void ChangeMain(bool set) { }
         protected virtual void Restart() { }
-        protected virtual void Change(bool set) { }
+
+        private bool _isInitialized;
+        public void Start()
+        {
+            if (!_isInitialized)
+                _isInitialized = true;
+            else
+                Refresh();
+
+            IsRunning = true;
+        }
+
+        public void Stop()
+        {
+            if (Next == null && Type != BoardType.Menu)
+                Next = Serializer.GetBoard(BoardType.Menu);
+            IsRunning = false;
+        }
+
+        public virtual void TogglePause()
+        {
+            Main.IsText = !Main.IsText;
+            Main.HasChanges = true;
+        }
 
         public virtual void NextFrame() { }
 
         public bool IsValidInput(string key)
         {
-            foreach (string k in _keys)
+            foreach (string k in Keys)
                 if (k == key)
                     return true;
             return false;

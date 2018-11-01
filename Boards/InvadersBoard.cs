@@ -19,12 +19,10 @@ namespace iobloc
         bool _shot;
         bool _movingRight;
 
-        internal InvadersBoard() : base(BoardType.Invaders) { }
+        public InvadersBoard() : base(BoardType.Invaders) { }
 
-        protected override void Initialize()
+        protected override void InitializeMain()
         {
-            base.Initialize();
-
             _skipFrame = BS;
             _ship = Width / 2 - 1;
             _bulletCol = Width / 2 - 1;
@@ -41,10 +39,10 @@ namespace iobloc
         protected override void Restart()
         {
             Main.Clear();
-            Initialize();
+            InitializeMain();
         }
 
-        protected override void Change(bool set)
+        protected override void ChangeMain(bool set)
         {
             for (int i = -1; i <= 1; i++)
                 Main[Height - 1, _ship + i] = set ? CP : 0;
@@ -60,21 +58,21 @@ namespace iobloc
                 case "LeftArrow":
                     if (_ship > 1)
                     {
-                        Change(false);
+                        ChangeMain(false);
                         _ship--;
                         if (!_shot)
                             _bulletCol--;
-                        Change(true);
+                        ChangeMain(true);
                     }
                     break;
                 case "RightArrow":
                     if (_ship < Width - 2)
                     {
-                        Change(false);
+                        ChangeMain(false);
                         _ship++;
                         if (!_shot)
                             _bulletCol++;
-                        Change(true);
+                        ChangeMain(true);
                     }
                     break;
                 case "UpArrow":
@@ -88,11 +86,11 @@ namespace iobloc
             for (int i = 0; i < Width; i++)
                 if (Main[Height - 2, i] == CE)
                 {
-                    Lose();
+                    Stop();
                     return;
                 }
 
-            Change(false);
+            ChangeMain(false);
             if (_skipFrame <= 0)
             {
                 _skipFrame = BS;
@@ -150,7 +148,7 @@ namespace iobloc
                 }
             }
 
-            Change(true);
+            ChangeMain(true);
         }
     }
 }

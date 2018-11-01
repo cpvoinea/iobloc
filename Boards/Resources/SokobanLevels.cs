@@ -4,9 +4,9 @@ namespace iobloc
     {
         static readonly int[][,] _levels;
 
-        internal static int Count => _levels == null ? 0 : _levels.Length;
+        public static int Count => _levels == null ? 0 : _levels.Length;
 
-        internal static int[,] Get(int lvl)
+        public static int[,] Get(int lvl)
         {
             return _levels[lvl];
         }

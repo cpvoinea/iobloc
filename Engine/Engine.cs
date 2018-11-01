@@ -2,7 +2,7 @@ namespace iobloc
 {
     static class Engine
     {
-        internal static void Start(string settingsFilePath)
+        public static void Start(string settingsFilePath)
         {
             Serializer.LoadSettings(settingsFilePath);
             Serializer.LoadHighscores();
@@ -16,7 +16,7 @@ namespace iobloc
             }
         }
 
-        internal static void Stop()
+        public static void Stop()
         {
             Serializer.SaveSettings();
             Serializer.SaveHighscores();

@@ -5,13 +5,13 @@ namespace iobloc
         enum PieceType { I = 1, O, T, L, J, S, Z }
 
         int Orientation { get; set; }
-        internal int Type { get; private set; }
-        internal int[,] Mask { get; private set; }
-        internal int X { get; private set; }
-        internal int Y { get; private set; }
-        internal int Color { get { return 15 - Type; } }
+        public int Type { get; private set; }
+        public int[,] Mask { get; private set; }
+        public int X { get; private set; }
+        public int Y { get; private set; }
+        public int Color { get { return 15 - Type; } }
 
-        internal TetrisPiece(int type, int orientation)
+        public TetrisPiece(int type, int orientation)
         {
             Type = type;
             Orientation = orientation;
@@ -207,7 +207,7 @@ namespace iobloc
             return null;
         }
 
-        internal TetrisPiece Rotate()
+        public TetrisPiece Rotate()
         {
             var p = new TetrisPiece(this);
             p.Orientation = (p.Orientation + 1) % 4;
@@ -216,21 +216,21 @@ namespace iobloc
             return p;
         }
 
-        internal TetrisPiece Left()
+        public TetrisPiece Left()
         {
             var p = new TetrisPiece(this);
             p.Y--;
             return p;
         }
 
-        internal TetrisPiece Right()
+        public TetrisPiece Right()
         {
             var p = new TetrisPiece(this);
             p.Y++;
             return p;
         }
 
-        internal TetrisPiece Down()
+        public TetrisPiece Down()
         {
             var p = new TetrisPiece(this);
             p.X++;

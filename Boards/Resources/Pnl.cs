@@ -2,22 +2,22 @@ namespace iobloc
 {
     static class Pnl
     {
-        internal const string Main = "main";
-        internal const string Score = "score";
-        internal const string Highscore = "hs";
-        internal const string Level = "lvl";
+        public const string Main = "main";
+        public const string Score = "score";
+        public const string Highscore = "hs";
+        public const string Level = "lvl";
 
-        internal class Table
+        public class Table
         {
-            internal const string UpperLeft = "upperLeft";
-            internal const string LowerLeft = "lowerLeft";
-            internal const string UpperRight = "upperRight";
-            internal const string LowerRight = "lowerRight";
-            internal const string UpperTaken = "upperTaken";
-            internal const string LowerTaken = "lowerTaken";
-            internal const string Dice = "dice";
-            internal const string UpperOut = "upperOut";
-            internal const string LowerOut = "lowerOut";
+            public const string UpperLeft = "upperLeft";
+            public const string LowerLeft = "lowerLeft";
+            public const string UpperRight = "upperRight";
+            public const string LowerRight = "lowerRight";
+            public const string UpperTaken = "upperTaken";
+            public const string LowerTaken = "lowerTaken";
+            public const string Dice = "dice";
+            public const string UpperOut = "upperOut";
+            public const string LowerOut = "lowerOut";
         }
     }
 }

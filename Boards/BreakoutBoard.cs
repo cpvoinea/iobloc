@@ -19,7 +19,7 @@ namespace iobloc
         double _ballY;
         double _angle;
 
-        internal BreakoutBoard() : base(BoardType.Breakout) { }
+        public BreakoutBoard() : base(BoardType.Breakout) { }
 
         protected override void Restart()
         {
@@ -34,10 +34,10 @@ namespace iobloc
                         Main[row, col + i] = CE;
             Main.HasChanges = true;
 
-            Initialize();
+            InitializeMain();
         }
 
-        protected override void Change(bool set)
+        protected override void ChangeMain(bool set)
         {
             for (int i = -2; i <= 2; i++)
                 Main[Height - 1, _paddle + i] = set ? CP : 0;
@@ -53,17 +53,17 @@ namespace iobloc
                 case "LeftArrow":
                     if (_paddle > 2)
                     {
-                        Change(false);
+                        ChangeMain(false);
                         _paddle--;
-                        Change(true);
+                        ChangeMain(true);
                     }
                     break;
                 case "RightArrow":
                     if (_paddle < Width - 3)
                     {
-                        Change(false);
+                        ChangeMain(false);
                         _paddle++;
-                        Change(true);
+                        ChangeMain(true);
                     }
                     break;
             }
@@ -71,7 +71,7 @@ namespace iobloc
 
         public override void NextFrame()
         {
-            Change(false);
+            ChangeMain(false);
             _ballRow = (int)Math.Round(_ballY);
             _ballCol = (int)Math.Round(_ballX);
 
@@ -79,13 +79,13 @@ namespace iobloc
             _angle = NextAngle(out lost);
             if (lost)
             {
-                Lose();
+                Stop();
                 return;
             }
             _ballX += Math.Cos(_angle);
             _ballY -= Math.Sin(_angle);
 
-            Change(true);
+            ChangeMain(true);
         }
 
         double NextAngle(out bool lost)

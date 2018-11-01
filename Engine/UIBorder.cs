@@ -4,11 +4,11 @@ namespace iobloc
     {
         readonly int[,] _grid;
 
-        internal int this[int row, int col] { get { return _grid[row, col]; } }
-        internal int Width { get; private set; }
-        internal int Height { get; private set; }
+        public int this[int row, int col] => _grid[row, col];
+        public int Width { get; private set; }
+        public int Height { get; private set; }
 
-        internal UIBorder(int width, int height)
+        public UIBorder(int width, int height)
         {
             Width = width;
             Height = height;
@@ -22,7 +22,7 @@ namespace iobloc
             });
         }
 
-        internal void AddLines(UIBorderLine[] lines)
+        public void AddLines(UIBorderLine[] lines)
         {
             for (int i1 = 0; i1 < lines.Length; i1++)
             {

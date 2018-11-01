@@ -16,11 +16,10 @@ namespace iobloc
         int _row;
         int _col;
 
-        internal SokobanBoard() : base(BoardType.Sokoban) { }
+        public SokobanBoard() : base(BoardType.Sokoban) { }
 
-        protected override void Initialize()
+        protected override void InitializeMain()
         {
-            base.Initialize();
             _startScore = 0;
             Restart();
         }
@@ -45,13 +44,6 @@ namespace iobloc
 
             Score = _startScore;
             Main.HasChanges = true;
-        }
-
-        protected override void NextLevel()
-        {
-            base.NextLevel();
-            if (Level >= SokobanLevels.Count)
-                IsRunning = false;
         }
 
         void SetBlock(int row, int col, int val)
@@ -135,7 +127,7 @@ namespace iobloc
                 return;
 
             Score += WS;
-            NextLevel();
+            Level++;
         }
     }
 }

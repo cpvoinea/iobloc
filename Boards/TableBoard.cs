@@ -18,7 +18,7 @@ namespace iobloc
         int _position;
         bool _white;
 
-        internal TableBoard() : base(BoardType.Table)
+        public TableBoard() : base(BoardType.Table)
         {
             Border.AddLines(new[]
             {
@@ -28,18 +28,18 @@ namespace iobloc
                 new UIBorderLine(6 * PW + 1, 7 * PW + 2, H / 2 - 3, false, true),
                 new UIBorderLine(6 * PW + 1, 7 * PW + 2, H / 2 + 2, false, true)
             });
-            Panels.Add(Pnl.Table.UpperLeft, new UIPanel(1, 1, H / 2 - 1, 6 * PW, (char)UISymbolType.BlockUpper));
-            Panels.Add(Pnl.Table.LowerLeft, new UIPanel(H / 2, 1, H - 2, 6 * PW, (char)UISymbolType.BlockLower));
-            Panels.Add(Pnl.Table.UpperTaken, new UIPanel(1, 6 * PW + 2, H / 2 - 4, 7 * PW + 1, (char)UISymbolType.BlockUpper));
-            Panels.Add(Pnl.Table.Dice, new UIPanel(H / 2 - 2, 6 * PW + 2, H / 2 + 1, 7 * PW + 1, (char)0));
-            Panels.Add(Pnl.Table.LowerTaken, new UIPanel(H / 2 + 3, 6 * PW + 2, H - 2, 7 * PW + 1, (char)UISymbolType.BlockLower));
-            Panels.Add(Pnl.Table.UpperRight, new UIPanel(1, 7 * PW + 3, H / 2 - 1, 13 * PW + 2, (char)UISymbolType.BlockUpper));
-            Panels.Add(Pnl.Table.LowerRight, new UIPanel(H / 2, 7 * PW + 3, H - 2, 13 * PW + 2, (char)UISymbolType.BlockLower));
-            Panels.Add(Pnl.Table.UpperOut, new UIPanel(1, 13 * PW + 4, H / 2 - 1, 14 * PW + 3, (char)UISymbolType.BlockUpper));
-            Panels.Add(Pnl.Table.LowerOut, new UIPanel(H / 2, 13 * PW + 4, H - 2, 14 * PW + 3, (char)UISymbolType.BlockLower));
+            Panels.Add(Pnl.Table.UpperLeft, new UIPanel(1, 1, H / 2 - 1, 6 * PW, 0, (char)UISymbolType.BlockUpper));
+            Panels.Add(Pnl.Table.LowerLeft, new UIPanel(H / 2, 1, H - 2, 6 * PW, 0, (char)UISymbolType.BlockLower));
+            Panels.Add(Pnl.Table.UpperTaken, new UIPanel(1, 6 * PW + 2, H / 2 - 4, 7 * PW + 1, 0, (char)UISymbolType.BlockUpper));
+            Panels.Add(Pnl.Table.Dice, new UIPanel(H / 2 - 2, 6 * PW + 2, H / 2 + 1, 7 * PW + 1, 2));
+            Panels.Add(Pnl.Table.LowerTaken, new UIPanel(H / 2 + 3, 6 * PW + 2, H - 2, 7 * PW + 1, 0, (char)UISymbolType.BlockLower));
+            Panels.Add(Pnl.Table.UpperRight, new UIPanel(1, 7 * PW + 3, H / 2 - 1, 13 * PW + 2, 0, (char)UISymbolType.BlockUpper));
+            Panels.Add(Pnl.Table.LowerRight, new UIPanel(H / 2, 7 * PW + 3, H - 2, 13 * PW + 2, 0, (char)UISymbolType.BlockLower));
+            Panels.Add(Pnl.Table.UpperOut, new UIPanel(1, 13 * PW + 4, H / 2 - 1, 14 * PW + 3, 0, (char)UISymbolType.BlockUpper));
+            Panels.Add(Pnl.Table.LowerOut, new UIPanel(H / 2, 13 * PW + 4, H - 2, 14 * PW + 3, 0, (char)UISymbolType.BlockLower));
         }
 
-        protected override void Initialize()
+        protected override void InitializeMain()
         {
             foreach (var pnl in Panels.Values)
             {
@@ -71,10 +71,10 @@ namespace iobloc
 
             _position = 0;
             _white = true;
-            Change(true);
+            ChangeMain(true);
         }
 
-        protected override void Change(bool set)
+        protected override void ChangeMain(bool set)
         {
             UIPanel pnl = null;
             int row = 0, col = 0;
@@ -121,7 +121,7 @@ namespace iobloc
 
         public override void HandleInput(string key)
         {
-            Change(false);
+            ChangeMain(false);
             switch (key)
             {
                 case "LeftArrow":
@@ -139,7 +139,7 @@ namespace iobloc
                 case "UpArrow": break;
                 case "DownArrow": break;
             }
-            Change(true);
+            ChangeMain(true);
         }
     }
 }

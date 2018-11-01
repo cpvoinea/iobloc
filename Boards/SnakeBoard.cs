@@ -7,10 +7,10 @@ namespace iobloc
     {
         struct Position
         {
-            internal int Row { get; set; }
-            internal int Col { get; set; }
+            public int Row { get; set; }
+            public int Col { get; set; }
 
-            internal Position(int row, int col)
+            public Position(int row, int col)
             {
                 Row = row;
                 Col = col;
@@ -39,11 +39,10 @@ namespace iobloc
         int _nextH = 1;
         int _nextV = 0;
 
-        internal SnakeBoard() : base(BoardType.Snake) { }
+        public SnakeBoard() : base(BoardType.Snake) { }
 
-        protected override void Initialize()
+        protected override void InitializeMain()
         {
-            base.Initialize();
             if (_snake.Count > 0)
             {
                 Main.Clear();
@@ -65,7 +64,7 @@ namespace iobloc
             NewPoint();
         }
 
-        protected override void Change(bool set)
+        protected override void ChangeMain(bool set)
         {
             foreach (var p in _snake)
                 Main[p.Row, p.Col] = set ? CP : 0;
@@ -99,11 +98,11 @@ namespace iobloc
 
         public override void NextFrame()
         {
-            Change(false);
+            ChangeMain(false);
             Position next = GetNext();
             if (_snake.Contains(next))
             {
-                Lose();
+                Stop();
                 return;
             }
 
@@ -115,7 +114,7 @@ namespace iobloc
             }
             else
                 _snake.RemoveLast();
-            Change(true);
+            ChangeMain(true);
         }
 
         void NewPoint()
