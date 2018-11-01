@@ -9,16 +9,13 @@ namespace iobloc
 
         internal TetrisBoard() : base(BoardType.Tetris) { }
 
-        protected override void InitializeGrid()
+        protected override void Initialize()
         {
-            Main.Clear();
-            Score = 0;
+            base.Initialize();
             _piece = NewPiece();
-
-            base.InitializeGrid();
         }
 
-        protected override void ChangeGrid(bool set)
+        protected override void Change(bool set)
         {
             for (int i = 0; i < 4; i++)
                 for (int j = 0; j < 4; j++)
@@ -29,13 +26,13 @@ namespace iobloc
                         if (gx >= 0 && gx < Height && gy >= 0 && gy < Width)
                             Main[gx, gy] = set ? (int)_piece.Color : 0;
                     }
-
-            base.ChangeGrid(set);
+            if (set)
+                Main.HasChanges = true;
         }
 
         public override void HandleInput(string key)
         {
-            ChangeGrid(false);
+            Change(false);
             switch (key)
             {
                 case "UpArrow": Rotate(); break;
@@ -43,14 +40,14 @@ namespace iobloc
                 case "RightArrow": MoveRight(); break;
                 case "DownArrow": MoveDown(); break;
             }
-            ChangeGrid(true);
+            Change(true);
         }
 
         public override void NextFrame()
         {
-            ChangeGrid(false);
+            Change(false);
             MoveDown();
-            ChangeGrid(true);
+            Change(true);
         }
 
         TetrisPiece NewPiece()
@@ -105,22 +102,20 @@ namespace iobloc
             {
                 if (!CanSet(_piece, false))
                 {
-                    IsWinner = false;
-                    IsRunning = false;
+                    Lose();
                     return;
                 }
-                ChangeGrid(true);
+                Change(true);
 
                 RemoveRows();
                 _piece = NewPiece();
                 if (!CanSet(_piece))
                 {
-                    IsWinner = false;
-                    IsRunning = false;
+                    Lose();
                     return;
                 }
 
-                ChangeGrid(true);
+                Change(true);
                 Main.HasChanges = true;
                 return;
             }

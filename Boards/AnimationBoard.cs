@@ -7,12 +7,11 @@ namespace iobloc
 
         internal AnimationBoard(BoardType type) : base(type) { }
 
-        protected override void InitializeGrid()
+        protected override void Initialize()
         {
+            Level = Serializer.Level;
             _animation = Animations.Get(Type);
             _currentFrame = 0;
-
-            base.InitializeGrid();
         }
 
         public override void HandleInput(string key) { }

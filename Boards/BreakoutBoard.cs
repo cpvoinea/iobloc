@@ -11,9 +11,7 @@ namespace iobloc
         int BS => Settings.GetInt("BlockSpace");
         int BR => Settings.GetInt("BlockRows");
         int B => BW + BS;
-        int WinScore => (Width + BS) / B * BR;
 
-        int _targets;
         int _paddle;
         int _ballCol;
         int _ballRow;
@@ -23,32 +21,29 @@ namespace iobloc
 
         internal BreakoutBoard() : base(BoardType.Breakout) { }
 
-        protected override void InitializeGrid()
+        protected override void Restart()
         {
-            if (_paddle > 0)
-                ChangeGrid(false);
-
             _paddle = Width / 2 - 2;
             _ballX = _ballCol = 2;
             _ballY = _ballRow = BR + 2;
             _angle = 7 * Math.PI / 4;
-            _targets = WinScore;
 
             for (int row = 0; row < BR; row++)
                 for (int col = 0; col < Width; col += B)
                     for (int i = 0; i < BW; i++)
                         Main[row, col + i] = CE;
+            Main.HasChanges = true;
 
-            base.InitializeGrid();
+            Initialize();
         }
 
-        protected override void ChangeGrid(bool set)
+        protected override void Change(bool set)
         {
             for (int i = -2; i <= 2; i++)
                 Main[Height - 1, _paddle + i] = set ? CP : 0;
             Main[_ballRow, _ballCol] = set ? CN : 0;
-
-            base.ChangeGrid(set);
+            if(set)
+                Main.HasChanges = true;
         }
 
         public override void HandleInput(string key)
@@ -58,17 +53,17 @@ namespace iobloc
                 case "LeftArrow":
                     if (_paddle > 2)
                     {
-                        ChangeGrid(false);
+                        Change(false);
                         _paddle--;
-                        ChangeGrid(true);
+                        Change(true);
                     }
                     break;
                 case "RightArrow":
                     if (_paddle < Width - 3)
                     {
-                        ChangeGrid(false);
+                        Change(false);
                         _paddle++;
-                        ChangeGrid(true);
+                        Change(true);
                     }
                     break;
             }
@@ -76,24 +71,7 @@ namespace iobloc
 
         public override void NextFrame()
         {
-            if (_targets == 0)
-            {
-                Level++;
-                if (Level > 15)
-                {
-                    IsWinner = true;
-                    IsRunning = false;
-                    InitializeGrid();
-                }
-                else
-                {
-                    ChangeGrid(false);
-                    InitializeGrid();
-                }
-                return;
-            }
-
-            ChangeGrid(false);
+            Change(false);
             _ballRow = (int)Math.Round(_ballY);
             _ballCol = (int)Math.Round(_ballX);
 
@@ -101,14 +79,13 @@ namespace iobloc
             _angle = NextAngle(out lost);
             if (lost)
             {
-                IsWinner = false;
-                IsRunning = false;
+                Lose();
                 return;
             }
             _ballX += Math.Cos(_angle);
             _ballY -= Math.Sin(_angle);
 
-            ChangeGrid(true);
+            Change(true);
         }
 
         double NextAngle(out bool lost)
@@ -180,7 +157,6 @@ namespace iobloc
             for (int i = 0; i < BW; i++)
                 Main[row, x + i] = 0;
             Score++;
-            _targets--;
         }
     }
 }

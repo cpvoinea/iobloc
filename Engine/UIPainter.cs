@@ -8,7 +8,7 @@ namespace iobloc
         internal static void Initialize()
         {
             Console.OutputEncoding = Encoding.UTF8;
-            Console.CursorVisible = false;
+            //Console.CursorVisible = false;
         }
 
         internal static void Exit()

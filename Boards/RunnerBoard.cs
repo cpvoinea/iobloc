@@ -14,34 +14,33 @@ namespace iobloc
         int _hang;
         bool _upwards;
         bool _doubleJump;
+        bool _restart;
 
         internal RunnerBoard() : base(BoardType.Runner) { }
 
-        protected override void InitializeGrid()
+        protected override void Restart()
         {
             Main.Clear();
             _distance = 0;
             _hang = 0;
             _upwards = false;
             _doubleJump = false;
+            _restart = false;
             Score = 0;
-            IsWinner = null;
-
-            base.InitializeGrid();
         }
 
-        protected override void ChangeGrid(bool set)
+        protected override void Change(bool set)
         {
             int h = Height - 1 - _distance;
             Main[h, 1] = Main[h - 1, 1] = set ? CP : 0;
-
-            base.ChangeGrid(set);
+            if(set)
+                Main.HasChanges = true;
         }
 
         public override void HandleInput(string key)
         {
-            if (IsWinner == false)
-                InitializeGrid();
+            if (_restart)
+                Restart();
             else
             {
                 if (_distance == 0)
@@ -56,9 +55,9 @@ namespace iobloc
 
         public override void NextFrame()
         {
-            if (IsWinner == false) return;
+            if (_restart) return;
             Move();
-            if (IsWinner == false) return;
+            if (_restart) return;
 
             _skipAdvance = !_skipAdvance;
             if (_skipAdvance)
@@ -70,9 +69,9 @@ namespace iobloc
             int max = _doubleJump ? 3 : 2;
             if (_upwards && _distance < max)
             {
-                ChangeGrid(false);
+                Change(false);
                 _distance++;
-                ChangeGrid(true);
+                Change(true);
             }
             else
             {
@@ -85,10 +84,10 @@ namespace iobloc
 
                     if (_distance > 0)
                     {
-                        ChangeGrid(false);
+                        Change(false);
                         _distance--;
                         if (!CheckDead())
-                            ChangeGrid(true);
+                            Change(true);
                     }
                     else
                         _doubleJump = false;
@@ -98,7 +97,7 @@ namespace iobloc
 
         void Advance()
         {
-            ChangeGrid(false);
+            Change(false);
             for (int j = 1; j < Width - 1; j++)
                 for (int i = 0; i < Height; i++)
                     Main[i, j] = Main[i, j + 1];
@@ -111,7 +110,7 @@ namespace iobloc
                 Score++;
 
             if (!CheckDead())
-                ChangeGrid(true);
+                Change(true);
         }
 
         bool CheckDead()
@@ -119,7 +118,7 @@ namespace iobloc
             int h = Height - 1 - _distance;
             if (Main[h, 1] == CE || Main[h - 1, 1] == CE)
             {
-                IsWinner = false;
+                _restart = true;
                 Main.Clear(CE);
                 return true;
             }

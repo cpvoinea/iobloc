@@ -18,14 +18,15 @@ namespace iobloc
 
         internal SokobanBoard() : base(BoardType.Sokoban) { }
 
-        protected override void InitializeGrid()
+        protected override void Initialize()
         {
-            if(_targets < int.MaxValue)
-            {
-                _startScore = 0;
-                Level = Serializer.Level;
-            }
+            base.Initialize();
+            _startScore = 0;
+            Restart();
+        }
 
+        protected override void Restart()
+        {
             var board = SokobanLevels.Get(Level);
             _targets = 0;
             for (int i = 0; i < Height && i < 6; i++)
@@ -43,8 +44,14 @@ namespace iobloc
                 }
 
             Score = _startScore;
+            Main.HasChanges = true;
+        }
 
-            base.InitializeGrid();
+        protected override void NextLevel()
+        {
+            base.NextLevel();
+            if (Level >= SokobanLevels.Count)
+                IsRunning = false;
         }
 
         void SetBlock(int row, int col, int val)
@@ -57,7 +64,7 @@ namespace iobloc
         {
             if (key == "R")
             {
-                InitializeGrid();
+                Restart();
                 return;
             }
 
@@ -128,12 +135,7 @@ namespace iobloc
                 return;
 
             Score += WS;
-            Level++;
-            if (IsRunning)
-            {
-                _startScore = Score;
-                InitializeGrid();
-            }
+            NextLevel();
         }
     }
 }

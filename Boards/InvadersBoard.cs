@@ -11,9 +11,7 @@ namespace iobloc
         int AC => Settings.GetInt("AlienCols");
         int BS => Settings.GetInt("BulletSpeed");
         int A => AW + AS;
-        int WinScore => AR * AC;
 
-        int _targets;
         int _ship;
         int _bulletCol;
         int _bulletRow;
@@ -23,32 +21,36 @@ namespace iobloc
 
         internal InvadersBoard() : base(BoardType.Invaders) { }
 
-        protected override void InitializeGrid()
+        protected override void Initialize()
         {
-            if (_ship > 0)
-                ChangeGrid(false);
+            base.Initialize();
+
             _skipFrame = BS;
             _ship = Width / 2 - 1;
             _bulletCol = Width / 2 - 1;
             _bulletRow = Height - 2;
             _movingRight = true;
-            _targets = WinScore;
 
             for (int row = 0; row < AR; row++)
                 for (int col = 0; col < Width && col < AC * A; col += A)
                     for (int i = 0; col + i < Width && i < AW; i++)
                         Main[row, col + i] = CE;
-
-            base.InitializeGrid();
+            Main.HasChanges = true;
         }
 
-        protected override void ChangeGrid(bool set)
+        protected override void Restart()
+        {
+            Main.Clear();
+            Initialize();
+        }
+
+        protected override void Change(bool set)
         {
             for (int i = -1; i <= 1; i++)
                 Main[Height - 1, _ship + i] = set ? CP : 0;
             Main[_bulletRow, _bulletCol] = set ? CN : 0;
-
-            base.ChangeGrid(set);
+            if(set)
+                Main.HasChanges= true;
         }
 
         public override void HandleInput(string key)
@@ -58,21 +60,21 @@ namespace iobloc
                 case "LeftArrow":
                     if (_ship > 1)
                     {
-                        ChangeGrid(false);
+                        Change(false);
                         _ship--;
                         if (!_shot)
                             _bulletCol--;
-                        ChangeGrid(true);
+                        Change(true);
                     }
                     break;
                 case "RightArrow":
                     if (_ship < Width - 2)
                     {
-                        ChangeGrid(false);
+                        Change(false);
                         _ship++;
                         if (!_shot)
                             _bulletCol++;
-                        ChangeGrid(true);
+                        Change(true);
                     }
                     break;
                 case "UpArrow":
@@ -83,31 +85,14 @@ namespace iobloc
 
         public override void NextFrame()
         {
-            if (_targets == 0)
-            {
-                Level++;
-                if (Level > 15)
-                {
-                    IsWinner = true;
-                    IsRunning = false;
-                }
-                else
-                {
-                    ChangeGrid(false);
-                    InitializeGrid();
-                }
-                return;
-            }
-
             for (int i = 0; i < Width; i++)
                 if (Main[Height - 2, i] == CE)
                 {
-                    IsWinner = false;
-                    IsRunning = false;
+                    Lose();
                     return;
                 }
 
-            ChangeGrid(false);
+            Change(false);
             if (_skipFrame <= 0)
             {
                 _skipFrame = BS;
@@ -156,7 +141,6 @@ namespace iobloc
                             Main[_bulletRow, c] = 0;
 
                         Score++;
-                        _targets--;
 
                         _shot = false;
                         _bulletRow = Height - 2;
@@ -166,7 +150,7 @@ namespace iobloc
                 }
             }
 
-            ChangeGrid(true);
+            Change(true);
         }
     }
 }

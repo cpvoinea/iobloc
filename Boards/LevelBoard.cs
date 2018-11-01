@@ -4,15 +4,15 @@ namespace iobloc
     {
         internal LevelBoard() : base(BoardType.Level) { }
 
-        protected override void InitializeGrid()
+        protected override void Initialize()
         {
+            Level = Serializer.Level;
             for (int i = 0; i < 16; i++)
                 Main[0, i] = 15 - i;
-
-            base.InitializeGrid();
+            Change(true);
         }
 
-        protected override void ChangeGrid(bool set)
+        protected override void Change(bool set)
         {
             if (set)
             {
@@ -30,17 +30,17 @@ namespace iobloc
                 case "RightArrow":
                     if (Level < 15)
                     {
-                        ChangeGrid(false);
+                        Change(false);
                         Level++;
-                        ChangeGrid(true);
+                        Change(true);
                     }
                     break;
                 case "LeftArrow":
                     if (Level > 0)
                     {
-                        ChangeGrid(false);
+                        Change(false);
                         Level--;
-                        ChangeGrid(true);
+                        Change(true);
                     }
                     break;
                 case "Enter":

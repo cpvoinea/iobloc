@@ -9,9 +9,9 @@ namespace iobloc
         Dictionary<string, UIPanel> Panels { get; }
         UIPanel Main { get; }
         string[] Help { get; }
-        IBoard Next { get; set; }
         int FrameInterval { get; }
         bool IsRunning { get; set; }
+        IBoard Next { get; set; }
 
         bool IsValidInput(string key);
         void HandleInput(string key);

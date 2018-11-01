@@ -13,41 +13,39 @@ namespace iobloc
         int _speed;
         int _distance;
         bool _skipAdvance;
+        bool _restart;
 
         internal HelicopterBoard() : base(BoardType.Helicopt) { }
 
-        protected override void InitializeGrid()
+        protected override void Restart()
         {
             Main.Clear();
             _distance = 0;
             _speed = 0;
-            Score = 0;
-            IsWinner = null;
-
-            base.InitializeGrid();
+            Initialize();
         }
 
-        protected override void ChangeGrid(bool set)
+        protected override void Change(bool set)
         {
             if (_distance >= 0 && _distance < Height)
                 Main[_distance, PP] = Main[_distance, PP + 1] = set ? CP : 0;
-
-            base.ChangeGrid(set);
+            if(set)
+                Main.HasChanges = true;
         }
 
         public override void HandleInput(string key)
         {
-            if (IsWinner == false)
-                InitializeGrid();
+            if (_restart)
+                Restart();
             else
                 _speed = 2;
         }
 
         public override void NextFrame()
         {
-            if (IsWinner == false) return;
+            if (_restart) return;
             Move();
-            if (IsWinner == false) return;
+            if (_restart) return;
 
             _skipAdvance = !_skipAdvance;
             if (!_skipAdvance)
@@ -60,26 +58,26 @@ namespace iobloc
             {
                 if (_speed > 0)
                 {
-                    ChangeGrid(false);
+                    Change(false);
                     _distance--;
                     if (!CheckDead())
-                        ChangeGrid(true);
+                        Change(true);
                 }
 
                 _speed--;
             }
             else
             {
-                ChangeGrid(false);
+                Change(false);
                 _distance++;
                 if (!CheckDead())
-                    ChangeGrid(true);
+                    Change(true);
             }
         }
 
         void Advance()
         {
-            ChangeGrid(false);
+            Change(false);
             for (int j = 1; j < Width - 1; j++)
                 for (int i = 0; i < Height; i++)
                     Main[i, j] = Main[i, j + 1];
@@ -90,7 +88,7 @@ namespace iobloc
             Score++;
 
             if (!CheckDead())
-                ChangeGrid(true);
+                Change(true);
         }
 
         bool CheckDead()
@@ -98,7 +96,7 @@ namespace iobloc
             if (_distance < 0 || _distance >= Height ||
                 Main[_distance, PP] == CE || Main[_distance, PP + 1] == CE)
             {
-                IsWinner = false;
+                _restart = true;
                 Main.Clear(CE);
                 return true;
             }

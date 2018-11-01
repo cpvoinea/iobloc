@@ -41,8 +41,9 @@ namespace iobloc
 
         internal SnakeBoard() : base(BoardType.Snake) { }
 
-        protected override void InitializeGrid()
+        protected override void Initialize()
         {
+            base.Initialize();
             if (_snake.Count > 0)
             {
                 Main.Clear();
@@ -62,17 +63,15 @@ namespace iobloc
                 _snake.AddFirst(p);
             }
             NewPoint();
-
-            base.InitializeGrid();
         }
 
-        protected override void ChangeGrid(bool set)
+        protected override void Change(bool set)
         {
             foreach (var p in _snake)
                 Main[p.Row, p.Col] = set ? CP : 0;
             Main[_point.Row, _point.Col] = set ? CN : 0;
-
-            base.ChangeGrid(set);
+            if(set)
+                Main.HasChanges = true;
         }
 
         public override void HandleInput(string key)
@@ -100,12 +99,11 @@ namespace iobloc
 
         public override void NextFrame()
         {
-            ChangeGrid(false);
+            Change(false);
             Position next = GetNext();
             if (_snake.Contains(next))
             {
-                IsWinner = false;
-                IsRunning = false;
+                Lose();
                 return;
             }
 
@@ -117,7 +115,7 @@ namespace iobloc
             }
             else
                 _snake.RemoveLast();
-            ChangeGrid(true);
+            Change(true);
         }
 
         void NewPoint()

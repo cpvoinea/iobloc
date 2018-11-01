@@ -18,26 +18,25 @@ namespace iobloc
         readonly int _frameMultiplier;
         readonly int _levelThreshold;
 
-        int _score;
-        int? _highscore;
-        int _level;
+        int _score = int.MinValue;
+        int? _highscore = int.MinValue;
+        int _level = int.MinValue;
         bool _isRunning;
 
-        protected bool? IsWinner;
         public UIBorder Border { get { return _border; } }
         public Dictionary<string, UIPanel> Panels { get { return _panels; } }
         public UIPanel Main { get { return _main; } }
         public string[] Help { get { return _help; } }
-        public IBoard Next { get; set; }
         public int FrameInterval { get; private set; }
+        public IBoard Next { get; set; }
 
         public int Level
         {
             get { return _level; }
             protected set
             {
-                FrameInterval = Serializer.GetLevelInterval(_frameMultiplier, _level);
-                if (value == Level)
+                FrameInterval = Serializer.GetLevelInterval(_frameMultiplier, value);
+                if (value == _level)
                     return;
 
                 _level = value;
@@ -46,34 +45,6 @@ namespace iobloc
             }
         }
 
-        public bool IsRunning
-        {
-            get { return _isRunning; }
-            set
-            {
-                _isRunning = value;
-                if (!_isRunning)
-                {
-                    if (IsWinner.HasValue)
-                    {
-                        if (IsWinner.Value)
-                            Next = Serializer.GetBoard(BoardType.Fireworks);
-                        else
-                            Next = Serializer.GetBoard(BoardType.RainingBlood);
-
-                        IsWinner = null;
-                        InitializeGrid();
-                    }
-                    else
-                    {
-                        if (Type != BoardType.Menu)
-                            Next = Serializer.GetBoard(BoardType.Menu);
-                        else
-                            Next = null;
-                    }
-                }
-            }
-        }
         public int? Highscore
         {
             get { return _highscore; }
@@ -100,21 +71,33 @@ namespace iobloc
                 if (_panels.ContainsKey(Pnl.Score))
                     _panels[Pnl.Score].SetText(string.Format($"{_score,3}"));
 
+                if (_score == 0)
+                    return;
+
                 if (Highscore.HasValue && _score > Highscore.Value)
                 {
                     Highscore = _score;
                     Serializer.UpdateHighscore(Type, _score);
                 }
-                if (_levelThreshold > 0 && _score >= _levelThreshold * (Level + 1))
-                {
-                    Level++;
-                    if (Level > 15)
-                    {
-                        IsWinner = true;
-                        if (Type != BoardType.Sokoban || Level >= SokobanLevels.Count)
-                            IsRunning = false;
-                    }
-                }
+
+                if (_levelThreshold > 0 && _score >= _levelThreshold * (_level + 1))
+                    NextLevel();
+            }
+        }
+
+        public bool IsRunning
+        {
+            get { return _isRunning; }
+            set
+            {
+                if (value == _isRunning)
+                    return;
+
+                _isRunning = value;
+                if (_isRunning)
+                    Refresh();
+                else if (Next == null && Type != BoardType.Menu)
+                    Next = Serializer.GetBoard(BoardType.Menu);
             }
         }
 
@@ -140,25 +123,53 @@ namespace iobloc
                 if (_border.Width > 8)
                     _panels.Add(Pnl.Highscore, new UIPanel(0, 1, 0, 3));
                 _panels.Add(Pnl.Score, new UIPanel(0, _border.Width - 4, 0, _border.Width - 2));
+            }
 
+            Initialize();
+        }
+
+        protected virtual void Initialize()
+        {
+            int key = (int)Type;
+            if (Serializer.Highscores.ContainsKey(key))
+            {
                 Highscore = Serializer.Highscores[key];
+                Score = 0;
             }
             Level = Serializer.Level;
-
-            InitializeGrid();
         }
 
-        protected virtual void InitializeGrid()
+        protected virtual void Refresh()
         {
-            ChangeGrid(true);
+            foreach (var p in _panels.Values)
+                p.HasChanges = true;
         }
 
-        protected virtual void ChangeGrid(bool set)
+        protected virtual void NextLevel()
         {
-            if (set)
-                foreach (var p in Panels.Values)
-                    p.HasChanges = true;
+            if (Level == 15)
+                Next = Serializer.GetBoard(BoardType.Fireworks);
+            if (Level < 15 || Type == BoardType.Sokoban && Level < SokobanLevels.Count - 1)
+                Level++;
         }
+
+
+        protected virtual void Lose()
+        {
+            Next = Serializer.GetBoard(BoardType.RainingBlood);
+            Clear();
+            Initialize();
+        }
+
+        protected void Clear()
+        {
+            foreach (var p in _panels.Values)
+                if (!p.IsText)
+                    p.Clear();
+        }
+
+        protected virtual void Restart() { }
+        protected virtual void Change(bool set) { }
 
         public virtual void NextFrame() { }
 

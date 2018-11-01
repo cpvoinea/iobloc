@@ -39,9 +39,8 @@ namespace iobloc
             Panels.Add(Pnl.Table.LowerOut, new UIPanel(H / 2, 13 * PW + 4, H - 2, 14 * PW + 3, (char)UISymbolType.BlockLower));
         }
 
-        protected override void InitializeGrid()
+        protected override void Initialize()
         {
-            ChangeGrid(false);
             foreach (var pnl in Panels.Values)
             {
                 for (int i = 0; i < pnl.Height; i++)
@@ -72,10 +71,10 @@ namespace iobloc
 
             _position = 0;
             _white = true;
-            base.InitializeGrid();
+            Change(true);
         }
 
-        protected override void ChangeGrid(bool set)
+        protected override void Change(bool set)
         {
             UIPanel pnl = null;
             int row = 0, col = 0;
@@ -116,14 +115,13 @@ namespace iobloc
             {
                 for (int i = col * PW; i < (col + 1) * PW; i++)
                     pnl[row, i] = set ? CN : 0;
+                pnl.HasChanges = true;
             }
-
-            base.ChangeGrid(set);
         }
 
         public override void HandleInput(string key)
         {
-            ChangeGrid(false);
+            Change(false);
             switch (key)
             {
                 case "LeftArrow":
@@ -141,7 +139,7 @@ namespace iobloc
                 case "UpArrow": break;
                 case "DownArrow": break;
             }
-            ChangeGrid(true);
+            Change(true);
         }
     }
 }
