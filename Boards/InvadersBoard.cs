@@ -4,12 +4,14 @@ namespace iobloc
     {
         private int CP, CE, CN, AW, AS, AR, AC, BS;
         private int A => AW + AS;
+        private int LT => AR * AC;
         private int _ship;
         private int _bulletCol;
         private int _bulletRow;
         private int _skipFrame;
         private bool _shot;
         private bool _movingRight;
+        private int _targets = int.MaxValue;
 
         public InvadersBoard() : base(BoardType.Invaders) { }
 
@@ -40,6 +42,7 @@ namespace iobloc
             _bulletRow = Height - 2;
             _skipFrame = BS;
             _movingRight = true;
+            _targets = LT;
 
             for (int row = 0; row < AR; row++)
                 for (int col = 0; col < Width && col < AC * A; col += A)
@@ -54,12 +57,6 @@ namespace iobloc
                 Main[Height - 1, _ship + i] = set ? CP : 0;
             Main[_bulletRow, _bulletCol] = set ? CN : 0;
             base.Change(set);
-        }
-
-        protected override void SetLevel(int level)
-        {
-            base.SetLevel(level);
-            Initialize();
         }
 
         public override void HandleInput(string key)
@@ -150,11 +147,19 @@ namespace iobloc
                             Main[_bulletRow, c] = 0;
 
                         Score++;
-
-                        _shot = false;
-                        _bulletRow = Height - 2;
-                        _bulletCol = _ship;
-                        Main[_bulletRow, _bulletCol] = CN;
+                        _targets--;
+                        if (_targets == 0)
+                        {
+                            Level++;
+                            Initialize();
+                        }
+                        else
+                        {
+                            _shot = false;
+                            _bulletRow = Height - 2;
+                            _bulletCol = _ship;
+                            Main[_bulletRow, _bulletCol] = CN;
+                        }
                     }
                 }
             }

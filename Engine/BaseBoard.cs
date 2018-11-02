@@ -67,7 +67,7 @@ namespace iobloc
             Serializer.UpdateHighscore(ID, score);
         }
 
-        protected virtual void SetLevel(int level)
+        protected void SetLevel(int level)
         {
             if (level > 0 && level == _level)
                 return;
@@ -91,7 +91,6 @@ namespace iobloc
         protected virtual void InitializeSettings()
         {
             BoardSettings = Serializer.Settings[ID];
-
             AllowedKeys = BoardSettings.GetList(Settings.AllowedKeys);
             Help = BoardSettings.GetList(Settings.Help);
             Width = BoardSettings.GetInt(Settings.Width, 10);

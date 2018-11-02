@@ -6,12 +6,14 @@ namespace iobloc
     {
         private int CP, CE, CN, BW, BS, BR;
         private int B => BW + BS;
+        private int LT => Width / BW * BR;
         private int _paddle;
         private int _ballCol;
         private int _ballRow;
         private double _ballX;
         private double _ballY;
         private double _angle;
+        private int _targets = int.MaxValue;
 
         public BreakoutBoard() : base(BoardType.Breakout) { }
 
@@ -40,6 +42,7 @@ namespace iobloc
                 for (int col = 0; col < Width; col += B)
                     for (int i = 0; i < BW; i++)
                         Main[row, col + i] = CE;
+            _targets = LT;
             Change(true);
         }
 
@@ -54,12 +57,6 @@ namespace iobloc
                 Main[_ballRow, _ballCol] = set ? CN : 0;
                 base.Change(set);
             }
-        }
-
-        protected override void SetLevel(int level)
-        {
-            base.SetLevel(level);
-            Initialize();
         }
 
         public override void HandleInput(string key)
@@ -161,6 +158,12 @@ namespace iobloc
             for (int i = 0; i < BW; i++)
                 Main[row, x + i] = 0;
             Score++;
+            _targets--;
+            if (_targets == 0)
+            {
+                Level++;
+                Initialize();
+            }
         }
     }
 }

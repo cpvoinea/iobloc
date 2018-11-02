@@ -3,7 +3,7 @@ namespace iobloc
     class SokobanBoard : BaseBoard
     {
         int P, B, W, T, R, H, BW, WS;
-        int _targets = int.MaxValue;
+        int LT = int.MaxValue;
         int _startScore;
         int _row;
         int _col;
@@ -28,7 +28,7 @@ namespace iobloc
             if (!IsInitialized)
                 base.Initialize();
             var board = SokobanLevels.Get(Level);
-            _targets = 0;
+            LT = 0;
             for (int i = 0; i < Height && i < 6; i++)
                 for (int j = 0; j < Width && j / BW < 4; j += BW)
                 {
@@ -40,15 +40,9 @@ namespace iobloc
                         _col = j;
                     }
                     else if (v == T)
-                        _targets++;
+                        LT++;
                 }
             Change(true);
-        }
-
-        protected override void SetLevel(int level)
-        {
-            base.SetLevel(level);
-            Initialize();
         }
 
         public override void HandleInput(string key)
@@ -100,7 +94,7 @@ namespace iobloc
                     _col += h;
                     if (Main[_row, _col] == R)
                     {
-                        _targets++;
+                        LT++;
                         SetBlock(_row, _col, H);
                     }
                     else
@@ -109,11 +103,12 @@ namespace iobloc
                     if (Main[_row + v, _col + h] == T)
                     {
                         SetBlock(_row + v, _col + h, R);
-                        _targets--;
-                        if (_targets == 0)
+                        LT--;
+                        if (LT == 0)
                         {
                             Score += WS;
                             Level++;
+                            Initialize();
                         }
                     }
                     else
