@@ -11,6 +11,7 @@ namespace iobloc
 
             bool paused = false;
             DateTime start = DateTime.Now;
+            int ticks = 0;
             board.Start();
             while (board.IsRunning)
             {
@@ -27,12 +28,13 @@ namespace iobloc
 
                 if (board.FrameInterval > 0)
                 {
-                    Thread.Sleep(1);
-                    double ticks = DateTime.Now.Subtract(start).TotalMilliseconds;
+                    Thread.Sleep(20);
+                    ticks = (int)DateTime.Now.Subtract(start).TotalMilliseconds;
                     if (ticks > board.FrameInterval)
                     {
                         board.NextFrame();
                         start = DateTime.Now;
+                        ticks -= board.FrameInterval;
                     }
                 }
             }
