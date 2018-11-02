@@ -28,8 +28,8 @@ namespace iobloc
             }
         }
 
-        int CP => Settings.GetColor("PlayerColor");
-        int CN => Settings.GetColor("NeutralColor");
+        int CP => BoardSettings.GetColor(Settings.PlayerColor);
+        int CN => BoardSettings.GetColor(Settings.NeutralColor);
 
         readonly Random _random = new Random();
         readonly LinkedList<Position> _snake = new LinkedList<Position>();

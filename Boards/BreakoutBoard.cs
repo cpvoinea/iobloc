@@ -4,12 +4,12 @@ namespace iobloc
 {
     class BreakoutBoard : BaseBoard
     {
-        int CP => Settings.GetColor("PlayerColor");
-        int CE => Settings.GetColor("EnemyColor");
-        int CN => Settings.GetColor("NeutralColor");
-        int BW => Settings.GetInt("BlockWidth");
-        int BS => Settings.GetInt("BlockSpace");
-        int BR => Settings.GetInt("BlockRows");
+        int CP => BoardSettings.GetColor(Settings.PlayerColor);
+        int CE => BoardSettings.GetColor(Settings.EnemyColor);
+        int CN => BoardSettings.GetColor(Settings.NeutralColor);
+        int BW => BoardSettings.GetInt("BlockWidth");
+        int BS => BoardSettings.GetInt("BlockSpace");
+        int BR => BoardSettings.GetInt("BlockRows");
         int B => BW + BS;
 
         int _paddle;

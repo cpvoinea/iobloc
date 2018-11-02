@@ -5,21 +5,21 @@ namespace iobloc
     abstract class BaseBoard : IBaseBoard
     {
         private BoardType Type { get; set; }
-        private string[] Keys { get; set; }
         private int FrameMultiplier { get; set; }
         private int LevelThreshold { get; set; }
-        private bool _isInitialized;
-        private int? _highscore;
+        private bool IsInitialized {get;set;}
+        private int? Highscore {get;set;}
         private int _score;
         private int _level;
 
         protected int ID => (int)Type;
-        protected Dictionary<string, string> Settings { get; private set; }
+        protected Dictionary<string, string> BoardSettings { get; private set; }
         protected string[] Help { get; private set; }
         protected int Width { get; private set; }
         protected int Height { get; private set; }
         protected UIPanel Main { get; private set; }
 
+        public string[] AllowedKeys { get; set; }
         public UIBorder Border { get; private set; }
         public Dictionary<string, UIPanel> Panels { get; private set; }
         public int FrameInterval { get; private set; }
@@ -35,20 +35,20 @@ namespace iobloc
             InitializeUI();
             Initialize();
 
-            _isInitialized = true;
+            IsInitialized = true;
             Reset();
         }
 
         private void InitializeSettings()
         {
-            Settings = Serializer.Settings[ID];
+            BoardSettings = Serializer.Settings[ID];
 
-            Width = Settings.GetInt("Width", 10);
-            Height = Settings.GetInt("Height", 10);
-            Help = Settings.GetList("Help");
-            Keys = Settings.GetList("Keys");
-            FrameMultiplier = Settings.GetInt("FrameMultiplier", 0);
-            LevelThreshold = Settings.GetInt("LevelThreshold", 0);
+            AllowedKeys = BoardSettings.GetList(Settings.AllowedKeys);
+            Help = BoardSettings.GetList(Settings.Help);
+            Width = BoardSettings.GetInt(Settings.Width, 10);
+            Height = BoardSettings.GetInt(Settings.Height, 10);
+            FrameMultiplier = BoardSettings.GetInt(Settings.FrameMultiplier, 0);
+            LevelThreshold = BoardSettings.GetInt(Settings.LevelThreshold, 0);
         }
 
         private void SetScore(int score)
@@ -63,9 +63,9 @@ namespace iobloc
                 Panels[Pnl.Score].HasChanges = true;
             }
 
-            if (score > _highscore.Value)
+            if (score > Highscore.Value)
             {
-                _highscore = score;
+                Highscore = score;
                 Serializer.UpdateHighscore(ID, score);
             }
 
@@ -85,7 +85,7 @@ namespace iobloc
                 return;
 
             if (level == 16)
-                Next = Serializer.GetBoard(BoardType.Fireworks);
+                Next = Serializer.GetBoard((int)BoardType.Fireworks);
             if (level < 16 || Type == BoardType.Sokoban && level < SokobanLevels.Count)
             {
                 _level = level;
@@ -123,7 +123,7 @@ namespace iobloc
             SetLevel(Serializer.MasterLevel);
             if (Serializer.Highscores.ContainsKey(ID))
             {
-                _highscore = Serializer.Highscores[ID];
+                Highscore = Serializer.Highscores[ID];
                 SetScore(0);
             }
         }
@@ -147,7 +147,7 @@ namespace iobloc
 
         public void Start()
         {
-            if (_isInitialized)
+            if (IsInitialized)
                 Paint();
             IsRunning = true;
         }
@@ -155,7 +155,7 @@ namespace iobloc
         public void Stop()
         {
             if (Next == null && Type != BoardType.Menu)
-                Next = Serializer.GetBoard(BoardType.Menu);
+                Next = Serializer.GetBoard((int)BoardType.Menu);
             IsRunning = false;
         }
 
@@ -166,14 +166,6 @@ namespace iobloc
         }
 
         public virtual void NextFrame() { }
-
-        public bool IsValidInput(string key)
-        {
-            foreach (string k in Keys)
-                if (k == key)
-                    return true;
-            return false;
-        }
 
         public abstract void HandleInput(string key);
     }

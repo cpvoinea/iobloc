@@ -4,9 +4,9 @@ namespace iobloc
 {
     class RunnerBoard : BaseBoard
     {
-        int CP => Settings.GetColor("PlayerColor");
-        int CE => Settings.GetColor("EnemyColor");
-        int FS => Settings.GetInt("FenceSpace");
+        int CP => BoardSettings.GetColor(Settings.PlayerColor);
+        int CE => BoardSettings.GetColor(Settings.EnemyColor);
+        int FS => BoardSettings.GetInt("FenceSpace");
 
         readonly Random _random = new Random();
         int _distance;

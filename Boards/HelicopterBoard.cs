@@ -4,10 +4,10 @@ namespace iobloc
 {
     class HelicopterBoard : BaseBoard
     {
-        int CP => Settings.GetColor("PlayerColor");
-        int CE => Settings.GetColor("EnemyColor");
-        int PP => Settings.GetInt("PlayerPosition");
-        int OS => Settings.GetInt("ObstacleSpace");
+        int CP => BoardSettings.GetColor(Settings.PlayerColor);
+        int CE => BoardSettings.GetColor(Settings.EnemyColor);
+        int PP => BoardSettings.GetInt("PlayerPosition");
+        int OS => BoardSettings.GetInt("ObstacleSpace");
 
         readonly Random _random = new Random();
         int _speed;

@@ -2,14 +2,14 @@ namespace iobloc
 {
     class InvadersBoard : BaseBoard
     {
-        int CP => Settings.GetColor("PlayerColor");
-        int CE => Settings.GetColor("EnemyColor");
-        int CN => Settings.GetColor("NeutralColor");
-        int AW => Settings.GetInt("AlienWidth");
-        int AS => Settings.GetInt("AlienSpace");
-        int AR => Settings.GetInt("AlienRows");
-        int AC => Settings.GetInt("AlienCols");
-        int BS => Settings.GetInt("BulletSpeed");
+        int CP => BoardSettings.GetColor(Settings.PlayerColor);
+        int CE => BoardSettings.GetColor(Settings.EnemyColor);
+        int CN => BoardSettings.GetColor(Settings.NeutralColor);
+        int AW => BoardSettings.GetInt("AlienWidth");
+        int AS => BoardSettings.GetInt("AlienSpace");
+        int AR => BoardSettings.GetInt("AlienRows");
+        int AC => BoardSettings.GetInt("AlienCols");
+        int BS => BoardSettings.GetInt("BulletSpeed");
         int A => AW + AS;
 
         int _ship;

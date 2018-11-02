@@ -2,14 +2,14 @@ namespace iobloc
 {
     class SokobanBoard : BaseBoard
     {
-        int P => (int)Settings.GetColor("PlayerColor");
-        int B => (int)Settings.GetColor("BlockColor");
-        int W => (int)Settings.GetColor("WallColor");
-        int T => (int)Settings.GetColor("TargetColor");
-        int R => (int)Settings.GetColor("TargetBlockColor");
-        int H => (int)Settings.GetColor("TargetPlayerColor");
-        int BW => (int)Settings.GetInt("BlockWidth");
-        int WS => (int)Settings.GetInt("WinScore");
+        int P => BoardSettings.GetColor(Settings.PlayerColor);
+        int B => BoardSettings.GetColor("BlockColor");
+        int W => BoardSettings.GetColor("WallColor");
+        int T => BoardSettings.GetColor("TargetColor");
+        int R => BoardSettings.GetColor("TargetBlockColor");
+        int H => BoardSettings.GetColor("TargetPlayerColor");
+        int BW => BoardSettings.GetInt("BlockWidth");
+        int WS => BoardSettings.GetInt("WinScore");
 
         int _targets = int.MaxValue;
         int _startScore;

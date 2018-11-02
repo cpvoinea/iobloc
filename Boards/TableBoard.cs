@@ -4,11 +4,11 @@ namespace iobloc
 {
     class TableBoard : BaseBoard
     {
-        int PW => (int)Settings.GetInt("PieceWidth");
-        int H => (int)Settings.GetInt("Height");
-        int CP => (int)Settings.GetColor("PlayerColor");
-        int CE => (int)Settings.GetColor("EnemyColor");
-        int CN => (int)Settings.GetColor("NeutralColor");
+        int PW => BoardSettings.GetInt("PieceWidth");
+        int H => BoardSettings.GetInt(Settings.Height);
+        int CP => BoardSettings.GetColor(Settings.PlayerColor);
+        int CE => BoardSettings.GetColor(Settings.EnemyColor);
+        int CN => BoardSettings.GetColor(Settings.NeutralColor);
         UIPanel PLR => Panels[Pnl.Table.LowerRight];
         UIPanel PLL => Panels[Pnl.Table.LowerLeft];
         UIPanel PUR => Panels[Pnl.Table.UpperRight];

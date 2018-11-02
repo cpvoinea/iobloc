@@ -4,11 +4,10 @@ namespace iobloc
     {
         public static void Start(string settingsFilePath)
         {
-            Serializer.LoadSettings(settingsFilePath);
-            Serializer.LoadHighscores();
+            Serializer.Load(settingsFilePath);
             UIPainter.Initialize();
 
-            IBaseBoard board = Serializer.GetBoard(BoardType.Menu);
+            IBaseBoard board = Serializer.GetBoard((int)BoardType.Menu);
             while (board != null)
             {
                 BoardRunner.Run(board);
@@ -18,8 +17,7 @@ namespace iobloc
 
         public static void Stop()
         {
-            Serializer.SaveSettings();
-            Serializer.SaveHighscores();
+            Serializer.Save();
             UIPainter.Exit();
         }
     }

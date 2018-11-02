@@ -10,16 +10,30 @@ namespace iobloc
         private static string SettingsFileName;
         private static Dictionary<int, IBaseBoard> Boards = new Dictionary<int, IBaseBoard>();
         public static Settings Settings = new Settings();
-        public static Dictionary<int, int> Highscores = new Dictionary<int, int> { { 1, 0 }, { 2, 0 }, { 3, 0 }, { 4, 0 }, { 5, 0 }, { 6, 0 }, { 7, 0 }, { 8, 0 } };
+        public static Dictionary<int, string[]> MenuKeys = new Dictionary<int, string[]>();
+        public static Dictionary<int, int> Highscores = new Dictionary<int, int>();
         public static int MasterLevel { get; set; }
 
-        public static void LoadSettings(string settingsFilePath = null)
+        public static void Load(string settingsFilePath = null)
+        {
+            LoadSettings(settingsFilePath);
+            ReadSettings();
+            LoadHighscores();
+        }
+
+        public static void Save()
+        {
+            SaveSettings();
+            SaveHighscores();
+        }
+
+        private static void LoadSettings(string settingsFilePath)
         {
             SettingsFileName = settingsFilePath;
-            if (string.IsNullOrEmpty(settingsFilePath) || !File.Exists(settingsFilePath))
+            if (string.IsNullOrEmpty(SettingsFileName) || !File.Exists(SettingsFileName))
                 return;
 
-            using (var sr = File.OpenText(settingsFilePath))
+            using (var sr = File.OpenText(SettingsFileName))
                 while (!sr.EndOfStream)
                 {
                     string line = sr.ReadLine();
@@ -34,7 +48,19 @@ namespace iobloc
                 }
         }
 
-        public static void SaveSettings()
+        private static void ReadSettings()
+        {
+            foreach (int key in Settings.Keys)
+            {
+                var s = Settings[key];
+                if (s.ContainsKey(Settings.MenuKeys))
+                    MenuKeys.Add(key, s.GetList(Settings.MenuKeys));
+                if (s.ContainsKey(Settings.Highscore))
+                    Highscores.Add(key, s.GetInt(Settings.Highscore, 0));
+            }
+        }
+
+        private static void SaveSettings()
         {
             if (string.IsNullOrEmpty(SettingsFileName) || File.Exists(SettingsFileName))
                 return;
@@ -51,7 +77,7 @@ namespace iobloc
             }
         }
 
-        public static void LoadHighscores()
+        private static void LoadHighscores()
         {
             if (!File.Exists(HighscoresFileName))
                 return;
@@ -69,7 +95,7 @@ namespace iobloc
                 }
         }
 
-        public static void SaveHighscores()
+        private static void SaveHighscores()
         {
             using (var sw = File.CreateText(HighscoresFileName))
             {
@@ -89,13 +115,12 @@ namespace iobloc
             return frameMultiplier * (200 - 10 * level);
         }
 
-        public static IBaseBoard GetBoard(BoardType type)
+        public static IBaseBoard GetBoard(int key)
         {
-            int key = (int)type;
             if (Boards.ContainsKey(key))
                 return Boards[key];
             IBaseBoard board = null;
-            switch (type)
+            switch ((BoardType)key)
             {
                 case BoardType.Level: board = new LevelBoard(); break;
                 case BoardType.Tetris: board = new TetrisBoard(); break;
@@ -136,6 +161,14 @@ namespace iobloc
             if (!dic.ContainsKey(key))
                 return 0;
             return (int)Enum.Parse(typeof(ConsoleColor), dic[key]);
+        }
+
+        public static bool Contains(this string[] array, string val)
+        {
+            foreach (string k in array)
+                if (k == val)
+                    return true;
+            return false;
         }
     }
 }
