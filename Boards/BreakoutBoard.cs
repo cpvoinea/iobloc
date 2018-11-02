@@ -21,7 +21,7 @@ namespace iobloc
 
         public BreakoutBoard() : base(BoardType.Breakout) { }
 
-        protected override void Restart()
+        public override void Reset()
         {
             _paddle = Width / 2 - 2;
             _ballX = _ballCol = 2;
@@ -34,10 +34,10 @@ namespace iobloc
                         Main[row, col + i] = CE;
             Main.HasChanges = true;
 
-            InitializeMain();
+            Initialize();
         }
 
-        protected override void ChangeMain(bool set)
+        public override void Change(bool set)
         {
             for (int i = -2; i <= 2; i++)
                 Main[Height - 1, _paddle + i] = set ? CP : 0;
@@ -53,17 +53,17 @@ namespace iobloc
                 case "LeftArrow":
                     if (_paddle > 2)
                     {
-                        ChangeMain(false);
+                        Change(false);
                         _paddle--;
-                        ChangeMain(true);
+                        Change(true);
                     }
                     break;
                 case "RightArrow":
                     if (_paddle < Width - 3)
                     {
-                        ChangeMain(false);
+                        Change(false);
                         _paddle++;
-                        ChangeMain(true);
+                        Change(true);
                     }
                     break;
             }
@@ -71,7 +71,7 @@ namespace iobloc
 
         public override void NextFrame()
         {
-            ChangeMain(false);
+            Change(false);
             _ballRow = (int)Math.Round(_ballY);
             _ballCol = (int)Math.Round(_ballX);
 
@@ -85,7 +85,7 @@ namespace iobloc
             _ballX += Math.Cos(_angle);
             _ballY -= Math.Sin(_angle);
 
-            ChangeMain(true);
+            Change(true);
         }
 
         double NextAngle(out bool lost)

@@ -4,7 +4,7 @@ namespace iobloc
 {
     class Settings
     {
-        static Dictionary<int, Dictionary<string, string>> _all = new Dictionary<int, Dictionary<string, string>>{
+        private static Dictionary<int, Dictionary<string, string>> _all = new Dictionary<int, Dictionary<string, string>>{
             {0, // Level
                 new Dictionary<string, string>{
                     {"Help", "<Easy-ENTR-Hard>"},
@@ -156,7 +156,6 @@ namespace iobloc
 
         public Dictionary<string, string> this[int key] => _all[key];
         public IEnumerable<int> Keys { get { return _all.Keys; } }
-
         public bool ContainsKey(int key) { return _all.ContainsKey(key); }
     }
 }

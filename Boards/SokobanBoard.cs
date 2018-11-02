@@ -18,14 +18,18 @@ namespace iobloc
 
         public SokobanBoard() : base(BoardType.Sokoban) { }
 
-        protected override void InitializeMain()
+        public override void Initialize()
         {
+            base.Initialize();
+
             _startScore = 0;
-            Restart();
+            Reset();
         }
 
-        protected override void Restart()
+        public override void Reset()
         {
+            base.Reset();
+
             var board = SokobanLevels.Get(Level);
             _targets = 0;
             for (int i = 0; i < Height && i < 6; i++)
@@ -56,7 +60,7 @@ namespace iobloc
         {
             if (key == "R")
             {
-                Restart();
+                Reset();
                 return;
             }
 

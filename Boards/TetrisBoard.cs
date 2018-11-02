@@ -9,12 +9,13 @@ namespace iobloc
 
         public TetrisBoard() : base(BoardType.Tetris) { }
 
-        protected override void InitializeMain()
+        public override void Initialize()
         {
+            base.Initialize();
             _piece = NewPiece();
         }
 
-        protected override void ChangeMain(bool set)
+        public override void Change(bool set)
         {
             for (int i = 0; i < 4; i++)
                 for (int j = 0; j < 4; j++)
@@ -31,7 +32,7 @@ namespace iobloc
 
         public override void HandleInput(string key)
         {
-            ChangeMain(false);
+            Change(false);
             switch (key)
             {
                 case "UpArrow": Rotate(); break;
@@ -39,14 +40,14 @@ namespace iobloc
                 case "RightArrow": MoveRight(); break;
                 case "DownArrow": MoveDown(); break;
             }
-            ChangeMain(true);
+            Change(true);
         }
 
         public override void NextFrame()
         {
-            ChangeMain(false);
+            Change(false);
             MoveDown();
-            ChangeMain(true);
+            Change(true);
         }
 
         TetrisPiece NewPiece()
@@ -104,7 +105,7 @@ namespace iobloc
                     Stop();
                     return;
                 }
-                ChangeMain(true);
+                Change(true);
 
                 RemoveRows();
                 _piece = NewPiece();
@@ -114,7 +115,7 @@ namespace iobloc
                     return;
                 }
 
-                ChangeMain(true);
+                Change(true);
                 Main.HasChanges = true;
                 return;
             }

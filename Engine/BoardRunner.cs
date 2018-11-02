@@ -14,14 +14,14 @@ namespace iobloc
             board.Start();
             while (board.IsRunning)
             {
-                Draw(board);
+                Paint(board);
                 paused = HandleInput(board, paused);
 
                 if (paused)
                 {
-                    Draw(board, true);
+                    Paint(board, true);
                     UIPainter.InputWait();
-                    Draw(board, true);
+                    Paint(board, true);
                     paused = false;
                 }
 
@@ -38,7 +38,7 @@ namespace iobloc
             }
         }
 
-        static bool HandleInput(IBoard board, bool paused)
+        private static bool HandleInput(IBoard board, bool paused)
         {
             string key = UIPainter.Input();
             if (key == null)
@@ -56,11 +56,16 @@ namespace iobloc
             return paused;
         }
 
-        static void Draw(IBoard board, bool toggle = false)
+        private static void Paint(IBoard board, bool toggle = false)
         {
             if (toggle)
                 board.TogglePause();
-            UIPainter.DrawPanels(board.Panels.Values);
+            foreach (var p in board.Panels.Values)
+                if (p.HasChanges)
+                {
+                    UIPainter.DrawPanel(p);
+                    p.HasChanges = false;
+                }
         }
     }
 }

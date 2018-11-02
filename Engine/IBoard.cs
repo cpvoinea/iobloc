@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace iobloc
@@ -9,7 +8,6 @@ namespace iobloc
         Dictionary<string, UIPanel> Panels { get; }
         int FrameInterval { get; }
         bool IsRunning { get; }
-        IBoard Next { get; }
 
         void Start();
         void Stop();

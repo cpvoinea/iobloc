@@ -1,17 +1,17 @@
-using System;
 using System.Collections.Generic;
 
 namespace iobloc
 {
-    abstract class BaseBoard : IBoard
+    abstract class BaseBoard : IBaseBoard
     {
         private BoardType Type { get; set; }
         private string[] Keys { get; set; }
         private int FrameMultiplier { get; set; }
         private int LevelThreshold { get; set; }
+        private bool _isInitialized;
         private int? _highscore;
-        private int _score = int.MinValue;
-        private int _level = int.MinValue;
+        private int _score;
+        private int _level;
 
         protected int ID => (int)Type;
         protected Dictionary<string, string> Settings { get; private set; }
@@ -19,60 +19,24 @@ namespace iobloc
         protected int Width { get; private set; }
         protected int Height { get; private set; }
         protected UIPanel Main { get; private set; }
-        protected int Score { get { return _score; } set { SetScore(value); } }
-        protected int Level { get { return _level; } set { SetLevel(value); } }
 
         public UIBorder Border { get; private set; }
         public Dictionary<string, UIPanel> Panels { get; private set; }
         public int FrameInterval { get; private set; }
         public bool IsRunning { get; private set; }
-        public IBoard Next { get; protected set; }
+        public int Score { get { return _score; } set { SetScore(value); } }
+        public int Level { get { return _level; } set { SetLevel(value); } }
+        public IBaseBoard Next { get; protected set; }
 
         protected BaseBoard(BoardType type)
         {
             Type = type;
             InitializeSettings();
             InitializeUI();
-            InitializeStats();
-            InitializeMain();
-        }
+            Initialize();
 
-        private void SetScore(int score)
-        {
-            if (score == _score)
-                return;
-            _score = score;
-
-            Panels[Pnl.Score].Text[0] = string.Format($"{score,3}");
-            Panels[Pnl.Score].HasChanges = true;
-
-            if (score > _highscore.Value)
-            {
-                _highscore = score;
-                if (Panels.ContainsKey(Pnl.Highscore))
-                {
-                    Panels[Pnl.Highscore].Text[0] = string.Format($"{score,3}");
-                    Panels[Pnl.Highscore].HasChanges = true;
-                }
-                Serializer.UpdateHighscore(ID, score);
-            }
-
-            if (LevelThreshold > 0 && _level >= 0 && score >= LevelThreshold * (_level + 1))
-                SetLevel(_level + 1);
-        }
-
-        private void SetLevel(int level)
-        {
-            if (level == _level)
-                return;
-
-            if (level == 16)
-                Next = Serializer.GetBoard(BoardType.Fireworks);
-            if (level < 16 || Type == BoardType.Sokoban && level < SokobanLevels.Count)
-                _level = level;
-
-            Panels[Pnl.Level].Text[0] = string.Format($"L{_level,2}");
-            Panels[Pnl.Level].HasChanges = true;
+            _isInitialized = true;
+            Reset();
         }
 
         private void InitializeSettings()
@@ -84,11 +48,59 @@ namespace iobloc
             Help = Settings.GetList("Help");
             Keys = Settings.GetList("Keys");
             FrameMultiplier = Settings.GetInt("FrameMultiplier", 0);
-            FrameInterval = Serializer.GetLevelInterval(FrameMultiplier);
             LevelThreshold = Settings.GetInt("LevelThreshold", 0);
         }
 
-        private void InitializeUI()
+        private void SetScore(int score)
+        {
+            if (score != 0 && score == _score)
+                return;
+            _score = score;
+
+            if (Panels.ContainsKey(Pnl.Score))
+            {
+                Panels[Pnl.Score].Text[0] = string.Format($"{score,3}");
+                Panels[Pnl.Score].HasChanges = true;
+            }
+
+            if (score > _highscore.Value)
+            {
+                _highscore = score;
+                Serializer.UpdateHighscore(ID, score);
+            }
+
+            if (Panels.ContainsKey(Pnl.Highscore))
+            {
+                Panels[Pnl.Highscore].Text[0] = string.Format($"{score,3}");
+                Panels[Pnl.Highscore].HasChanges = true;
+            }
+
+            if (LevelThreshold > 0 && score >= LevelThreshold * (_level + 1))
+                SetLevel(_level + 1);
+        }
+
+        private void SetLevel(int level)
+        {
+            if (level > 0 && level == _level)
+                return;
+
+            if (level == 16)
+                Next = Serializer.GetBoard(BoardType.Fireworks);
+            if (level < 16 || Type == BoardType.Sokoban && level < SokobanLevels.Count)
+            {
+                _level = level;
+                if (level < 16)
+                    FrameInterval = Serializer.GetLevelInterval(FrameMultiplier, _level);
+
+                if (Panels.ContainsKey(Pnl.Level))
+                {
+                    Panels[Pnl.Level].Text[0] = string.Format($"L{_level,2}");
+                    Panels[Pnl.Level].HasChanges = true;
+                }
+            }
+        }
+
+        public virtual void InitializeUI()
         {
             Border = new UIBorder(Width + 2, Height + 2);
 
@@ -96,7 +108,8 @@ namespace iobloc
             Main.Text = Help;
             var pnlLevel = new UIPanel(Border.Height - 1, (Border.Width + 1) / 2 - 2, Border.Height - 1, (Border.Width + 1) / 2, 1);
 
-            Panels = new Dictionary<string, UIPanel> { { Pnl.Main, Main }, { Pnl.Level, pnlLevel } };
+            if (Type != BoardType.Fireworks && Type != BoardType.RainingBlood)
+                Panels = new Dictionary<string, UIPanel> { { Pnl.Main, Main }, { Pnl.Level, pnlLevel } };
             if (Serializer.Highscores.ContainsKey(ID))
             {
                 if (Border.Width > 8)
@@ -105,33 +118,37 @@ namespace iobloc
             }
         }
 
-        private void InitializeStats()
+        public virtual void Initialize()
         {
+            SetLevel(Serializer.MasterLevel);
             if (Serializer.Highscores.ContainsKey(ID))
             {
                 _highscore = Serializer.Highscores[ID];
                 SetScore(0);
             }
-            SetLevel(Serializer.Level);
         }
 
-        protected virtual void InitializeMain() { }
-        protected virtual void Refresh()
+        public virtual void Reset()
+        {
+            Paint();
+        }
+
+        public virtual void Change(bool set)
+        {
+            if (set)
+                Paint();
+        }
+
+        public virtual void Paint()
         {
             foreach (var p in Panels.Values)
                 p.HasChanges = true;
         }
-        protected virtual void ChangeMain(bool set) { }
-        protected virtual void Restart() { }
 
-        private bool _isInitialized;
         public void Start()
         {
-            if (!_isInitialized)
-                _isInitialized = true;
-            else
-                Refresh();
-
+            if (_isInitialized)
+                Paint();
             IsRunning = true;
         }
 

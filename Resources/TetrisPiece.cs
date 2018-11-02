@@ -2,9 +2,9 @@ namespace iobloc
 {
     struct TetrisPiece
     {
-        enum PieceType { I = 1, O, T, L, J, S, Z }
+        private enum PieceType { I = 1, O, T, L, J, S, Z }
 
-        int Orientation { get; set; }
+        private int Orientation { get; set; }
         public int Type { get; private set; }
         public int[,] Mask { get; private set; }
         public int X { get; private set; }
@@ -22,7 +22,7 @@ namespace iobloc
             Y = 5;
         }
 
-        TetrisPiece(TetrisPiece p)
+        private TetrisPiece(TetrisPiece p)
         {
             Type = p.Type;
             Orientation = p.Orientation;
@@ -31,7 +31,7 @@ namespace iobloc
             Y = p.Y;
         }
 
-        static int[,] GetMask(PieceType type, int orientation)
+        private static int[,] GetMask(PieceType type, int orientation)
         {
             switch (type)
             {

@@ -28,28 +28,28 @@ namespace iobloc
         public int GetIntersectionSymbol(UIBorderLine line)
         {
             if (IsVertical == line.IsVertical || Position < line.From || Position > line.To || line.Position < From || line.Position > To)
-                return UISymbolType.None;
+                return Symbols.None;
             if (IsVertical)
             {
                 if (Position == line.From)
                 {
                     if (line.Position == From)
-                        return UISymbolType.UpperLeftCorner;
+                        return Symbols.UpperLeftCorner;
                     if (line.Position == To)
-                        return UISymbolType.LowerLeftCorner;
+                        return Symbols.LowerLeftCorner;
                     if (IsSingle)
-                        return UISymbolType.SingleLeftSplit;
-                    return UISymbolType.LeftSplit;
+                        return Symbols.SingleLeftSplit;
+                    return Symbols.LeftSplit;
                 }
                 if (Position == line.To)
                 {
                     if (line.Position == From)
-                        return UISymbolType.UpperRightCorner;
+                        return Symbols.UpperRightCorner;
                     if (line.Position == To)
-                        return UISymbolType.LowerRightCorner;
+                        return Symbols.LowerRightCorner;
                     if (IsSingle)
-                        return UISymbolType.SingleRightSplit;
-                    return UISymbolType.RightSplit;
+                        return Symbols.SingleRightSplit;
+                    return Symbols.RightSplit;
                 }
             }
             else
@@ -57,32 +57,32 @@ namespace iobloc
                 if (Position == line.From)
                 {
                     if (line.Position == From)
-                        return UISymbolType.UpperLeftCorner;
+                        return Symbols.UpperLeftCorner;
                     if (line.Position == To)
-                        return UISymbolType.UpperRightCorner;
+                        return Symbols.UpperRightCorner;
                     if (IsSingle)
-                        return UISymbolType.SingleUppperSplit;
-                    return UISymbolType.UpperSplit;
+                        return Symbols.SingleUppperSplit;
+                    return Symbols.UpperSplit;
                 }
                 if (Position == line.To)
                 {
                     if (line.Position == From)
-                        return UISymbolType.LowerLeftCorner;
+                        return Symbols.LowerLeftCorner;
                     if (line.Position == To)
-                        return UISymbolType.LowerRightCorner;
+                        return Symbols.LowerRightCorner;
                     if (IsSingle)
-                        return UISymbolType.SingleLowerSplit;
-                    return UISymbolType.LowerSplit;
+                        return Symbols.SingleLowerSplit;
+                    return Symbols.LowerSplit;
                 }
             }
 
-            return UISymbolType.SingleIntersection;
+            return Symbols.SingleIntersection;
         }
 
         public override bool Equals(object obj)
         {
             var l = (UIBorderLine)obj;
-            return l.From == From && l.To == To && l.Position == Position && l.IsVertical == IsVertical;
+            return l.From == From && l.To == To && l.Position == Position && l.IsVertical == IsVertical && l.IsSingle == IsSingle;
         }
 
         public override int GetHashCode()

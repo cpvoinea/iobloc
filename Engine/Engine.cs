@@ -8,7 +8,7 @@ namespace iobloc
             Serializer.LoadHighscores();
             UIPainter.Initialize();
 
-            IBoard board = Serializer.GetBoard(BoardType.Menu);
+            IBaseBoard board = Serializer.GetBoard(BoardType.Menu);
             while (board != null)
             {
                 BoardRunner.Run(board);

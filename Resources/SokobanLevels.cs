@@ -2,7 +2,7 @@ namespace iobloc
 {
     static class SokobanLevels
     {
-        static readonly int[][,] _levels;
+        private static readonly int[][,] _levels;
 
         public static int Count => _levels == null ? 0 : _levels.Length;
 

@@ -21,8 +21,10 @@ namespace iobloc
 
         public InvadersBoard() : base(BoardType.Invaders) { }
 
-        protected override void InitializeMain()
+        public override void Initialize()
         {
+            base.Initialize();
+
             _skipFrame = BS;
             _ship = Width / 2 - 1;
             _bulletCol = Width / 2 - 1;
@@ -36,13 +38,14 @@ namespace iobloc
             Main.HasChanges = true;
         }
 
-        protected override void Restart()
+        public override void Reset()
         {
+            base.Reset();
             Main.Clear();
-            InitializeMain();
+            Initialize();
         }
 
-        protected override void ChangeMain(bool set)
+        public override void Change(bool set)
         {
             for (int i = -1; i <= 1; i++)
                 Main[Height - 1, _ship + i] = set ? CP : 0;
@@ -58,21 +61,21 @@ namespace iobloc
                 case "LeftArrow":
                     if (_ship > 1)
                     {
-                        ChangeMain(false);
+                        Change(false);
                         _ship--;
                         if (!_shot)
                             _bulletCol--;
-                        ChangeMain(true);
+                        Change(true);
                     }
                     break;
                 case "RightArrow":
                     if (_ship < Width - 2)
                     {
-                        ChangeMain(false);
+                        Change(false);
                         _ship++;
                         if (!_shot)
                             _bulletCol++;
-                        ChangeMain(true);
+                        Change(true);
                     }
                     break;
                 case "UpArrow":
@@ -90,7 +93,7 @@ namespace iobloc
                     return;
                 }
 
-            ChangeMain(false);
+            Change(false);
             if (_skipFrame <= 0)
             {
                 _skipFrame = BS;
@@ -148,7 +151,7 @@ namespace iobloc
                 }
             }
 
-            ChangeMain(true);
+            Change(true);
         }
     }
 }

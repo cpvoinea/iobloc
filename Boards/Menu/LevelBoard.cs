@@ -4,15 +4,15 @@ namespace iobloc
     {
         public LevelBoard() : base(BoardType.Level) { }
 
-        protected override void InitializeMain()
+        public override void Reset()
         {
-            Level = Serializer.Level;
             for (int i = 0; i < 16; i++)
                 Main[0, i] = 15 - i;
-            ChangeMain(true);
+            Level = Serializer.MasterLevel;
+            Change(true);
         }
 
-        protected override void ChangeMain(bool set)
+        public override void Change(bool set)
         {
             if (set)
             {
@@ -30,21 +30,21 @@ namespace iobloc
                 case "RightArrow":
                     if (Level < 15)
                     {
-                        ChangeMain(false);
+                        Change(false);
                         Level++;
-                        ChangeMain(true);
+                        Change(true);
                     }
                     break;
                 case "LeftArrow":
                     if (Level > 0)
                     {
-                        ChangeMain(false);
+                        Change(false);
                         Level--;
-                        ChangeMain(true);
+                        Change(true);
                     }
                     break;
                 case "Enter":
-                    Serializer.Level = Level;
+                    Serializer.MasterLevel = Level;
                     Stop();
                     break;
             }

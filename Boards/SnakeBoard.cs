@@ -41,8 +41,10 @@ namespace iobloc
 
         public SnakeBoard() : base(BoardType.Snake) { }
 
-        protected override void InitializeMain()
+        public override void Initialize()
         {
+            base.Initialize();
+
             if (_snake.Count > 0)
             {
                 Main.Clear();
@@ -64,7 +66,7 @@ namespace iobloc
             NewPoint();
         }
 
-        protected override void ChangeMain(bool set)
+        public override void Change(bool set)
         {
             foreach (var p in _snake)
                 Main[p.Row, p.Col] = set ? CP : 0;
@@ -98,7 +100,7 @@ namespace iobloc
 
         public override void NextFrame()
         {
-            ChangeMain(false);
+            Change(false);
             Position next = GetNext();
             if (_snake.Contains(next))
             {
@@ -114,7 +116,7 @@ namespace iobloc
             }
             else
                 _snake.RemoveLast();
-            ChangeMain(true);
+            Change(true);
         }
 
         void NewPoint()

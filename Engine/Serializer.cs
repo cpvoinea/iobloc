@@ -6,12 +6,12 @@ namespace iobloc
 {
     static class Serializer
     {
+        private const string HighscoresFileName = "highscores.txt";
+        private static string SettingsFileName;
+        private static Dictionary<int, IBaseBoard> Boards = new Dictionary<int, IBaseBoard>();
         public static Settings Settings = new Settings();
         public static Dictionary<int, int> Highscores = new Dictionary<int, int> { { 1, 0 }, { 2, 0 }, { 3, 0 }, { 4, 0 }, { 5, 0 }, { 6, 0 }, { 7, 0 }, { 8, 0 } };
-        static Dictionary<int, IBoard> Boards = new Dictionary<int, IBoard>();
-        static string SettingsFileName;
-        const string HighscoresFileName = "highscores.txt";
-        public static int Level { get; set; }
+        public static int MasterLevel { get; set; }
 
         public static void LoadSettings(string settingsFilePath = null)
         {
@@ -89,17 +89,12 @@ namespace iobloc
             return frameMultiplier * (200 - 10 * level);
         }
 
-        public static int GetLevelInterval(int frameMultiplier)
-        {
-            return GetLevelInterval(frameMultiplier, Level);
-        }
-
-        public static IBoard GetBoard(BoardType type)
+        public static IBaseBoard GetBoard(BoardType type)
         {
             int key = (int)type;
             if (Boards.ContainsKey(key))
                 return Boards[key];
-            IBoard board = null;
+            IBaseBoard board = null;
             switch (type)
             {
                 case BoardType.Level: board = new LevelBoard(); break;

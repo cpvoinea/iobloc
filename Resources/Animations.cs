@@ -4,7 +4,7 @@ namespace iobloc
     {
         public static int[][,] Get(int id) => All[id - (int)BoardType.Fireworks];
 
-        static readonly int[][][,] All = new int[][][,]{
+        private static readonly int[][][,] All = new int[][][,]{
             new int[][,]{
                 new int[,]{
                     {0, 0, 0, 0, 0, 0, 0},

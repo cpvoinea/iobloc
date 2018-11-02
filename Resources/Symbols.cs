@@ -1,6 +1,6 @@
 namespace iobloc
 {
-    static class UISymbolType
+    static class Symbols
     {
         public const int None = 0;
         public const int HorizontalLine = 0x2550;

@@ -2,8 +2,7 @@ namespace iobloc
 {
     struct UIBorder
     {
-        readonly int[,] _grid;
-
+        private readonly int[,] _grid;
         public int this[int row, int col] => _grid[row, col];
         public int Width { get; private set; }
         public int Height { get; private set; }
@@ -30,19 +29,19 @@ namespace iobloc
                 for (int i = line1.From; i <= line1.To; i++)
                     if (line1.IsVertical)
                     {
-                        if (_grid[i, line1.Position] == UISymbolType.None)
-                            _grid[i, line1.Position] = line1.IsSingle ? UISymbolType.SingleVerticalLine : UISymbolType.VerticalLine;
+                        if (_grid[i, line1.Position] == Symbols.None)
+                            _grid[i, line1.Position] = line1.IsSingle ? Symbols.SingleVerticalLine : Symbols.VerticalLine;
                     }
                     else
                     {
-                        if (_grid[line1.Position, i] == UISymbolType.None)
-                            _grid[line1.Position, i] = line1.IsSingle ? UISymbolType.SingleHorizontalLine : UISymbolType.HorizontalLine;
+                        if (_grid[line1.Position, i] == Symbols.None)
+                            _grid[line1.Position, i] = line1.IsSingle ? Symbols.SingleHorizontalLine : Symbols.HorizontalLine;
                     }
                 for (int i2 = i1 + 1; i2 < lines.Length; i2++)
                 {
                     var line2 = lines[i2];
                     var s = line1.GetIntersectionSymbol(line2);
-                    if (s != UISymbolType.None)
+                    if (s != Symbols.None)
                     {
                         if (line1.IsVertical)
                             _grid[line2.Position, line1.Position] = s;

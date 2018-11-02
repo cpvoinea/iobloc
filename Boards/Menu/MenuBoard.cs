@@ -2,23 +2,24 @@ namespace iobloc
 {
     class MenuBoard : BaseBoard
     {
+        private string[] _menuItems;
+
         public MenuBoard() : base(BoardType.Menu) { }
 
-        protected override void InitializeMain()
+        public override void Reset()
         {
             Main.Text = Settings.GetList("MenuItems");
             Main.IsText = true;
-            Refresh();
+            base.Reset();
         }
 
-        protected override void Refresh()
+        public override void Paint()
         {
+            Level = Serializer.MasterLevel;
             Next = null;
-            Level = Serializer.Level;
             Main.HasChanges = true;
         }
 
-        string[] _menuItems;
         public override void TogglePause()
         {
             if (_menuItems == null)

@@ -17,15 +17,15 @@ namespace iobloc
 
         public HelicopterBoard() : base(BoardType.Helicopt) { }
 
-        protected override void Restart()
+        public override void Reset()
         {
             Main.Clear();
             _distance = 0;
             _speed = 0;
-            InitializeMain();
+            Initialize();
         }
 
-        protected override void ChangeMain(bool set)
+        public override void Change(bool set)
         {
             if (_distance >= 0 && _distance < Height)
                 Main[_distance, PP] = Main[_distance, PP + 1] = set ? CP : 0;
@@ -36,7 +36,7 @@ namespace iobloc
         public override void HandleInput(string key)
         {
             if (_restart)
-                Restart();
+                Reset();
             else
                 _speed = 2;
         }
@@ -58,26 +58,26 @@ namespace iobloc
             {
                 if (_speed > 0)
                 {
-                    ChangeMain(false);
+                    Change(false);
                     _distance--;
                     if (!CheckDead())
-                        ChangeMain(true);
+                        Change(true);
                 }
 
                 _speed--;
             }
             else
             {
-                ChangeMain(false);
+                Change(false);
                 _distance++;
                 if (!CheckDead())
-                    ChangeMain(true);
+                    Change(true);
             }
         }
 
         void Advance()
         {
-            ChangeMain(false);
+            Change(false);
             for (int j = 1; j < Width - 1; j++)
                 for (int i = 0; i < Height; i++)
                     Main[i, j] = Main[i, j + 1];
@@ -88,7 +88,7 @@ namespace iobloc
             Score++;
 
             if (!CheckDead())
-                ChangeMain(true);
+                Change(true);
         }
 
         bool CheckDead()
