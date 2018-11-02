@@ -7,8 +7,8 @@ namespace iobloc
         UIBorder Border { get; }
         Dictionary<string, UIPanel> Panels { get; }
         int FrameInterval { get; }
-        string[] AllowedKeys { get; }
         bool IsRunning { get; }
+        string[] AllowedKeys { get; }
 
         void Start();
         void Stop();

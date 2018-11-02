@@ -4,24 +4,21 @@ namespace iobloc
 {
     class TetrisBoard : BaseBoard
     {
-        readonly Random _random = new Random();
-        TetrisPiece _piece;
+        private readonly Random _random = new Random();
+        private TetrisPiece _piece;
 
         public TetrisBoard() : base(BoardType.Tetris) { }
 
-        public override void Initialize()
+        protected override void Initialize()
         {
             base.Initialize();
             if (IsInitialized)
-            {
                 Main.Clear();
-                SetScore(0);
-            }
             _piece = NewPiece();
             Change(true);
         }
 
-        public override void Change(bool set)
+        protected override void Change(bool set)
         {
             for (int i = 0; i < 4; i++)
                 for (int j = 0; j < 4; j++)
@@ -29,11 +26,10 @@ namespace iobloc
                     {
                         int gx = _piece.X - 1 + i;
                         int gy = _piece.Y - 2 + j;
-                        if (gx >= 0 && gx < Height && gy >= 0 && gy < Width)
+                        if (gx >= 0)
                             Main[gx, gy] = set ? (int)_piece.Color : 0;
                     }
-            if (set)
-                Main.HasChanges = true;
+            base.Change(set);
         }
 
         public override void HandleInput(string key)
@@ -79,7 +75,7 @@ namespace iobloc
             }
         }
 
-        bool CanSet(TetrisPiece piece, bool partiallyEntered = true)
+        private bool CanSet(TetrisPiece piece, bool ignoreTop = true)
         {
             for (int i = 0; i < 4; i++)
                 for (int j = 0; j < 4; j++)
@@ -87,21 +83,21 @@ namespace iobloc
                     {
                         int gx = piece.X - 1 + i;
                         int gy = piece.Y - 2 + j;
-                        if (!(gx < Height && gy >= 0 && gy < Width) ||
-                            (gx < 0 && !partiallyEntered) ||
-                            (gx >= 0 && Main[gx, gy] > 0))
+                        bool free = gy >= 0 && gy < Width && gx < Height &&
+                            (gx < 0 && ignoreTop || gx >= 0 && Main[gx, gy] == 0);
+                        if (!free)
                             return false;
                     }
 
             return true;
         }
 
-        TetrisPiece NewPiece()
+        private TetrisPiece NewPiece()
         {
             return new TetrisPiece(_random.Next(7) + 1, _random.Next(4));
         }
 
-        void Rotate()
+        private void Rotate()
         {
             var p = _piece.Rotate();
             Change(false);
@@ -110,7 +106,7 @@ namespace iobloc
             Change(true);
         }
 
-        void MoveLeft()
+        private void MoveLeft()
         {
             var p = _piece.Left();
             Change(false);
@@ -119,7 +115,7 @@ namespace iobloc
             Change(true);
         }
 
-        void MoveRight()
+        private void MoveRight()
         {
             var p = _piece.Right();
             Change(false);
@@ -128,7 +124,7 @@ namespace iobloc
             Change(true);
         }
 
-        void RemoveRows()
+        private void RemoveRows()
         {
             int series = 0;
             for (int i = Height - 1; i >= 0; i--)

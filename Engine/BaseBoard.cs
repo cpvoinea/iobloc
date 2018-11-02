@@ -5,28 +5,28 @@ namespace iobloc
     abstract class BaseBoard : IBaseBoard
     {
         private int ID => (int)Type;
+        private BoardType Type { get; set; }
         private int FrameMultiplier { get; set; }
         private int LevelThreshold { get; set; }
         private int? Highscore { get; set; }
         private int _score;
         private int _level;
 
-        protected BoardType Type { get; private set; }
         protected Dictionary<string, string> BoardSettings { get; private set; }
-        protected string[] Help { get; private set; }
         protected int Width { get; private set; }
         protected int Height { get; private set; }
         protected UIPanel Main { get; private set; }
+        protected string[] Help { get; private set; }
         protected bool IsInitialized { get; private set; }
 
-        public string[] AllowedKeys { get; set; }
         public UIBorder Border { get; private set; }
         public Dictionary<string, UIPanel> Panels { get; private set; }
         public int FrameInterval { get; private set; }
         public bool IsRunning { get; private set; }
-        public int Score { get { return _score; } set { SetScore(value); } }
-        public int Level { get { return _level; } set { SetLevel(value); } }
+        public string[] AllowedKeys { get; protected set; }
         public IBaseBoard Next { get; protected set; }
+        protected int Score { get { return _score; } set { SetScore(value); } }
+        protected int Level { get { return _level; } set { SetLevel(value); } }
 
         protected BaseBoard(BoardType type)
         {
@@ -37,19 +37,7 @@ namespace iobloc
             IsInitialized = true;
         }
 
-        private void InitializeSettings()
-        {
-            BoardSettings = Serializer.Settings[ID];
-
-            AllowedKeys = BoardSettings.GetList(Settings.AllowedKeys);
-            Help = BoardSettings.GetList(Settings.Help);
-            Width = BoardSettings.GetInt(Settings.Width, 10);
-            Height = BoardSettings.GetInt(Settings.Height, 10);
-            FrameMultiplier = BoardSettings.GetInt(Settings.FrameMultiplier, 0);
-            LevelThreshold = BoardSettings.GetInt(Settings.LevelThreshold, 0);
-        }
-
-        protected void SetScore(int score)
+        private void SetScore(int score)
         {
             if (score != 0 && score == _score)
                 return;
@@ -60,21 +48,24 @@ namespace iobloc
                 Panels[Pnl.Score].Text[0] = string.Format($"{score,3}");
                 Panels[Pnl.Score].HasChanges = true;
             }
-
-            if (score > Highscore.Value)
-            {
-                Highscore = score;
-                Serializer.UpdateHighscore(ID, score);
-            }
-
-            if (Panels.ContainsKey(Pnl.Highscore))
-            {
-                Panels[Pnl.Highscore].Text[0] = string.Format($"{score,3}");
-                Panels[Pnl.Highscore].HasChanges = true;
-            }
+            SetHighscore(score);
 
             if (LevelThreshold > 0 && score >= LevelThreshold * (_level + 1))
                 SetLevel(_level + 1);
+        }
+
+        private void SetHighscore(int score)
+        {
+            if (score < Highscore)
+                return;
+            Highscore = score;
+
+            if (Panels.ContainsKey(Pnl.Highscore))
+            {
+                Panels[Pnl.Highscore].Text[0] = string.Format($"{Highscore,3}");
+                Panels[Pnl.Highscore].HasChanges = true;
+            }
+            Serializer.UpdateHighscore(ID, score);
         }
 
         private void SetLevel(int level)
@@ -98,20 +89,19 @@ namespace iobloc
             }
         }
 
-        protected virtual void Win()
+        protected virtual void InitializeSettings()
         {
-            Next = Serializer.GetBoard((int)BoardType.Fireworks);
+            BoardSettings = Serializer.Settings[ID];
+
+            AllowedKeys = BoardSettings.GetList(Settings.AllowedKeys);
+            Help = BoardSettings.GetList(Settings.Help);
+            Width = BoardSettings.GetInt(Settings.Width, 10);
+            Height = BoardSettings.GetInt(Settings.Height, 10);
+            FrameMultiplier = BoardSettings.GetInt(Settings.FrameMultiplier, 0);
+            LevelThreshold = BoardSettings.GetInt(Settings.LevelThreshold, 0);
         }
 
-        protected virtual void Lose(bool exit = true)
-        {
-            Next = Serializer.GetBoard((int)BoardType.RainingBlood);
-            Initialize();
-            if (exit)
-                Stop();
-        }
-
-        public virtual void InitializeUI()
+        protected virtual void InitializeUI()
         {
             Border = new UIBorder(Width + 2, Height + 2);
 
@@ -129,31 +119,41 @@ namespace iobloc
             }
         }
 
-        public virtual void Initialize()
+        protected virtual void Initialize()
         {
             SetLevel(Settings.MasterLevel);
             if (Serializer.Highscores.ContainsKey(ID))
             {
-                Highscore = Serializer.Highscores[ID];
                 SetScore(0);
+                SetHighscore(Serializer.Highscores[ID]);
             }
-            Next = null;
         }
 
-        public virtual void Paint()
+        protected virtual void Change(bool set)
         {
+            if (set)
+                Main.HasChanges = true;
+        }
+
+        protected void Win()
+        {
+            Next = Serializer.GetBoard((int)BoardType.Fireworks);
+        }
+
+        protected void Lose(bool exit = true)
+        {
+            Next = Serializer.GetBoard((int)BoardType.RainingBlood);
+            Initialize();
+            if (exit)
+                Stop();
+        }
+
+        public virtual void Start()
+        {
+            Next = null;
+            IsRunning = true;
             foreach (var p in Panels.Values)
                 p.HasChanges = true;
-        }
-
-        public virtual void Change(bool set)
-        {
-        }
-
-        public void Start()
-        {
-            Paint();
-            IsRunning = true;
         }
 
         public void Stop()

@@ -20,7 +20,7 @@ namespace iobloc
 
         public TableBoard() : base(BoardType.Table){}
 
-        public override void InitializeUI()
+        protected override void InitializeUI()
         {
             base.InitializeUI();
 
@@ -43,7 +43,7 @@ namespace iobloc
             Panels.Add(Pnl.Table.LowerOut, new UIPanel(H / 2, 13 * PW + 4, H - 2, 14 * PW + 3, 0, (char)Symbols.BlockLower));
         }
 
-        public override void Initialize()
+        protected override void Initialize()
         {
             base.Initialize();
 
@@ -80,7 +80,7 @@ namespace iobloc
             Change(true);
         }
 
-        public override void Change(bool set)
+        protected override void Change(bool set)
         {
             UIPanel pnl = null;
             int row = 0, col = 0;

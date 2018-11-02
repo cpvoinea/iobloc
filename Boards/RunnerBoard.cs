@@ -4,69 +4,87 @@ namespace iobloc
 {
     class RunnerBoard : BaseBoard
     {
-        int CP => BoardSettings.GetColor(Settings.PlayerColor);
-        int CE => BoardSettings.GetColor(Settings.EnemyColor);
-        int FS => BoardSettings.GetInt("FenceSpace");
-
-        readonly Random _random = new Random();
-        int _distance;
-        bool _skipAdvance;
-        int _hang;
-        bool _upwards;
-        bool _doubleJump;
-        bool _restart;
+        private int CP;
+        private int CE;
+        private int FS;
+        private readonly Random _random = new Random();
+        private int _distance;
+        private bool _skipAdvance;
+        private int _hang;
+        private bool _upwards;
+        private bool _doubleJump;
+        private bool _lost;
 
         public RunnerBoard() : base(BoardType.Runner) { }
 
-        public override void Initialize()
+        protected override void InitializeSettings()
         {
-            base.Initialize();
-
-            Main.Clear();
-            _distance = 0;
-            _hang = 0;
-            _upwards = false;
-            _doubleJump = false;
-            _restart = false;
-            Score = 0;
+            base.InitializeSettings();
+            CP = BoardSettings.GetColor(Settings.PlayerColor);
+            CE = BoardSettings.GetColor(Settings.EnemyColor);
+            FS = BoardSettings.GetInt("FenceSpace");
         }
 
-        public override void Change(bool set)
+        protected override void Initialize()
+        {
+            base.Initialize();
+            if (IsInitialized)
+            {
+                Main.Clear();
+                _distance = 0;
+                _hang = 0;
+                _upwards = false;
+                _doubleJump = false;
+                _lost = false;
+                Score = 0;
+            }
+            Change(true);
+        }
+
+        protected override void Change(bool set)
         {
             int h = Height - 1 - _distance;
-            Main[h, 1] = Main[h - 1, 1] = set ? CP : 0;
-            if(set)
-                Main.HasChanges = true;
+
+            if (set && Main[h, 1] == CE || Main[h - 1, 1] == CE)
+            {
+                Main.Clear(CE);
+                _lost = true;
+            }
+            else
+            {
+                Main[h, 1] = Main[h - 1, 1] = set ? CP : 0;
+                base.Change(set);
+            }
         }
 
         public override void HandleInput(string key)
         {
-            if (_restart)
-                Initialize();
-            else
+            if (_lost)
             {
-                if (_distance == 0)
-                    _upwards = true;
-                else if (_distance > 0 && !_doubleJump)
-                {
-                    _doubleJump = true;
-                    _upwards = true;
-                }
+                Lose(false);
+                return;
+            }
+
+            if (_distance == 0)
+                _upwards = true;
+            else if (_distance > 0 && !_doubleJump)
+            {
+                _doubleJump = true;
+                _upwards = true;
             }
         }
 
         public override void NextFrame()
         {
-            if (_restart) return;
             Move();
-            if (_restart) return;
+            if(_lost) return;
 
             _skipAdvance = !_skipAdvance;
             if (_skipAdvance)
                 Advance();
         }
 
-        void Move()
+        private void Move()
         {
             int max = _doubleJump ? 3 : 2;
             if (_upwards && _distance < max)
@@ -88,8 +106,7 @@ namespace iobloc
                     {
                         Change(false);
                         _distance--;
-                        if (!CheckDead())
-                            Change(true);
+                        Change(true);
                     }
                     else
                         _doubleJump = false;
@@ -97,7 +114,7 @@ namespace iobloc
             }
         }
 
-        void Advance()
+        private void Advance()
         {
             Change(false);
             for (int j = 1; j < Width - 1; j++)
@@ -110,25 +127,10 @@ namespace iobloc
 
             if (Main[Height - 1, 1] == CE)
                 Score++;
-
-            if (!CheckDead())
-                Change(true);
+            Change(true);
         }
 
-        bool CheckDead()
-        {
-            int h = Height - 1 - _distance;
-            if (Main[h, 1] == CE || Main[h - 1, 1] == CE)
-            {
-                _restart = true;
-                Main.Clear(CE);
-                return true;
-            }
-
-            return false;
-        }
-
-        void CreateFence()
+        private void CreateFence()
         {
             bool hasSpace = true;
             int y = Width - 4;

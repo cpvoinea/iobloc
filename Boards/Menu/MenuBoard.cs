@@ -9,9 +9,10 @@ namespace iobloc
 
         public MenuBoard() : base(BoardType.Menu) { }
 
-        public override void Initialize()
+        protected override void Initialize()
         {
             _itemAllowedKeys = Serializer.MenuKeys;
+
             List<string> items = new List<string>();
             List<string> allowedKeys = new List<string>(AllowedKeys);
             foreach (int k in _itemAllowedKeys.Keys)
@@ -22,14 +23,13 @@ namespace iobloc
 
             AllowedKeys = allowedKeys.ToArray();
             Main.Text = items.ToArray(); ;
+            Main.IsText = true;
         }
 
-        public override void Paint()
+        public override void Start()
         {
             Level = Settings.MasterLevel;
-            Next = null;
-            Main.IsText = true;
-            Main.HasChanges = true;
+            base.Start();
         }
 
         public override void TogglePause()

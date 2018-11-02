@@ -4,15 +4,14 @@ namespace iobloc
     {
         public LevelBoard() : base(BoardType.Level) { }
 
-        public override void Initialize()
+        protected override void Initialize()
         {
             for (int i = 0; i < 16; i++)
                 Main[0, i] = 15 - i;
             Level = Settings.MasterLevel;
-            Change(true);
         }
 
-        public override void Change(bool set)
+        protected override void Change(bool set)
         {
             if (set)
             {

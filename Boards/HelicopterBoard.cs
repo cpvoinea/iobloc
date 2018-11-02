@@ -17,7 +17,7 @@ namespace iobloc
 
         public HelicopterBoard() : base(BoardType.Helicopt) { }
 
-        public override void Initialize()
+        protected override void Initialize()
         {
             base.Initialize();
 
@@ -26,7 +26,7 @@ namespace iobloc
             _speed = 0;
         }
 
-        public override void Change(bool set)
+        protected override void Change(bool set)
         {
             if (_distance >= 0 && _distance < Height)
                 Main[_distance, PP] = Main[_distance, PP + 1] = set ? CP : 0;

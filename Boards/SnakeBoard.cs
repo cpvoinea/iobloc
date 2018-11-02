@@ -5,29 +5,6 @@ namespace iobloc
 {
     class SnakeBoard : BaseBoard
     {
-        struct Position
-        {
-            public int Row { get; set; }
-            public int Col { get; set; }
-
-            public Position(int row, int col)
-            {
-                Row = row;
-                Col = col;
-            }
-
-            public override bool Equals(object obj)
-            {
-                Position p = (Position)obj;
-                return p.Row == Row && p.Col == Col;
-            }
-
-            public override int GetHashCode()
-            {
-                return Col + Row * 100;
-            }
-        }
-
         int CP => BoardSettings.GetColor(Settings.PlayerColor);
         int CN => BoardSettings.GetColor(Settings.NeutralColor);
 
@@ -41,7 +18,7 @@ namespace iobloc
 
         public SnakeBoard() : base(BoardType.Snake) { }
 
-        public override void Initialize()
+        protected override void Initialize()
         {
             base.Initialize();
 
@@ -66,7 +43,7 @@ namespace iobloc
             NewPoint();
         }
 
-        public override void Change(bool set)
+        protected override void Change(bool set)
         {
             foreach (var p in _snake)
                 Main[p.Row, p.Col] = set ? CP : 0;

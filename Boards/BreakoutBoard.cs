@@ -21,7 +21,7 @@ namespace iobloc
 
         public BreakoutBoard() : base(BoardType.Breakout) { }
 
-        public override void Initialize()
+        protected override void Initialize()
         {
             base.Initialize();
             
@@ -37,7 +37,7 @@ namespace iobloc
             Main.HasChanges = true;
         }
 
-        public override void Change(bool set)
+        protected override void Change(bool set)
         {
             for (int i = -2; i <= 2; i++)
                 Main[Height - 1, _paddle + i] = set ? CP : 0;

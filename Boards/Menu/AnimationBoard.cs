@@ -2,16 +2,17 @@ namespace iobloc
 {
     class AnimationBoard : BaseBoard
     {
-        private int[][,] _animation;
+        private readonly int[][,] _animation;
         private int _currentFrame;
 
-        public AnimationBoard(BoardType type) : base(type) { }
-
-        public override void Initialize()
+        public AnimationBoard(BoardType type) : base(type)
         {
-            Level = Settings.MasterLevel;
-            _animation = Animations.Get(Type);
-            _currentFrame = 0;
+            _animation = Animations.Get(type);
+        }
+
+        protected override void Initialize()
+        {
+            Level = 0;
         }
 
         public override void HandleInput(string key) { }

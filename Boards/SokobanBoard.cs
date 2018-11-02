@@ -18,7 +18,7 @@ namespace iobloc
 
         public SokobanBoard() : base(BoardType.Sokoban) { }
 
-        public override void Initialize()
+        protected override void Initialize()
         {
             base.Initialize();
 

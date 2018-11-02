@@ -21,7 +21,7 @@ namespace iobloc
 
         public InvadersBoard() : base(BoardType.Invaders) { }
 
-        public override void Initialize()
+        protected override void Initialize()
         {
             base.Initialize();
 
@@ -38,7 +38,7 @@ namespace iobloc
             Main.HasChanges = true;
         }
 
-        public override void Change(bool set)
+        protected override void Change(bool set)
         {
             for (int i = -1; i <= 1; i++)
                 Main[Height - 1, _ship + i] = set ? CP : 0;
