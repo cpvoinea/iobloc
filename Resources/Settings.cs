@@ -20,6 +20,7 @@ namespace iobloc
 
         public Settings()
         {
+            // Level
             Add(0, new Dictionary<string, string>{
                 {"MenuKeys", "D0,NumPad0"},
                 {"Help", "<Easy-ENTR-Hard>"},
@@ -27,6 +28,7 @@ namespace iobloc
                 {"Width", "16"},
                 {"Height", "1"},
             });
+            // Tetris
             Add(1, new Dictionary<string, string>{
                 {"MenuKeys", "D1,NumPad1"},
                 {"Highscore", "0"},
@@ -37,6 +39,7 @@ namespace iobloc
                 {"Width", "10"},
                 {"Height", "20"},
             });
+            // Runner
             Add(2, new Dictionary<string, string>{
                 {"MenuKeys", "D2,NumPad2"},
                 {"Highscore", "0"},
@@ -50,6 +53,7 @@ namespace iobloc
                 {"EnemyColor", "Red"},
                 {"FenceSpace", "7"},
             });
+            // Helicopter
             Add(3, new Dictionary<string, string>{
                 {"MenuKeys", "D3,NumPad3"},
                 {"Highscore", "0"},
@@ -64,12 +68,13 @@ namespace iobloc
                 {"PlayerColor", "Blue"},
                 {"EnemyColor", "Red"},
             });
+            // Breakout
             Add(4, new Dictionary<string, string>{
                 {"MenuKeys", "D4,NumPad4"},
                 {"Highscore", "0"},
                 {"Help", ",,,,Move:LEFT-RIGHT,Exit:ESC,Pause:ANY" },
                 {"AllowedKeys", "LeftArrow,RightArrow"},
-                {"FrameMultiplier", "2"},
+                {"FrameMultiplier", "1.5"},
                 {"LevelThreshold", "15"},
                 {"Width", "25"},
                 {"Height", "15"},
@@ -80,13 +85,14 @@ namespace iobloc
                 {"BlockSpace", "0"},
                 {"BlockRows", "3"},
             });
+            // Invaders
             Add(5, new Dictionary<string, string>{
                 {"MenuKeys", "D5,NumPad5"},
                 {"Highscore", "0"},
                 {"Help", ",,,Move:LEFT-RIGHT,Shoot:UP,Exit:ESC,Pause:ANY"},
                 {"AllowedKeys", "LeftArrow,RightArrow,UpArrow"},
-                {"FrameMultiplier", "1"},
-                {"LevelThreshold", "15"},
+                {"FrameMultiplier", "0.75"},
+                {"LevelThreshold", "9"},
                 {"Width", "19"},
                 {"Height", "11"},
                 {"PlayerColor", "Blue"},
@@ -98,6 +104,7 @@ namespace iobloc
                 {"AlienCols", "3"},
                 {"BulletSpeed", "2"},
             });
+            // Snake
             Add(6, new Dictionary<string, string>{
                 {"MenuKeys", "D6,NumPad6"},
                 {"Highscore", "0"},
@@ -108,6 +115,7 @@ namespace iobloc
                 {"PlayerColor", "Blue"},
                 {"NeutralColor", "Gray"},
             });
+            // Sokoban
             Add(7, new Dictionary<string, string>{
                 {"MenuKeys", "D7,NumPad7"},
                 {"Highscore", "0"},
@@ -124,8 +132,8 @@ namespace iobloc
                 {"TargetPlayerColor", "DarkRed"},
                 {"TargetBlockColor", "DarkBlue"},
             });
+            // Table
             Add(8, new Dictionary<string, string>{
-                {"MenuKeys", "D8,NumPad8"},
                 {"Help", "Move_cursor:,LEFT-RIGHT,Take_piece:,UP_ARROW,Put_piece:,DOWN_ARROW,Exit:ESC,Pause:ANY"},
                 {"AllowedKeys", "LeftArrow,RightArrow,UpArrow,DownArrow"},
                 {"Height", "36"},
@@ -134,14 +142,18 @@ namespace iobloc
                 {"EnemyColor", "Red"},
                 {"NeutralColor", "Gray"},
             });
+            // Paint
             Add(9, new Dictionary<string, string>{
                 {"MenuKeys", "D9,NumPad9"},
                 {"Help", "Move_cursor:ARROWS,Toggle_draw:ENTER,Select_color:1-7,Toggle_color:8,Write_color:9,Erase_color:0,Clear_screen:R"},
                 {"AllowedKeys", "LeftArrow,RightArrow,UpArrow,DownArrow,Enter,D1,D2,D3,D4,D5,D6,D7,D8,D9,D0,R"}
             });
+            // Menu
             Add(10, new Dictionary<string, string>{
                 {"Help", ",,,Select:0-9,Exit:ESC,Help:Any"},
+                {"Height", "9"},
             });
+            // Fireworks
             Add(11, new Dictionary<string, string>{
                 {"MenuKeys", "F"},
                 {"Help", ",,,WINNER!"},
@@ -150,6 +162,7 @@ namespace iobloc
                 {"Width", "7"},
                 {"Height", "7"}
             });
+            // Rain
             Add(12, new Dictionary<string, string>{
                 {"MenuKeys", "R"},
                 {"Help", ",,GAME,OVER"},

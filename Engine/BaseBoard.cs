@@ -6,7 +6,7 @@ namespace iobloc
     {
         private int ID => (int)Type;
         private BoardType Type { get; set; }
-        private int FrameMultiplier { get; set; }
+        private double FrameMultiplier { get; set; }
         private int LevelThreshold { get; set; }
         private int? Highscore { get; set; }
         private int _score;
@@ -34,7 +34,6 @@ namespace iobloc
             InitializeSettings();
             InitializeUI();
             Initialize();
-            IsInitialized = true;
         }
 
         private void SetScore(int score)
@@ -68,7 +67,7 @@ namespace iobloc
             Serializer.UpdateHighscore(ID, score);
         }
 
-        private void SetLevel(int level)
+        protected virtual void SetLevel(int level)
         {
             if (level > 0 && level == _level)
                 return;
@@ -97,7 +96,7 @@ namespace iobloc
             Help = BoardSettings.GetList(Settings.Help);
             Width = BoardSettings.GetInt(Settings.Width, 10);
             Height = BoardSettings.GetInt(Settings.Height, 10);
-            FrameMultiplier = BoardSettings.GetInt(Settings.FrameMultiplier, 0);
+            FrameMultiplier = BoardSettings.GetReal(Settings.FrameMultiplier);
             LevelThreshold = BoardSettings.GetInt(Settings.LevelThreshold, 0);
         }
 
@@ -121,6 +120,7 @@ namespace iobloc
 
         protected virtual void Initialize()
         {
+            IsInitialized = true;
             SetLevel(Settings.MasterLevel);
             if (Serializer.Highscores.ContainsKey(ID))
             {

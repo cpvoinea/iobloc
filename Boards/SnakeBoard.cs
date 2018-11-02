@@ -5,9 +5,7 @@ namespace iobloc
 {
     class SnakeBoard : BaseBoard
     {
-        int CP => BoardSettings.GetColor(Settings.PlayerColor);
-        int CN => BoardSettings.GetColor(Settings.NeutralColor);
-
+        int CP, CN;
         readonly Random _random = new Random();
         readonly LinkedList<Position> _snake = new LinkedList<Position>();
         Position _point;
@@ -18,15 +16,20 @@ namespace iobloc
 
         public SnakeBoard() : base(BoardType.Snake) { }
 
+        protected override void InitializeSettings()
+        {
+            base.InitializeSettings();
+            CP = BoardSettings.GetColor(Settings.PlayerColor);
+            CN = BoardSettings.GetColor(Settings.NeutralColor);
+        }
+
         protected override void Initialize()
         {
             base.Initialize();
-
-            if (_snake.Count > 0)
+            if (IsInitialized)
             {
                 Main.Clear();
                 _snake.Clear();
-                Score = 0;
                 _h = 1;
                 _v = 0;
                 _nextH = 1;
@@ -48,8 +51,7 @@ namespace iobloc
             foreach (var p in _snake)
                 Main[p.Row, p.Col] = set ? CP : 0;
             Main[_point.Row, _point.Col] = set ? CN : 0;
-            if(set)
-                Main.HasChanges = true;
+            base.Change(set);
         }
 
         public override void HandleInput(string key)
@@ -81,7 +83,7 @@ namespace iobloc
             Position next = GetNext();
             if (_snake.Contains(next))
             {
-                Stop();
+                Lose();
                 return;
             }
 

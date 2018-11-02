@@ -4,79 +4,97 @@ namespace iobloc
 {
     class HelicopterBoard : BaseBoard
     {
-        int CP => BoardSettings.GetColor(Settings.PlayerColor);
-        int CE => BoardSettings.GetColor(Settings.EnemyColor);
-        int PP => BoardSettings.GetInt("PlayerPosition");
-        int OS => BoardSettings.GetInt("ObstacleSpace");
-
-        readonly Random _random = new Random();
-        int _speed;
-        int _distance;
-        bool _skipAdvance;
-        bool _restart;
+        private int CP, CE, PP, OS;
+        private readonly Random _random = new Random();
+        private int _speed;
+        private int _distance;
+        private bool _skipAdvance;
+        private bool _lost;
 
         public HelicopterBoard() : base(BoardType.Helicopt) { }
+
+        protected override void InitializeSettings()
+        {
+            base.InitializeSettings();
+            CP = BoardSettings.GetColor(Settings.PlayerColor);
+            CE = BoardSettings.GetColor(Settings.EnemyColor);
+            PP = BoardSettings.GetInt("PlayerPosition");
+            OS = BoardSettings.GetInt("ObstacleSpace");
+        }
 
         protected override void Initialize()
         {
             base.Initialize();
-
-            Main.Clear();
-            _distance = 0;
-            _speed = 0;
+            if (IsInitialized)
+            {
+                Main.Clear();
+                _speed = 0;
+                _distance = 0;
+                _skipAdvance = false;
+                _lost = false;
+            }
+            Change(true);
         }
 
         protected override void Change(bool set)
         {
-            if (_distance >= 0 && _distance < Height)
+            if (set && (_distance >= Height || Main[_distance, PP] == CE || Main[_distance, PP + 1] == CE))
+            {
+                Main.Clear(CE);
+                _lost = true;
+            }
+            else
+            {
                 Main[_distance, PP] = Main[_distance, PP + 1] = set ? CP : 0;
-            if(set)
-                Main.HasChanges = true;
+                base.Change(set);
+            }
         }
 
         public override void HandleInput(string key)
         {
-            if (_restart)
-                Initialize();
+            if (_lost)
+                Lose(false);
             else
                 _speed = 2;
         }
 
         public override void NextFrame()
         {
-            if (_restart) return;
+            if (_lost) return;
             Move();
-            if (_restart) return;
+            if (_lost) return;
 
             _skipAdvance = !_skipAdvance;
             if (!_skipAdvance)
                 Advance();
         }
 
-        void Move()
+        private void Move()
         {
             if (_speed >= 0)
             {
                 if (_speed > 0)
                 {
-                    Change(false);
-                    _distance--;
-                    if (!CheckDead())
+                    if (_distance > 0)
+                    {
+                        Change(false);
+                        _distance--;
                         Change(true);
+                    }
+                    else
+                        _speed--;
                 }
-
                 _speed--;
             }
             else
             {
                 Change(false);
                 _distance++;
-                if (!CheckDead())
-                    Change(true);
+                Change(true);
             }
         }
 
-        void Advance()
+        private void Advance()
         {
             Change(false);
             for (int j = 1; j < Width - 1; j++)
@@ -88,24 +106,10 @@ namespace iobloc
             CreateObstacles();
             Score++;
 
-            if (!CheckDead())
-                Change(true);
+            Change(true);
         }
 
-        bool CheckDead()
-        {
-            if (_distance < 0 || _distance >= Height ||
-                Main[_distance, PP] == CE || Main[_distance, PP + 1] == CE)
-            {
-                _restart = true;
-                Main.Clear(CE);
-                return true;
-            }
-
-            return false;
-        }
-
-        void CreateObstacles()
+        private void CreateObstacles()
         {
             bool hasSpace = true;
             int y = Width - 2;

@@ -4,9 +4,7 @@ namespace iobloc
 {
     class RunnerBoard : BaseBoard
     {
-        private int CP;
-        private int CE;
-        private int FS;
+        private int CP, CE, FS;
         private readonly Random _random = new Random();
         private int _distance;
         private bool _skipAdvance;
@@ -32,6 +30,7 @@ namespace iobloc
             {
                 Main.Clear();
                 _distance = 0;
+                _skipAdvance = false;
                 _hang = 0;
                 _upwards = false;
                 _doubleJump = false;
@@ -44,8 +43,7 @@ namespace iobloc
         protected override void Change(bool set)
         {
             int h = Height - 1 - _distance;
-
-            if (set && Main[h, 1] == CE || Main[h - 1, 1] == CE)
+            if (set && (Main[h, 1] == CE || Main[h - 1, 1] == CE))
             {
                 Main.Clear(CE);
                 _lost = true;
@@ -76,8 +74,9 @@ namespace iobloc
 
         public override void NextFrame()
         {
+            if (_lost) return;
             Move();
-            if(_lost) return;
+            if (_lost) return;
 
             _skipAdvance = !_skipAdvance;
             if (_skipAdvance)

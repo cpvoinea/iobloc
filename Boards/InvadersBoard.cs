@@ -2,40 +2,50 @@ namespace iobloc
 {
     class InvadersBoard : BaseBoard
     {
-        int CP => BoardSettings.GetColor(Settings.PlayerColor);
-        int CE => BoardSettings.GetColor(Settings.EnemyColor);
-        int CN => BoardSettings.GetColor(Settings.NeutralColor);
-        int AW => BoardSettings.GetInt("AlienWidth");
-        int AS => BoardSettings.GetInt("AlienSpace");
-        int AR => BoardSettings.GetInt("AlienRows");
-        int AC => BoardSettings.GetInt("AlienCols");
-        int BS => BoardSettings.GetInt("BulletSpeed");
-        int A => AW + AS;
-
-        int _ship;
-        int _bulletCol;
-        int _bulletRow;
-        int _skipFrame;
-        bool _shot;
-        bool _movingRight;
+        private int CP, CE, CN, AW, AS, AR, AC, BS;
+        private int A => AW + AS;
+        private int _ship;
+        private int _bulletCol;
+        private int _bulletRow;
+        private int _skipFrame;
+        private bool _shot;
+        private bool _movingRight;
 
         public InvadersBoard() : base(BoardType.Invaders) { }
 
+        protected override void InitializeSettings()
+        {
+            base.InitializeSettings();
+            CP = BoardSettings.GetColor(Settings.PlayerColor);
+            CE = BoardSettings.GetColor(Settings.EnemyColor);
+            CN = BoardSettings.GetColor(Settings.NeutralColor);
+            AW = BoardSettings.GetInt("AlienWidth");
+            AS = BoardSettings.GetInt("AlienSpace");
+            AR = BoardSettings.GetInt("AlienRows");
+            AC = BoardSettings.GetInt("AlienCols");
+            BS = BoardSettings.GetInt("BulletSpeed");
+        }
+
         protected override void Initialize()
         {
-            base.Initialize();
-
-            _skipFrame = BS;
+            if (IsInitialized)
+            {
+                Main.Clear();
+                _shot = false;
+            }
+            else
+                base.Initialize();
             _ship = Width / 2 - 1;
             _bulletCol = Width / 2 - 1;
             _bulletRow = Height - 2;
+            _skipFrame = BS;
             _movingRight = true;
 
             for (int row = 0; row < AR; row++)
                 for (int col = 0; col < Width && col < AC * A; col += A)
                     for (int i = 0; col + i < Width && i < AW; i++)
                         Main[row, col + i] = CE;
-            Main.HasChanges = true;
+            Change(true);
         }
 
         protected override void Change(bool set)
@@ -43,8 +53,13 @@ namespace iobloc
             for (int i = -1; i <= 1; i++)
                 Main[Height - 1, _ship + i] = set ? CP : 0;
             Main[_bulletRow, _bulletCol] = set ? CN : 0;
-            if(set)
-                Main.HasChanges= true;
+            base.Change(set);
+        }
+
+        protected override void SetLevel(int level)
+        {
+            base.SetLevel(level);
+            Initialize();
         }
 
         public override void HandleInput(string key)
@@ -82,7 +97,7 @@ namespace iobloc
             for (int i = 0; i < Width; i++)
                 if (Main[Height - 2, i] == CE)
                 {
-                    Stop();
+                    Lose();
                     return;
                 }
 

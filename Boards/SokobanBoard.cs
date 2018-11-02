@@ -2,15 +2,7 @@ namespace iobloc
 {
     class SokobanBoard : BaseBoard
     {
-        int P => BoardSettings.GetColor(Settings.PlayerColor);
-        int B => BoardSettings.GetColor("BlockColor");
-        int W => BoardSettings.GetColor("WallColor");
-        int T => BoardSettings.GetColor("TargetColor");
-        int R => BoardSettings.GetColor("TargetBlockColor");
-        int H => BoardSettings.GetColor("TargetPlayerColor");
-        int BW => BoardSettings.GetInt("BlockWidth");
-        int WS => BoardSettings.GetInt("WinScore");
-
+        int P, B, W, T, R, H, BW, WS;
         int _targets = int.MaxValue;
         int _startScore;
         int _row;
@@ -18,10 +10,23 @@ namespace iobloc
 
         public SokobanBoard() : base(BoardType.Sokoban) { }
 
+        protected override void InitializeSettings()
+        {
+            base.InitializeSettings();
+            P = BoardSettings.GetColor(Settings.PlayerColor);
+            B = BoardSettings.GetColor("BlockColor");
+            W = BoardSettings.GetColor("WallColor");
+            T = BoardSettings.GetColor("TargetColor");
+            R = BoardSettings.GetColor("TargetBlockColor");
+            H = BoardSettings.GetColor("TargetPlayerColor");
+            BW = BoardSettings.GetInt("BlockWidth");
+            WS = BoardSettings.GetInt("WinScore");
+        }
+
         protected override void Initialize()
         {
-            base.Initialize();
-
+            if (!IsInitialized)
+                base.Initialize();
             var board = SokobanLevels.Get(Level);
             _targets = 0;
             for (int i = 0; i < Height && i < 6; i++)
@@ -37,15 +42,13 @@ namespace iobloc
                     else if (v == T)
                         _targets++;
                 }
-
-            Score = _startScore;
-            Main.HasChanges = true;
+            Change(true);
         }
 
-        void SetBlock(int row, int col, int val)
+        protected override void SetLevel(int level)
         {
-            for (int i = col; i < col + BW; i++)
-                Main[row, i] = val;
+            base.SetLevel(level);
+            Initialize();
         }
 
         public override void HandleInput(string key)
@@ -107,6 +110,11 @@ namespace iobloc
                     {
                         SetBlock(_row + v, _col + h, R);
                         _targets--;
+                        if (_targets == 0)
+                        {
+                            Score += WS;
+                            Level++;
+                        }
                     }
                     else
                         SetBlock(_row + v, _col + h, B);
@@ -117,13 +125,10 @@ namespace iobloc
             }
         }
 
-        public override void NextFrame()
+        void SetBlock(int row, int col, int val)
         {
-            if (_targets > 0)
-                return;
-
-            Score += WS;
-            Level++;
+            for (int i = col; i < col + BW; i++)
+                Main[row, i] = val;
         }
     }
 }

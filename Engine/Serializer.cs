@@ -109,9 +109,9 @@ namespace iobloc
                 Highscores[key] = score;
         }
 
-        public static int GetLevelInterval(int frameMultiplier, int level)
+        public static int GetLevelInterval(double frameMultiplier, int level)
         {
-            return frameMultiplier * (200 - 10 * level);
+            return (int)(frameMultiplier * (200 - 10 * level));
         }
 
         public static IBaseBoard GetBoard(int key)
@@ -146,6 +146,13 @@ namespace iobloc
             if (!dic.ContainsKey(key))
                 return defVal;
             return int.Parse(dic[key]);
+        }
+
+        public static double GetReal(this Dictionary<string, string> dic, string key, double defVal = 0)
+        {
+            if (!dic.ContainsKey(key))
+                return defVal;
+            return double.Parse(dic[key]);
         }
 
         public static string[] GetList(this Dictionary<string, string> dic, string key)
