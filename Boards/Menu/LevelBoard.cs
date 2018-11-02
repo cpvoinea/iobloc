@@ -8,7 +8,7 @@ namespace iobloc
         {
             for (int i = 0; i < 16; i++)
                 Main[0, i] = 15 - i;
-            Level = Serializer.MasterLevel;
+            Level = Settings.MasterLevel;
             Change(true);
         }
 
@@ -44,7 +44,7 @@ namespace iobloc
                     }
                     break;
                 case "Enter":
-                    Serializer.MasterLevel = Level;
+                    Settings.MasterLevel = Level;
                     Stop();
                     break;
             }

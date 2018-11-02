@@ -26,7 +26,7 @@ namespace iobloc
 
         public override void Paint()
         {
-            Level = Serializer.MasterLevel;
+            Level = Settings.MasterLevel;
             Next = null;
             Main.IsText = true;
             Main.HasChanges = true;

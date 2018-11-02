@@ -9,6 +9,7 @@ namespace iobloc
 
         public override void Initialize()
         {
+            Level = Settings.MasterLevel;
             _animation = Animations.Get(Type);
             _currentFrame = 0;
         }

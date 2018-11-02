@@ -12,16 +12,17 @@ namespace iobloc
 
         private static void Resize(int width, int height)
         {
-            width = width < 12 ? 13 : width + 1;
-            height = height + 1;
-
-            try
-            {
-                Console.SetWindowSize(width, height);
-                Console.SetBufferSize(width, height);
-                Console.SetWindowSize(width, height);
-            }
-            catch { }
+            bool success = false;
+            do try
+                {
+                    width++;
+                    Console.SetWindowSize(width, height);
+                    Console.SetBufferSize(width, height);
+                    Console.SetWindowSize(width, height);
+                    success = true;
+                }
+                catch { }
+            while (!success && width < 16);
         }
 
         public static void Initialize()

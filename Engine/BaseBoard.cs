@@ -118,7 +118,7 @@ namespace iobloc
 
         public virtual void Initialize()
         {
-            SetLevel(Serializer.MasterLevel);
+            SetLevel(Settings.MasterLevel);
             if (Serializer.Highscores.ContainsKey(ID))
             {
                 Highscore = Serializer.Highscores[ID];

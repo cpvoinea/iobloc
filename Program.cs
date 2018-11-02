@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 namespace iobloc
 {
@@ -6,6 +7,7 @@ namespace iobloc
     {
         static void Main(string[] args)
         {
+            StringBuilder errors = new StringBuilder();
             try
             {
                 var settingsFilePath = args.Length > 0 ? args[0] : null;
@@ -13,12 +15,18 @@ namespace iobloc
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
-                Console.ReadKey(true);
+                errors.AppendLine(ex.ToString());
             }
             finally
             {
                 Engine.Stop();
+            }
+
+            if (errors.Length > 0)
+            {
+                Console.Clear();
+                Console.WriteLine(errors);
+                Console.Read();
             }
         }
     }

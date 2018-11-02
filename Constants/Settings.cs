@@ -16,6 +16,8 @@ namespace iobloc
         public const string EnemyColor = "EnemyColor";
         public const string NeutralColor = "NeutralColor";
 
+        public static int MasterLevel { get; set; }
+
         public Settings()
         {
             Add(0, new Dictionary<string, string>{

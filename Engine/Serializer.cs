@@ -12,7 +12,6 @@ namespace iobloc
         public static Settings Settings = new Settings();
         public static Dictionary<int, string[]> MenuKeys = new Dictionary<int, string[]>();
         public static Dictionary<int, int> Highscores = new Dictionary<int, int>();
-        public static int MasterLevel { get; set; }
 
         public static void Load(string settingsFilePath = null)
         {
