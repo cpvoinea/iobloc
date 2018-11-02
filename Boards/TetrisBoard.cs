@@ -11,10 +11,14 @@ namespace iobloc
 
         public override void Initialize()
         {
+            base.Initialize();
             if (IsInitialized)
+            {
                 Main.Clear();
+                SetScore(0);
+            }
             _piece = NewPiece();
-            Main.HasChanges = true;
+            Change(true);
         }
 
         public override void Change(bool set)
@@ -34,27 +38,45 @@ namespace iobloc
 
         public override void HandleInput(string key)
         {
-            Change(false);
             switch (key)
             {
-                case "UpArrow": Rotate(); break;
-                case "LeftArrow": MoveLeft(); break;
-                case "RightArrow": MoveRight(); break;
-                case "DownArrow": MoveDown(); break;
+                case UIKeys.LeftArrow: MoveLeft(); break;
+                case UIKeys.RightArrow: MoveRight(); break;
+                case UIKeys.DownArrow: NextFrame(); break;
+                case UIKeys.UpArrow: Rotate(); break;
             }
-            Change(true);
         }
 
         public override void NextFrame()
         {
+            var p = _piece.Down();
             Change(false);
-            MoveDown();
-            Change(true);
-        }
-
-        TetrisPiece NewPiece()
-        {
-            return new TetrisPiece(_random.Next(7) + 1, _random.Next(4));
+            if (CanSet(p))
+            {
+                _piece = p;
+                Change(true);
+            }
+            else
+            {
+                if (!CanSet(_piece, false))
+                {
+                    Change(true);
+                    Lose();
+                }
+                else
+                {
+                    Change(true);
+                    RemoveRows();
+                    _piece = NewPiece();
+                    if (!CanSet(_piece))
+                    {
+                        Change(true);
+                        Lose();
+                    }
+                    else
+                        Change(true);
+                }
+            }
         }
 
         bool CanSet(TetrisPiece piece, bool partiallyEntered = true)
@@ -65,8 +87,8 @@ namespace iobloc
                     {
                         int gx = piece.X - 1 + i;
                         int gy = piece.Y - 2 + j;
-                        if (gx >= Height || gy < 0 || gy >= Width ||
-                            (!partiallyEntered && gx < 0) ||
+                        if (!(gx < Height && gy >= 0 && gy < Width) ||
+                            (gx < 0 && !partiallyEntered) ||
                             (gx >= 0 && Main[gx, gy] > 0))
                             return false;
                     }
@@ -74,53 +96,36 @@ namespace iobloc
             return true;
         }
 
+        TetrisPiece NewPiece()
+        {
+            return new TetrisPiece(_random.Next(7) + 1, _random.Next(4));
+        }
+
         void Rotate()
         {
             var p = _piece.Rotate();
+            Change(false);
             if (CanSet(p))
                 _piece = p;
+            Change(true);
         }
 
         void MoveLeft()
         {
             var p = _piece.Left();
+            Change(false);
             if (CanSet(p))
                 _piece = p;
+            Change(true);
         }
 
         void MoveRight()
         {
             var p = _piece.Right();
+            Change(false);
             if (CanSet(p))
                 _piece = p;
-        }
-
-        void MoveDown()
-        {
-            var p = _piece.Down();
-            if (CanSet(p))
-                _piece = p;
-            else
-            {
-                if (!CanSet(_piece, false))
-                {
-                    Stop();
-                    return;
-                }
-                Change(true);
-
-                RemoveRows();
-                _piece = NewPiece();
-                if (!CanSet(_piece))
-                {
-                    Stop();
-                    return;
-                }
-
-                Change(true);
-                Main.HasChanges = true;
-                return;
-            }
+            Change(true);
         }
 
         void RemoveRows()

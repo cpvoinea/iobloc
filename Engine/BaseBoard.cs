@@ -49,7 +49,7 @@ namespace iobloc
             LevelThreshold = BoardSettings.GetInt(Settings.LevelThreshold, 0);
         }
 
-        private void SetScore(int score)
+        protected void SetScore(int score)
         {
             if (score != 0 && score == _score)
                 return;
@@ -83,7 +83,7 @@ namespace iobloc
                 return;
 
             if (level == 16)
-                Next = Serializer.GetBoard((int)BoardType.Fireworks);
+                Win();
             if (level < 16 || Type == BoardType.Sokoban && level < SokobanLevels.Count)
             {
                 _level = level;
@@ -96,6 +96,19 @@ namespace iobloc
                     Panels[Pnl.Level].HasChanges = true;
                 }
             }
+        }
+
+        protected virtual void Win()
+        {
+            Next = Serializer.GetBoard((int)BoardType.Fireworks);
+        }
+
+        protected virtual void Lose(bool exit = true)
+        {
+            Next = Serializer.GetBoard((int)BoardType.RainingBlood);
+            Initialize();
+            if (exit)
+                Stop();
         }
 
         public virtual void InitializeUI()
@@ -124,6 +137,7 @@ namespace iobloc
                 Highscore = Serializer.Highscores[ID];
                 SetScore(0);
             }
+            Next = null;
         }
 
         public virtual void Paint()
@@ -134,8 +148,6 @@ namespace iobloc
 
         public virtual void Change(bool set)
         {
-            if (set)
-                Paint();
         }
 
         public void Start()

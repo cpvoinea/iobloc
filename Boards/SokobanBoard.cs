@@ -60,10 +60,10 @@ namespace iobloc
             int v = 0;
             switch (key)
             {
-                case "LeftArrow": h = -BW; break;
-                case "RightArrow": h = BW; break;
-                case "UpArrow": v = -1; break;
-                case "DownArrow": v = 1; break;
+                case UIKeys.LeftArrow: h = -BW; break;
+                case UIKeys.RightArrow: h = BW; break;
+                case UIKeys.UpArrow: v = -1; break;
+                case UIKeys.DownArrow: v = 1; break;
             }
 
             if (_row + v < 0 || _row + v >= Height || _col + h < 0 || _col + h >= Width)

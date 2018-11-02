@@ -130,20 +130,20 @@ namespace iobloc
             Change(false);
             switch (key)
             {
-                case "LeftArrow":
+                case UIKeys.LeftArrow:
                     if (_position <= 12)
                         _position++;
                     else if (_position <= 25)
                         _position--;
                     break;
-                case "RightArrow":
+                case UIKeys.RightArrow:
                     if (_position <= 12 && _position > 0)
                         _position--;
                     else if (_position > 12 && _position < 25)
                         _position++;
                     break;
-                case "UpArrow": break;
-                case "DownArrow": break;
+                case UIKeys.UpArrow: break;
+                case UIKeys.DownArrow: break;
             }
             Change(true);
         }

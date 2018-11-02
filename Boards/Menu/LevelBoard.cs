@@ -27,7 +27,7 @@ namespace iobloc
         {
             switch (key)
             {
-                case "RightArrow":
+                case UIKeys.RightArrow:
                     if (Level < 15)
                     {
                         Change(false);
@@ -35,7 +35,7 @@ namespace iobloc
                         Change(true);
                     }
                     break;
-                case "LeftArrow":
+                case UIKeys.LeftArrow:
                     if (Level > 0)
                     {
                         Change(false);
