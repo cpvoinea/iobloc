@@ -46,7 +46,7 @@ namespace iobloc
 
             if (paused)
                 return false;
-            if (key == "Escape")
+            if (key == UIKeys.Escape)
                 board.Stop();
             else if (board.AllowedKeys.Contains(key))
                 board.HandleInput(key);

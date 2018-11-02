@@ -17,12 +17,13 @@ namespace iobloc
 
         public HelicopterBoard() : base(BoardType.Helicopt) { }
 
-        public override void Reset()
+        public override void Initialize()
         {
+            base.Initialize();
+
             Main.Clear();
             _distance = 0;
             _speed = 0;
-            Initialize();
         }
 
         public override void Change(bool set)
@@ -36,7 +37,7 @@ namespace iobloc
         public override void HandleInput(string key)
         {
             if (_restart)
-                Reset();
+                Initialize();
             else
                 _speed = 2;
         }

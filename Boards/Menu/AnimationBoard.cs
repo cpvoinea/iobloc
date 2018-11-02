@@ -7,9 +7,9 @@ namespace iobloc
 
         public AnimationBoard(BoardType type) : base(type) { }
 
-        public override void Reset()
+        public override void Initialize()
         {
-            _animation = Animations.Get(ID);
+            _animation = Animations.Get(Type);
             _currentFrame = 0;
         }
 

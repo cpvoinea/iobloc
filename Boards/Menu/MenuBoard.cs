@@ -9,22 +9,19 @@ namespace iobloc
 
         public MenuBoard() : base(BoardType.Menu) { }
 
-        public override void Reset()
+        public override void Initialize()
         {
             _itemAllowedKeys = Serializer.MenuKeys;
             List<string> items = new List<string>();
             List<string> allowedKeys = new List<string>(AllowedKeys);
             foreach (int k in _itemAllowedKeys.Keys)
             {
-                items.Add(((BoardType)k).ToString());
+                items.Add(string.Format($"{k}:{(BoardType)k}"));
                 allowedKeys.AddRange(_itemAllowedKeys[k]);
             }
 
-            _itemNames = items.ToArray();
             AllowedKeys = allowedKeys.ToArray();
-            Main.Text = _itemNames;
-
-            base.Reset();
+            Main.Text = items.ToArray(); ;
         }
 
         public override void Paint()
@@ -57,6 +54,7 @@ namespace iobloc
                 {
                     Next = Serializer.GetBoard(k);
                     Stop();
+                    return;
                 }
         }
     }

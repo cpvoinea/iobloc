@@ -3,13 +3,8 @@ namespace iobloc
     static class SokobanLevels
     {
         private static readonly int[][,] _levels;
-
         public static int Count => _levels == null ? 0 : _levels.Length;
-
-        public static int[,] Get(int lvl)
-        {
-            return _levels[lvl];
-        }
+        public static int[,] Get(int lvl) => _levels[lvl];
 
         static SokobanLevels()
         {

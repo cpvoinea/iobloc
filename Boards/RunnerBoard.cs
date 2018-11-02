@@ -18,8 +18,10 @@ namespace iobloc
 
         public RunnerBoard() : base(BoardType.Runner) { }
 
-        public override void Reset()
+        public override void Initialize()
         {
+            base.Initialize();
+
             Main.Clear();
             _distance = 0;
             _hang = 0;
@@ -40,7 +42,7 @@ namespace iobloc
         public override void HandleInput(string key)
         {
             if (_restart)
-                Reset();
+                Initialize();
             else
             {
                 if (_distance == 0)

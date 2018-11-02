@@ -38,13 +38,6 @@ namespace iobloc
             Main.HasChanges = true;
         }
 
-        public override void Reset()
-        {
-            base.Reset();
-            Main.Clear();
-            Initialize();
-        }
-
         public override void Change(bool set)
         {
             for (int i = -1; i <= 1; i++)

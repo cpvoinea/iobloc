@@ -8,8 +8,7 @@ namespace iobloc
 
         void InitializeUI();
         void Initialize();
-        void Reset();
-        void Change(bool set);
         void Paint();
+        void Change(bool set);
     }
 }

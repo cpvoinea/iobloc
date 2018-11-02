@@ -22,14 +22,6 @@ namespace iobloc
         {
             base.Initialize();
 
-            _startScore = 0;
-            Reset();
-        }
-
-        public override void Reset()
-        {
-            base.Reset();
-
             var board = SokobanLevels.Get(Level);
             _targets = 0;
             for (int i = 0; i < Height && i < 6; i++)
@@ -60,7 +52,7 @@ namespace iobloc
         {
             if (key == "R")
             {
-                Reset();
+                Initialize();
                 return;
             }
 

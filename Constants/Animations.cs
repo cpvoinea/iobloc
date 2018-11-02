@@ -2,8 +2,6 @@ namespace iobloc
 {
     static class Animations
     {
-        public static int[][,] Get(int id) => All[id - (int)BoardType.Fireworks];
-
         private static readonly int[][][,] All = new int[][][,]{
             new int[][,]{
                 new int[,]{
@@ -136,5 +134,7 @@ namespace iobloc
                 },
             },
         };
+
+        public static int[][,] Get(BoardType type) => All[type - BoardType.Fireworks];
     }
 }

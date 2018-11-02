@@ -4,20 +4,20 @@ namespace iobloc
 {
     abstract class BaseBoard : IBaseBoard
     {
-        private BoardType Type { get; set; }
+        private int ID => (int)Type;
         private int FrameMultiplier { get; set; }
         private int LevelThreshold { get; set; }
-        private bool IsInitialized {get;set;}
-        private int? Highscore {get;set;}
+        private int? Highscore { get; set; }
         private int _score;
         private int _level;
 
-        protected int ID => (int)Type;
+        protected BoardType Type { get; private set; }
         protected Dictionary<string, string> BoardSettings { get; private set; }
         protected string[] Help { get; private set; }
         protected int Width { get; private set; }
         protected int Height { get; private set; }
         protected UIPanel Main { get; private set; }
+        protected bool IsInitialized { get; private set; }
 
         public string[] AllowedKeys { get; set; }
         public UIBorder Border { get; private set; }
@@ -34,9 +34,7 @@ namespace iobloc
             InitializeSettings();
             InitializeUI();
             Initialize();
-
             IsInitialized = true;
-            Reset();
         }
 
         private void InitializeSettings()
@@ -106,10 +104,10 @@ namespace iobloc
 
             Main = new UIPanel(1, 1, Height, Width);
             Main.Text = Help;
-            var pnlLevel = new UIPanel(Border.Height - 1, (Border.Width + 1) / 2 - 2, Border.Height - 1, (Border.Width + 1) / 2, 1);
+            Panels = new Dictionary<string, UIPanel> { { Pnl.Main, Main } };
 
             if (Type != BoardType.Fireworks && Type != BoardType.RainingBlood)
-                Panels = new Dictionary<string, UIPanel> { { Pnl.Main, Main }, { Pnl.Level, pnlLevel } };
+                Panels.Add(Pnl.Level, new UIPanel(Border.Height - 1, (Border.Width + 1) / 2 - 2, Border.Height - 1, (Border.Width + 1) / 2, 1));
             if (Serializer.Highscores.ContainsKey(ID))
             {
                 if (Border.Width > 8)
@@ -128,9 +126,10 @@ namespace iobloc
             }
         }
 
-        public virtual void Reset()
+        public virtual void Paint()
         {
-            Paint();
+            foreach (var p in Panels.Values)
+                p.HasChanges = true;
         }
 
         public virtual void Change(bool set)
@@ -139,16 +138,9 @@ namespace iobloc
                 Paint();
         }
 
-        public virtual void Paint()
-        {
-            foreach (var p in Panels.Values)
-                p.HasChanges = true;
-        }
-
         public void Start()
         {
-            if (IsInitialized)
-                Paint();
+            Paint();
             IsRunning = true;
         }
 

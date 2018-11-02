@@ -9,7 +9,7 @@ namespace iobloc
         public int[,] Mask { get; private set; }
         public int X { get; private set; }
         public int Y { get; private set; }
-        public int Color { get { return 15 - Type; } }
+        public int Color => 15 - Type;
 
         public TetrisPiece(int type, int orientation)
         {
@@ -211,7 +211,6 @@ namespace iobloc
         {
             var p = new TetrisPiece(this);
             p.Orientation = (p.Orientation + 1) % 4;
-            // refresh the mask
             p.Mask = GetMask((PieceType)p.Type, p.Orientation);
             return p;
         }

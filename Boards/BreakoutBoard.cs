@@ -21,8 +21,10 @@ namespace iobloc
 
         public BreakoutBoard() : base(BoardType.Breakout) { }
 
-        public override void Reset()
+        public override void Initialize()
         {
+            base.Initialize();
+            
             _paddle = Width / 2 - 2;
             _ballX = _ballCol = 2;
             _ballY = _ballRow = BR + 2;
@@ -33,8 +35,6 @@ namespace iobloc
                     for (int i = 0; i < BW; i++)
                         Main[row, col + i] = CE;
             Main.HasChanges = true;
-
-            Initialize();
         }
 
         public override void Change(bool set)

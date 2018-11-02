@@ -11,8 +11,10 @@ namespace iobloc
 
         public override void Initialize()
         {
-            base.Initialize();
+            if (IsInitialized)
+                Main.Clear();
             _piece = NewPiece();
+            Main.HasChanges = true;
         }
 
         public override void Change(bool set)

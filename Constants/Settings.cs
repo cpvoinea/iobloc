@@ -20,7 +20,6 @@ namespace iobloc
         {
             Add(0, new Dictionary<string, string>{
                 {"MenuKeys", "D0,NumPad0"},
-                {"Highscore", "0"},
                 {"Help", "<Easy-ENTR-Hard>"},
                 {"AllowedKeys", "LeftArrow,RightArrow,Enter"},
                 {"Width", "16"},

@@ -7,6 +7,22 @@ namespace iobloc
     {
         private static int WinWidth = 15;
         private static int WinHeight = 4;
+        private static int BuffWidth = 15;
+        private static int BuffHeight = 15;
+
+        private static void Resize(int width, int height)
+        {
+            width = width < 12 ? 13 : width + 1;
+            height = height + 1;
+
+            try
+            {
+                Console.SetWindowSize(width, height);
+                Console.SetBufferSize(width, height);
+                Console.SetWindowSize(width, height);
+            }
+            catch { }
+        }
 
         public static void Initialize()
         {
@@ -14,33 +30,33 @@ namespace iobloc
             Console.CursorVisible = false;
             WinWidth = Console.WindowWidth;
             WinHeight = Console.WindowHeight;
+            BuffWidth = Console.BufferWidth;
+            BuffHeight = Console.BufferHeight;
         }
 
         public static void Exit()
         {
             Console.ResetColor();
             Console.CursorVisible = true;
-            Resize(WinWidth, WinHeight);
-        }
-
-        public static void Resize(int width, int height)
-        {
-            width = width < 15 ? 15 : width;
-            height = height + 1;
-
-            Console.Clear();
-            Console.SetWindowSize(width, height);
-            if (Console.BufferWidth > width || Console.BufferHeight > height)
-                Console.SetBufferSize(width, height);
+            try
+            {
+                Console.SetWindowSize(WinWidth, WinHeight);
+                Console.SetBufferSize(BuffWidth, BuffHeight);
+            }
+            catch { }
         }
 
         public static void DrawBorder(UIBorder border)
         {
-            Resize(border.Width, border.Height);
-            for (int row = 0; row < border.Height; row++)
+            Console.Clear();
+            int w = border.Width;
+            int h = border.Height;
+            Resize(w, h);
+
+            for (int row = 0; row < h; row++)
             {
-                StringBuilder line = new StringBuilder(new string(' ', border.Width));
-                for (int j = 0; j < border.Width; j++)
+                StringBuilder line = new StringBuilder(new string(' ', w));
+                for (int j = 0; j < w; j++)
                 {
                     if (border[row, j] > 0)
                         line[j] = (char)border[row, j];
@@ -51,7 +67,15 @@ namespace iobloc
             Console.SetCursorPosition(1, 1);
         }
 
-        public static void DrawPanelText(UIPanel panel, string[] lines)
+        public static void DrawPanel(UIPanel panel)
+        {
+            if (panel.IsText)
+                DrawPanelText(panel, panel.Text);
+            else
+                DrawPanelColor(panel);
+        }
+
+        private static void DrawPanelText(UIPanel panel, string[] lines)
         {
             string empty = new String(' ', panel.Width);
             for (int row = 0; row < panel.Height; row++)
@@ -60,7 +84,6 @@ namespace iobloc
                 Console.SetCursorPosition(panel.FromCol, panel.FromRow + row);
                 Console.Write(text);
             }
-            Console.SetCursorPosition(1, 1);
         }
 
         private static void DrawPanelColor(UIPanel panel)
@@ -84,15 +107,6 @@ namespace iobloc
                 }
             }
             Console.ResetColor();
-            Console.SetCursorPosition(1, 1);
-        }
-
-        public static void DrawPanel(UIPanel panel)
-        {
-            if (panel.IsText)
-                DrawPanelText(panel, panel.Text);
-            else
-                DrawPanelColor(panel);
         }
 
         public static string InputWait()
