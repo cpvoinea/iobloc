@@ -10,6 +10,6 @@
 * 2 new games
 * AI opponent
 * advanced input
-* ~~persistent logging, metrics
+* ~~persistent logging, metrics~~
 * SDK
 * multi-platform
