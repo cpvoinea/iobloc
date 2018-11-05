@@ -4,22 +4,30 @@ namespace iobloc
 {
     class TableBoard : BaseBoard
     {
-        int PW => BoardSettings.GetInt("PieceWidth");
-        int H => BoardSettings.GetInt(Settings.Height);
-        int CP => BoardSettings.GetColor(Settings.PlayerColor);
-        int CE => BoardSettings.GetColor(Settings.EnemyColor);
-        int CN => BoardSettings.GetColor(Settings.NeutralColor);
+        int PW, H, CP, CE, CN;
         UIPanel PLR => Panels[Pnl.Table.LowerRight];
         UIPanel PLL => Panels[Pnl.Table.LowerLeft];
         UIPanel PUR => Panels[Pnl.Table.UpperRight];
         UIPanel PUL => Panels[Pnl.Table.UpperLeft];
-
+        UIPanel[] _displayPanels;
         readonly Random _random = new Random();
         int _position;
         bool _white;
 
-        public TableBoard() : base(BoardType.Table){}
+        public TableBoard() : base(BoardType.Table) { }
 
+        protected override void InitializeSettings()
+        {
+            PW = BoardSettings.GetInt("PieceWidth");
+            H = BoardSettings.GetInt(Settings.Height);
+            CP = BoardSettings.GetColor(Settings.PlayerColor);
+            CE = BoardSettings.GetColor(Settings.EnemyColor);
+            CN = BoardSettings.GetColor(Settings.NeutralColor);
+        }
+
+        /// <summary>
+        /// Add extra lines and panels
+        /// </summary>
         protected override void InitializeUI()
         {
             base.InitializeUI();
@@ -41,17 +49,22 @@ namespace iobloc
             Panels.Add(Pnl.Table.LowerRight, new UIPanel(H / 2, 7 * PW + 3, H - 2, 13 * PW + 2, 0, (char)Symbols.BlockLower));
             Panels.Add(Pnl.Table.UpperOut, new UIPanel(1, 13 * PW + 4, H / 2 - 1, 14 * PW + 3, 0, (char)Symbols.BlockUpper));
             Panels.Add(Pnl.Table.LowerOut, new UIPanel(H / 2, 13 * PW + 4, H - 2, 14 * PW + 3, 0, (char)Symbols.BlockLower));
+            _displayPanels = new[] { Panels[Pnl.Table.UpperLeft], Panels[Pnl.Table.LowerLeft], Panels[Pnl.Table.UpperTaken], Panels[Pnl.Table.LowerTaken], Panels[Pnl.Table.UpperRight], Panels[Pnl.Table.LowerRight], Panels[Pnl.Table.UpperOut], Panels[Pnl.Table.LowerOut] };
         }
 
+        /// <summary>
+        /// Reset to starting configuration
+        /// </summary>
         protected override void Initialize()
         {
             base.Initialize();
 
-            foreach (var pnl in Panels.Values)
+            if (IsInitialized)
             {
-                for (int i = 0; i < pnl.Height; i++)
-                    for (int j = 0; j < pnl.Width; j++)
-                        pnl[i, j] = 0;
+                foreach (var pnl in _displayPanels)
+                    pnl.Clear(0);
+                _position = 0;
+                _white = true;
             }
 
             for (int j = 0; j < PW; j++)
@@ -75,11 +88,13 @@ namespace iobloc
                 }
             }
 
-            _position = 0;
-            _white = true;
             Change(true);
         }
 
+        /// <summary>
+        /// Move selection cursor
+        /// </summary>
+        /// <param name="set"></param>
         protected override void Change(bool set)
         {
             UIPanel pnl = null;
@@ -125,6 +140,10 @@ namespace iobloc
             }
         }
 
+        /// <summary>
+        /// Move selection cursor left-right
+        /// </summary>
+        /// <param name="key"></param>
         public override void HandleInput(string key)
         {
             Change(false);
