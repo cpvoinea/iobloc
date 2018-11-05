@@ -2,6 +2,9 @@ using System.Collections.Generic;
 
 namespace iobloc
 {
+    /// <summary>
+    /// Dictionary of settings for each board ID, a board setting is a collection of (name,value) string pairs
+    /// </summary>
     sealed class Settings : Dictionary<int, Dictionary<string, string>>
     {
         public const string MenuKeys = "MenuKeys";
@@ -16,8 +19,16 @@ namespace iobloc
         public const string EnemyColor = "EnemyColor";
         public const string NeutralColor = "NeutralColor";
 
+        /// <summary>
+        /// A common and customizable level value across all boards.
+        /// During Initialization, board levels will be set to this value.
+        /// </summary>
+        /// <value>0-15</value>
         public static int MasterLevel { get; set; }
 
+        /// <summary>
+        /// Default settings for built-in boards
+        /// </summary>
         public Settings()
         {
             // Level

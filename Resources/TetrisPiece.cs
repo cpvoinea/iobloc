@@ -1,16 +1,45 @@
 namespace iobloc
 {
+    /// <summary>
+    /// Tetris piece struct with rotation maps for each piece
+    /// </summary>
     struct TetrisPiece
     {
+        // basic tetrominos
         private enum PieceType { I = 1, O, T, L, J, S, Z }
-
+        // orientation and type are used to determine piece footprint (mask)
         private int Orientation { get; set; }
+
+        /// <summary>
+        /// Tetromino type
+        /// </summary>
+        /// <value></value>
         public int Type { get; private set; }
+        /// <summary>
+        /// Piece footprint as a 4x4 matrix
+        /// </summary>
+        /// <value></value>
         public int[,] Mask { get; private set; }
+        /// <summary>
+        /// Mask distance to top (can be negativ on piece entry)
+        /// </summary>
+        /// <value></value>
         public int X { get; private set; }
+        /// <summary>
+        /// Mask distance to left
+        /// </summary>
+        /// <value></value>
         public int Y { get; private set; }
+        /// <summary>
+        /// Color depends on type
+        /// </summary>
         public int Color => 15 - Type;
 
+        /// <summary>
+        /// Construct a piece which can only move or rotate
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="orientation"></param>
         public TetrisPiece(int type, int orientation)
         {
             Type = type;
@@ -31,6 +60,12 @@ namespace iobloc
             Y = p.Y;
         }
 
+        /// <summary>
+        /// Decide on a mask from type and rotation
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="orientation"></param>
+        /// <returns></returns>
         private static int[,] GetMask(PieceType type, int orientation)
         {
             switch (type)
@@ -207,6 +242,10 @@ namespace iobloc
             return null;
         }
 
+        /// <summary>
+        /// Change orientation (and mask)
+        /// </summary>
+        /// <returns></returns>
         public TetrisPiece Rotate()
         {
             var p = new TetrisPiece(this);
@@ -215,6 +254,10 @@ namespace iobloc
             return p;
         }
 
+        /// <summary>
+        ///  Strafe left
+        /// </summary>
+        /// <returns></returns>
         public TetrisPiece Left()
         {
             var p = new TetrisPiece(this);
@@ -222,6 +265,10 @@ namespace iobloc
             return p;
         }
 
+        /// <summary>
+        /// Strafe right
+        /// </summary>
+        /// <returns></returns>
         public TetrisPiece Right()
         {
             var p = new TetrisPiece(this);
@@ -229,6 +276,10 @@ namespace iobloc
             return p;
         }
 
+        /// <summary>
+        /// Strafe down
+        /// </summary>
+        /// <returns></returns>
         public TetrisPiece Down()
         {
             var p = new TetrisPiece(this);

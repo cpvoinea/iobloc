@@ -1,5 +1,8 @@
 namespace iobloc
 {
+    /// <summary>
+    /// Built-in boards
+    /// </summary>
     enum BoardType
     {
         Level = 0,

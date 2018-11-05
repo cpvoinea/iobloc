@@ -1,5 +1,8 @@
 namespace iobloc
 {
+    /// <summary>
+    /// Animation frames
+    /// </summary>
     static class Animations
     {
         private static readonly int[][][,] All = new int[][][,]{

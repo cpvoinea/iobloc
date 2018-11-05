@@ -1,5 +1,8 @@
 namespace iobloc
 {
+    /// <summary>
+    /// Sokoban levels ar matrix maps, using runtime colors from settings
+    /// </summary>
     static class SokobanLevels
     {
         private static readonly int[][,] _levels;
@@ -16,7 +19,7 @@ namespace iobloc
             int R = settings.GetColor("TargetBlockColor");
 
             _levels = new[]{
-                new[,] {
+                new[,] { // 0
                     {0, W, 0, 0},
                     {P, B, T, 0},
                     {W, W, 0, 0},
@@ -24,7 +27,7 @@ namespace iobloc
                     {0, 0, 0, 0},
                     {0, 0, 0, 0}
                 },
-                new[,] {
+                new[,] { // 1
                     {0, 0, 0, 0},
                     {0, 0, T, 0},
                     {0, 0, W, 0},
@@ -32,7 +35,7 @@ namespace iobloc
                     {0, B, P, 0},
                     {0, 0, 0, 0}
                 },
-                new[,] {
+                new[,] { // 2
                     {T, 0, 0, W},
                     {0, 0, R, 0},
                     {0, B, W, 0},
@@ -40,7 +43,7 @@ namespace iobloc
                     {0, W, P, 0},
                     {0, 0, 0, 0}
                 },
-                new[,] {
+                new[,] { // 3
                     {T, 0, 0, W},
                     {0, 0, 0, 0},
                     {W, B, 0, 0},
@@ -48,7 +51,7 @@ namespace iobloc
                     {P, 0, 0, 0},
                     {0, 0, 0, W}
                 },
-                new[,] {
+                new[,] { // 4
                     {W, 0, 0, W},
                     {0, 0, B, 0},
                     {T, B, W, T},
@@ -56,7 +59,7 @@ namespace iobloc
                     {P, 0, 0, 0},
                     {W, 0, 0, W}
                 },
-                new[,] {
+                new[,] { // 5
                     {0, 0, 0, 0},
                     {0, P, 0, 0},
                     {0, B, W, T},
@@ -64,7 +67,7 @@ namespace iobloc
                     {0, 0, 0, 0},
                     {T, R, 0, W}
                 },
-                new[,] {
+                new[,] { // 6
                     {W, 0, 0, 0},
                     {W, T, P, T},
                     {0, T, B, 0},
@@ -72,7 +75,7 @@ namespace iobloc
                     {0, 0, B, 0},
                     {0, 0, 0, 0}
                 },
-                new[,] {
+                new[,] { // 7
                     {0, W, 0, 0},
                     {W, 0, 0, 0},
                     {0, R, T, 0},
@@ -80,7 +83,7 @@ namespace iobloc
                     {0, T, W, 0},
                     {P, 0, 0, 0}
                 },
-                new[,] {
+                new[,] { // 8
                     {W, T, 0, P},
                     {W, R, W, B},
                     {W, 0, B, T},
@@ -88,7 +91,7 @@ namespace iobloc
                     {0, 0, 0, 0},
                     {0, 0, 0, 0}
                 },
-                new[,] {
+                new[,] { // 9
                     {W, 0, 0, W},
                     {0, 0, T, 0},
                     {0, 0, 0, 0},
@@ -96,7 +99,7 @@ namespace iobloc
                     {R, B, B, 0},
                     {P, 0, 0, T}
                 },
-                new[,] {
+                new[,] { // 10
                     {W, W, W, W},
                     {0, 0, 0, T},
                     {B, B, B, P},
@@ -104,7 +107,7 @@ namespace iobloc
                     {0, 0, T, 0},
                     {W, W, W, W}
                 },
-                new[,] {
+                new[,] { // 11
                     {W, 0, 0, T},
                     {0, R, B, T},
                     {0, W, 0, B},
@@ -112,7 +115,7 @@ namespace iobloc
                     {0, 0, 0, 0},
                     {0, P, 0, 0}
                 },
-                new[,] {
+                new[,] { // 12
                     {W, W, W, 0},
                     {P, 0, 0, W},
                     {0, W, B, 0},
@@ -120,7 +123,7 @@ namespace iobloc
                     {W, 0, 0, B},
                     {W, T, 0, 0}
                 },
-                new[,] {
+                new[,] { // 13
                     {0, 0, 0, W},
                     {0, W, 0, 0},
                     {T, T, 0, 0},
@@ -128,7 +131,7 @@ namespace iobloc
                     {0, B, 0, 0},
                     {0, 0, P, W}
                 },
-                new[,] {
+                new[,] { // 14
                     {0, 0, 0, W},
                     {0, W, T, 0},
                     {0, 0, T, 0},
@@ -136,7 +139,7 @@ namespace iobloc
                     {P, B, 0, 0},
                     {T, B, 0, 0}
                 },
-                new[,] {
+                new[,] { // 15
                     {0, 0, W, 0},
                     {0, 0, 0, W},
                     {0, T, R, 0},
@@ -144,7 +147,7 @@ namespace iobloc
                     {P, W, T, 0},
                     {0, 0, 0, 0}
                 },
-                new[,] {
+                new[,] { // 16
                     {0, W, W, 0},
                     {W, P, 0, W},
                     {0, B, 0, 0},
@@ -152,7 +155,7 @@ namespace iobloc
                     {0, R, 0, 0},
                     {0, T, T, 0}
                 },
-                new[,] {
+                new[,] { // 17
                     {0, T, W, 0},
                     {0, 0, W, W},
                     {R, P, 0, 0},
@@ -160,7 +163,7 @@ namespace iobloc
                     {0, 0, W, W},
                     {W, W, 0, 0}
                 },
-                new[,] {
+                new[,] { // 18
                     {0, 0, 0, 0},
                     {0, W, P, 0},
                     {0, B, R, 0},
@@ -168,7 +171,7 @@ namespace iobloc
                     {0, 0, 0, 0},
                     {W, W, W, W}
                 },
-                new[,] {
+                new[,] { // 19
                     {W, 0, 0, 0},
                     {W, 0, T, 0},
                     {W, 0, R, 0},
@@ -176,7 +179,7 @@ namespace iobloc
                     {0, 0, B, 0},
                     {0, 0, P, 0}
                 },
-                new[,] {
+                new[,] { // 20
                     {T, 0, 0, W},
                     {P, B, B, 0},
                     {W, 0, 0, 0},
@@ -184,7 +187,7 @@ namespace iobloc
                     {0, 0, W, 0},
                     {0, 0, 0, T}
                 },
-                new[,] {
+                new[,] { // 21
                     {0, T, 0, 0},
                     {0, 0, W, 0},
                     {0, B, 0, 0},
@@ -192,7 +195,7 @@ namespace iobloc
                     {W, P, 0, 0},
                     {0, W, W, W}
                 },
-                new[,] {
+                new[,] { // 22
                     {0, P, 0, W},
                     {T, T, T, W},
                     {B, B, B, W},
@@ -200,7 +203,7 @@ namespace iobloc
                     {0, 0, 0, 0},
                     {0, 0, 0, 0}
                 },
-                new[,] {
+                new[,] { // 23
                     {W, 0, 0, 0},
                     {0, B, T, 0},
                     {0, B, 0, W},
@@ -208,7 +211,7 @@ namespace iobloc
                     {0, P, 0, W},
                     {W, W, W, 0}
                 },
-                new[,] {
+                new[,] { // 24
                     {W, 0, P, 0},
                     {W, 0, 0, 0},
                     {W, W, B, 0},
@@ -216,7 +219,7 @@ namespace iobloc
                     {0, B, B, 0},
                     {W, W, 0, 0}
                 },
-                new[,] {
+                new[,] { // 25
                     {0, 0, W, W},
                     {0, B, B, 0},
                     {T, T, T, 0},
@@ -224,7 +227,7 @@ namespace iobloc
                     {0, 0, 0, W},
                     {W, W, W, 0}
                 },
-                new[,] {
+                new[,] { // 26
                     {P, 0, W, W},
                     {T, B, 0, 0},
                     {T, B, 0, 0},
@@ -232,7 +235,7 @@ namespace iobloc
                     {0, 0, W, W},
                     {W, W, 0, 0}
                 },
-                new[,] {
+                new[,] { // 27
                     {W, 0, P, 0},
                     {0, 0, B, 0},
                     {0, W, B, 0},
@@ -240,7 +243,7 @@ namespace iobloc
                     {0, T, 0, 0},
                     {W, T, W, W}
                 },
-                new[,] {
+                new[,] { // 28
                     {T, T, T, 0},
                     {0, 0, B, 0},
                     {0, W, B, W},
@@ -248,7 +251,7 @@ namespace iobloc
                     {0, 0, P, 0},
                     {0, W, W, 0}
                 },
-                new[,] {
+                new[,] { // 29
                     {W, W, 0, P},
                     {0, 0, B, 0},
                     {0, 0, R, T},
@@ -256,7 +259,7 @@ namespace iobloc
                     {0, 0, B, 0},
                     {W, W, 0, 0}
                 },
-                new[,] {
+                new[,] { // 30
                     {W, W, 0, 0},
                     {0, R, 0, 0},
                     {0, 0, B, 0},

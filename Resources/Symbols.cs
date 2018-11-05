@@ -1,5 +1,8 @@
 namespace iobloc
 {
+    /// <summary>
+    /// Character code constants
+    /// </summary>
     static class Symbols
     {
         public const int None = 0;
