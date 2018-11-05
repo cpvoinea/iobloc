@@ -1,5 +1,5 @@
 # iobloc
-## v2.1 (released)
+## v2.2 (released)
 * 7 games: tetris, runner, helicopter, breakout, invaders, snake, sokoban
 * bonus pack of sudoku levels
 * level progression, ending animations
@@ -7,9 +7,9 @@
 * editable settings
 * multi-panel box drawing with custom colored symbol
 ## v3.0
-* 8th game: ???
+* 2 new games
 * AI opponent
 * advanced input
-* persistent logging, metrics
+* ~~persistent logging, metrics
 * SDK
 * multi-platform
