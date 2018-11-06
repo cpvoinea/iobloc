@@ -130,9 +130,9 @@ namespace iobloc
                 {"Highscore", "0"},
                 {"Help", "Mov:,ARRW,R:Re,strt,Ext:,ESC"},
                 {"AllowedKeys", "LeftArrow,RightArrow,UpArrow,DownArrow,R"},
-                {"Width", "4"},
+                {"Width", "8"},
                 {"Height", "6"},
-                {"BlockWidth", "1"},
+                {"BlockWidth", "2"},
                 {"WinScore", "50"},
                 {"WallColor", "DarkGray"},
                 {"PlayerColor", "Red"},
@@ -146,9 +146,9 @@ namespace iobloc
                 {"MenuKeys", "D8,NumPad8"},
                 {"Help", "Move_cursor:ARROWS,Toggle_draw:ENTER,Select_color:1-7,Toggle_shade:8,Write_color:9,Erase_color:0,Reset:R"},
                 {"AllowedKeys", "LeftArrow,RightArrow,UpArrow,DownArrow,Enter,R,D0,D1,D2,D3,D4,D5,D6,D7,D8,D9,NumPad0,NumPad1,NumPad2,NumPad3,NumPad4,NumPad5,NumPad6,NumPad7,NumPad8,NumPad9"},
-                {"Width", "20"},
-                {"Height", "20"},
-                {"BlockWidth", "3"},
+                {"Width", "80"},
+                {"Height", "40"},
+                {"BlockWidth", "2"},
             });
             // Table
             Add(9, new Dictionary<string, string>{
