@@ -42,8 +42,7 @@ namespace iobloc
         /// </summary>
         public override void Start()
         {
-            if (IsInitialized)
-                Level = Settings.MasterLevel;
+            Level = Settings.MasterLevel;
             base.Start();
         }
 
@@ -62,7 +61,7 @@ namespace iobloc
                 Main.SetText(_itemNames);
                 _itemNames = null;
             }
-            Main.Change(true);
+            base.Change(true);
         }
 
         /// <summary>

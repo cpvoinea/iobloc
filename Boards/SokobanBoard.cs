@@ -28,10 +28,9 @@ namespace iobloc
         /// </summary>
         public override void Start()
         {
-            if (IsInitialized) // avoid initializing twice at first start
-                Initialize(); // reset score and level
-            base.Start(); // start running and reset next animation
-            ResetLevel(); // intialize level
+            base.Start();
+            Level = Settings.MasterLevel;
+            ResetLevel();
         }
 
         public override void HandleInput(string key)
@@ -66,7 +65,7 @@ namespace iobloc
                 SetBlock(_row, _col, Main[_row, _col] == T ? H : P);
 
                 Score--;
-                Main.Change(true);
+                base.Change(true);
             }
             else if (next == B || next == R)
             {
@@ -101,7 +100,7 @@ namespace iobloc
                         SetBlock(_row + v, _col + h, B);
 
                     Score--;
-                    Main.Change(true);
+                    base.Change(true);
                 }
             }
         }
@@ -124,7 +123,7 @@ namespace iobloc
                         _targets++;
                 }
 
-            Main.Change(true);
+            base.Change(true);
             Score = _startScore;
         }
 

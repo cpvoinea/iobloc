@@ -153,8 +153,11 @@ namespace iobloc
             });
             // Paint
             Add(9, new Dictionary<string, string>{
-                {"Help", "Move_cursor:ARROWS,Toggle_draw:ENTER,Select_color:1-7,Toggle_color:8,Write_color:9,Erase_color:0,Clear_screen:R"},
-                {"AllowedKeys", "LeftArrow,RightArrow,UpArrow,DownArrow,Enter,R,D0,D1,D2,D3,D4,D5,D6,D7,D8,D9,NumPad0,NumPad1,NumPad2,NumPad3,NumPad4,NumPad5,NumPad6,NumPad7,NumPad8,NumPad9"}
+                {"Help", "Move_cursor:ARROWS,Toggle_draw:ENTER,Select_color:1-7,Toggle_shade:8,Write_color:9,Erase_color:0,Reset:R"},
+                {"AllowedKeys", "LeftArrow,RightArrow,UpArrow,DownArrow,Enter,R,D0,D1,D2,D3,D4,D5,D6,D7,D8,D9,NumPad0,NumPad1,NumPad2,NumPad3,NumPad4,NumPad5,NumPad6,NumPad7,NumPad8,NumPad9"},
+                {"Width", "20"},
+                {"Height", "20"},
+                {"BlockWidth", "3"},
             });
             // Menu
             Add(10, new Dictionary<string, string>{

@@ -44,6 +44,7 @@ namespace iobloc
                 _snake.AddFirst(p);
             }
             NewPoint();
+            Change(true);
         }
 
         protected override void Change(bool set)
