@@ -142,7 +142,7 @@ namespace iobloc
                 {"TargetBlockColor", "DarkBlue"},
             });
             // Paint
-            Add(9, new Dictionary<string, string>{
+            Add(8, new Dictionary<string, string>{
                 {"MenuKeys", "D8,NumPad8"},
                 {"Help", "Move_cursor:ARROWS,Toggle_draw:ENTER,Select_color:1-7,Toggle_shade:8,Write_color:9,Erase_color:0,Reset:R"},
                 {"AllowedKeys", "LeftArrow,RightArrow,UpArrow,DownArrow,Enter,R,D0,D1,D2,D3,D4,D5,D6,D7,D8,D9,NumPad0,NumPad1,NumPad2,NumPad3,NumPad4,NumPad5,NumPad6,NumPad7,NumPad8,NumPad9"},
@@ -151,7 +151,7 @@ namespace iobloc
                 {"BlockWidth", "3"},
             });
             // Table
-            Add(8, new Dictionary<string, string>{
+            Add(9, new Dictionary<string, string>{
                 {"MenuKeys", "D9,NumPad9"},
                 {"Help", "Move_cursor:,LEFT-RIGHT,Take_piece:,UP_ARROW,Put_piece:,DOWN_ARROW,Exit:ESC,Pause:ANY"},
                 {"AllowedKeys", "LeftArrow,RightArrow,UpArrow,DownArrow"},

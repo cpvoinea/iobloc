@@ -2,16 +2,13 @@ namespace iobloc
 {
     class TableBoard : BaseBoard
     {
-        private int H, PW;
-        private TableBoardModel _model;
+        private TableModel _model;
 
         public TableBoard() : base(BoardType.Table) { }
 
         protected override void InitializeSettings()
         {
-            H = BoardSettings.GetInt(Settings.Height);
-            PW = BoardSettings.GetInt("PieceWidth");
-            _model = new TableBoardModel(H, PW, BoardSettings.GetColor("HighlightColor"),
+            _model = new TableModel(BoardSettings.GetInt(Settings.Height), BoardSettings.GetInt("PieceWidth"), BoardSettings.GetColor("HighlightColor"),
                 BoardSettings.GetColor(Settings.PlayerColor), BoardSettings.GetColor(Settings.EnemyColor), BoardSettings.GetColor(Settings.NeutralColor));
         }
 
@@ -24,11 +21,11 @@ namespace iobloc
 
             Border.AddLines(new[]
             {
-                new UIBorderLine(0, H - 1, 6 * PW + 1, true, true),
-                new UIBorderLine(0, H - 1, 7 * PW + 2, true, true),
-                new UIBorderLine(0, H - 1, 13 * PW + 3, true, true),
-                new UIBorderLine(6 * PW + 1, 7 * PW + 2, H / 2 - 3, false, true),
-                new UIBorderLine(6 * PW + 1, 7 * PW + 2, H / 2 + 2, false, true)
+                new UIBorderLine(0, TableModel.H - 1, 6 * TableModel.PW + 1, true, true),
+                new UIBorderLine(0, TableModel.H - 1, 7 * TableModel.PW + 2, true, true),
+                new UIBorderLine(0, TableModel.H - 1, 13 * TableModel.PW + 3, true, true),
+                new UIBorderLine(6 * TableModel.PW + 1, 7 * TableModel.PW + 2, TableModel.H / 2 - 3, false, true),
+                new UIBorderLine(6 * TableModel.PW + 1, 7 * TableModel.PW + 2, TableModel.H / 2 + 2, false, true)
             });
 
             Panels.Add(Pnl.Table.UpperLeft, _model.Panels[0]);
@@ -57,7 +54,7 @@ namespace iobloc
             {
                 case UIKey.LeftArrow: _model.MoveLeft(); break;
                 case UIKey.RightArrow: _model.MoveRight(); break;
-                case UIKey.UpArrow: _model.Take(); break;
+                case UIKey.UpArrow: _model.Pick(); break;
                 case UIKey.DownArrow: _model.Put(); break;
             }
             switch (_model.State)

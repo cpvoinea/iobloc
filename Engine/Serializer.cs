@@ -267,15 +267,15 @@ namespace iobloc
         }
 
         /// <summary>
-        /// Check if array contains string value
+        /// Check if array contains value
         /// </summary>
         /// <param name="array"></param>
         /// <param name="val"></param>
         /// <returns></returns>
-        public static bool Contains(this string[] array, string val)
+        public static bool Contains<T>(this T[] array, T val)
         {
-            foreach (string k in array)
-                if (k == val)
+            foreach (T k in array)
+                if (k.Equals(val))
                     return true;
             return false;
         }
