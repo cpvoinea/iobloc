@@ -81,7 +81,7 @@ namespace iobloc
             if (key == null)
                 return false;
 
-            if (key == UIKeys.Escape)
+            if (key == UIKey.Escape)
                 board.Stop(); // stop on Escape
             else if (board.AllowedKeys.Contains(key))
                 board.HandleInput(key); // handle if key is allowed

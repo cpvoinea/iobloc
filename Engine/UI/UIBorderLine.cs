@@ -57,28 +57,28 @@ namespace iobloc
         {
             if (IsVertical == line.IsVertical // parallel lines
                 || Position < line.From || Position > line.To || line.Position < From || line.Position > To) // no intersection
-                return Symbols.None;
+                return UISymbol.None;
             if (IsVertical)
             {
                 if (Position == line.From)
                 {
                     if (line.Position == From)
-                        return Symbols.UpperLeftCorner;
+                        return UISymbol.UpperLeftCorner;
                     if (line.Position == To)
-                        return Symbols.LowerLeftCorner;
+                        return UISymbol.LowerLeftCorner;
                     if (IsSingle)
-                        return Symbols.SingleLeftSplit;
-                    return Symbols.LeftSplit;
+                        return UISymbol.SingleLeftSplit;
+                    return UISymbol.LeftSplit;
                 }
                 if (Position == line.To)
                 {
                     if (line.Position == From)
-                        return Symbols.UpperRightCorner;
+                        return UISymbol.UpperRightCorner;
                     if (line.Position == To)
-                        return Symbols.LowerRightCorner;
+                        return UISymbol.LowerRightCorner;
                     if (IsSingle)
-                        return Symbols.SingleRightSplit;
-                    return Symbols.RightSplit;
+                        return UISymbol.SingleRightSplit;
+                    return UISymbol.RightSplit;
                 }
             }
             else
@@ -86,26 +86,26 @@ namespace iobloc
                 if (Position == line.From)
                 {
                     if (line.Position == From)
-                        return Symbols.UpperLeftCorner;
+                        return UISymbol.UpperLeftCorner;
                     if (line.Position == To)
-                        return Symbols.UpperRightCorner;
+                        return UISymbol.UpperRightCorner;
                     if (IsSingle)
-                        return Symbols.SingleUppperSplit;
-                    return Symbols.UpperSplit;
+                        return UISymbol.SingleUppperSplit;
+                    return UISymbol.UpperSplit;
                 }
                 if (Position == line.To)
                 {
                     if (line.Position == From)
-                        return Symbols.LowerLeftCorner;
+                        return UISymbol.LowerLeftCorner;
                     if (line.Position == To)
-                        return Symbols.LowerRightCorner;
+                        return UISymbol.LowerRightCorner;
                     if (IsSingle)
-                        return Symbols.SingleLowerSplit;
-                    return Symbols.LowerSplit;
+                        return UISymbol.SingleLowerSplit;
+                    return UISymbol.LowerSplit;
                 }
             }
 
-            return Symbols.SingleIntersection;
+            return UISymbol.SingleIntersection;
         }
 
         public override bool Equals(object obj)

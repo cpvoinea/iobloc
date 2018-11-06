@@ -63,7 +63,7 @@ namespace iobloc
         {
             switch (key)
             {
-                case UIKeys.LeftArrow:
+                case UIKey.LeftArrow:
                     if (_ship > 1)
                     {
                         Change(false);
@@ -73,7 +73,7 @@ namespace iobloc
                         Change(true);
                     }
                     break;
-                case UIKeys.RightArrow:
+                case UIKey.RightArrow:
                     if (_ship < Width - 2)
                     {
                         Change(false);
@@ -83,7 +83,7 @@ namespace iobloc
                         Change(true);
                     }
                     break;
-                case UIKeys.UpArrow:
+                case UIKey.UpArrow:
                     _shot = true;
                     break;
             }

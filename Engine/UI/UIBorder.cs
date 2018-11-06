@@ -1,7 +1,7 @@
 namespace iobloc
 {
     /// <summary>
-    /// A matrix of box drawing symbols that construct a grid of lines around panels
+    /// A matrix of box drawing UISymbol that construct a grid of lines around panels
     /// </summary>
     struct UIBorder
     {
@@ -42,7 +42,7 @@ namespace iobloc
         }
 
         /// <summary>
-        /// Add extra lines and calculates intersections and symbols
+        /// Add extra lines and calculates intersections and UISymbol
         /// </summary>
         /// <param name="lines">interior lines to be added</param>
         public void AddLines(UIBorderLine[] lines)
@@ -53,20 +53,20 @@ namespace iobloc
                 for (int i = line1.From; i <= line1.To; i++)
                     if (line1.IsVertical)
                     {
-                        if (_grid[i, line1.Position] == Symbols.None)
-                            _grid[i, line1.Position] = line1.IsSingle ? Symbols.SingleVerticalLine : Symbols.VerticalLine;
+                        if (_grid[i, line1.Position] == UISymbol.None)
+                            _grid[i, line1.Position] = line1.IsSingle ? UISymbol.SingleVerticalLine : UISymbol.VerticalLine;
                     }
                     else
                     {
-                        if (_grid[line1.Position, i] == Symbols.None)
-                            _grid[line1.Position, i] = line1.IsSingle ? Symbols.SingleHorizontalLine : Symbols.HorizontalLine;
+                        if (_grid[line1.Position, i] == UISymbol.None)
+                            _grid[line1.Position, i] = line1.IsSingle ? UISymbol.SingleHorizontalLine : UISymbol.HorizontalLine;
                     }
                 // look for intersections
                 for (int i2 = i1 + 1; i2 < lines.Length; i2++)
                 {
                     var line2 = lines[i2];
                     var s = line1.GetIntersectionSymbol(line2);
-                    if (s != Symbols.None)
+                    if (s != UISymbol.None)
                     {
                         if (line1.IsVertical)
                             _grid[line2.Position, line1.Position] = s;

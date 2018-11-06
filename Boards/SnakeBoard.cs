@@ -59,19 +59,19 @@ namespace iobloc
         {
             switch (key)
             {
-                case UIKeys.LeftArrow:
+                case UIKey.LeftArrow:
                     if (_h != 1)
                         SetMove(-1, 0);
                     break;
-                case UIKeys.RightArrow:
+                case UIKey.RightArrow:
                     if (_h != -1)
                         SetMove(1, 0);
                     break;
-                case UIKeys.UpArrow:
+                case UIKey.UpArrow:
                     if (_v != 1)
                         SetMove(0, -1);
                     break;
-                case UIKeys.DownArrow:
+                case UIKey.DownArrow:
                     if (_v != -1)
                         SetMove(0, 1);
                     break;

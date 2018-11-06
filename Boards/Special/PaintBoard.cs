@@ -71,10 +71,10 @@ namespace iobloc
                 case "R":
                     Initialize();
                     break;
-                case UIKeys.Enter:
+                case UIKey.Enter:
                     _set = !_set;
                     break;
-                case UIKeys.LeftArrow:
+                case UIKey.LeftArrow:
                     if (_col > 0)
                     {
                         Change(false);
@@ -82,7 +82,7 @@ namespace iobloc
                         Change(true);
                     }
                     break;
-                case UIKeys.RightArrow:
+                case UIKey.RightArrow:
                     if (_col < Width - 1)
                     {
                         Change(false);
@@ -90,7 +90,7 @@ namespace iobloc
                         Change(true);
                     }
                     break;
-                case UIKeys.UpArrow:
+                case UIKey.UpArrow:
                     if (_row > 0)
                     {
                         Change(false);
@@ -98,7 +98,7 @@ namespace iobloc
                         Change(true);
                     }
                     break;
-                case UIKeys.DownArrow:
+                case UIKey.DownArrow:
                     if (_row < Height - 1)
                     {
                         Change(false);

@@ -74,7 +74,7 @@ namespace iobloc
         /// <param name="textLength">Set to a value > 0 to enter text mode and initialize text lines array to this length</param>
         /// <param name="symbol">Character to be drawn in different colors as configured in grid matrix, defaults to full block</param>
         /// <returns></returns>
-        public UIPanel(int fromRow, int fromCol, int toRow, int toCol, int textLength = 0, char symbol = (char)Symbols.BlockFull)
+        public UIPanel(int fromRow, int fromCol, int toRow, int toCol, int textLength = 0, char symbol = (char)UISymbol.BlockFull)
         {
             Symbol = symbol;
             FromRow = fromRow;

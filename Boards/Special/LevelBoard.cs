@@ -40,7 +40,7 @@ namespace iobloc
         {
             switch (key)
             {
-                case UIKeys.RightArrow:
+                case UIKey.RightArrow:
                     if (Level < 15)
                     {
                         Change(false);
@@ -48,7 +48,7 @@ namespace iobloc
                         Change(true);
                     }
                     break;
-                case UIKeys.LeftArrow:
+                case UIKey.LeftArrow:
                     if (Level > 0)
                     {
                         Change(false);
@@ -56,7 +56,7 @@ namespace iobloc
                         Change(true);
                     }
                     break;
-                case "Enter":
+                case UIKey.Enter:
                     Settings.MasterLevel = Level;
                     Stop();
                     break;

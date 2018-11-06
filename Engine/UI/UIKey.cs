@@ -3,7 +3,7 @@ namespace iobloc
     /// <summary>
     /// Key constants
     /// </summary>
-    static class UIKeys
+    static class UIKey
     {
         /// <summary>
         /// "Escape"

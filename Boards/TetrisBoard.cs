@@ -36,10 +36,10 @@ namespace iobloc
         {
             switch (key)
             {
-                case UIKeys.LeftArrow: MoveLeft(); break;
-                case UIKeys.RightArrow: MoveRight(); break;
-                case UIKeys.DownArrow: NextFrame(); break; // accelerate to next frame
-                case UIKeys.UpArrow: Rotate(); break;
+                case UIKey.LeftArrow: MoveLeft(); break;
+                case UIKey.RightArrow: MoveRight(); break;
+                case UIKey.DownArrow: NextFrame(); break; // accelerate to next frame
+                case UIKey.UpArrow: Rotate(); break;
             }
         }
 

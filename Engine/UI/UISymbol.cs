@@ -3,7 +3,7 @@ namespace iobloc
     /// <summary>
     /// Character code constants
     /// </summary>
-    static class Symbols
+    static class UISymbol
     {
         public const int None = 0;
         public const int HorizontalLine = 0x2550;
