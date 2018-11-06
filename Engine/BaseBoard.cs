@@ -196,7 +196,7 @@ namespace iobloc
             Border = new UIBorder(Width + 2, Height + 2);
 
             Main = new UIPanel(1, 1, Height, Width);
-            Main.SetText(Help);
+            Main.SetText(Help, false);
             Panels = new Dictionary<string, UIPanel> { { Pnl.Main, Main } };
 
             if (Type != BoardType.Fireworks && Type != BoardType.RainingBlood) // don't add level panel to animation

@@ -34,7 +34,7 @@ namespace iobloc
             }
 
             AllowedKeys = allowedKeys.ToArray();
-            Main.SetText(items.ToArray());
+            Main.SetText(items.ToArray(), true);
         }
 
         /// <summary>
@@ -54,11 +54,11 @@ namespace iobloc
             if (_itemNames == null)
             {
                 _itemNames = Main.Text;
-                Main.SetText(Help);
+                Main.SetText(Help, true);
             }
             else
             {
-                Main.SetText(_itemNames);
+                Main.SetText(_itemNames, true);
                 _itemNames = null;
             }
             base.Change(true);

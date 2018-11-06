@@ -8,6 +8,7 @@ namespace iobloc
 
         protected override void InitializeSettings()
         {
+            base.InitializeSettings();
             _model = new TableModel(BoardSettings.GetInt(Settings.Height), BoardSettings.GetInt("PieceWidth"), BoardSettings.GetColor("HighlightColor"),
                 BoardSettings.GetColor(Settings.PlayerColor), BoardSettings.GetColor(Settings.EnemyColor), BoardSettings.GetColor(Settings.NeutralColor));
         }
@@ -21,11 +22,11 @@ namespace iobloc
 
             Border.AddLines(new[]
             {
-                new UIBorderLine(0, TableModel.H - 1, 6 * TableModel.PW + 1, true, true),
-                new UIBorderLine(0, TableModel.H - 1, 7 * TableModel.PW + 2, true, true),
-                new UIBorderLine(0, TableModel.H - 1, 13 * TableModel.PW + 3, true, true),
-                new UIBorderLine(6 * TableModel.PW + 1, 7 * TableModel.PW + 2, TableModel.H / 2 - 3, false, true),
-                new UIBorderLine(6 * TableModel.PW + 1, 7 * TableModel.PW + 2, TableModel.H / 2 + 2, false, true)
+                new UIBorderLine(0, TableModel.H + 1, 6 * TableModel.PW + 1, true, true),
+                new UIBorderLine(0, TableModel.H + 1, 7 * TableModel.PW + 2, true, true),
+                new UIBorderLine(0, TableModel.H + 1, 13 * TableModel.PW + 3, true, true),
+                new UIBorderLine(6 * TableModel.PW + 1, 7 * TableModel.PW + 2, TableModel.H / 2 - 1, false, true),
+                new UIBorderLine(6 * TableModel.PW + 1, 7 * TableModel.PW + 2, TableModel.H / 2 + 4, false, true)
             });
 
             Panels.Add(Pnl.Table.UpperLeft, _model.Panels[0]);

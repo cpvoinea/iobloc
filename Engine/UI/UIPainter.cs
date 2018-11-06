@@ -123,7 +123,7 @@ namespace iobloc
             for (int row = 0; row < panel.Height; row++)
             {
                 // use padding to clear if text is too short
-                string text = row < lines.Length ? lines[row].PadRight(panel.Width) : empty;
+                string text = row < lines.Length && !string.IsNullOrEmpty(lines[row]) ? lines[row].PadRight(panel.Width) : empty;
                 Console.SetCursorPosition(panel.FromCol, panel.FromRow + row);
                 Console.Write(text);
             }

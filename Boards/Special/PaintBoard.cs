@@ -6,12 +6,14 @@ namespace iobloc
         private int _row;
         private int _col;
         private int _color;
-        private bool _set;
+        private bool _paint;
+        private bool _light;
 
         public PaintBoard() : base(BoardType.Paint) { }
 
         protected override void InitializeSettings()
         {
+            base.InitializeSettings();
             BW = BoardSettings.GetInt("BlockWidth");
         }
 
@@ -23,7 +25,7 @@ namespace iobloc
             _row = Height - 1;
             _col = Width / 2;
             _color = 15;
-            _set = true;
+            _paint = true;
             Change(true);
         }
 
@@ -31,11 +33,11 @@ namespace iobloc
         {
             if (set)
             {
-                Main[_row, _col] = 15;
+                Main[_row, _col] = _color == 0 || !_paint ? 15 : _color;
                 base.Change(set);
             }
             else
-                Main[_row, _col] = _set ? _color : 0;
+                Main[_row, _col] = _paint ? _color : 0;
         }
 
         public override void HandleInput(string key)
@@ -43,6 +45,9 @@ namespace iobloc
             switch (key)
             {
                 case "D0":
+                case "NumPad0":
+                    _color = 0;
+                    break;
                 case "D1":
                 case "D2":
                 case "D3":
@@ -50,7 +55,6 @@ namespace iobloc
                 case "D5":
                 case "D6":
                 case "D7":
-                case "NumPad0":
                 case "NumPad1":
                 case "NumPad2":
                 case "NumPad3":
@@ -59,20 +63,26 @@ namespace iobloc
                 case "NumPad6":
                 case "NumPad7":
                     _color = int.Parse(key.Substring(key.Length - 1));
+                    if(_light)
+                        _color += 8;
+                    Change(true);
                     break;
                 case "D8":
                 case "NumPad8":
+                    _light = !_light;
                     _color += _color < 8 ? 8 : -8;
+                    Change(true);
                     break;
                 case "D9":
                 case "NumPad9":
                     _color = 15;
+                    Change(true);
                     break;
                 case "R":
                     Initialize();
                     break;
                 case UIKey.Enter:
-                    _set = !_set;
+                    _paint = !_paint;
                     break;
                 case UIKey.LeftArrow:
                     if (_col > 0)

@@ -89,7 +89,7 @@ namespace iobloc
             _grid = new int[Height, Width];
         }
 
-        public void SetText(string[] text, bool textMode = false)
+        public void SetText(string[] text, bool textMode)
         {
             Text = text;
             IsText = textMode;
@@ -97,7 +97,7 @@ namespace iobloc
 
         public void SetText(string text)
         {
-            SetText(new[] { text });
+            SetText(new[] { text }, true);
         }
 
         public void ToggleText()

@@ -156,6 +156,7 @@ namespace iobloc
                 {"Help", "Move_cursor:,LEFT-RIGHT,Take_piece:,UP_ARROW,Put_piece:,DOWN_ARROW,Exit:ESC,Pause:ANY"},
                 {"AllowedKeys", "LeftArrow,RightArrow,UpArrow,DownArrow"},
                 {"FrameMultiplier", "10"},
+                {"Width", "59"},
                 {"Height", "36"},
                 {"PieceWidth", "4"},
                 {"PlayerColor", "Blue"},
@@ -165,8 +166,7 @@ namespace iobloc
             });
             // Menu
             Add(10, new Dictionary<string, string>{
-                {"Help", ",,,Select:0-7,Exit:ESC,Help:Any"},
-                {"Height", "8"},
+                {"Help", ",,,Select:0-9,Exit:ESC,Help:Any"},
             });
             // Fireworks
             Add(11, new Dictionary<string, string>{

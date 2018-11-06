@@ -83,7 +83,7 @@ namespace iobloc
 
         public void MoveLeft()
         {
-            if (_selection < _lines.Length)
+            if (_selection < _lines.Length - 1)
             {
                 _lines[_selection].Select(false);
                 _selection++;
