@@ -107,6 +107,7 @@ namespace iobloc
             InitializeSettings();
             InitializeUI();
             Initialize();
+            IsInitialized = true;
         }
 
         /// <summary>
@@ -121,8 +122,8 @@ namespace iobloc
 
             if (Panels.ContainsKey(Pnl.Score))
             {
-                Panels[Pnl.Score].Text[0] = string.Format($"{score,3}");
-                Panels[Pnl.Score].HasChanges = true;
+                Panels[Pnl.Score].SetText(string.Format($"{score,3}"));
+                Panels[Pnl.Score].Change(true);
             }
             SetHighscore(score);
 
@@ -142,8 +143,8 @@ namespace iobloc
 
             if (Panels.ContainsKey(Pnl.Highscore))
             {
-                Panels[Pnl.Highscore].Text[0] = string.Format($"{Highscore,3}");
-                Panels[Pnl.Highscore].HasChanges = true;
+                Panels[Pnl.Highscore].SetText(string.Format($"{Highscore,3}"));
+                Panels[Pnl.Highscore].Change(true);
             }
             Serializer.UpdateHighscore(ID, score);
         }
@@ -157,18 +158,17 @@ namespace iobloc
             if (level > 0 && level == _level)
                 return;
 
-            if (level == 16)
+            if (level >= 16 && Type != BoardType.Sokoban)
                 Win();
-            if (level < 16 || Type == BoardType.Sokoban && level < SokobanLevels.Count)
+            else
             {
                 _level = level;
-                if (level < 16)
-                    FrameInterval = Serializer.GetLevelInterval(FrameMultiplier, _level);
+                FrameInterval = Serializer.GetLevelInterval(FrameMultiplier, _level);
 
                 if (Panels.ContainsKey(Pnl.Level))
                 {
-                    Panels[Pnl.Level].Text[0] = string.Format($"L{_level,2}");
-                    Panels[Pnl.Level].HasChanges = true;
+                    Panels[Pnl.Level].SetText(string.Format($"L{_level,2}"));
+                    Panels[Pnl.Level].Change(true);
                 }
             }
         }
@@ -196,7 +196,7 @@ namespace iobloc
             Border = new UIBorder(Width + 2, Height + 2);
 
             Main = new UIPanel(1, 1, Height, Width);
-            Main.Text = Help;
+            Main.SetText(Help);
             Panels = new Dictionary<string, UIPanel> { { Pnl.Main, Main } };
 
             if (Type != BoardType.Fireworks && Type != BoardType.RainingBlood) // don't add level panel to animation
@@ -210,12 +210,11 @@ namespace iobloc
         }
 
         /// <summary>
-        /// Board initialization, set level to MasterLevel, highscore to global and score to 0
+        /// Initialize Level = MasterLevel, Score = 0
         /// Overwrite to initialize board or to restart (use IsInitialized value to setup the board again)
         /// </summary>
         protected virtual void Initialize()
         {
-            IsInitialized = true;
             SetLevel(Settings.MasterLevel);
             if (Serializer.Highscores.ContainsKey(ID))
             {
@@ -231,46 +230,54 @@ namespace iobloc
         protected virtual void Change(bool set)
         {
             if (set)
-                Main.HasChanges = true;
+                Main.Change(true);
         }
 
         /// <summary>
-        /// Common Win trigger, sets Next board to Fireworks animation, but doesn't stop running
+        /// Set Next board to Fireworks animation, re-initialize on exit
         /// </summary>
-        protected void Win()
+        protected void Win(bool exit = false)
         {
-            Next = Serializer.GetBoard((int)BoardType.Fireworks);
+            if (Next == null)
+                Next = Serializer.GetBoard((int)BoardType.Fireworks);
+            if (exit)
+            {
+                Initialize(); // if exit is called, re-initialize board
+                Stop();
+            }
         }
 
         /// <summary>
-        /// Common Lose trigger, sets Next board to Rain and calls Initialize() to restart
+        /// Set Next board to Rain animation and re-initialize
         /// </summary>
         /// <param name="exit">when true, the board also stops running</param>
         protected void Lose(bool exit = true)
         {
-            Next = Serializer.GetBoard((int)BoardType.RainingBlood);
-            Initialize();
+            if (Next == null)
+                Next = Serializer.GetBoard((int)BoardType.RainingBlood);
+            Initialize(); // if game is over, re-initialize board
             if (exit)
                 Stop();
         }
 
         /// <summary>
-        /// Initialize the board and start running
+        /// Runs every time a bord is opened by BoardRunner,
+        /// Set Next to null, IsRunning to true, refresh all panels
         /// </summary>
         public virtual void Start()
         {
             Next = null;
             IsRunning = true;
-            foreach (var p in Panels.Values)
-                p.HasChanges = true;
+            foreach (var p in Panels.Values) // force refresh of panels
+                p.Change(true);
         }
 
         /// <summary>
-        /// Stop running and cleanup
+        /// Stop running and return to menu
         /// </summary>
         public void Stop()
         {
-            if (Next == null && Type != BoardType.Menu)
+            if (Next == null && Type != BoardType.Menu) // if no animation, return to menu, unless already in menu
                 Next = Serializer.GetBoard((int)BoardType.Menu);
             IsRunning = false;
         }
@@ -280,8 +287,7 @@ namespace iobloc
         /// </summary>
         public virtual void TogglePause()
         {
-            Main.IsText = !Main.IsText;
-            Main.HasChanges = true;
+            Main.ToggleText();
         }
 
         /// <summary>

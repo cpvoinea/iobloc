@@ -45,7 +45,7 @@ namespace iobloc
                     Main[i, j] = a[i, j];
             if (_currentFrame >= _animation.Length)
                 _currentFrame = 0;
-            Main.HasChanges = true;
+            Main.Change(true);
         }
     }
 }

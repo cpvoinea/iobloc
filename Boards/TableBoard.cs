@@ -136,7 +136,7 @@ namespace iobloc
             {
                 for (int i = col * PW; i < (col + 1) * PW; i++)
                     pnl[row, i] = set ? CN : 0;
-                pnl.HasChanges = true;
+                pnl.Change(true);
             }
         }
 

@@ -35,7 +35,6 @@ namespace iobloc
                 _upwards = false;
                 _doubleJump = false;
                 _lost = false;
-                Score = 0;
             }
             Change(true);
         }

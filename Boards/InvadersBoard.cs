@@ -35,7 +35,7 @@ namespace iobloc
                 Main.Clear();
                 _shot = false;
             }
-            else
+            else // don't reset the score when level is reset
                 base.Initialize();
             _ship = Width / 2 - 1;
             _bulletCol = Width / 2 - 1;
@@ -94,6 +94,7 @@ namespace iobloc
             for (int i = 0; i < Width; i++)
                 if (Main[Height - 2, i] == CE)
                 {
+                    base.Initialize(); // reset score and level
                     Lose();
                     return;
                 }

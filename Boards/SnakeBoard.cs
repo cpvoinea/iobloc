@@ -82,20 +82,19 @@ namespace iobloc
             Change(false);
             Position next = GetNext();
             if (_snake.Contains(next))
-            {
                 Lose();
-                return;
-            }
-
-            _snake.AddFirst(next);
-            if (_point.Equals(next))
-            {
-                Score++;
-                NewPoint();
-            }
             else
-                _snake.RemoveLast();
-            Change(true);
+            {
+                _snake.AddFirst(next);
+                if (_point.Equals(next))
+                {
+                    Score++;
+                    NewPoint();
+                }
+                else
+                    _snake.RemoveLast();
+                Change(true);
+            }
         }
 
         void NewPoint()

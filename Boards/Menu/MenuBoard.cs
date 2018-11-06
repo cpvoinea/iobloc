@@ -34,8 +34,7 @@ namespace iobloc
             }
 
             AllowedKeys = allowedKeys.ToArray();
-            Main.Text = items.ToArray(); ;
-            Main.IsText = true;
+            Main.SetText(items.ToArray());
         }
 
         /// <summary>
@@ -43,7 +42,8 @@ namespace iobloc
         /// </summary>
         public override void Start()
         {
-            Level = Settings.MasterLevel;
+            if (IsInitialized)
+                Level = Settings.MasterLevel;
             base.Start();
         }
 
@@ -55,14 +55,14 @@ namespace iobloc
             if (_itemNames == null)
             {
                 _itemNames = Main.Text;
-                Main.Text = Help;
+                Main.SetText(Help);
             }
             else
             {
-                Main.Text = _itemNames;
+                Main.SetText(_itemNames);
                 _itemNames = null;
             }
-            Main.HasChanges = true;
+            Main.Change(true);
         }
 
         /// <summary>

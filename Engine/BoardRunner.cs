@@ -8,7 +8,7 @@ namespace iobloc
     /// Draw(board.Border)
     /// board.Start()
     /// do
-    ///   Draw(Panels)
+    ///   Draw(board.Panels)
     ///   key <= Input()
     ///   if (board.AllowedKeys contains key)
     ///     board.HandleInput(key)
@@ -25,7 +25,7 @@ namespace iobloc
         /// Draw(board.Border)
         /// board.Start()
         /// do
-        ///   Draw(Panels)
+        ///   Draw(board.Panels)
         ///   key <= Input()
         ///   if (board.AllowedKeys contains key)
         ///     board.HandleInput(key)
@@ -104,7 +104,7 @@ namespace iobloc
                 if (p.HasChanges)
                 {
                     UIPainter.DrawPanel(p);
-                    p.HasChanges = false;
+                    p.Change(false);
                 }
         }
     }

@@ -32,7 +32,7 @@ namespace iobloc
         {
             if (IsInitialized)
                 Main.Clear();
-            else
+            else // don't reset the score when level is reset
                 base.Initialize();
             _paddle = Width / 2 - 2;
             _ballX = _ballCol = 2;
@@ -50,8 +50,11 @@ namespace iobloc
         {
             for (int i = -2; i <= 2; i++)
                 Main[Height - 1, _paddle + i] = set ? CP : 0;
-            if (_ballRow >= Height - 1)
+            if (set && _ballRow >= Height - 1)
+            {
+                base.Initialize(); // reset score and level
                 Lose();
+            }
             else
             {
                 Main[_ballRow, _ballCol] = set ? CN : 0;

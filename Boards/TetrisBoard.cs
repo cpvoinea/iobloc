@@ -38,7 +38,7 @@ namespace iobloc
             {
                 case UIKeys.LeftArrow: MoveLeft(); break;
                 case UIKeys.RightArrow: MoveRight(); break;
-                case UIKeys.DownArrow: NextFrame(); break;
+                case UIKeys.DownArrow: NextFrame(); break; // accelerate to next frame
                 case UIKeys.UpArrow: Rotate(); break;
             }
         }
@@ -50,21 +50,21 @@ namespace iobloc
             if (CanSet(p))
             {
                 _piece = p;
-                Change(true);
+                Change(true); // move down
             }
             else
             {
-                if (!CanSet(_piece, false))
+                if (!CanSet(_piece, false)) // is outside the box
                 {
                     Change(true);
                     Lose();
                 }
                 else
                 {
-                    Change(true);
+                    Change(true); // set piece
                     RemoveRows();
                     _piece = NewPiece();
-                    if (!CanSet(_piece))
+                    if (!CanSet(_piece)) // cannot enter new piece
                     {
                         Change(true);
                         Lose();

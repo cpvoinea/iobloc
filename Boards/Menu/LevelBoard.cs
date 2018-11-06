@@ -26,7 +26,7 @@ namespace iobloc
             if (set)
             {
                 Main[0, Level] = 15;
-                Main.HasChanges = true;
+                Main.Change(true);
             }
             else
                 Main[0, Level] = 15 - Level;

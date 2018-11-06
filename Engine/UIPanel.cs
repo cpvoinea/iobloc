@@ -52,17 +52,17 @@ namespace iobloc
         /// Lines of text to be displayed in text mode
         /// </summary>
         /// <value></value>
-        public string[] Text { get; set; }
+        public string[] Text { get; private set; }
         /// <summary>
         /// Indicates if text mode (true) or color mode (false)
         /// </summary>
         /// <value></value>
-        public bool IsText { get; set; }
+        public bool IsText { get; private set; }
         /// <summary>
         /// If true, panel has changed and should be drawn again
         /// </summary>
         /// <value></value>
-        public bool HasChanges { get; set; }
+        public bool HasChanges { get; private set; }
 
         /// <summary>
         /// Initialize panel
@@ -85,7 +85,30 @@ namespace iobloc
             Height = toRow - fromRow + 1;
             Text = new string[textLength];
             IsText = textLength > 0;
+            HasChanges = false;
             _grid = new int[Height, Width];
+        }
+
+        public void SetText(string[] text, bool textMode = false)
+        {
+            Text = text;
+            IsText = textMode;
+        }
+
+        public void SetText(string text)
+        {
+            SetText(new[] { text });
+        }
+
+        public void ToggleText()
+        {
+            IsText = !IsText;
+            HasChanges = true;
+        }
+
+        public void Change(bool hasChanges)
+        {
+            HasChanges = hasChanges;
         }
 
         /// <summary>
