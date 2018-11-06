@@ -120,10 +120,18 @@ namespace iobloc
         {
             // use empty line to clear where text is missing
             string empty = new String(' ', panel.Width);
+            int start = (panel.Height - lines.Length) / 2;
+            if (start < 0) start = 0;
             for (int row = 0; row < panel.Height; row++)
             {
                 // use padding to clear if text is too short
-                string text = row < lines.Length && !string.IsNullOrEmpty(lines[row]) ? lines[row].PadRight(panel.Width) : empty;
+                string text = empty;
+                if (row >= start && row - start < lines.Length && !string.IsNullOrEmpty(lines[row - start]))
+                {
+                    text = lines[row - start];
+                    int left = (panel.Width - text.Length) / 2;
+                    text = text.PadLeft(left + text.Length).PadRight(panel.Width);
+                }
                 Console.SetCursorPosition(panel.FromCol, panel.FromRow + row);
                 Console.Write(text);
             }

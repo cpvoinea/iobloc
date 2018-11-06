@@ -194,12 +194,18 @@ namespace iobloc
         protected virtual void InitializeUI()
         {
             Border = new UIBorder(Width + 2, Height + 2);
+            Panels = new Dictionary<string, UIPanel>();
 
-            Main = new UIPanel(1, 1, Height, Width);
-            Main.SetText(Help, false);
-            Panels = new Dictionary<string, UIPanel> { { Pnl.Main, Main } };
+            // don't use main for these boards
+            if (Type != BoardType.Table)
+            {
+                Main = new UIPanel(1, 1, Height, Width);
+                Main.SetText(Help, false);
+                Panels.Add(Pnl.Main, Main);
+            }
 
-            if (Type != BoardType.Fireworks && Type != BoardType.RainingBlood) // don't add level panel to animation
+            // don't show level for these boards
+            if (!new BoardType[] { BoardType.Fireworks, BoardType.RainingBlood, BoardType.Paint, BoardType.Table }.Contains(Type))
                 Panels.Add(Pnl.Level, new UIPanel(Border.Height - 1, (Border.Width + 1) / 2 - 2, Border.Height - 1, (Border.Width + 1) / 2, 1));
             if (Serializer.Highscores.ContainsKey(ID)) // don't add score panel if board doesn't keep score
             {

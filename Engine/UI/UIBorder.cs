@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace iobloc
 {
     /// <summary>
@@ -7,6 +9,7 @@ namespace iobloc
     {
         // box drawing matrix
         private readonly int[,] _grid;
+        private readonly List<UIBorderLine> _lines;
         /// <summary>
         /// Access to box drawing symbol matrix
         /// </summary>
@@ -32,6 +35,7 @@ namespace iobloc
             Width = width;
             Height = height;
             _grid = new int[Height, Width];
+            _lines = new List<UIBorderLine>();
 
             AddLines(new[]{
                 new UIBorderLine(0, width - 1, 0, false, false), // top
@@ -47,9 +51,10 @@ namespace iobloc
         /// <param name="lines">interior lines to be added</param>
         public void AddLines(UIBorderLine[] lines)
         {
-            for (int i1 = 0; i1 < lines.Length; i1++)
+            _lines.AddRange(lines);
+            for (int i1 = 0; i1 < _lines.Count; i1++)
             {
-                var line1 = lines[i1];
+                var line1 = _lines[i1];
                 for (int i = line1.From; i <= line1.To; i++)
                     if (line1.IsVertical)
                     {
@@ -62,9 +67,9 @@ namespace iobloc
                             _grid[line1.Position, i] = line1.IsSingle ? UISymbol.SingleHorizontalLine : UISymbol.HorizontalLine;
                     }
                 // look for intersections
-                for (int i2 = i1 + 1; i2 < lines.Length; i2++)
+                for (int i2 = i1 + 1; i2 < _lines.Count; i2++)
                 {
-                    var line2 = lines[i2];
+                    var line2 = _lines[i2];
                     var s = line1.GetIntersectionSymbol(line2);
                     if (s != UISymbol.None)
                     {

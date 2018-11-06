@@ -30,6 +30,7 @@ namespace iobloc
         {
             base.Start();
             Level = Settings.MasterLevel;
+            _startScore = 0;
             ResetLevel();
         }
 

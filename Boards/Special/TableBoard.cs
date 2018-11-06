@@ -25,8 +25,8 @@ namespace iobloc
                 new UIBorderLine(0, TableModel.H + 1, 6 * TableModel.PW + 1, true, true),
                 new UIBorderLine(0, TableModel.H + 1, 7 * TableModel.PW + 2, true, true),
                 new UIBorderLine(0, TableModel.H + 1, 13 * TableModel.PW + 3, true, true),
-                new UIBorderLine(6 * TableModel.PW + 1, 7 * TableModel.PW + 2, TableModel.H / 2 - 1, false, true),
-                new UIBorderLine(6 * TableModel.PW + 1, 7 * TableModel.PW + 2, TableModel.H / 2 + 4, false, true)
+                new UIBorderLine(6 * TableModel.PW + 1, 7 * TableModel.PW + 2, TableModel.H / 2 - 2, false, true),
+                new UIBorderLine(6 * TableModel.PW + 1, 7 * TableModel.PW + 2, TableModel.H / 2 + 3, false, true)
             });
 
             Panels.Add(Pnl.Table.UpperLeft, _model.Panels[0]);
@@ -45,7 +45,6 @@ namespace iobloc
         /// </summary>
         protected override void Initialize()
         {
-            base.Initialize();
             _model.Initialize();
         }
 

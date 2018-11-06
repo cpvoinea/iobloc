@@ -43,7 +43,7 @@ namespace iobloc
             Add(1, new Dictionary<string, string>{
                 {"MenuKeys", "D1,NumPad1"},
                 {"Highscore", "0"},
-                {"Help", ",,,,,,Left:LEFT,Rght:RIGHT,Rotate:UP,Speed:DOWN,Exit:ESC,Pause:ANY"},
+                {"Help", "Left:LEFT,Rght:RIGHT,Rotate:UP,Speed:DOWN,Exit:ESC,Pause:ANY"},
                 {"AllowedKeys", "LeftArrow,RightArrow,UpArrow,DownArrow"},
                 {"FrameMultiplier", "4"},
                 {"LevelThreshold", "10"},
@@ -68,7 +68,7 @@ namespace iobloc
             Add(3, new Dictionary<string, string>{
                 {"MenuKeys", "D3,NumPad3"},
                 {"Highscore", "0"},
-                {"Help", ",,Lift:UP,Exit:ESC,Pause:ANY"},
+                {"Help", "Lift:UP,Exit:ESC,Pause:ANY"},
                 {"AllowedKeys", "UpArrow"},
                 {"FrameMultiplier", "2"},
                 {"LevelThreshold", "10"},
@@ -83,7 +83,7 @@ namespace iobloc
             Add(4, new Dictionary<string, string>{
                 {"MenuKeys", "D4,NumPad4"},
                 {"Highscore", "0"},
-                {"Help", ",,,,Move:LEFT-RIGHT,Exit:ESC,Pause:ANY" },
+                {"Help", "Move:LEFT-RIGHT,Exit:ESC,Pause:ANY" },
                 {"AllowedKeys", "LeftArrow,RightArrow"},
                 {"FrameMultiplier", "1.5"},
                 {"Width", "25"},
@@ -99,7 +99,7 @@ namespace iobloc
             Add(5, new Dictionary<string, string>{
                 {"MenuKeys", "D5,NumPad5"},
                 {"Highscore", "0"},
-                {"Help", ",,,Move:LEFT-RIGHT,Shoot:UP,Exit:ESC,Pause:ANY"},
+                {"Help", "Move:LEFT-RIGHT,Shoot:UP,Exit:ESC,Pause:ANY"},
                 {"AllowedKeys", "LeftArrow,RightArrow,UpArrow"},
                 {"FrameMultiplier", "0.75"},
                 {"Width", "19"},
@@ -117,7 +117,7 @@ namespace iobloc
             Add(6, new Dictionary<string, string>{
                 {"MenuKeys", "D6,NumPad6"},
                 {"Highscore", "0"},
-                {"Help", ",,,Move:ARROWS,Exit:ESC,Pause:ANY"},
+                {"Help", "Move:ARRWS,Exit:ESC,Pause:ANY"},
                 {"AllowedKeys", "LeftArrow,RightArrow,UpArrow,DownArrow"},
                 {"FrameMultiplier", "2"},
                 {"LevelThreshold", "4"},
@@ -166,12 +166,11 @@ namespace iobloc
             });
             // Menu
             Add(10, new Dictionary<string, string>{
-                {"Help", ",,,Select:0-9,Exit:ESC,Help:Any"},
+                {"Help", "Select:0-9,Exit:ESC,Help:Any"},
             });
             // Fireworks
             Add(11, new Dictionary<string, string>{
-                {"MenuKeys", "F"},
-                {"Help", ",,,WINNER!"},
+                {"Help", "WINNER!"},
                 {"FrameMultiplier", "1"},
                 {"AllowedKeys", ""},
                 {"Width", "7"},
@@ -179,8 +178,7 @@ namespace iobloc
             });
             // Rain
             Add(12, new Dictionary<string, string>{
-                {"MenuKeys", "R"},
-                {"Help", ",,GAME,OVER"},
+                {"Help", "GAME,OVER"},
                 {"AllowedKeys", ""},
                 {"FrameMultiplier", "1"},
                 {"Width", "7"},
