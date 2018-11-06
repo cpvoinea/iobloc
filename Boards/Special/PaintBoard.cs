@@ -40,7 +40,7 @@ namespace iobloc
             if (set)
                 _prev = Main[_row, _col];
             for (int i = 0; i < BW; i++)
-                Main[_row, _col + i] = _paint ? _color : (set ? 15 : _prev);
+                Main[_row, _col + i] = _paint ? (set && _color == 0 ? 15 : _color) : (set ? 15 : _prev);
             base.Change(set);
         }
 
@@ -66,23 +66,31 @@ namespace iobloc
                     break;
                 case "D9": case "NumPad9":
                     if (_paint)
+                    {
                         _color = 15;
+                        Change(true);
+                    }
                     break;
                 case "D0": case "NumPad0":
                     if (_paint)
+                    {
                         _color = 0;
+                        Change(true);
+                    }
                     break;
                 case "R":
                     Initialize();
                     break;
                 case UIKey.Enter:
                     _paint = !_paint;
+                    Change(true);
                     break;
                 case UIKey.LeftArrow:
                     if (_col > 0)
                     {
                         Change(false);
                         _col -= BW;
+                        Change(true);
                     }
                     break;
                 case UIKey.RightArrow:
@@ -90,6 +98,7 @@ namespace iobloc
                     {
                         Change(false);
                         _col += BW;
+                        Change(true);
                     }
                     break;
                 case UIKey.UpArrow:
@@ -97,6 +106,7 @@ namespace iobloc
                     {
                         Change(false);
                         _row--;
+                        Change(true);
                     }
                     break;
                 case UIKey.DownArrow:
@@ -104,10 +114,10 @@ namespace iobloc
                     {
                         Change(false);
                         _row++;
+                        Change(true);
                     }
                     break;
             }
-            Change(true);
         }
     }
 }
