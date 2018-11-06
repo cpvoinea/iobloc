@@ -45,7 +45,13 @@ namespace iobloc
         /// </summary>
         protected override void Initialize()
         {
+            Panels[Pnl.Table.UpperLeft].SetText(Help, false);
             _model.Initialize();
+        }
+
+        public override void TogglePause()
+        {
+            Panels[Pnl.Table.UpperLeft].ToggleText();
         }
 
         public override void HandleInput(string key)
