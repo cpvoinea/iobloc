@@ -2,84 +2,85 @@ namespace iobloc
 {
     class TableLine
     {
-        int PW => TableModel.PW;
-        int PC => TableModel.PC;
-        int EC => TableModel.EC;
-        int NC => TableModel.NC;
+        private int _startCol;
+        private int _startRow;
+        private int _direction;
+        private int _picked;
 
-        private UIPanel _panel;
-        private int _col;
-        private int _row;
-        private int _dir = 1;
-
-        public bool? IsWhite { get; private set; }
+        public UIPanel Panel { get; private set; }
+        public bool IsPlayerWhite { get; private set; }
         public int Count { get; private set; }
-        public bool IsSelected { get; private set; }
+
+        private void Set(int row, int val)
+        {
+            for (int i = 0; i < TableBoard.BW; i++)
+                Panel[_startRow + row * _direction, _startCol + i] = val;
+        }
 
         public TableLine(UIPanel panel, int col, int row = 0, bool isLower = false)
         {
-            _panel = panel;
-            _col = col;
-            _row = row;
-            if (isLower)
-                _dir = -1;
+            Panel = panel;
+            _startCol = col;
+            _startRow = row;
+            _direction = isLower ? -1 : 1;
         }
 
-        public void Clear(int val = 0)
+        public void Clear()
         {
-            for (int i = 1; i < _panel.Height; i++)
-                for (int j = 0; j < PW; j++)
-                    _panel[i, _col * PW + j] = val;
-            if (val == 0)
-            {
-                Count = 0;
-                IsWhite = null;
-            }
-            _panel.Change(true);
+            for (int i = 1; i < Panel.Height; i++)
+                Set(i, 0);
+            Count = 0;
         }
 
-        public void Set(int count, bool isWhite)
+        public void Set(int count, bool isPlayerWhite)
         {
-            for (int i = 1; i <= count; i++)
-                for (int j = 0; j < PW; j++)
-                    _panel[_row + i * _dir, _col * PW + j] = isWhite ? PC : EC;
-            _panel.Change(true);
+            var c = isPlayerWhite ? TableBoard.CP : TableBoard.CE;
+            for (int i = 1; i <= Panel.Height; i++)
+                Set(i, i <= count ? c : 0);
 
             Count = count;
-            if (count > 0)
-                IsWhite = isWhite;
-            else
-                IsWhite = null;
+            IsPlayerWhite = isPlayerWhite;
         }
 
-        public void Select(bool set = false)
+        public void Select(bool set, bool highlight = false)
         {
-            for (int j = 0; j < PW; j++)
-                _panel[_row, _col * PW + j] = set ? NC : 0;
-            _panel.Change(true);
-
-            IsSelected = set;
+            var c = highlight ? TableBoard.CH : TableBoard.CN;
+            Set(0, set ? c : 0);
+            if (set) Change();
         }
 
         public void Pick()
         {
-            for (int j = 0; j < PW; j++)
-                _panel[_row + (Count + 1) * _dir, _col * PW + j] = 0;
-            _panel.Change(true);
-
-            Count--;
-            if (Count == 0)
-                IsWhite = null;
+            _picked++;
+            Set(Panel.Height - _picked, IsPlayerWhite);
+            Take();
         }
 
-        public void Put(bool isWhite)
+        public void Unpick()
         {
-            for (int j = 0; j < PW; j++)
-                _panel[_row + (Count + 2) * _dir, _col * PW + j] = 0;
-            _panel.Change(true);
+            Set(Panel.Height - _picked, 0);
+            _picked--;
+            Change();
+        }
 
+        public void Put(bool isPlayerWhite)
+        {
             Count++;
-            IsWhite = isWhite;
+            Set(Count, isPlayerWhite ? TableBoard.CP : TableBoard.CE);
+            IsPlayerWhite = isPlayerWhite;
+            Change();
+        }
+
+        public void Take()
+        {
+            Set(Count, 0);
+            Count--;
+            Change();
+        }
+
+        private void Change()
+        {
+            Panel.Change(true);
         }
     }
 }

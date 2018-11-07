@@ -1,43 +1,23 @@
-using System;
-using System.Collections.Generic;
-
 namespace iobloc
 {
-    enum TableState { Running = 0, Win, Lose }
-
     class TableModel
     {
-        public static int H, PW, HC, PC, EC, NC;
         private readonly TableLine[] _lines = new TableLine[28];
-        private UIPanel pnlDice;
-        private readonly Random _random = new Random();
-        private readonly int[] _dice = new int[4];
-        private bool _whiteTurn;
-        private int _selection;
-        private int _picked;
-
+        public TableLine this[int line] { get { return _lines[line]; } }
+        private readonly UIPanel _pnlDice;
         public UIPanel[] Panels { get; private set; }
 
-        public TableState State { get; private set; }
-
-        public TableModel(int h, int pw, int hc, int pc, int ec, int nc)
+        public TableModel(int h, int pw)
         {
-            H = h;
-            PW = pw;
-            HC = hc;
-            PC = pc;
-            EC = ec;
-            NC = nc;
-
-            var pnlUpperLeft = new UIPanel(1, 1, H / 2, 6 * PW, 0, (char)UISymbol.BlockUpper);
-            var pnlLowerLeft = new UIPanel(H / 2 + 1, 1, H, 6 * PW, 0, (char)UISymbol.BlockLower);
-            var pnlUpperTaken = new UIPanel(1, 6 * PW + 2, H / 2 - 3, 7 * PW + 1, 0, (char)UISymbol.BlockUpper);
-            pnlDice = new UIPanel(H / 2 - 1, 6 * PW + 2, H / 2 + 2, 7 * PW + 1, 2);
-            var pnlLowerTaken = new UIPanel(H / 2 + 6, 6 * PW + 2, H, 7 * PW + 1, 0, (char)UISymbol.BlockLower);
-            var pnlUpperRight = new UIPanel(1, 7 * PW + 3, H / 2, 13 * PW + 2, 0, (char)UISymbol.BlockUpper);
-            var pnlLowerRight = new UIPanel(H / 2 + 1, 7 * PW + 3, H, 13 * PW + 2, 0, (char)UISymbol.BlockLower);
-            var pnlUpperOut = new UIPanel(1, 13 * PW + 4, H / 2, 14 * PW + 3, 0, (char)UISymbol.BlockUpper);
-            var pnlLowerOut = new UIPanel(H / 2 + 1, 13 * PW + 4, H, 14 * PW + 3, 0, (char)UISymbol.BlockLower);
+            var pnlUpperLeft = new UIPanel(1, 1, 17, 6 * pw, 0, (char)UISymbol.BlockUpper);
+            var pnlLowerLeft = new UIPanel(h - 16, 1, h, 6 * pw, 0, (char)UISymbol.BlockLower);
+            var pnlUpperTaken = new UIPanel(1, 6 * pw + 2, 15, 7 * pw + 1, 0, (char)UISymbol.BlockUpper);
+            _pnlDice = new UIPanel(h / 2 - 1, 6 * pw + 2, h / 2 + 2, 7 * pw + 1, 2);
+            var pnlLowerTaken = new UIPanel(h - 14, 6 * pw + 2, h, 7 * pw + 1, 0, (char)UISymbol.BlockLower);
+            var pnlUpperRight = new UIPanel(1, 7 * pw + 3, 17, 13 * pw + 2, 0, (char)UISymbol.BlockUpper);
+            var pnlLowerRight = new UIPanel(h - 16, 7 * pw + 3, h, 13 * pw + 2, 0, (char)UISymbol.BlockLower);
+            var pnlUpperOut = new UIPanel(1, 13 * pw + 4, 15, 14 * pw + 3, 0, (char)UISymbol.BlockUpper);
+            var pnlLowerOut = new UIPanel(h - 14, 13 * pw + 4, h, 14 * pw + 3, 0, (char)UISymbol.BlockLower);
 
             for (int i = 0; i < 6; i++)
             {
@@ -52,77 +32,13 @@ namespace iobloc
             _lines[27] = new TableLine(pnlUpperOut, 0);
 
             // !!! don't change the order !!!
-            Panels = new[] { pnlUpperLeft, pnlLowerLeft, pnlUpperTaken, pnlDice, pnlLowerTaken, pnlUpperRight, pnlLowerRight, pnlUpperOut, pnlLowerOut };
-            State = TableState.Running;
+            Panels = new[] { pnlUpperLeft, pnlLowerLeft, pnlUpperTaken, _pnlDice, pnlLowerTaken, pnlUpperRight, pnlLowerRight, pnlUpperOut, pnlLowerOut };
         }
 
-        private void ThrowDice()
+        public void ShowDice(string[] dice)
         {
-            int d1 = _random.Next(6) + 1;
-            int d2 = _random.Next(6) + 1;
-            _dice[0] = d1;
-            _dice[1] = d2;
-            _dice[2] = _dice[3] = d1 == d2 ? d1 : 0;
-
-            string diceText = d1 + "," + d2;
-            if (d1 == d2) diceText += "," + diceText;
-            pnlDice.SetText(diceText.Split(','), true);
-            pnlDice.Change(true);
-        }
-
-        public void Initialize()
-        {
-            for (int i = 0; i < _lines.Length; i++)
-                _lines[i].Clear();
-            _lines[0].Set(2, false);
-            _lines[5].Set(5, true);
-            _lines[7].Set(3, true);
-            _lines[11].Set(5, false);
-            _lines[12].Set(5, true);
-            _lines[16].Set(3, false);
-            _lines[18].Set(5, false);
-            _lines[23].Set(2, true);
-
-            ThrowDice();
-            _lines[_selection].Select(true);
-        }
-
-        public void MoveLeft()
-        {
-            if (_selection < _lines.Length - 1)
-            {
-                _lines[_selection].Select(false);
-                _selection++;
-                _lines[_selection].Select(true);
-            }
-        }
-
-        public void MoveRight()
-        {
-            if (_selection > 0)
-            {
-                _lines[_selection].Select(false);
-                _selection--;
-                _lines[_selection].Select(true);
-            }
-        }
-
-        public void Pick()
-        {
-            if (_lines[_selection].Count > 0)
-            {
-                _lines[_selection].Pick();
-                _picked++;
-            }
-        }
-
-        public void Put()
-        {
-            if (_picked > 0)
-            {
-                _lines[_selection].Put(_whiteTurn);
-                _picked--;
-            }
+            _pnlDice.SetText(dice, true);
+            _pnlDice.Change(true);
         }
     }
 }
