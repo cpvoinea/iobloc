@@ -2,7 +2,6 @@ namespace iobloc
 {
     class PaintBoard : BaseBoard
     {
-        private int BW;
         private int _row;
         private int _col;
         private int _color;
@@ -11,12 +10,6 @@ namespace iobloc
         private bool _light;
 
         public PaintBoard() : base(BoardType.Paint) { }
-
-        protected override void InitializeSettings()
-        {
-            base.InitializeSettings();
-            BW = BoardSettings.GetInt("BlockWidth");
-        }
 
         protected override void Initialize()
         {
@@ -38,12 +31,12 @@ namespace iobloc
         protected override void Change(bool set)
         {
             if (!set)
-                for (int i = 0; i < BW; i++)
+                for (int i = 0; i < BlockWidth; i++)
                     Main[_row, _col + i] = _paint ? _color : _prev;
             else
             {
                 _prev = Main[_row, _col];
-                for (int i = 0; i < BW; i++)
+                for (int i = 0; i < BlockWidth; i++)
                     Main[_row, _col + i] = (!_paint || _color == 0 && _prev == 0) ? 15 : _color;
                 base.Change(set);
             }
@@ -53,20 +46,8 @@ namespace iobloc
         {
             switch (key)
             {
-                case "D1":
-                case "D2":
-                case "D3":
-                case "D4":
-                case "D5":
-                case "D6":
-                case "D7":
-                case "NumPad1":
-                case "NumPad2":
-                case "NumPad3":
-                case "NumPad4":
-                case "NumPad5":
-                case "NumPad6":
-                case "NumPad7":
+                case "D1": case "D2": case "D3": case "D4": case "D5": case "D6": case "D7":
+                case "NumPad1": case "NumPad2": case "NumPad3": case "NumPad4": case "NumPad5": case "NumPad6": case "NumPad7":
                     if (_paint)
                     {
                         _color = int.Parse(key.Substring(key.Length - 1));
@@ -75,8 +56,7 @@ namespace iobloc
                         Change(true);
                     }
                     break;
-                case "D8":
-                case "NumPad8":
+                case "D8": case "NumPad8":
                     if (_paint)
                     {
                         _light = !_light;
@@ -84,16 +64,14 @@ namespace iobloc
                         Change(true);
                     }
                     break;
-                case "D9":
-                case "NumPad9":
+                case "D9": case "NumPad9":
                     if (_paint)
                     {
                         _color = 15;
                         Change(true);
                     }
                     break;
-                case "D0":
-                case "NumPad0":
+                case "D0": case "NumPad0":
                     if (_paint)
                     {
                         _color = 0;
@@ -111,15 +89,15 @@ namespace iobloc
                     if (_col > 0)
                     {
                         Change(false);
-                        _col -= BW;
+                        _col -= BlockWidth;
                         Change(true);
                     }
                     break;
                 case UIKey.RightArrow:
-                    if (_col < Width - BW)
+                    if (_col < Width - BlockWidth)
                     {
                         Change(false);
-                        _col += BW;
+                        _col += BlockWidth;
                         Change(true);
                     }
                     break;

@@ -9,24 +9,21 @@ namespace iobloc
         protected override void InitializeSettings()
         {
             base.InitializeSettings();
-            _model = new TableModel(BoardSettings.GetInt(Settings.Height), BoardSettings.GetInt("PieceWidth"), BoardSettings.GetColor("HighlightColor"),
+            _model = new TableModel(Height, BlockWidth, BoardSettings.GetColor("HighlightColor"),
                 BoardSettings.GetColor(Settings.PlayerColor), BoardSettings.GetColor(Settings.EnemyColor), BoardSettings.GetColor(Settings.NeutralColor));
         }
 
-        /// <summary>
-        /// Add extra lines and panels
-        /// </summary>
         protected override void InitializeUI()
         {
             base.InitializeUI();
 
             Border.AddLines(new[]
             {
-                new UIBorderLine(0, TableModel.H + 1, 6 * TableModel.PW + 1, true, true),
-                new UIBorderLine(0, TableModel.H + 1, 7 * TableModel.PW + 2, true, true),
-                new UIBorderLine(0, TableModel.H + 1, 13 * TableModel.PW + 3, true, true),
-                new UIBorderLine(6 * TableModel.PW + 1, 7 * TableModel.PW + 2, TableModel.H / 2 - 2, false, true),
-                new UIBorderLine(6 * TableModel.PW + 1, 7 * TableModel.PW + 2, TableModel.H / 2 + 3, false, true)
+                new UIBorderLine(0, Height+ 1, 6 * BlockWidth + 1, true),
+                new UIBorderLine(0, Height + 1, 7 * BlockWidth + 2, true),
+                new UIBorderLine(0, Height + 1, 13 * BlockWidth + 3, true),
+                new UIBorderLine(6 * BlockWidth + 1, 7 * BlockWidth + 2, Height / 2 - 2, false),
+                new UIBorderLine(6 * BlockWidth + 1, 7 * BlockWidth + 2, Height / 2 + 3, false)
             });
 
             Panels.Add(Pnl.Table.UpperLeft, _model.Panels[0]);
@@ -40,9 +37,6 @@ namespace iobloc
             Panels.Add(Pnl.Table.LowerOut, _model.Panels[8]);
         }
 
-        /// <summary>
-        /// Reset to starting configuration
-        /// </summary>
         protected override void Initialize()
         {
             Panels[Pnl.Table.UpperLeft].SetText(Help, false);

@@ -9,10 +9,10 @@ namespace iobloc
         readonly Random _random = new Random();
         readonly LinkedList<Position> _snake = new LinkedList<Position>();
         Position _point;
-        int _h = 1;
-        int _v = 0;
-        int _nextH = 1;
-        int _nextV = 0;
+        int _h;
+        int _v;
+        int _nextH;
+        int _nextV;
 
         public SnakeBoard() : base(BoardType.Snake) { }
 
@@ -30,17 +30,17 @@ namespace iobloc
             {
                 Main.Clear();
                 _snake.Clear();
-                _h = 1;
                 _v = 0;
-                _nextH = 1;
                 _nextV = 0;
             }
 
             int v = Height / 2;
             int h = Width / 2;
+            _h = BlockWidth;
+            _nextH = BlockWidth;
             for (int i = 0; i < 3; i++)
             {
-                var p = new Position(v, h + i);
+                var p = new Position(v, h + i * BlockWidth);
                 _snake.AddFirst(p);
             }
             NewPoint();
@@ -50,8 +50,10 @@ namespace iobloc
         protected override void Change(bool set)
         {
             foreach (var p in _snake)
-                Main[p.Row, p.Col] = set ? CP : 0;
-            Main[_point.Row, _point.Col] = set ? CN : 0;
+                for (int i = 0; i < BlockWidth; i++)
+                    Main[p.Row, p.Col + i] = set ? CP : 0;
+            for (int i = 0; i < BlockWidth; i++)
+                Main[_point.Row, _point.Col + i] = set ? CN : 0;
             base.Change(set);
         }
 
@@ -60,20 +62,20 @@ namespace iobloc
             switch (key)
             {
                 case UIKey.LeftArrow:
-                    if (_h != 1)
-                        SetMove(-1, 0);
+                    if (_h != BlockWidth)
+                        SetMove(-BlockWidth, 0);
                     break;
                 case UIKey.RightArrow:
-                    if (_h != -1)
-                        SetMove(1, 0);
+                    if (_h != -BlockWidth)
+                        SetMove(BlockWidth, 0);
                     break;
                 case UIKey.UpArrow:
-                    if (_v != 1)
-                        SetMove(0, -1);
+                    if (_v != BlockWidth)
+                        SetMove(0, -BlockWidth);
                     break;
                 case UIKey.DownArrow:
-                    if (_v != -1)
-                        SetMove(0, 1);
+                    if (_v != -BlockWidth)
+                        SetMove(0, BlockWidth);
                     break;
             }
         }
@@ -102,7 +104,7 @@ namespace iobloc
         {
             List<Position> candidates = new List<Position>();
             for (int r = 0; r < Height; r++)
-                for (int c = 0; c < Width; c++)
+                for (int c = 0; c < Width; c += BlockWidth)
                 {
                     var p = new Position(r, c);
                     if (!_snake.Contains(p))
@@ -128,7 +130,7 @@ namespace iobloc
             else if (nextV >= Height)
                 nextV = 0;
             if (nextH < 0)
-                nextH = Width - 1;
+                nextH = Width - BlockWidth;
             else if (nextH >= Width)
                 nextH = 0;
             _h = _nextH;

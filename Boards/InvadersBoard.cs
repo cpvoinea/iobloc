@@ -2,8 +2,8 @@ namespace iobloc
 {
     class InvadersBoard : BaseBoard
     {
-        private int CP, CE, CN, AW, AS, AR, AC, BS;
-        private int A => AW + AS;
+        private int CP, CE, CN, AS, AR, AC;
+        private int A => BlockWidth + AS;
         private int LT => AR * AC;
         private int _ship;
         private int _bulletCol;
@@ -21,11 +21,9 @@ namespace iobloc
             CP = BoardSettings.GetColor(Settings.PlayerColor);
             CE = BoardSettings.GetColor(Settings.EnemyColor);
             CN = BoardSettings.GetColor(Settings.NeutralColor);
-            AW = BoardSettings.GetInt("AlienWidth");
             AS = BoardSettings.GetInt("AlienSpace");
             AR = BoardSettings.GetInt("AlienRows");
             AC = BoardSettings.GetInt("AlienCols");
-            BS = BoardSettings.GetInt("BulletSpeed");
         }
 
         protected override void Initialize()
@@ -40,13 +38,13 @@ namespace iobloc
             _ship = Width / 2 - 1;
             _bulletCol = Width / 2 - 1;
             _bulletRow = Height - 2;
-            _skipFrame = BS;
+            _skipFrame = 2;
             _movingRight = true;
             _targets = LT;
 
             for (int row = 0; row < AR; row++)
                 for (int col = 0; col < Width && col < AC * A; col += A)
-                    for (int i = 0; col + i < Width && i < AW; i++)
+                    for (int i = 0; col + i < Width && i < BlockWidth; i++)
                         Main[row, col + i] = CE;
             Change(true);
         }
@@ -102,7 +100,7 @@ namespace iobloc
             Change(false);
             if (_skipFrame <= 0)
             {
-                _skipFrame = BS;
+                _skipFrame = 2;
                 for (int i = 0; i < Height; i++)
                     if (_movingRight && Main[i, Width - 1] > 0 ||
                      !_movingRight && Main[i, 0] > 0)

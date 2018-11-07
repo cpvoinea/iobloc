@@ -31,7 +31,7 @@ namespace iobloc
         /// <value></value>
         public bool IsSingle { get; private set; }
 
-        public UIBorderLine(int from, int to, int position, bool isVertical, bool isSingle)
+        public UIBorderLine(int from, int to, int position, bool isVertical, bool isSingle = true)
         {
             if (from < to)
             {

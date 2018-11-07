@@ -13,6 +13,7 @@ namespace iobloc
         public const string AllowedKeys = "AllowedKeys";
         public const string Width = "Width";
         public const string Height = "Height";
+        public const string BlockWidth = "BlockWidth";
         public const string FrameMultiplier = "FrameMultiplier";
         public const string LevelThreshold = "LevelThreshold";
         public const string PlayerColor = "PlayerColor";
@@ -49,6 +50,7 @@ namespace iobloc
                 {"LevelThreshold", "10"},
                 {"Width", "10"},
                 {"Height", "20"},
+                {"BlockWidth", "2"},
             });
             // Runner
             Add(2, new Dictionary<string, string>{
@@ -74,7 +76,7 @@ namespace iobloc
                 {"LevelThreshold", "10"},
                 {"Width", "13"},
                 {"Height", "7"},
-                {"PlayerPosition", "1"},
+                {"BlockWidth", "2"},
                 {"ObstacleSpace", "4"},
                 {"PlayerColor", "Blue"},
                 {"EnemyColor", "Red"},
@@ -88,10 +90,10 @@ namespace iobloc
                 {"FrameMultiplier", "1.5"},
                 {"Width", "25"},
                 {"Height", "15"},
+                {"BlockWidth", "5"},
                 {"PlayerColor", "Blue"},
                 {"EnemyColor", "Red"},
                 {"NeutralColor", "Gray"},
-                {"BlockWidth", "5"},
                 {"BlockSpace", "0"},
                 {"BlockRows", "3"},
             });
@@ -104,14 +106,13 @@ namespace iobloc
                 {"FrameMultiplier", "0.75"},
                 {"Width", "19"},
                 {"Height", "10"},
+                {"BlockWidth", "3"},
                 {"PlayerColor", "Blue"},
                 {"EnemyColor", "Red"},
                 {"NeutralColor", "Gray"},
-                {"AlienWidth", "3"},
                 {"AlienSpace", "1"},
                 {"AlienRows", "3"},
                 {"AlienCols", "3"},
-                {"BulletSpeed", "2"},
             });
             // Snake
             Add(6, new Dictionary<string, string>{
@@ -120,6 +121,9 @@ namespace iobloc
                 {"Help", "Move:ARRWS,Exit:ESC,Pause:ANY"},
                 {"AllowedKeys", "LeftArrow,RightArrow,UpArrow,DownArrow"},
                 {"FrameMultiplier", "2"},
+                {"Width", "20"},
+                {"Height", "10"},
+                {"BlockWidth", "2"},
                 {"LevelThreshold", "4"},
                 {"PlayerColor", "Blue"},
                 {"NeutralColor", "Gray"},
@@ -157,7 +161,7 @@ namespace iobloc
                 {"FrameMultiplier", "10"},
                 {"Width", "59"},
                 {"Height", "36"},
-                {"PieceWidth", "4"},
+                {"BlockWidth", "4"},
                 {"PlayerColor", "Blue"},
                 {"EnemyColor", "Red"},
                 {"NeutralColor", "White"},

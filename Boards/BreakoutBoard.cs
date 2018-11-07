@@ -4,9 +4,9 @@ namespace iobloc
 {
     class BreakoutBoard : BaseBoard
     {
-        private int CP, CE, CN, BW, BS, BR;
-        private int B => BW + BS;
-        private int LT => Width / BW * BR;
+        private int CP, CE, CN, BS, BR;
+        private int B => BlockWidth + BS;
+        private int LT => (Width + BS) / B * BR;
         private int _paddle;
         private int _ballCol;
         private int _ballRow;
@@ -23,7 +23,6 @@ namespace iobloc
             CP = BoardSettings.GetColor(Settings.PlayerColor);
             CE = BoardSettings.GetColor(Settings.EnemyColor);
             CN = BoardSettings.GetColor(Settings.NeutralColor);
-            BW = BoardSettings.GetInt("BlockWidth");
             BS = BoardSettings.GetInt("BlockSpace");
             BR = BoardSettings.GetInt("BlockRows");
         }
@@ -40,7 +39,7 @@ namespace iobloc
             _angle = 7 * Math.PI / 4;
             for (int row = 0; row < BR; row++)
                 for (int col = 0; col < Width; col += B)
-                    for (int i = 0; i < BW; i++)
+                    for (int i = 0; i < BlockWidth; i++)
                         Main[row, col + i] = CE;
             _targets = LT;
             Change(true);
@@ -158,7 +157,7 @@ namespace iobloc
         private void Break(int row, int col)
         {
             int x = (col / B) * B;
-            for (int i = 0; i < BW; i++)
+            for (int i = 0; i < BlockWidth; i++)
                 Main[row, x + i] = 0;
             Score++;
             _targets--;

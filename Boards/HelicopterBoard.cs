@@ -4,7 +4,7 @@ namespace iobloc
 {
     class HelicopterBoard : BaseBoard
     {
-        private int CP, CE, PP, OS;
+        private int CP, CE, OS;
         private readonly Random _random = new Random();
         private int _speed;
         private int _distance;
@@ -18,7 +18,6 @@ namespace iobloc
             base.InitializeSettings();
             CP = BoardSettings.GetColor(Settings.PlayerColor);
             CE = BoardSettings.GetColor(Settings.EnemyColor);
-            PP = BoardSettings.GetInt("PlayerPosition");
             OS = BoardSettings.GetInt("ObstacleSpace");
         }
 
@@ -38,14 +37,15 @@ namespace iobloc
 
         protected override void Change(bool set)
         {
-            if (set && (_distance >= Height || Main[_distance, PP] == CE || Main[_distance, PP + 1] == CE))
-            {
+            _lost = _distance >= Height;
+            for (int i = 0; i < BlockWidth; i++)
+                _lost |= Main[_distance, i + 1] == CE;
+            if (set && _lost)
                 Main.Clear(CE);
-                _lost = true;
-            }
             else
             {
-                Main[_distance, PP] = Main[_distance, PP + 1] = set ? CP : 0;
+                for (int i = 0; i < BlockWidth; i++)
+                    Main[_distance, i + 1] = set ? CP : 0;
                 base.Change(set);
             }
         }

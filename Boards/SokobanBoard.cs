@@ -2,7 +2,7 @@ namespace iobloc
 {
     class SokobanBoard : BaseBoard
     {
-        int P, B, W, T, R, H, BW, WS;
+        int P, B, W, T, R, H, WS;
         int _targets = int.MaxValue;
         int _startScore;
         int _row;
@@ -19,7 +19,6 @@ namespace iobloc
             T = BoardSettings.GetColor("TargetColor");
             R = BoardSettings.GetColor("TargetBlockColor");
             H = BoardSettings.GetColor("TargetPlayerColor");
-            BW = BoardSettings.GetInt("BlockWidth");
             WS = BoardSettings.GetInt("WinScore");
         }
 
@@ -46,8 +45,8 @@ namespace iobloc
             int v = 0;
             switch (key)
             {
-                case UIKey.LeftArrow: h = -BW; break;
-                case UIKey.RightArrow: h = BW; break;
+                case UIKey.LeftArrow: h = -BlockWidth; break;
+                case UIKey.RightArrow: h = BlockWidth; break;
                 case UIKey.UpArrow: v = -1; break;
                 case UIKey.DownArrow: v = 1; break;
             }
@@ -111,9 +110,9 @@ namespace iobloc
             var board = SokobanLevels.Get(Level);
             _targets = 0;
             for (int i = 0; i < Height && i < 6; i++)
-                for (int j = 0; j < Width && j / BW < 4; j += BW)
+                for (int j = 0; j < Width && j / BlockWidth < 4; j += BlockWidth)
                 {
-                    int v = board[i, j / BW];
+                    int v = board[i, j / BlockWidth];
                     SetBlock(i, j, v);
                     if (v == P)
                     {
@@ -143,8 +142,8 @@ namespace iobloc
 
         void SetBlock(int row, int col, int val)
         {
-            for (int i = col; i < col + BW; i++)
-                Main[row, i] = val;
+            for (int i = 0; i < BlockWidth; i++)
+                Main[row, col + i] = val;
         }
     }
 }
