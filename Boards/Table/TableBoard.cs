@@ -64,11 +64,8 @@ namespace iobloc
                 case UIKey.UpArrow: _controller.Pick(); break;
                 case UIKey.DownArrow: _controller.Put(); break;
             }
-            switch (_controller.State)
-            {
-                case TableState.Win: Win(true); break;
-                case TableState.Lose: Lose(); break;
-            }
+            if (_controller.State == TableState.Ended)
+                Win(true);
         }
     }
 }

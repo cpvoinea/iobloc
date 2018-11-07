@@ -9,10 +9,11 @@ namespace iobloc
         private readonly TableModel _model;
         private readonly Random _random = new Random();
         private int _currentPlayer;
-        private int _selection;
-        private readonly List<int> _picked = new List<int>();
-        private TableLine Selected => Selected;
         private bool White => _currentPlayer == 0;
+        private int _selection;
+        private TableLine Selected => _model[_selection];
+        private readonly List<int> _picked = new List<int>();
+        private readonly List<int> _dice = new List<int>();
 
         public TableState State { get; private set; }
 
@@ -70,10 +71,10 @@ namespace iobloc
         {
             if (_picked.Count == 0 || Selected.Count > 1 && Selected.IsPlayerWhite != White)
                 return;
-            if(Selected.IsPlayerWhite != White)
+            if (Selected.IsPlayerWhite != White)
             {
                 Selected.Take();
-                _model[24 + _currentPlayer].Put(!White);
+                _model[24 + (1 - _currentPlayer)].Put(!White);
             }
 
             int from = _picked[0];
@@ -84,28 +85,34 @@ namespace iobloc
 
         private void BeginTurn()
         {
-            if (_model[27].Count == 15)
-            {
-                State = TableState.Lose;
-                return;
-            }
             ThrowDice();
-
-            if (_model[26].Count == 15)
+            if (_model[24 + _currentPlayer].Count > 0)
             {
-                State = TableState.Win;
-                return;
             }
-            _currentPlayer = 1 - _currentPlayer;
+
+            if (_model[26 + _currentPlayer].Count == 15)
+                State = TableState.Ended;
+            else
+                _currentPlayer = 1 - _currentPlayer;
         }
 
         private void ThrowDice()
         {
             int d1 = _random.Next(6) + 1;
             int d2 = _random.Next(6) + 1;
-            string diceText = d1 + "," + d2;
-            if (d1 == d2) diceText += "," + diceText;
-            _model.ShowDice(diceText.Split(','));
+            _dice.Clear();
+            _dice.Add(d1);
+            if (d1 == d2)
+                for (int i = 0; i < 3; i++)
+                    _dice.Add(d1);
+            else
+                _dice.Add(d2);
+            ShowDice();
+        }
+
+        private void ShowDice()
+        {
+            _model.ShowDice(string.Join<int>(",", _dice).Split(','));
         }
     }
 }

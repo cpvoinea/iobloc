@@ -16,8 +16,8 @@ namespace iobloc
             var pnlLowerTaken = new UIPanel(h - 14, 6 * pw + 2, h, 7 * pw + 1, 0, (char)UISymbol.BlockLower);
             var pnlUpperRight = new UIPanel(1, 7 * pw + 3, 17, 13 * pw + 2, 0, (char)UISymbol.BlockUpper);
             var pnlLowerRight = new UIPanel(h - 16, 7 * pw + 3, h, 13 * pw + 2, 0, (char)UISymbol.BlockLower);
-            var pnlUpperOut = new UIPanel(1, 13 * pw + 4, 15, 14 * pw + 3, 0, (char)UISymbol.BlockUpper);
-            var pnlLowerOut = new UIPanel(h - 14, 13 * pw + 4, h, 14 * pw + 3, 0, (char)UISymbol.BlockLower);
+            var pnlUpperOut = new UIPanel(1, 13 * pw + 4, 16, 14 * pw + 3, 0, (char)UISymbol.BlockUpper);
+            var pnlLowerOut = new UIPanel(h - 15, 13 * pw + 4, h, 14 * pw + 3, 0, (char)UISymbol.BlockLower);
 
             for (int i = 0; i < 6; i++)
             {
