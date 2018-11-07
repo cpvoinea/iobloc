@@ -14,6 +14,8 @@ namespace iobloc
         private TableLine Selected => _model[_selection];
         private readonly List<int> _picked = new List<int>();
         private readonly List<int> _dice = new List<int>();
+        private readonly List<int> _diceValues = new List<int>();
+        private readonly List<TableMove> _allowedMoves = new List<TableMove>();
 
         public TableState State { get; private set; }
 
@@ -86,9 +88,6 @@ namespace iobloc
         private void BeginTurn()
         {
             ThrowDice();
-            if (_model[24 + _currentPlayer].Count > 0)
-            {
-            }
 
             if (_model[26 + _currentPlayer].Count == 15)
                 State = TableState.Ended;
@@ -107,7 +106,101 @@ namespace iobloc
                     _dice.Add(d1);
             else
                 _dice.Add(d2);
+
+            SetDiceValues();
+            SetAllowedMoves();
             ShowDice();
+        }
+
+        private void HighlightAllowedFrom()
+        {
+            int max = 0;
+            foreach (var m in _allowedMoves)
+            {
+                _model[m.From].Select(true, true);
+                int d = Math.Abs(m.From - _selection);
+                if (d > max)
+                {
+                    max = d;
+                    _selection = m.From;
+                }
+            }
+            Selected.Select(true);
+        }
+
+        private void SetDiceValues()
+        {
+            _diceValues.Clear();
+            if (_dice.Count == 0)
+                return;
+
+            int d1 = _dice[0];
+            _diceValues.Add(d1);
+            if (_dice.Count > 1)
+            {
+                int d2 = _dice[1];
+                if (d1 != d2)
+                {
+                    _diceValues.Add(d2);
+                    _diceValues.Add(d1 + d2);
+                }
+                else for (int i = 1; i < _dice.Count; i++)
+                        _diceValues.Add(d1 * (i + 1));
+            }
+        }
+
+        private void SetAllowedMoves()
+        {
+            _allowedMoves.Clear();
+            if (_dice.Count == 0 || _diceValues.Count == 0)
+                return;
+
+            if (_model[24 + _currentPlayer].Count > 0)
+            {
+                int from = 24 + _currentPlayer;
+                for (int i = 0; i < 6; i++)
+                    if (_diceValues.Contains(i + 1))
+                    {
+                        int to = White ? 23 - i : i;
+                        if (_model[to].Count <= 1 || _model[to].IsPlayerWhite == White)
+                            _allowedMoves.Add(new TableMove(from, to));
+                    }
+            }
+            else
+            {
+                for (int from = 0; from < 24; from++)
+                    if (_model[from].Count > 0 && _model[from].IsPlayerWhite == White)
+                        foreach (int v in _diceValues)
+                        {
+                            int to = White ? from - v : from + v;
+                            if (to >= 0 && to < 24 && (_model[to].Count <= 1 || _model[to].IsPlayerWhite == White))
+                                _allowedMoves.Add(new TableMove(from, to));
+                        }
+                bool canTakeOut = true;
+                for (int i = 0; i < 18 && canTakeOut; i++)
+                {
+                    int line = White ? i + 6 : i;
+                    if (_model[line].Count > 0 && _model[line].IsPlayerWhite == White)
+                        canTakeOut = false;
+                }
+                if (canTakeOut)
+                {
+                    int to = 26 + _currentPlayer;
+                    for (int i = 0; i < 6; i++)
+                    {
+                        int from = White ? i : 23 - i;
+                        if (_model[from].Count > 0 && _model[from].IsPlayerWhite == White)
+                        {
+                            bool hasValueToTakeOut = false;
+                            foreach (int v in _diceValues)
+                                if (v >= i + 1)
+                                    hasValueToTakeOut = true;
+                            if (hasValueToTakeOut)
+                                _allowedMoves.Add(new TableMove(from, to));
+                        }
+                    }
+                }
+            }
         }
 
         private void ShowDice()

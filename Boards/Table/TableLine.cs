@@ -6,6 +6,7 @@ namespace iobloc
         private int _startRow;
         private int _direction;
         private int _picked;
+        private bool _highlight;
 
         public UIPanel Panel { get; private set; }
         public bool IsPlayerWhite { get; private set; }
@@ -27,7 +28,7 @@ namespace iobloc
 
         public void Clear()
         {
-            for (int i = 1; i < Panel.Height; i++)
+            for (int i = 0; i < Panel.Height; i++)
                 Set(i, 0);
             Count = 0;
         }
@@ -42,11 +43,19 @@ namespace iobloc
             IsPlayerWhite = isPlayerWhite;
         }
 
-        public void Select(bool set, bool highlight = false)
+        public void Select(bool set, bool hl = false)
         {
-            var c = highlight ? TableBoard.CH : TableBoard.CN;
-            Set(0, set ? c : 0);
-            if (set) Change();
+            if (set)
+            {
+                Set(0, hl ? TableBoard.CH : TableBoard.CN);
+                _highlight |= hl;
+            }
+            else
+            {
+                Set(0, _highlight && !hl ? TableBoard.CH : 0);
+                _highlight |= !hl;
+            }
+            Change();
         }
 
         public void Pick()
