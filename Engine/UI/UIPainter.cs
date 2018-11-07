@@ -9,7 +9,7 @@ namespace iobloc
     static class UIPainter
     {
         // initial window values to restore to
-        private static int WinWidth = 15, WinHeight = 4, BuffWidth = 15, BuffHeight = 15;
+        private static int WinWidth = 48, WinHeight = 24, BuffWidth = 48, BuffHeight = 192;
 
         /// <summary>
         /// Resize window to fit a border - not working on all OS

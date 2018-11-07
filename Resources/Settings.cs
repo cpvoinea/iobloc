@@ -88,13 +88,13 @@ namespace iobloc
                 {"Help", "Move:LEFT-RIGHT,Exit:ESC,Pause:ANY" },
                 {"AllowedKeys", "LeftArrow,RightArrow"},
                 {"FrameMultiplier", "1.5"},
-                {"Width", "25"},
+                {"Width", "29"},
                 {"Height", "15"},
                 {"BlockWidth", "5"},
                 {"PlayerColor", "Blue"},
                 {"EnemyColor", "Red"},
                 {"NeutralColor", "Gray"},
-                {"BlockSpace", "0"},
+                {"BlockSpace", "1"},
                 {"BlockRows", "3"},
             });
             // Invaders
@@ -156,6 +156,7 @@ namespace iobloc
             });
             // Table
             Add(9, new Dictionary<string, string>{
+                {"MenuKeys", "D9,NumPad9"},
                 {"Help", "Move_cursor:,LEFT-RIGHT,Take_piece:,UP_ARROW,Put_piece:,DOWN_ARROW,Exit:ESC,Pause:ANY"},
                 {"AllowedKeys", "LeftArrow,RightArrow,UpArrow,DownArrow"},
                 {"FrameMultiplier", "10"},

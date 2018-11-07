@@ -70,12 +70,12 @@ namespace iobloc
                         SetMove(BlockWidth, 0);
                     break;
                 case UIKey.UpArrow:
-                    if (_v != BlockWidth)
-                        SetMove(0, -BlockWidth);
+                    if (_v != 1)
+                        SetMove(0, -1);
                     break;
                 case UIKey.DownArrow:
-                    if (_v != -BlockWidth)
-                        SetMove(0, BlockWidth);
+                    if (_v != -1)
+                        SetMove(0, 1);
                     break;
             }
         }

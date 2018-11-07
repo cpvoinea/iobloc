@@ -38,7 +38,7 @@ namespace iobloc
         protected override void Change(bool set)
         {
             _lost = _distance >= Height;
-            for (int i = 0; i < BlockWidth; i++)
+            for (int i = 0; !_lost && i < BlockWidth; i++)
                 _lost |= Main[_distance, i + 1] == CE;
             if (set && _lost)
                 Main.Clear(CE);
