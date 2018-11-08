@@ -6,17 +6,22 @@ namespace iobloc
     class TableController
     {
         const int L = 28;
+        const int TW = 24;
+        const int TB = 25;
+        const int OW = 26;
+        const int OB = 27;
         private readonly TableModel _model;
         private readonly Random _random = new Random();
         private int _currentPlayer;
-        private bool White => _currentPlayer == 0;
-        private int _selection;
-        private TableLine Selected => _model[_selection];
-        private readonly List<int> _picked = new List<int>();
+        private int _currentSelection;
+        private int _pickedFrom;
+        private int _pickedCount;
+        private bool _diceDouble;
         private readonly List<int> _dice = new List<int>();
         private readonly List<int> _diceValues = new List<int>();
-        private readonly List<TableMove> _allowedMoves = new List<TableMove>();
-
+        private readonly List<int> _allowed = new List<int>();
+        private bool White => _currentPlayer == 0;
+        private TableLine Selected => _model[_currentSelection];
         public TableState State { get; private set; }
 
         public TableController(TableModel model)
@@ -26,8 +31,8 @@ namespace iobloc
 
         public void Initialize()
         {
-            for (int i = 0; i < L; i++)
-                _model[i].Clear();
+            _model.Clear();
+            _model.ClearSelection();
             _model[0].Set(2, false);
             _model[5].Set(5, true);
             _model[7].Set(3, true);
@@ -37,95 +42,92 @@ namespace iobloc
             _model[18].Set(5, false);
             _model[23].Set(2, true);
 
-            _currentPlayer = 0;
-            _selection = 0;
-            _picked.Clear();
+            _currentSelection = -1;
+            _pickedFrom = -1;
+            _pickedCount = 0;
             BeginTurn();
         }
 
-        public void MoveLeft()
+        public void Move(bool isLeft)
         {
-            if (_selection >= L - 1)
-                return;
             Selected.Select(false);
-            _selection++;
+            if (_currentSelection < 0)
+                return;
+            if (_currentSelection == OW)
+                _currentSelection = isLeft ? 0 : OB;
+            else if (_currentSelection == 0)
+                _currentSelection = isLeft ? 1 : OW;
+            else if (_currentSelection == 5)
+                _currentSelection = isLeft ? TB : 4;
+            else if (_currentSelection == TB)
+                _currentSelection = isLeft ? 6 : 5;
+            else if (_currentSelection == 17)
+                _currentSelection = isLeft ? 16 : TW;
+            else if (_currentSelection == TW)
+                _currentSelection = isLeft ? 17 : 18;
+            else if (_currentSelection == 18)
+                _currentSelection = isLeft ? TW : 19;
+            else if (_currentSelection == 23)
+                _currentSelection = isLeft ? 22 : OB;
+            else if (_currentSelection == OB)
+                _currentSelection = isLeft ? 23 : OW;
+            else
+                _currentSelection += isLeft ? 1 : -1;
             Selected.Select(true);
         }
 
-        public void MoveRight()
+        public void Action()
         {
-            if (_selection <= 0)
+            if(!_allowed.Contains(_currentSelection))
                 return;
-            Selected.Select(false);
-            _selection--;
-            Selected.Select(true);
-        }
-
-        public void Pick()
-        {
-            if (Selected.Count == 0 || Selected.IsPlayerWhite != White)
-                return;
-            Selected.Pick();
-            _picked.Add(_selection);
-        }
-
-        public void Put()
-        {
-            if (_picked.Count == 0 || Selected.Count > 1 && Selected.IsPlayerWhite != White)
-                return;
-            if (Selected.IsPlayerWhite != White)
+            if(_pickedCount > 0 && _pickedFrom != _currentSelection)
             {
-                Selected.Take();
-                _model[24 + (1 - _currentPlayer)].Put(!White);
+                _model[_pickedFrom].Unpick();
+                Selected.Put(White);
+                _pickedCount--;
+                if(_pickedCount == 0)
+                    _pickedFrom = -1;
             }
-
-            int from = _picked[0];
-            _model[from].Unpick();
-            Selected.Put(White);
-            _picked.RemoveAt(0);
+            else
+            {
+                Selected.Pick();
+                _pickedCount++;
+                _pickedFrom = _currentSelection;
+            }
+            ShowAllowed();
         }
 
         private void BeginTurn()
         {
+            if (_currentSelection >= 0)
+                Selected.Select(false);
             ThrowDice();
-
-            if (_model[26 + _currentPlayer].Count == 15)
-                State = TableState.Ended;
+            if (_currentSelection >= 0)
+                Selected.Select(true);
             else
+            {
                 _currentPlayer = 1 - _currentPlayer;
+                BeginTurn();
+            }
         }
 
         private void ThrowDice()
         {
             int d1 = _random.Next(6) + 1;
             int d2 = _random.Next(6) + 1;
+            _diceDouble = d1 == d2;
             _dice.Clear();
             _dice.Add(d1);
-            if (d1 == d2)
-                for (int i = 0; i < 3; i++)
-                    _dice.Add(d1);
-            else
-                _dice.Add(d2);
+            _dice.Add(d2);
+            if (_diceDouble)
+            {
+                _dice.Add(d1);
+                _dice.Add(d1);
+            }
 
             SetDiceValues();
-            SetAllowedMoves();
             ShowDice();
-        }
-
-        private void HighlightAllowedFrom()
-        {
-            int max = 0;
-            foreach (var m in _allowedMoves)
-            {
-                _model[m.From].Select(true, true);
-                int d = Math.Abs(m.From - _selection);
-                if (d > max)
-                {
-                    max = d;
-                    _selection = m.From;
-                }
-            }
-            Selected.Select(true);
+            ShowAllowed();
         }
 
         private void SetDiceValues()
@@ -133,38 +135,46 @@ namespace iobloc
             _diceValues.Clear();
             if (_dice.Count == 0)
                 return;
-
             int d1 = _dice[0];
             _diceValues.Add(d1);
             if (_dice.Count > 1)
             {
-                int d2 = _dice[1];
-                if (d1 != d2)
+                if (_diceDouble)
+                    for (int i = 1; i < _dice.Count; i++)
+                        _diceValues.Add(d1 * (i + 1));
+                else
                 {
+                    int d2 = _dice[1];
                     _diceValues.Add(d2);
                     _diceValues.Add(d1 + d2);
                 }
-                else for (int i = 1; i < _dice.Count; i++)
-                        _diceValues.Add(d1 * (i + 1));
             }
         }
 
-        private void SetAllowedMoves()
+        private void ShowDice()
         {
-            _allowedMoves.Clear();
+            _model.ShowDice(string.Join<int>(",", _dice).Split(','));
+        }
+
+        private void ShowAllowed()
+        {
+            _allowed.Clear();
+            _model.ClearSelection();
             if (_dice.Count == 0 || _diceValues.Count == 0)
                 return;
 
-            if (_model[24 + _currentPlayer].Count > 0)
+            if (_model[TW + _currentPlayer].Count > 0)
             {
-                int from = 24 + _currentPlayer;
+                int from = TW + _currentPlayer;
                 for (int i = 0; i < 6; i++)
-                    if (_diceValues.Contains(i + 1))
+                {
+                    int to = White ? 23 - i : i;
+                    if (_diceValues.Contains(i + 1) && (_model[to].Count <= 1 || _model[to].IsPlayerWhite == White))
                     {
-                        int to = White ? 23 - i : i;
-                        if (_model[to].Count <= 1 || _model[to].IsPlayerWhite == White)
-                            _allowedMoves.Add(new TableMove(from, to));
+                        _allowed.Add(from);
+                        break;
                     }
+                }
             }
             else
             {
@@ -174,7 +184,10 @@ namespace iobloc
                         {
                             int to = White ? from - v : from + v;
                             if (to >= 0 && to < 24 && (_model[to].Count <= 1 || _model[to].IsPlayerWhite == White))
-                                _allowedMoves.Add(new TableMove(from, to));
+                            {
+                                _allowed.Add(from);
+                                break;
+                            }
                         }
                 bool canTakeOut = true;
                 for (int i = 0; i < 18 && canTakeOut; i++)
@@ -185,7 +198,7 @@ namespace iobloc
                 }
                 if (canTakeOut)
                 {
-                    int to = 26 + _currentPlayer;
+                    int to = OW + _currentPlayer;
                     for (int i = 0; i < 6; i++)
                     {
                         int from = White ? i : 23 - i;
@@ -196,16 +209,14 @@ namespace iobloc
                                 if (v >= i + 1)
                                     hasValueToTakeOut = true;
                             if (hasValueToTakeOut)
-                                _allowedMoves.Add(new TableMove(from, to));
+                                _allowed.Add(from);
                         }
                     }
                 }
             }
-        }
 
-        private void ShowDice()
-        {
-            _model.ShowDice(string.Join<int>(",", _dice).Split(','));
+            foreach (var m in _allowed)
+                _model[m].Select(true, true);
         }
     }
 }

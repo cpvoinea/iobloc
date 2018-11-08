@@ -59,10 +59,9 @@ namespace iobloc
         {
             switch (key)
             {
-                case UIKey.LeftArrow: _controller.MoveLeft(); break;
-                case UIKey.RightArrow: _controller.MoveRight(); break;
-                case UIKey.UpArrow: _controller.Pick(); break;
-                case UIKey.DownArrow: _controller.Put(); break;
+                case UIKey.LeftArrow: _controller.Move(true); break;
+                case UIKey.RightArrow: _controller.Move(false); break;
+                case UIKey.UpArrow: _controller.Action(); break;
             }
             if (_controller.State == TableState.Ended)
                 Win(true);

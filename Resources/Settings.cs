@@ -157,8 +157,8 @@ namespace iobloc
             // Table
             Add(9, new Dictionary<string, string>{
                 {"MenuKeys", "D9,NumPad9"},
-                {"Help", "Move_cursor:,LEFT-RIGHT,Take_piece:,UP_ARROW,Put_piece:,DOWN_ARROW,Exit:ESC,Pause:ANY"},
-                {"AllowedKeys", "LeftArrow,RightArrow,UpArrow,DownArrow"},
+                {"Help", "Move:,LEFT-RIGHT,Take/Put:,UP_ARROW,Exit:ESC,Pause:ANY"},
+                {"AllowedKeys", "LeftArrow,RightArrow,UpArrow"},
                 {"FrameMultiplier", "10"},
                 {"Width", "59"},
                 {"Height", "36"},

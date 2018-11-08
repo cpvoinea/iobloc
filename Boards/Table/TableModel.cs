@@ -35,6 +35,18 @@ namespace iobloc
             Panels = new[] { pnlUpperLeft, pnlLowerLeft, pnlUpperTaken, _pnlDice, pnlLowerTaken, pnlUpperRight, pnlLowerRight, pnlUpperOut, pnlLowerOut };
         }
 
+        public void Clear()
+        {
+            foreach (var l in _lines)
+                l.Clear();
+        }
+
+        public void ClearSelection()
+        {
+            foreach (var l in _lines)
+                l.ClearSelection();
+        }
+
         public void ShowDice(string[] dice)
         {
             _pnlDice.SetText(dice, true);

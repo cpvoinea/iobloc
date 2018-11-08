@@ -2,9 +2,9 @@ namespace iobloc
 {
     class TableLine
     {
-        private int _startCol;
-        private int _startRow;
-        private int _direction;
+        private readonly int _startCol;
+        private readonly int _startRow;
+        private readonly int _direction;
         private int _picked;
         private bool _highlight;
 
@@ -28,9 +28,16 @@ namespace iobloc
 
         public void Clear()
         {
-            for (int i = 0; i < Panel.Height; i++)
+            for (int i = 1; i < Panel.Height; i++)
                 Set(i, 0);
             Count = 0;
+            _picked = 0;
+        }
+
+        public void ClearSelection()
+        {
+            _highlight = false;
+            Set(0, 0);
         }
 
         public void Set(int count, bool isPlayerWhite)
@@ -60,9 +67,10 @@ namespace iobloc
 
         public void Pick()
         {
+            Take();
             _picked++;
             Set(Panel.Height - _picked, IsPlayerWhite);
-            Take();
+            Change();
         }
 
         public void Unpick()
