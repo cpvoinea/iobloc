@@ -13,7 +13,7 @@ namespace iobloc
         private readonly TableModel _model;
         private readonly Random _random = new Random();
         private int _currentPlayer;
-        private int _currentSelection;
+        private int _cursor;
         private int _pickedFrom;
         private int _pickedCount;
         private bool _diceDouble;
@@ -21,7 +21,7 @@ namespace iobloc
         private readonly List<int> _diceValues = new List<int>();
         private readonly List<int> _allowed = new List<int>();
         private bool White => _currentPlayer == 0;
-        private TableLine Selected => _model[_currentSelection];
+        private TableLine Selected => _model[_cursor];
         public TableState State { get; private set; }
 
         public TableController(TableModel model)
@@ -33,81 +33,77 @@ namespace iobloc
         {
             _model.Clear();
             _model.ClearSelection();
-            _model[0].Set(2, false);
-            _model[5].Set(5, true);
-            _model[7].Set(3, true);
-            _model[11].Set(5, false);
-            _model[12].Set(5, true);
-            _model[16].Set(3, false);
-            _model[18].Set(5, false);
-            _model[23].Set(2, true);
+            _model[0].Initialize(2, false);
+            _model[5].Initialize(5, true);
+            _model[7].Initialize(3, true);
+            _model[11].Initialize(5, false);
+            _model[12].Initialize(5, true);
+            _model[16].Initialize(3, false);
+            _model[18].Initialize(5, false);
+            _model[23].Initialize(2, true);
 
-            _currentSelection = -1;
+            _cursor = -1;
             _pickedFrom = -1;
             _pickedCount = 0;
             BeginTurn();
         }
 
-        public void Move(bool isLeft)
+        public void Move(bool left)
         {
-            Selected.Select(false);
-            if (_currentSelection < 0)
-                return;
-            if (_currentSelection == OW)
-                _currentSelection = isLeft ? 0 : OB;
-            else if (_currentSelection == 0)
-                _currentSelection = isLeft ? 1 : OW;
-            else if (_currentSelection == 5)
-                _currentSelection = isLeft ? TB : 4;
-            else if (_currentSelection == TB)
-                _currentSelection = isLeft ? 6 : 5;
-            else if (_currentSelection == 17)
-                _currentSelection = isLeft ? 16 : TW;
-            else if (_currentSelection == TW)
-                _currentSelection = isLeft ? 17 : 18;
-            else if (_currentSelection == 18)
-                _currentSelection = isLeft ? TW : 19;
-            else if (_currentSelection == 23)
-                _currentSelection = isLeft ? 22 : OB;
-            else if (_currentSelection == OB)
-                _currentSelection = isLeft ? 23 : OW;
+            if (_cursor >= 0)
+                Selected.Select(false);
+            if (_allowed.Count == 0)
+                _cursor = -1;
             else
-                _currentSelection += isLeft ? 1 : -1;
-            Selected.Select(true);
+            {
+                int i = _cursor >= 0 ? _allowed.IndexOf(_cursor) : -1;
+                if (left)
+                {
+                    i--;
+                    if (i < 0)
+                        i = _allowed.Count - 1;
+                }
+                else
+                {
+                    i++;
+                    if (i >= _allowed.Count)
+                        i = 0;
+                }
+                _cursor = _allowed[i];
+                Selected.Select(true);
+            }
         }
 
         public void Action()
         {
-            if(!_allowed.Contains(_currentSelection))
-                return;
-            if(_pickedCount > 0 && _pickedFrom != _currentSelection)
+            if (_pickedCount > 0 && _pickedFrom != _cursor)
             {
                 _model[_pickedFrom].Unpick();
                 Selected.Put(White);
                 _pickedCount--;
-                if(_pickedCount == 0)
+                if (_pickedCount == 0)
                     _pickedFrom = -1;
             }
             else
             {
                 Selected.Pick();
                 _pickedCount++;
-                _pickedFrom = _currentSelection;
+                _pickedFrom = _cursor;
             }
             ShowAllowed();
         }
 
         private void BeginTurn()
         {
-            if (_currentSelection >= 0)
+            if (_cursor >= 0)
                 Selected.Select(false);
             ThrowDice();
-            if (_currentSelection >= 0)
+            if (_cursor >= 0)
                 Selected.Select(true);
             else
             {
                 _currentPlayer = 1 - _currentPlayer;
-                BeginTurn();
+                // BeginTurn();
             }
         }
 
@@ -215,6 +211,7 @@ namespace iobloc
                 }
             }
 
+            _allowed.Sort();
             foreach (var m in _allowed)
                 _model[m].Select(true, true);
         }

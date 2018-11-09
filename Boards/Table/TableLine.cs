@@ -12,12 +12,6 @@ namespace iobloc
         public bool IsPlayerWhite { get; private set; }
         public int Count { get; private set; }
 
-        private void Set(int row, int val)
-        {
-            for (int i = 0; i < TableBoard.BW; i++)
-                Panel[_startRow + row * _direction, _startCol + i] = val;
-        }
-
         public TableLine(UIPanel panel, int col, int row = 0, bool isLower = false)
         {
             Panel = panel;
@@ -28,7 +22,7 @@ namespace iobloc
 
         public void Clear()
         {
-            for (int i = 1; i < Panel.Height; i++)
+            for (int i = 0; i < Panel.Height; i++)
                 Set(i, 0);
             Count = 0;
             _picked = 0;
@@ -36,14 +30,13 @@ namespace iobloc
 
         public void ClearSelection()
         {
-            _highlight = false;
             Set(0, 0);
         }
 
-        public void Set(int count, bool isPlayerWhite)
+        public void Initialize(int count, bool isPlayerWhite)
         {
             var c = isPlayerWhite ? TableBoard.CP : TableBoard.CE;
-            for (int i = 1; i <= Panel.Height; i++)
+            for (int i = 1; i < Panel.Height; i++)
                 Set(i, i <= count ? c : 0);
 
             Count = count;
@@ -55,12 +48,12 @@ namespace iobloc
             if (set)
             {
                 Set(0, hl ? TableBoard.CH : TableBoard.CN);
-                _highlight |= hl;
+                if (hl)
+                    _highlight = true;
             }
             else
             {
                 Set(0, _highlight && !hl ? TableBoard.CH : 0);
-                _highlight |= !hl;
             }
             Change();
         }
@@ -69,7 +62,7 @@ namespace iobloc
         {
             Take();
             _picked++;
-            Set(Panel.Height - _picked, IsPlayerWhite);
+            Set(Panel.Height - _picked, IsPlayerWhite ? TableBoard.CP : TableBoard.CE);
             Change();
         }
 
@@ -93,6 +86,12 @@ namespace iobloc
             Set(Count, 0);
             Count--;
             Change();
+        }
+
+        private void Set(int row, int val)
+        {
+            for (int i = 0; i < TableBoard.BW; i++)
+                Panel[_startRow + row * _direction, _startCol * TableBoard.BW + i] = val;
         }
 
         private void Change()

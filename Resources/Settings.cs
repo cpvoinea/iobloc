@@ -165,8 +165,8 @@ namespace iobloc
                 {"BlockWidth", "4"},
                 {"PlayerColor", "Blue"},
                 {"EnemyColor", "Red"},
-                {"NeutralColor", "White"},
-                {"HighlightColor", "Gray"},
+                {"NeutralColor", "Yellow"},
+                {"HighlightColor", "DarkGray"},
             });
             // Menu
             Add(10, new Dictionary<string, string>{
