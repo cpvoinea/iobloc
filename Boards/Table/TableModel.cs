@@ -7,17 +7,17 @@ namespace iobloc
         private readonly UIPanel _pnlDice;
         public UIPanel[] Panels { get; private set; }
 
-        public TableModel(int h, int pw)
+        public TableModel(int h, int p)
         {
-            var pnlUpperLeft = new UIPanel(1, 1, 17, 6 * pw, 0, (char)UISymbol.BlockUpper);
-            var pnlLowerLeft = new UIPanel(h - 16, 1, h, 6 * pw, 0, (char)UISymbol.BlockLower);
-            var pnlUpperTaken = new UIPanel(1, 6 * pw + 2, 15, 7 * pw + 1, 0, (char)UISymbol.BlockUpper);
-            _pnlDice = new UIPanel(h / 2 - 1, 6 * pw + 2, h / 2 + 2, 7 * pw + 1, 2);
-            var pnlLowerTaken = new UIPanel(h - 14, 6 * pw + 2, h, 7 * pw + 1, 0, (char)UISymbol.BlockLower);
-            var pnlUpperRight = new UIPanel(1, 7 * pw + 3, 17, 13 * pw + 2, 0, (char)UISymbol.BlockUpper);
-            var pnlLowerRight = new UIPanel(h - 16, 7 * pw + 3, h, 13 * pw + 2, 0, (char)UISymbol.BlockLower);
-            var pnlUpperOut = new UIPanel(1, 13 * pw + 4, 16, 14 * pw + 3, 0, (char)UISymbol.BlockUpper);
-            var pnlLowerOut = new UIPanel(h - 15, 13 * pw + 4, h, 14 * pw + 3, 0, (char)UISymbol.BlockLower);
+            var pnlUpperLeft = new UIPanel(1, 1, 17, 6 * p, 0, (char)UISymbol.BlockUpper);
+            var pnlLowerLeft = new UIPanel(h - 16, 1, h, 6 * p, 0, (char)UISymbol.BlockLower);
+            var pnlUpperTaken = new UIPanel(1, 6 * p + 2, 15, 7 * p + 1, 0, (char)UISymbol.BlockUpper);
+            _pnlDice = new UIPanel(h / 2 - 1, 6 * p + 2, h / 2 + 2, 7 * p + 1, 2);
+            var pnlLowerTaken = new UIPanel(h - 14, 6 * p + 2, h, 7 * p + 1, 0, (char)UISymbol.BlockLower);
+            var pnlUpperRight = new UIPanel(1, 7 * p + 3, 17, 13 * p + 2, 0, (char)UISymbol.BlockUpper);
+            var pnlLowerRight = new UIPanel(h - 16, 7 * p + 3, h, 13 * p + 2, 0, (char)UISymbol.BlockLower);
+            var pnlUpperOut = new UIPanel(1, 13 * p + 4, 16, 14 * p + 3, 0, (char)UISymbol.BlockUpper);
+            var pnlLowerOut = new UIPanel(h - 15, 13 * p + 4, h, 14 * p + 3, 0, (char)UISymbol.BlockLower);
 
             for (int i = 0; i < 6; i++)
             {

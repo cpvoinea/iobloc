@@ -42,6 +42,8 @@ namespace iobloc
         /// </summary>
         /// <value></value>
         protected int BlockWidth { get; private set; }
+        protected int BlockSpace { get; private set; }
+        protected int Block { get; private set; }
         /// <summary>
         /// Main panel inside border rectangle
         /// </summary>
@@ -188,7 +190,9 @@ namespace iobloc
             Help = BoardSettings.GetList(Settings.Help);
             Width = BoardSettings.GetInt(Settings.Width, 10);
             Height = BoardSettings.GetInt(Settings.Height, 10);
-            BlockWidth = BoardSettings.GetInt(Settings.BlockWidth);
+            BlockWidth = BoardSettings.GetInt(Settings.BlockWidth, 0);
+            BlockSpace = BoardSettings.GetInt(Settings.BlockSpace);
+            Block = BlockWidth + BlockSpace;
             FrameMultiplier = BoardSettings.GetReal(Settings.FrameMultiplier);
             LevelThreshold = BoardSettings.GetInt(Settings.LevelThreshold, 0);
         }

@@ -2,8 +2,7 @@ namespace iobloc
 {
     class InvadersBoard : BaseBoard
     {
-        private int CP, CE, CN, AS, AR, AC;
-        private int A => BlockWidth + AS;
+        private int CP, CE, CN, AR, AC;
         private int LT => AR * AC;
         private int _ship;
         private int _bulletCol;
@@ -21,7 +20,6 @@ namespace iobloc
             CP = BoardSettings.GetColor(Settings.PlayerColor);
             CE = BoardSettings.GetColor(Settings.EnemyColor);
             CN = BoardSettings.GetColor(Settings.NeutralColor);
-            AS = BoardSettings.GetInt("AlienSpace");
             AR = BoardSettings.GetInt("AlienRows");
             AC = BoardSettings.GetInt("AlienCols");
         }
@@ -43,7 +41,7 @@ namespace iobloc
             _targets = LT;
 
             for (int row = 0; row < AR; row++)
-                for (int col = 0; col < Width && col < AC * A; col += A)
+                for (int col = 0; col < Width && col < AC * Block; col += Block)
                     for (int i = 0; col + i < Width && i < BlockWidth; i++)
                         Main[row, col + i] = CE;
             Change(true);

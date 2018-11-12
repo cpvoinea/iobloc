@@ -2,7 +2,7 @@ namespace iobloc
 {
     class TableBoard : BaseBoard
     {
-        public static int BW, CP, CE, CN, CH;
+        public static int BW, B, CP, CE, CN, CH;
         private TableController _controller;
 
         public TableBoard() : base(BoardType.Table) { }
@@ -11,6 +11,7 @@ namespace iobloc
         {
             base.InitializeSettings();
             BW = BlockWidth;
+            B = Block;
             CP = BoardSettings.GetColor(Settings.PlayerColor);
             CE = BoardSettings.GetColor(Settings.EnemyColor);
             CN = BoardSettings.GetColor(Settings.NeutralColor);
@@ -23,14 +24,14 @@ namespace iobloc
 
             Border.AddLines(new[]
             {
-                new UIBorderLine(0, Height + 1, 6 * BlockWidth + 1, true),
-                new UIBorderLine(0, Height + 1, 7 * BlockWidth + 2, true),
-                new UIBorderLine(0, Height + 1, 13 * BlockWidth + 3, true),
-                new UIBorderLine(6 * BlockWidth + 1, 7 * BlockWidth + 2, Height / 2 - 2, false),
-                new UIBorderLine(6 * BlockWidth + 1, 7 * BlockWidth + 2, Height / 2 + 3, false)
+                new UIBorderLine(0, Height + 1, 6 * Block + 1, true),
+                new UIBorderLine(0, Height + 1, 7 * Block + 2, true),
+                new UIBorderLine(0, Height + 1, 13 * Block + 3, true),
+                new UIBorderLine(6 * Block + 1, 7 * Block + 2, Height / 2 - 2, false),
+                new UIBorderLine(6 * Block + 1, 7 * Block + 2, Height / 2 + 3, false)
             });
 
-            var model = new TableModel(Height, BlockWidth);
+            var model = new TableModel(Height, Block);
             Panels.Add(Pnl.Table.UpperLeft, model.Panels[0]);
             Panels.Add(Pnl.Table.LowerLeft, model.Panels[1]);
             Panels.Add(Pnl.Table.UpperTaken, model.Panels[2]);

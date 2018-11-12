@@ -3,6 +3,7 @@ namespace iobloc
     class TableLine
     {
         int BW => TableBoard.BW;
+        int B => TableBoard.B;
         int CP => TableBoard.CP;
         int CE => TableBoard.CE;
         int CN => TableBoard.CN;
@@ -84,15 +85,19 @@ namespace iobloc
         {
             if (!Player.HasValue)
                 return;
-            // take
             int c = Player == PlayerSide.White ? CP : CE;
+            Take();
+            _picked++;
+            Set(Panel.Height - _picked, c);
+            Change();
+        }
+
+        public void Take()
+        {
             Set(Count, 0);
             Count--;
             if (Count == 0)
                 Player = null;
-            // mark pick
-            _picked++;
-            Set(Panel.Height - _picked, c);
             Change();
         }
 
@@ -117,7 +122,7 @@ namespace iobloc
         private void Set(int row, int val)
         {
             for (int i = 0; i < BW; i++)
-                Panel[_startRow + row * _direction, _startCol * BW + i] = val;
+                Panel[_startRow + row * _direction, _startCol * B + i] = val;
         }
 
         private void Change()

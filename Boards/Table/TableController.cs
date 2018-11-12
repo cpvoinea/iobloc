@@ -81,7 +81,13 @@ namespace iobloc
             if (_pickedCount > 0 && _cursor != _pickedFrom)
             {
                 _model[_player, _pickedFrom.Value].Unpick();
-                Selected.Put(_player);
+                if (Selected.Player != _player && Selected.Count == 1)
+                {
+                    Selected.Take();
+                    _model[OtherPlayer, LineType.Taken].Put(OtherPlayer);
+                }
+                else
+                    Selected.Put(_player);
                 int d = _pickedFrom.Value - _cursor.Value;
                 // TODO matrix 26x26 of allowed moves with cost = dice (?)
                 if (_pickedFrom == LineType.Taken)
@@ -265,8 +271,13 @@ namespace iobloc
 
         private void EndTurn()
         {
-            _player = OtherPlayer;
-            ThrowDice();
+            if (_model[_player, LineType.Out].Count == 15)
+                State = State.Ended;
+            else
+            {
+                _player = OtherPlayer;
+                ThrowDice();
+            }
         }
     }
 }

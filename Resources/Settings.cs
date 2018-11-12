@@ -14,6 +14,7 @@ namespace iobloc
         public const string Width = "Width";
         public const string Height = "Height";
         public const string BlockWidth = "BlockWidth";
+        public const string BlockSpace = "BlockSpace";
         public const string FrameMultiplier = "FrameMultiplier";
         public const string LevelThreshold = "LevelThreshold";
         public const string PlayerColor = "PlayerColor";
@@ -50,7 +51,6 @@ namespace iobloc
                 {"LevelThreshold", "10"},
                 {"Width", "10"},
                 {"Height", "20"},
-                {"BlockWidth", "2"},
             });
             // Runner
             Add(2, new Dictionary<string, string>{
@@ -91,10 +91,10 @@ namespace iobloc
                 {"Width", "29"},
                 {"Height", "15"},
                 {"BlockWidth", "5"},
+                {"BlockSpace", "1"},
                 {"PlayerColor", "Blue"},
                 {"EnemyColor", "Red"},
                 {"NeutralColor", "Gray"},
-                {"BlockSpace", "1"},
                 {"BlockRows", "3"},
             });
             // Invaders
@@ -107,10 +107,10 @@ namespace iobloc
                 {"Width", "19"},
                 {"Height", "10"},
                 {"BlockWidth", "3"},
+                {"BlockSpace", "1"},
                 {"PlayerColor", "Blue"},
                 {"EnemyColor", "Red"},
                 {"NeutralColor", "Gray"},
-                {"AlienSpace", "1"},
                 {"AlienRows", "3"},
                 {"AlienCols", "3"},
             });
@@ -160,9 +160,10 @@ namespace iobloc
                 {"Help", "Move:LEFT-RIGHT,Pick/Put:UP_ARROW,Put_back:DOWN_ARROW,Restart:R,Exit:ESC,Pause:ANY"},
                 {"AllowedKeys", "LeftArrow,RightArrow,UpArrow,DownArrow,R"},
                 {"FrameMultiplier", "10"},
-                {"Width", "59"},
+                {"Width", "87"},
                 {"Height", "36"},
-                {"BlockWidth", "4"},
+                {"BlockWidth", "5"},
+                {"BlockSpace", "1"},
                 {"PlayerColor", "Blue"},
                 {"EnemyColor", "Red"},
                 {"NeutralColor", "Yellow"},
