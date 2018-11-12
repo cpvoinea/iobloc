@@ -40,17 +40,94 @@ namespace iobloc
             _pickedFrom = null;
             _pickedCount = 0;
             ThrowDice();
-            ShowAllowed();
+            ShowAllowedFrom(true);
         }
 
         public void Move(bool left)
         {
-            ShowAllowed();
+            if (_allowedMoves.Count == 0)
+                return;
+            if (!_cursor.HasValue)
+            {
+                _cursor = left ? _allowedMoves.Keys.Last() : _allowedMoves.Keys.First();
+                Selected.Select(true);
+                return;
+            }
+
+            Selected.Select(false);
+            LineType? prev = null;
+            bool next = false;
+            foreach (var line in _allowedMoves.Keys)
+            {
+                if (next)
+                {
+                    _cursor = line;
+                    next = false;
+                    break;
+                }
+                if (line == _cursor)
+                {
+                    if (left)
+                    {
+                        _cursor = prev ?? _allowedMoves.Keys.Last();
+                        break;
+                    }
+                    else
+                        next = true;
+                }
+                prev = line;
+            }
+            if (next)
+                _cursor = _allowedMoves.Keys.First();
+
+            Selected.Select(true);
         }
 
-        public void Action()
+        public void Action(bool pick)
         {
-            ShowAllowed();
+            if (_cursor == null)
+                return;
+
+            if (_pickedCount > 0 && _cursor != _pickedFrom)
+            {
+                _model[_player, _pickedFrom.Value].Unpick();
+                Selected.Put(_player);
+                int d = _pickedFrom.Value - _cursor.Value;
+                // TODO matrix 26x26 of allowed moves with cost = dice (?)
+                if (_pickedFrom == LineType.Taken)
+                    d = 24 - (int)_cursor.Value;
+                else if (_cursor.Value == LineType.Out)
+                {
+                    d = (int)_pickedFrom.Value + 1;
+                    if (!_dice.Contains(d))
+                        d = _dice.First(x => x > d);
+                }
+                _pickedCount--;
+                if (_pickedCount == 0)
+                    _pickedFrom = null;
+                _dice.Remove(d);
+                ShowAllowedFrom(true);
+            }
+            else
+            {
+                if (pick)
+                {
+                    Selected.Pick();
+                    _pickedCount++;
+                    _pickedFrom = _cursor;
+                    ShowAllowedTo();
+                }
+                else
+                {
+                    Selected.Unpick();
+                    _pickedCount--;
+                    if (_pickedCount == 0)
+                    {
+                        ShowAllowedFrom(false);
+                        _pickedFrom = null;
+                    }
+                }
+            }
         }
 
         private void ThrowDice()
@@ -70,26 +147,42 @@ namespace iobloc
             _model.ShowDice(string.Join<int>(",", _dice).Split(','));
         }
 
-        private void ShowAllowed()
+        private void ShowAllowedFrom(bool setAllowed)
         {
             _allowedMoves.Clear();
             _model.ClearSelection();
+            _cursor = null;
             if (_dice.Count == 0)
             {
                 EndTurn();
                 return;
             }
 
-            SetAllowed();
-            if(_allowedMoves.Count == 0)
+            if (setAllowed)
+                SetAllowed();
+            if (_allowedMoves.Count == 0)
             {
                 EndTurn();
                 return;
             }
-            foreach(LineType line in _allowedMoves.Keys)
+            // TODO treat _allowedMoves.Count <= _dice.Count, check for max number of possible moves
+            foreach (LineType line in _allowedMoves.Keys)
                 _model[_player, line].Select(true, true);
 
-            _cursor = _allowedMoves.Keys.Last();
+            _cursor = _pickedFrom ?? _allowedMoves.Keys.Last();
+            Selected.Select(true);
+        }
+
+        private void ShowAllowedTo()
+        {
+            if (!_pickedFrom.HasValue)
+                return;
+            _model.ClearSelection();
+            _model[_player, _pickedFrom.Value].Select(true, true);
+            foreach (var to in _allowedMoves[_pickedFrom.Value])
+                _model[_player, to].Select(true, true);
+
+            _cursor = _pickedFrom ?? _allowedMoves.Keys.Last();
             Selected.Select(true);
         }
 
