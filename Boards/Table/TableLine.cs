@@ -33,11 +33,14 @@ namespace iobloc
             Count = 0;
             _picked = 0;
             _isHighlight = false;
+            Change();
         }
 
         public void ClearSelection()
         {
             Set(0, 0);
+            _isHighlight = false;
+            Change();
         }
 
         public bool CanPut(PlayerSide player)
@@ -104,7 +107,7 @@ namespace iobloc
 
         public void Put(PlayerSide player)
         {
-            int c = Player == PlayerSide.White ? CP : CE;
+            int c = player == PlayerSide.White ? CP : CE;
             Count++;
             Set(Count, c);
             Player = player;
