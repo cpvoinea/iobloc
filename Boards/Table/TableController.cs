@@ -102,6 +102,7 @@ namespace iobloc
                     if (!_dice.Contains(d))
                         d = _dice.First(x => x > d);
                 }
+
                 _pickedCount--;
                 if (_pickedCount == 0)
                     _pickedFrom = null;
@@ -260,6 +261,8 @@ namespace iobloc
 
         private void EndTurn()
         {
+            _player = OtherPlayer;
+            ThrowDice();
         }
     }
 }
