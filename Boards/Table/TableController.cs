@@ -7,12 +7,11 @@ namespace iobloc
     {
         private readonly TableModel _model;
         private readonly Random _random = new Random();
+        private readonly List<int> _dice = new List<int>();
+        private readonly List<LineType> _allowed = new List<LineType>();
         private PlayerSide _player;
         private LineType? _cursor;
         private LineType? _pickedFrom;
-        private int _pickedCount;
-        private readonly List<int> _dice = new List<int>();
-        private readonly Dictionary<LineType, List<LineType>> _allowedMoves = new Dictionary<LineType, List<LineType>>();
         public State State { get; private set; }
         private TableLine Selected => _cursor.HasValue ? _model[_player, _cursor.Value] : null;
         private PlayerSide OtherPlayer => (PlayerSide)(1 - _player);
@@ -37,101 +36,64 @@ namespace iobloc
 
             _cursor = null;
             _pickedFrom = null;
-            _pickedCount = 0;
+            State = State.Running;
             ThrowDice();
         }
 
         public void Move(bool left)
         {
-            if (_allowedMoves.Count == 0)
+            if (_allowed.Count == 0)
                 return;
-            List<int> allowed = new List<int>();
-            if (_pickedFrom.HasValue)
-            {
-                allowed.Add((int)_pickedFrom.Value);
-                if (_allowedMoves.ContainsKey(_pickedFrom.Value))
-                    foreach (LineType to in _allowedMoves[_pickedFrom.Value])
-                        allowed.Add((int)to);
-            }
-            else
-                foreach (LineType from in _allowedMoves.Keys)
-                    allowed.Add((int)from);
-            allowed.Sort();
             if (_cursor.HasValue)
             {
                 Selected.Select(false);
-                int i = allowed.IndexOf((int)_cursor.Value);
-                i += left ? -1 : 1;
+                int i = _allowed.IndexOf(_cursor.Value) + (left ? -1 : 1);
                 if (i < 0)
-                    i = allowed.Count - 1;
-                if (i >= allowed.Count)
+                    i = _allowed.Count - 1;
+                if (i >= _allowed.Count)
                     i = 0;
-                _cursor = (LineType)allowed[i];
+                _cursor = _allowed[i];
             }
             else
-                _cursor = left ? (LineType)allowed[allowed.Count - 1] : (LineType)allowed[0];
+                _cursor = _allowed[_allowed.Count - 1];
             Selected.Select(true);
         }
 
-        public void Action(bool pick)
+        public void Action()
         {
             if (_cursor == null)
                 return;
 
-            if (_pickedCount > 0 && _cursor != _pickedFrom)
+            if (_pickedFrom.HasValue && _cursor != _pickedFrom) // put
             {
+                // unpick
                 _model[_player, _pickedFrom.Value].Unpick();
+                // capture
                 if (Selected.Player != _player && Selected.Count == 1)
                 {
                     Selected.Take();
                     _model[OtherPlayer, LineType.Taken].Put(OtherPlayer);
                 }
-                else
-                    Selected.Put(_player);
-                int d = _pickedFrom.Value - _cursor.Value;
-                // TODO matrix 26x26 of allowed moves with cost = dice (?)
-                if (_pickedFrom == LineType.Taken)
-                    d = 24 - (int)_cursor.Value;
-                else if (_cursor.Value == LineType.Out)
-                {
-                    d = (int)_pickedFrom.Value + 1;
-                    if (!_dice.Contains(d))
-                        foreach (int dd in _dice)
-                            if (dd > d)
-                            {
-                                d = dd;
-                                break;
-                            }
-                }
-
-                _pickedCount--;
-                if (_pickedCount == 0)
-                    _pickedFrom = null;
-                _dice.Remove(d);
-                ShowDice();
-                ShowAllowedFrom();
+                // put
+                Selected.Put(_player);
+                UpdateDice(_pickedFrom.Value, _cursor.Value);
+                _pickedFrom = null;
             }
-            else
+            else // take/put back
             {
-                if (pick)
+                if (!_pickedFrom.HasValue) // take
                 {
                     Selected.Pick();
-                    _pickedCount++;
                     _pickedFrom = _cursor;
-                    ShowAllowedTo();
                 }
-                else
+                else if (_cursor == _pickedFrom) // put back
                 {
                     Selected.Unpick();
                     Selected.Put(_player);
-                    _pickedCount--;
-                    if (_pickedCount == 0)
-                    {
-                        ShowAllowedFrom();
-                        _pickedFrom = null;
-                    }
+                    _pickedFrom = null;
                 }
             }
+            ShowAllowed();
         }
 
         private void ThrowDice()
@@ -143,8 +105,62 @@ namespace iobloc
             _dice.Add(d2);
             if (d1 == d2)
                 _dice.AddRange(_dice);
+            _dice.Sort();
             ShowDice();
-            ShowAllowedFrom();
+            ShowAllowed();
+        }
+
+        private void UpdateDice(LineType from, LineType to)
+        {
+            int d = from - to;
+            if (from == LineType.Taken)
+                d = 24 - (int)to;
+            else if (to == LineType.Out)
+                foreach (int dd in _dice)
+                    if (dd >= d)
+                    {
+                        d = dd;
+                        break;
+                    }
+            _dice.Remove(d);
+            ShowDice();
+        }
+
+        private void ShowAllowed()
+        {
+            if (_dice.Count == 0)
+            {
+                EndTurn();
+                return;
+            }
+
+            _allowed.Clear();
+            if (_pickedFrom.HasValue)
+                SetAllowedTo(_pickedFrom.Value);
+            else
+                SetAllowedFrom();
+            _allowed.Sort();
+            // TODO treat _allowedMoves.Count <= _dice.Count, check for max number of possible moves
+            if (_allowed.Count == 0)
+            {
+                if (_model[_player, LineType.Out].Count == 15)
+                    State = State.Ended;
+                else
+                    EndTurn();
+                return;
+            }
+
+            _model.ClearSelection();
+            foreach (LineType line in _allowed)
+                _model[_player, line].Select(true, true);
+
+            if (!_pickedFrom.HasValue && _cursor.HasValue && _allowed.Contains(_cursor.Value))
+                Selected.Select(true);
+            else
+            {
+                _cursor = null;
+                Move(_pickedFrom.HasValue);
+            }
         }
 
         private void ShowDice()
@@ -152,53 +168,61 @@ namespace iobloc
             _model.ShowDice(string.Join<int>(",", _dice).Split(','));
         }
 
-        private void ShowAllowedFrom()
+        private void SetAllowedTo(LineType from)
         {
-            _model.ClearSelection();
-            _cursor = null;
-            if (_dice.Count == 0)
-            {
-                EndTurn();
-                return;
-            }
-
-            SetAllowed();
-
-            if (_allowedMoves.Count == 0)
-            {
-                EndTurn();
-                return;
-            }
-            // TODO treat _allowedMoves.Count <= _dice.Count, check for max number of possible moves
-            foreach (LineType line in _allowedMoves.Keys)
-                _model[_player, line].Select(true, true);
-            Move(true);
-        }
-
-        private void ShowAllowedTo()
-        {
-            if (!_pickedFrom.HasValue)
-                return;
-            _model.ClearSelection();
-            _model[_player, _pickedFrom.Value].Select(true, true);
-            foreach (var to in _allowedMoves[_pickedFrom.Value])
-                _model[_player, to].Select(true, true);
-
-            if (_pickedFrom.HasValue)
-            {
-                _cursor = _pickedFrom;
-                Selected.Select(true);
-            }
+            Add(from);
+            if (from == LineType.Taken)
+                for (int entry = 1; entry <= 6; entry++)
+                {
+                    LineType to = (LineType)(24 - entry);
+                    if (_dice.Contains(entry) && _model[_player, to].CanPut(_player))
+                        Add(to);
+                }
             else
             {
-                _cursor = null;
-                Move(true);
+                int idxFrom = (int)from;
+                for (int idxTo = idxFrom - 1; idxTo >= 0 && idxTo >= idxFrom - 6; idxTo--)
+                {
+                    int dif = idxFrom - idxTo;
+                    LineType to = (LineType)idxTo;
+                    if (_dice.Contains(dif) && _model[_player, to].CanPut(_player))
+                        Add(to);
+                }
+
+                if (_allowed.Contains(LineType.Out))
+                    return;
+                bool canTakeOut = true;
+                for (int i = 0; i < 18 && canTakeOut; i++)
+                {
+                    LineType line = (LineType)(i + 6);
+                    if (_model[_player, line].HasAny(_player))
+                        canTakeOut = false;
+                }
+                if (!canTakeOut)
+                    return;
+
+                int d = (int)from + 1;
+                if (_dice.Contains(d))
+                    Add(LineType.Out);
+                else
+                {
+                    bool clearLeft = true;
+                    for (int j = d; j < 6 && clearLeft; j++)
+                        if (_model[_player, (LineType)j].HasAny(_player))
+                            clearLeft = false;
+                    if (clearLeft)
+                        for (int j = d; j <= 6; j++)
+                            if (_dice.Contains(j))
+                            {
+                                Add(LineType.Out);
+                                return;
+                            }
+                }
             }
         }
 
-        private void SetAllowed()
+        private void SetAllowedFrom()
         {
-            _allowedMoves.Clear();
             if (_model[_player, LineType.Taken].Count > 0)
             {
                 LineType from = LineType.Taken;
@@ -206,7 +230,7 @@ namespace iobloc
                 {
                     LineType to = (LineType)(24 - entry);
                     if (_dice.Contains(entry) && _model[_player, to].CanPut(_player))
-                        AddMove(from, to);
+                        Add(from);
                 }
             }
             else
@@ -220,7 +244,7 @@ namespace iobloc
                             int d = idxFrom - idxTo;
                             LineType to = (LineType)idxTo;
                             if (_dice.Contains(d) && _model[_player, to].CanPut(_player))
-                                AddMove(from, to);
+                                Add(from);
                         }
                 }
 
@@ -233,24 +257,23 @@ namespace iobloc
                 }
                 if (canTakeOut)
                 {
-                    LineType to = LineType.Out;
-                    for (int i = 1; i <= 6; i++)
+                    for (int i = 0; i < 6; i++)
                     {
-                        LineType from = (LineType)(i - 1);
+                        LineType from = (LineType)i;
                         if (_model[_player, from].HasAny(_player))
                         {
-                            if (_dice.Contains(i))
-                                AddMove(from, to);
+                            if (_dice.Contains(i + 1))
+                                Add(from);
                             else
                             {
                                 bool clearLeft = true;
-                                for (int j = i + 1; j <= 6 && clearLeft; j++)
+                                for (int j = i + 1; j < 6 && clearLeft; j++)
                                     if (_model[_player, (LineType)j].HasAny(_player))
                                         clearLeft = false;
                                 if (clearLeft)
-                                    for (int j = i + 1; j <= 6; j++)
+                                    for (int j = i + 2; j <= 6; j++)
                                         if (_dice.Contains(j))
-                                            AddMove(from, to);
+                                            Add(from);
                             }
                         }
                     }
@@ -258,26 +281,16 @@ namespace iobloc
             }
         }
 
-        private void AddMove(LineType from, LineType to)
+        private void Add(LineType line)
         {
-            if (_allowedMoves.ContainsKey(from))
-            {
-                if (!_allowedMoves[from].Contains(to))
-                    _allowedMoves[from].Add(to);
-            }
-            else
-                _allowedMoves.Add(from, new List<LineType> { to });
+            if (!_allowed.Contains(line))
+                _allowed.Add(line);
         }
 
         private void EndTurn()
         {
-            if (_model[_player, LineType.Out].Count == 15)
-                State = State.Ended;
-            else
-            {
-                _player = OtherPlayer;
-                ThrowDice();
-            }
+            _player = OtherPlayer;
+            ThrowDice();
         }
     }
 }

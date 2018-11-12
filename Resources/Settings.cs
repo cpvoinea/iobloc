@@ -157,12 +157,12 @@ namespace iobloc
             // Table
             Add(9, new Dictionary<string, string>{
                 {"MenuKeys", "D9,NumPad9"},
-                {"Help", "Move:LEFT-RIGHT,Pick/Put:UP_ARROW,Put_back:DOWN_ARROW,Restart:R,Exit:ESC,Pause:ANY"},
-                {"AllowedKeys", "LeftArrow,RightArrow,UpArrow,DownArrow,R"},
+                {"Help", "Move:LEFT-RIGHT,Pick/Put:UP_ARROW,Restart:R,Exit:ESC,Pause:ANY"},
+                {"AllowedKeys", "LeftArrow,RightArrow,UpArrow,R"},
                 {"FrameMultiplier", "10"},
-                {"Width", "87"},
+                {"Width", "101"},
                 {"Height", "36"},
-                {"BlockWidth", "5"},
+                {"BlockWidth", "6"},
                 {"BlockSpace", "1"},
                 {"PlayerColor", "Blue"},
                 {"EnemyColor", "Red"},

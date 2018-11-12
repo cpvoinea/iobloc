@@ -63,8 +63,7 @@ namespace iobloc
             {
                 case UIKey.LeftArrow: _controller.Move(true); break;
                 case UIKey.RightArrow: _controller.Move(false); break;
-                case UIKey.UpArrow: _controller.Action(true); break;
-                case UIKey.DownArrow: _controller.Action(false); break;
+                case UIKey.UpArrow: _controller.Action(); break;
                 case "R": _controller.Initialize(); break;
             }
             if (_controller.State == State.Ended)

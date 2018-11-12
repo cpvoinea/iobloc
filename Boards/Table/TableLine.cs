@@ -48,7 +48,7 @@ namespace iobloc
         {
             return Count <= 1 || Player == player;
         }
-        
+
         public bool HasAny(PlayerSide player)
         {
             return Player == player && Count > 0;
@@ -88,7 +88,7 @@ namespace iobloc
             int c = Player == PlayerSide.White ? CP : CE;
             Take();
             _picked++;
-            Set(Panel.Height - _picked, c);
+            Set(Count + _picked, c);
             Change();
         }
 
@@ -105,7 +105,7 @@ namespace iobloc
         {
             if (_picked == 0)
                 return;
-            Set(Panel.Height - _picked, 0);
+            Set(Count + _picked, 0);
             _picked--;
             Change();
         }
