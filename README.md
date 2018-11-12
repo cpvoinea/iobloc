@@ -1,5 +1,5 @@
 # iobloc
-## v2.2 (released)
+## v2.3 (released)
 * 8 games: tetris, runner, helicopter, breakout, invaders, snake, sokoban, paint
 * bonus pack of sudoku levels
 * level progression, ending animations
