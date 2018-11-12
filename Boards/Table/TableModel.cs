@@ -3,7 +3,7 @@ namespace iobloc
     class TableModel
     {
         private readonly TableLine[] _lines = new TableLine[28];
-        public TableLine this[int line] { get { return _lines[line]; } }
+        public TableLine this[PlayerSide player, LineType type] { get { return _lines[GetIndex(player, type)]; } }
         private readonly UIPanel _pnlDice;
         public UIPanel[] Panels { get; private set; }
 
@@ -51,6 +51,16 @@ namespace iobloc
         {
             _pnlDice.SetText(dice, true);
             _pnlDice.Change(true);
+        }
+
+        private int GetIndex(PlayerSide player, LineType type)
+        {
+            int index = (int)type;
+            if (type == LineType.Taken || type == LineType.Out)
+                return index + (int)player;
+            if (player == PlayerSide.Black)
+                return 23 - index;
+            return index;
         }
     }
 }

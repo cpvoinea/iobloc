@@ -2,14 +2,19 @@ namespace iobloc
 {
     class TableLine
     {
+        int BW => TableBoard.BW;
+        int CP => TableBoard.CP;
+        int CE => TableBoard.CE;
+        int CN => TableBoard.CN;
+        int CH => TableBoard.CH;
         private readonly int _startCol;
         private readonly int _startRow;
         private readonly int _direction;
         private int _picked;
-        private bool _highlight;
+        private bool _isHighlight;
 
         public UIPanel Panel { get; private set; }
-        public bool IsPlayerWhite { get; private set; }
+        public PlayerSide? Player { get; private set; }
         public int Count { get; private set; }
 
         public TableLine(UIPanel panel, int col, int row = 0, bool isLower = false)
@@ -24,8 +29,10 @@ namespace iobloc
         {
             for (int i = 0; i < Panel.Height; i++)
                 Set(i, 0);
+            Player = null;
             Count = 0;
             _picked = 0;
+            _isHighlight = false;
         }
 
         public void ClearSelection()
@@ -33,65 +40,81 @@ namespace iobloc
             Set(0, 0);
         }
 
-        public void Initialize(int count, bool isPlayerWhite)
+        public bool CanPut(PlayerSide player)
         {
-            var c = isPlayerWhite ? TableBoard.CP : TableBoard.CE;
+            return Count <= 1 || Player == player;
+        }
+        
+        public bool HasAny(PlayerSide player)
+        {
+            return Player == player && Count > 0;
+        }
+
+        public void Initialize(int count, PlayerSide player)
+        {
+            var c = player == PlayerSide.White ? CP : CE;
             for (int i = 1; i < Panel.Height; i++)
                 Set(i, i <= count ? c : 0);
 
+            Player = player;
             Count = count;
-            IsPlayerWhite = isPlayerWhite;
+            _picked = 0;
+            _isHighlight = false;
         }
 
-        public void Select(bool set, bool hl = false)
+        public void Select(bool set, bool highlight = false)
         {
             if (set)
             {
-                Set(0, hl ? TableBoard.CH : TableBoard.CN);
-                if (hl)
-                    _highlight = true;
+                Set(0, highlight ? CH : CN);
+                if (highlight)
+                    _isHighlight = true;
             }
             else
             {
-                Set(0, _highlight && !hl ? TableBoard.CH : 0);
+                Set(0, _isHighlight && !highlight ? CH : 0);
             }
             Change();
         }
 
         public void Pick()
         {
-            Take();
+            if (!Player.HasValue)
+                return;
+            // take
+            int c = Player == PlayerSide.White ? CP : CE;
+            Set(Count, 0);
+            Count--;
+            if (Count == 0)
+                Player = null;
+            // mark pick
             _picked++;
-            Set(Panel.Height - _picked, IsPlayerWhite ? TableBoard.CP : TableBoard.CE);
+            Set(Panel.Height - _picked, c);
             Change();
         }
 
         public void Unpick()
         {
+            if (_picked == 0)
+                return;
             Set(Panel.Height - _picked, 0);
             _picked--;
             Change();
         }
 
-        public void Put(bool isPlayerWhite)
+        public void Put(PlayerSide player)
         {
+            int c = Player == PlayerSide.White ? CP : CE;
             Count++;
-            Set(Count, isPlayerWhite ? TableBoard.CP : TableBoard.CE);
-            IsPlayerWhite = isPlayerWhite;
-            Change();
-        }
-
-        public void Take()
-        {
-            Set(Count, 0);
-            Count--;
+            Set(Count, c);
+            Player = player;
             Change();
         }
 
         private void Set(int row, int val)
         {
-            for (int i = 0; i < TableBoard.BW; i++)
-                Panel[_startRow + row * _direction, _startCol * TableBoard.BW + i] = val;
+            for (int i = 0; i < BW; i++)
+                Panel[_startRow + row * _direction, _startCol * BW + i] = val;
         }
 
         private void Change()

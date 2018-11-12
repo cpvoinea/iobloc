@@ -46,6 +46,7 @@ namespace iobloc
 
         protected override void Initialize()
         {
+            Level = 0; // for frame multiplier
             Panels[Pnl.Table.UpperLeft].SetText(Help, false);
             _controller.Initialize();
         }
@@ -63,7 +64,7 @@ namespace iobloc
                 case UIKey.RightArrow: _controller.Move(false); break;
                 case UIKey.UpArrow: _controller.Action(); break;
             }
-            if (_controller.State == TableState.Ended)
+            if (_controller.State == State.Ended)
                 Win(true);
         }
     }

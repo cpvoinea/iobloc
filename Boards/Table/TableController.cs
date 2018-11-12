@@ -1,28 +1,22 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace iobloc
 {
     class TableController
     {
-        const int L = 28;
-        const int TW = 24;
-        const int TB = 25;
-        const int OW = 26;
-        const int OB = 27;
         private readonly TableModel _model;
         private readonly Random _random = new Random();
-        private int _currentPlayer;
-        private int _cursor;
-        private int _pickedFrom;
+        private PlayerSide _player;
+        private LineType? _cursor;
+        private LineType? _pickedFrom;
         private int _pickedCount;
-        private bool _diceDouble;
         private readonly List<int> _dice = new List<int>();
-        private readonly List<int> _diceValues = new List<int>();
-        private readonly List<int> _allowed = new List<int>();
-        private bool White => _currentPlayer == 0;
-        private TableLine Selected => _model[_cursor];
-        public TableState State { get; private set; }
+        private readonly SortedDictionary<LineType, List<LineType>> _allowedMoves = new SortedDictionary<LineType, List<LineType>>();
+        public State State { get; private set; }
+        private TableLine Selected => _cursor.HasValue ? _model[_player, _cursor.Value] : null;
+        private PlayerSide OtherPlayer => (PlayerSide)(1 - _player);
 
         public TableController(TableModel model)
         {
@@ -33,118 +27,42 @@ namespace iobloc
         {
             _model.Clear();
             _model.ClearSelection();
-            _model[0].Initialize(2, false);
-            _model[5].Initialize(5, true);
-            _model[7].Initialize(3, true);
-            _model[11].Initialize(5, false);
-            _model[12].Initialize(5, true);
-            _model[16].Initialize(3, false);
-            _model[18].Initialize(5, false);
-            _model[23].Initialize(2, true);
+            _model[PlayerSide.White, LineType.Line1].Initialize(2, PlayerSide.Black);
+            _model[PlayerSide.White, LineType.Line6].Initialize(5, PlayerSide.White);
+            _model[PlayerSide.White, LineType.Line8].Initialize(3, PlayerSide.White);
+            _model[PlayerSide.White, LineType.Line12].Initialize(5, PlayerSide.Black);
+            _model[PlayerSide.White, LineType.Line13].Initialize(5, PlayerSide.White);
+            _model[PlayerSide.White, LineType.Line17].Initialize(3, PlayerSide.Black);
+            _model[PlayerSide.White, LineType.Line19].Initialize(5, PlayerSide.Black);
+            _model[PlayerSide.White, LineType.Line24].Initialize(2, PlayerSide.White);
 
-            _cursor = -1;
-            _pickedFrom = -1;
+            _cursor = null;
+            _pickedFrom = null;
             _pickedCount = 0;
-            BeginTurn();
+            ThrowDice();
+            ShowAllowed();
         }
 
         public void Move(bool left)
         {
-            if (_cursor >= 0)
-                Selected.Select(false);
-            if (_allowed.Count == 0)
-                _cursor = -1;
-            else
-            {
-                int i = _cursor >= 0 ? _allowed.IndexOf(_cursor) : -1;
-                if (left)
-                {
-                    i--;
-                    if (i < 0)
-                        i = _allowed.Count - 1;
-                }
-                else
-                {
-                    i++;
-                    if (i >= _allowed.Count)
-                        i = 0;
-                }
-                _cursor = _allowed[i];
-                Selected.Select(true);
-            }
+            ShowAllowed();
         }
 
         public void Action()
         {
-            if (_pickedCount > 0 && _pickedFrom != _cursor)
-            {
-                _model[_pickedFrom].Unpick();
-                Selected.Put(White);
-                _pickedCount--;
-                if (_pickedCount == 0)
-                    _pickedFrom = -1;
-            }
-            else
-            {
-                Selected.Pick();
-                _pickedCount++;
-                _pickedFrom = _cursor;
-            }
             ShowAllowed();
-        }
-
-        private void BeginTurn()
-        {
-            if (_cursor >= 0)
-                Selected.Select(false);
-            ThrowDice();
-            if (_cursor >= 0)
-                Selected.Select(true);
-            else
-            {
-                _currentPlayer = 1 - _currentPlayer;
-                // BeginTurn();
-            }
         }
 
         private void ThrowDice()
         {
             int d1 = _random.Next(6) + 1;
             int d2 = _random.Next(6) + 1;
-            _diceDouble = d1 == d2;
             _dice.Clear();
             _dice.Add(d1);
             _dice.Add(d2);
-            if (_diceDouble)
-            {
-                _dice.Add(d1);
-                _dice.Add(d1);
-            }
-
-            SetDiceValues();
+            if (d1 == d2)
+                _dice.AddRange(_dice);
             ShowDice();
-            ShowAllowed();
-        }
-
-        private void SetDiceValues()
-        {
-            _diceValues.Clear();
-            if (_dice.Count == 0)
-                return;
-            int d1 = _dice[0];
-            _diceValues.Add(d1);
-            if (_dice.Count > 1)
-            {
-                if (_diceDouble)
-                    for (int i = 1; i < _dice.Count; i++)
-                        _diceValues.Add(d1 * (i + 1));
-                else
-                {
-                    int d2 = _dice[1];
-                    _diceValues.Add(d2);
-                    _diceValues.Add(d1 + d2);
-                }
-            }
         }
 
         private void ShowDice()
@@ -154,66 +72,101 @@ namespace iobloc
 
         private void ShowAllowed()
         {
-            _allowed.Clear();
+            _allowedMoves.Clear();
             _model.ClearSelection();
-            if (_dice.Count == 0 || _diceValues.Count == 0)
-                return;
-
-            if (_model[TW + _currentPlayer].Count > 0)
+            if (_dice.Count == 0)
             {
-                int from = TW + _currentPlayer;
-                for (int i = 0; i < 6; i++)
+                EndTurn();
+                return;
+            }
+
+            SetAllowed();
+            if(_allowedMoves.Count == 0)
+            {
+                EndTurn();
+                return;
+            }
+            foreach(LineType line in _allowedMoves.Keys)
+                _model[_player, line].Select(true, true);
+
+            _cursor = _allowedMoves.Keys.Last();
+            Selected.Select(true);
+        }
+
+        private void SetAllowed()
+        {
+            if (_model[_player, LineType.Taken].Count > 0)
+            {
+                LineType from = LineType.Taken;
+                for (int entry = 1; entry <= 6; entry++)
                 {
-                    int to = White ? 23 - i : i;
-                    if (_diceValues.Contains(i + 1) && (_model[to].Count <= 1 || _model[to].IsPlayerWhite == White))
-                    {
-                        _allowed.Add(from);
-                        break;
-                    }
+                    LineType to = (LineType)(24 - entry);
+                    if (_dice.Contains(entry) && _model[_player, to].CanPut(_player))
+                        AddMove(from, to);
                 }
             }
             else
             {
-                for (int from = 0; from < 24; from++)
-                    if (_model[from].Count > 0 && _model[from].IsPlayerWhite == White)
-                        foreach (int v in _diceValues)
+                for (int idxFrom = 0; idxFrom < 24; idxFrom++)
+                {
+                    LineType from = (LineType)idxFrom;
+                    if (_model[_player, from].HasAny(_player))
+                        for (int idxTo = idxFrom - 1; idxTo >= 0 && idxTo >= idxFrom - 6; idxTo--)
                         {
-                            int to = White ? from - v : from + v;
-                            if (to >= 0 && to < 24 && (_model[to].Count <= 1 || _model[to].IsPlayerWhite == White))
-                            {
-                                _allowed.Add(from);
-                                break;
-                            }
+                            int d = idxFrom - idxTo;
+                            LineType to = (LineType)idxTo;
+                            if (_dice.Contains(d) && _model[_player, to].CanPut(_player))
+                                AddMove(from, to);
                         }
+                }
+
                 bool canTakeOut = true;
                 for (int i = 0; i < 18 && canTakeOut; i++)
                 {
-                    int line = White ? i + 6 : i;
-                    if (_model[line].Count > 0 && _model[line].IsPlayerWhite == White)
+                    LineType line = (LineType)(i + 6);
+                    if (_model[_player, line].HasAny(_player))
                         canTakeOut = false;
                 }
                 if (canTakeOut)
                 {
-                    int to = OW + _currentPlayer;
-                    for (int i = 0; i < 6; i++)
+                    LineType to = LineType.Out;
+                    for (int i = 1; i <= 6; i++)
                     {
-                        int from = White ? i : 23 - i;
-                        if (_model[from].Count > 0 && _model[from].IsPlayerWhite == White)
+                        LineType from = (LineType)(i - 1);
+                        if (_model[_player, from].HasAny(_player))
                         {
-                            bool hasValueToTakeOut = false;
-                            foreach (int v in _diceValues)
-                                if (v >= i + 1)
-                                    hasValueToTakeOut = true;
-                            if (hasValueToTakeOut)
-                                _allowed.Add(from);
+                            if (_dice.Contains(i))
+                                AddMove(from, to);
+                            else
+                            {
+                                bool clearLeft = true;
+                                for (int j = i + 1; j <= 6 && clearLeft; j++)
+                                    if (_model[_player, (LineType)j].HasAny(_player))
+                                        clearLeft = false;
+                                if (clearLeft)
+                                    for (int j = i + 1; j <= 6; j++)
+                                        if (_dice.Contains(j))
+                                            AddMove(from, to);
+                            }
                         }
                     }
                 }
             }
+        }
 
-            _allowed.Sort();
-            foreach (var m in _allowed)
-                _model[m].Select(true, true);
+        private void AddMove(LineType from, LineType to)
+        {
+            if (_allowedMoves.ContainsKey(from))
+            {
+                if (!_allowedMoves[from].Contains(to))
+                    _allowedMoves[from].Add(to);
+            }
+            else
+                _allowedMoves.Add(from, new List<LineType> { to });
+        }
+
+        private void EndTurn()
+        {
         }
     }
 }
