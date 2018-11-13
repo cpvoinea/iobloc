@@ -72,7 +72,7 @@ namespace iobloc
             Width = toCol - fromCol + 1;
             Height = toRow - fromRow + 1;
             IsTextMode = isTextMode;
-            HasChanges = false;
+            HasChanges = true;
             _grid = new int[Height, Width];
         }
 

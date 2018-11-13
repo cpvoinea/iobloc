@@ -4,7 +4,7 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <RuntimeIdentifiers>win-x86,win-x64,linux-x64,osx-x64</RuntimeIdentifiers>
     <PackageId>iobloc</PackageId>
-    <Version>2.5.2</Version>
+    <Version>2.5.3</Version>
     <Authors>io</Authors>
     <IsPackable>true</IsPackable>
   </PropertyGroup>

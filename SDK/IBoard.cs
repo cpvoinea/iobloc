@@ -35,15 +35,15 @@ namespace iobloc
         /// <value></value>
         int FrameInterval { get; }
         /// <summary>
-        /// Is true while board is running, false when board needs to exit
-        /// </summary>
-        /// <value></value>
-        bool IsRunning { get; }
-        /// <summary>
         /// List of shortcut keys which are handled by board
         /// </summary>
         /// <value></value>
         string[] AllowedKeys { get; }
+        /// <summary>
+        /// Is true while board is running, false when board needs to exit
+        /// </summary>
+        /// <value></value>
+        bool IsRunning { get; }
 
         /// <summary>
         /// Initialize the board and start running
