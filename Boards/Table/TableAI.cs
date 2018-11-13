@@ -1,8 +1,8 @@
 namespace iobloc
 {
-    static class TableAI
+    class TableAI
     {
-        public static int[,] GetMoveMatrix(int[] lines, int[] dice)
+        private int[,] GetMoveMatrix(int[] lines, int[] dice)
         {
             int[,] result = new int[28, 28];
 

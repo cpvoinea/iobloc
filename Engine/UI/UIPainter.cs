@@ -77,7 +77,7 @@ namespace iobloc
             int w = border.Width;
             int h = border.Height;
             // fit window to border
-            Resize(w, h);
+            //Resize(w, h);
 
             for (int row = 0; row < h; row++)
             {
