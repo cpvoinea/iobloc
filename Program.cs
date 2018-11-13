@@ -7,6 +7,7 @@ namespace iobloc
     {
         static void Main(string[] args)
         {
+            // new DemoBoard().Run();
             // rudimentary logging
             StringBuilder errors = new StringBuilder();
             try

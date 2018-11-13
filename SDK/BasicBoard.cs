@@ -62,7 +62,7 @@ namespace iobloc
             UIPanel main = new UIPanel(1, 1, mainPanelHeight, mainPanelWidth);
             Panels = new Dictionary<string, UIPanel> { { MAIN, main } };
             if (!string.IsNullOrEmpty(text))
-                main.SetText(text.Split(','));
+                main.SetText(text.Split(','), false);
             FrameInterval = frameInterval;
             AllowedKeys = allowedKeys.Split(',');
         }
@@ -124,6 +124,7 @@ namespace iobloc
             }
             finally
             {
+                Console.Clear();
                 Console.CursorVisible = true;
                 Console.ResetColor();
             }

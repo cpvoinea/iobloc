@@ -88,7 +88,7 @@ namespace iobloc
         }
 
         /// <summary>
-        /// Set lines of text for text mode
+        /// Set lines of text for text mode, enters text mode and marks changes if required
         /// </summary>
         /// <param name="textLines">text</param>
         /// <param name="setTextMode">switch to text mode</param>
@@ -103,7 +103,7 @@ namespace iobloc
         }
 
         /// <summary>
-        /// Change first line of text
+        /// Change first line of text, does not enter change mode but marks changes if already in text mode
         /// </summary>
         /// <param name="text"></param>
         public void SetText(string text)
@@ -117,7 +117,7 @@ namespace iobloc
         }
 
         /// <summary>
-        /// Toggle between text mode and matrix mode
+        /// Toggle between text mode and matrix mode and marks changes
         /// </summary>
         public void SwitchMode()
         {

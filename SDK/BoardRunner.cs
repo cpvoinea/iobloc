@@ -52,11 +52,13 @@ namespace iobloc
                 if (paused)
                 {
                     Paint(board, true); // toggle to paused and draw
+                    if (!board.IsRunning)
+                        break;
                     UIPainter.InputWait(); // wait for any key press
                     Paint(board, true); // unpause and draw
                 }
 
-                if (board.FrameInterval > 0)
+                if (board.IsRunning && board.FrameInterval > 0)
                 {
                     Thread.Sleep(20);
                     ticks = (int)DateTime.Now.Subtract(start).TotalMilliseconds;
