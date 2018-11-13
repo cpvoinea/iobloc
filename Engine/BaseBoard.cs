@@ -128,10 +128,7 @@ namespace iobloc
             _score = score;
 
             if (Panels.ContainsKey(Pnl.Score))
-            {
-                Panels[Pnl.Score].Text = new[] { string.Format($"{score,3}") };
-                Panels[Pnl.Score].HasChanges = true;
-            }
+                Panels[Pnl.Score].SetText(string.Format($"{score,3}"));
             SetHighscore(score);
 
             if (LevelThreshold > 0 && score >= LevelThreshold * (_level + 1))
@@ -149,10 +146,7 @@ namespace iobloc
             Highscore = score;
 
             if (Panels.ContainsKey(Pnl.Highscore))
-            {
-                Panels[Pnl.Highscore].Text = new[] { string.Format($"{Highscore,3}") };
-                Panels[Pnl.Highscore].HasChanges = true;
-            }
+                Panels[Pnl.Highscore].SetText(string.Format($"{Highscore,3}"));
             Serializer.UpdateHighscore(ID, score);
         }
 
@@ -173,10 +167,7 @@ namespace iobloc
                 FrameInterval = Serializer.GetLevelInterval(FrameMultiplier, _level);
 
                 if (Panels.ContainsKey(Pnl.Level))
-                {
-                    Panels[Pnl.Level].Text = new[] { string.Format($"L{_level,2}") };
-                    Panels[Pnl.Level].HasChanges = true;
-                }
+                    Panels[Pnl.Level].SetText(string.Format($"L{_level,2}"));
             }
         }
 
@@ -210,18 +201,18 @@ namespace iobloc
             if (Type != BoardType.Table)
             {
                 Main = new UIPanel(1, 1, Height, Width);
-                Main.Text = Help;
+                Main.SetText(Help, false);
                 Panels.Add(Pnl.Main, Main);
             }
 
             // don't show level for these boards
             if (!new BoardType[] { BoardType.Fireworks, BoardType.RainingBlood, BoardType.Paint, BoardType.Table }.Contains(Type))
-                Panels.Add(Pnl.Level, new UIPanel(Border.Height - 1, (Border.Width + 1) / 2 - 2, Border.Height - 1, (Border.Width + 1) / 2, 1));
+                Panels.Add(Pnl.Level, new UIPanel(Border.Height - 1, (Border.Width + 1) / 2 - 2, Border.Height - 1, (Border.Width + 1) / 2, true));
             if (Serializer.Highscores.ContainsKey(ID)) // don't add score panel if board doesn't keep score
             {
                 if (Border.Width > 8) // don't add highscore panel if there's no room
-                    Panels.Add(Pnl.Highscore, new UIPanel(0, 1, 0, 3, 1));
-                Panels.Add(Pnl.Score, new UIPanel(0, Border.Width - 4, 0, Border.Width - 2, 1));
+                    Panels.Add(Pnl.Highscore, new UIPanel(0, 1, 0, 3, true));
+                Panels.Add(Pnl.Score, new UIPanel(0, Border.Width - 4, 0, Border.Width - 2, true));
             }
         }
 
@@ -246,7 +237,7 @@ namespace iobloc
         protected virtual void Change(bool set)
         {
             if (set)
-                Main.HasChanges = true;
+                Main.Change();
         }
 
         /// <summary>
@@ -285,7 +276,7 @@ namespace iobloc
             Next = null;
             IsRunning = true;
             foreach (var p in Panels.Values) // force refresh of panels
-                p.HasChanges = true;
+                p.Change();
         }
 
         /// <summary>
@@ -303,8 +294,7 @@ namespace iobloc
         /// </summary>
         public virtual void TogglePause()
         {
-            Main.IsText = !Main.IsText;
-            Main.HasChanges = true;
+            Main.SwitchMode();
         }
 
         /// <summary>

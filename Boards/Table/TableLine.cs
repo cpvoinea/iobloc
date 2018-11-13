@@ -127,7 +127,7 @@ namespace iobloc
 
         private void Change()
         {
-            Panel.HasChanges = true;
+            Panel.Change();
         }
     }
 }

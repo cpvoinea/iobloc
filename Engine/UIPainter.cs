@@ -102,7 +102,7 @@ namespace iobloc
         /// <param name="panel">panel to draw</param>
         public static void DrawPanel(UIPanel panel)
         {
-            if (panel.IsText)
+            if (panel.IsTextMode)
                 DrawPanelText(panel, panel.Text);
             else
                 DrawPanelColor(panel);

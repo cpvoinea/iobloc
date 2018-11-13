@@ -104,7 +104,7 @@ namespace iobloc
                 if (p.HasChanges)
                 {
                     UIPainter.DrawPanel(p);
-                    p.HasChanges = false;
+                    p.Change(false);
                 }
         }
     }

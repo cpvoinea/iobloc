@@ -42,17 +42,17 @@ namespace iobloc
         /// Lines of text to be displayed in text mode
         /// </summary>
         /// <value></value>
-        public string[] Text { get; set; }
+        internal string[] Text { get; private set; }
         /// <summary>
         /// Indicates if text mode (true) or color mode (false)
         /// </summary>
         /// <value></value>
-        public bool IsText { get; set; }
+        internal bool IsTextMode { get; private set; }
         /// <summary>
         /// If true, panel has changed and should be drawn again
         /// </summary>
         /// <value></value>
-        public bool HasChanges { get; set; }
+        internal bool HasChanges { get; private set; }
 
         /// <summary>
         /// Initialize panel
@@ -64,15 +64,14 @@ namespace iobloc
         /// <param name="textLength">Set to a value > 0 to enter text mode and initialize text lines array to this length</param>
         /// <param name="symbol">Character to be drawn in different colors as configured in grid matrix, defaults to full block</param>
         /// <returns></returns>
-        public UIPanel(int fromRow, int fromCol, int toRow, int toCol, int textLength = 0, char symbol = (char)UISymbol.BlockFull)
+        public UIPanel(int fromRow, int fromCol, int toRow, int toCol, bool isTextMode = false, char symbol = (char)UISymbol.BlockFull)
         {
             Symbol = symbol;
             FromRow = fromRow;
             FromCol = fromCol;
             Width = toCol - fromCol + 1;
             Height = toRow - fromRow + 1;
-            Text = new string[textLength];
-            IsText = textLength > 0;
+            IsTextMode = isTextMode;
             HasChanges = false;
             _grid = new int[Height, Width];
         }
@@ -86,6 +85,53 @@ namespace iobloc
             for (int i = 0; i < Height; i++)
                 for (int j = 0; j < Width; j++)
                     this[i, j] = val;
+        }
+
+        /// <summary>
+        /// Set lines of text for text mode
+        /// </summary>
+        /// <param name="textLines">text</param>
+        /// <param name="setTextMode">switch to text mode</param>
+        public void SetText(string[] textLines, bool setTextMode = true)
+        {
+            Text = textLines;
+            if (setTextMode)
+            {
+                IsTextMode = true;
+                HasChanges = true;
+            }
+        }
+
+        /// <summary>
+        /// Change first line of text
+        /// </summary>
+        /// <param name="text"></param>
+        public void SetText(string text)
+        {
+            if (Text == null || Text.Length != 1)
+                Text = new[] { text };
+            else
+                Text[0] = text;
+            if (IsTextMode)
+                HasChanges = true;
+        }
+
+        /// <summary>
+        /// Toggle between text mode and matrix mode
+        /// </summary>
+        public void SwitchMode()
+        {
+            IsTextMode = !IsTextMode;
+            HasChanges = true;
+        }
+
+        /// <summary>
+        /// Mark the panel with changes or not
+        /// </summary>
+        /// <param name="hasChanges"></param>
+        public void Change(bool hasChanges = true)
+        {
+            HasChanges = hasChanges;
         }
     }
 }
