@@ -3,8 +3,13 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <RuntimeIdentifiers>win-x86,win-x64,linux-x64,osx-x64</RuntimeIdentifiers>
+    <PackageId>iobloc</PackageId>
+    <Version>2.5</Version>
+    <Authors>io</Authors>
+    <IsPackable>true</IsPackable>
   </PropertyGroup>
+
   <ItemGroup>
-    <PackageReference Include="Microsoft.DotNet.ILCompiler" Version="1.0.0-alpha-*" />
+    <!-- <PackageReference Include="Microsoft.DotNet.ILCompiler" Version="1.0.0-alpha-*" /> -->
   </ItemGroup>
 </Project>

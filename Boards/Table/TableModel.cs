@@ -53,27 +53,6 @@ namespace iobloc
             _pnlDice.HasChanges = true;
         }
 
-        public int[] GetLines(PlayerSide player)
-        {
-            int[] result = new int[28];
-            for (int i = 0; i < 24; i++)
-            {
-                int l = player == PlayerSide.White ? i : 23 - i;
-                var line = _lines[l];
-                result[i] = line.Player == player ? line.Count : -line.Count;
-            }
-            int tl = 24 + (int)player;
-            result[24] = _lines[tl].Count;
-            int otl = 25 - (int)player;
-            result[25] = _lines[otl].Count;
-            int ol = 26 + (int)player;
-            result[26] = _lines[ol].Count;
-            int ool = 27 - (int)player;
-            result[27] = _lines[ool].Count;
-
-            return result;
-        }
-
         private int GetIndex(PlayerSide player, LineType type)
         {
             int index = (int)type;
