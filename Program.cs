@@ -13,8 +13,10 @@ namespace iobloc
             {
                 // optional external settings file
                 var settingsFilePath = args.Length > 0 ? args[0] : null;
-                // initialization of environment and open to menu
-                Engine.Start(settingsFilePath);
+                // initialization of environment
+                Engine.Initialize(settingsFilePath);
+                // open to menu
+                Engine.Start();
             }
             catch (Exception ex)
             {

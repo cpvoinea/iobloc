@@ -1,22 +1,28 @@
 namespace iobloc
 {
     /// <summary>
-    /// Entry point to application, handle setup and disposal
+    /// Entry point to application, handle initialization and disposal
     /// </summary>
     static class Engine
     {
         /// <summary>
         /// Load settings from default or external file,
-        /// Initialize UI,
-        /// Display menu board,
-        /// Handle linking of boards (menu->game->animation->menu->etc)
+        /// Initialize UI
         /// </summary>
-        /// <param name="settingsFilePath">optional external settings file path, if null use default settings</param>
-        public static void Start(string settingsFilePath)
+        /// <param name="settingsFilePath"></param>
+        public static void Initialize(string settingsFilePath)
         {
             Serializer.Load(settingsFilePath);
             UIPainter.Initialize();
+        }
 
+        /// <summary>
+        /// Display menu board
+        /// Handle linking of boards (menu->game->animation->menu->etc)
+        /// </summary>
+        /// <param name="settingsFilePath">optional external settings file path, if null use default settings</param>
+        public static void Start()
+        {
             IBaseBoard board = Serializer.GetBoard((int)BoardType.Menu);
             while (board != null)
             {
