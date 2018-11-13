@@ -29,7 +29,7 @@ namespace iobloc
 
                 bool canTakeOut = true;
                 for (int i = 6; i < 24 && canTakeOut; i++)
-                    if( lines[i] > 0 )
+                    if (lines[i] > 0)
                         canTakeOut = false;
                 if (canTakeOut)
                 {

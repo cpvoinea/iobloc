@@ -46,8 +46,20 @@ namespace iobloc
         {
             switch (key)
             {
-                case "D1": case "D2": case "D3": case "D4": case "D5": case "D6": case "D7":
-                case "NumPad1": case "NumPad2": case "NumPad3": case "NumPad4": case "NumPad5": case "NumPad6": case "NumPad7":
+                case "D1":
+                case "D2":
+                case "D3":
+                case "D4":
+                case "D5":
+                case "D6":
+                case "D7":
+                case "NumPad1":
+                case "NumPad2":
+                case "NumPad3":
+                case "NumPad4":
+                case "NumPad5":
+                case "NumPad6":
+                case "NumPad7":
                     if (_paint)
                     {
                         _color = int.Parse(key.Substring(key.Length - 1));
@@ -56,7 +68,8 @@ namespace iobloc
                         Change(true);
                     }
                     break;
-                case "D8": case "NumPad8":
+                case "D8":
+                case "NumPad8":
                     if (_paint)
                     {
                         _light = !_light;
@@ -64,14 +77,16 @@ namespace iobloc
                         Change(true);
                     }
                     break;
-                case "D9": case "NumPad9":
+                case "D9":
+                case "NumPad9":
                     if (_paint)
                     {
                         _color = 15;
                         Change(true);
                     }
                     break;
-                case "D0": case "NumPad0":
+                case "D0":
+                case "NumPad0":
                     if (_paint)
                     {
                         _color = 0;
