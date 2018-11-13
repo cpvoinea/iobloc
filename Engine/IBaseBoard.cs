@@ -9,6 +9,6 @@ namespace iobloc
         /// Reference to next board to run, null to terminate
         /// </summary>
         /// <value></value>
-        IBaseBoard Next { get; }
+        IBoard Next { get; }
     }
 }

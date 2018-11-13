@@ -49,8 +49,8 @@ namespace iobloc
 
         public void ShowDice(string[] dice)
         {
-            _pnlDice.SetText(dice, true);
-            _pnlDice.Change(true);
+            _pnlDice.Text = dice;
+            _pnlDice.HasChanges = true;
         }
 
         public int[] GetLines(PlayerSide player)

@@ -48,13 +48,15 @@ namespace iobloc
         protected override void Initialize()
         {
             Level = 0; // for frame multiplier
-            Panels[Pnl.Table.UpperLeft].SetText(Help, false);
+            Panels[Pnl.Table.UpperLeft].Text = Help;
             _controller.Initialize();
         }
 
         public override void TogglePause()
         {
-            Panels[Pnl.Table.UpperLeft].ToggleText();
+            var pnl = Panels[Pnl.Table.UpperLeft];
+            pnl.IsText = !pnl.IsText;
+            pnl.HasChanges = true;
         }
 
         public override void HandleInput(string key)

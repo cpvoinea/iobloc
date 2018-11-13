@@ -28,7 +28,16 @@ namespace iobloc
             {
                 BoardRunner.Run(board);
                 // each IBaseBoard has a link to the next one until exit is called
-                board = board.Next;
+                IBoard next = board.Next;
+                if (next is IBaseBoard) // base board selected
+                    board = next as IBaseBoard;
+                else if (next != null) // custom board selected
+                {
+                    BoardRunner.Run(next);
+                    board = Serializer.GetBoard((int)BoardType.Menu);
+                }
+                else // exit
+                    board = null;
             }
         }
 

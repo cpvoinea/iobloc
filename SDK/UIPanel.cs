@@ -17,27 +17,17 @@ namespace iobloc
         /// Character to be drawn in different colors as configured in grid matrix
         /// </summary>
         /// <value></value>
-        public char Symbol { get; private set; }
+        internal char Symbol { get; private set; }
         /// <summary>
         /// Distance from top where panel begins
         /// </summary>
         /// <value></value>
-        public int FromRow { get; private set; }
+        internal int FromRow { get; private set; }
         /// <summary>
         /// Distance from left where panel begins
         /// </summary>
         /// <value></value>
-        public int FromCol { get; private set; }
-        /// <summary>
-        /// Distance from top where panel ends, including last row
-        /// </summary>
-        /// <value></value>
-        public int ToRow { get; private set; }
-        /// <summary>
-        /// Distance from left where panel ends, including last column
-        /// </summary>
-        /// <value></value>
-        public int ToCol { get; private set; }
+        internal int FromCol { get; private set; }
         /// <summary>
         /// Number of columns in panel
         /// </summary>
@@ -52,17 +42,17 @@ namespace iobloc
         /// Lines of text to be displayed in text mode
         /// </summary>
         /// <value></value>
-        public string[] Text { get; private set; }
+        public string[] Text { get; set; }
         /// <summary>
         /// Indicates if text mode (true) or color mode (false)
         /// </summary>
         /// <value></value>
-        public bool IsText { get; private set; }
+        public bool IsText { get; set; }
         /// <summary>
         /// If true, panel has changed and should be drawn again
         /// </summary>
         /// <value></value>
-        public bool HasChanges { get; private set; }
+        public bool HasChanges { get; set; }
 
         /// <summary>
         /// Initialize panel
@@ -79,36 +69,12 @@ namespace iobloc
             Symbol = symbol;
             FromRow = fromRow;
             FromCol = fromCol;
-            ToRow = toRow;
-            ToCol = toCol;
             Width = toCol - fromCol + 1;
             Height = toRow - fromRow + 1;
             Text = new string[textLength];
             IsText = textLength > 0;
             HasChanges = false;
             _grid = new int[Height, Width];
-        }
-
-        public void SetText(string[] text, bool textMode)
-        {
-            Text = text;
-            IsText = textMode;
-        }
-
-        public void SetText(string text)
-        {
-            SetText(new[] { text }, true);
-        }
-
-        public void ToggleText()
-        {
-            IsText = !IsText;
-            HasChanges = true;
-        }
-
-        public void Change(bool hasChanges)
-        {
-            HasChanges = hasChanges;
         }
 
         /// <summary>
@@ -120,7 +86,6 @@ namespace iobloc
             for (int i = 0; i < Height; i++)
                 for (int j = 0; j < Width; j++)
                     this[i, j] = val;
-            HasChanges = true;
         }
     }
 }

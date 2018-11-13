@@ -48,10 +48,8 @@ namespace iobloc
                 _lost = true;
             }
             else
-            {
                 Main[h, 1] = Main[h - 1, 1] = set ? CP : 0;
-                base.Change(set);
-            }
+            base.Change(set);
         }
 
         public override void HandleInput(string key)

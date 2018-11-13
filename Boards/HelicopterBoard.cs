@@ -43,11 +43,9 @@ namespace iobloc
             if (set && _lost)
                 Main.Clear(CE);
             else
-            {
                 for (int i = 0; i < BlockWidth; i++)
                     Main[_distance, i + 1] = set ? CP : 0;
-                base.Change(set);
-            }
+            base.Change(set);
         }
 
         public override void HandleInput(string key)

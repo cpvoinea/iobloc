@@ -13,17 +13,17 @@ namespace iobloc
         /// <summary>
         /// Access to box drawing symbol matrix
         /// </summary>
-        public int this[int row, int col] => _grid[row, col];
+        internal int this[int row, int col] => _grid[row, col];
         /// <summary>
         /// Maximum width
         /// </summary>
         /// <value></value>
-        public int Width { get; private set; }
+        internal int Width { get; private set; }
         /// <summary>
         /// Maximum height
         /// </summary>
         /// <value></value>
-        public int Height { get; private set; }
+        internal int Height { get; private set; }
 
         /// <summary>
         /// Initialize to a rectangle of width x height with double line borders

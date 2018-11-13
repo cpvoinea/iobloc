@@ -89,7 +89,7 @@ namespace iobloc
         /// Reference to next board to run, null to terminate
         /// </summary>
         /// <value></value>
-        public IBaseBoard Next { get; protected set; }
+        public IBoard Next { get; protected set; }
         /// <summary>
         /// Get current score. Setting the score triggers level progression, highscore update and winning conditions
         /// </summary>
@@ -129,8 +129,8 @@ namespace iobloc
 
             if (Panels.ContainsKey(Pnl.Score))
             {
-                Panels[Pnl.Score].SetText(string.Format($"{score,3}"));
-                Panels[Pnl.Score].Change(true);
+                Panels[Pnl.Score].Text = new[] { string.Format($"{score,3}") };
+                Panels[Pnl.Score].HasChanges = true;
             }
             SetHighscore(score);
 
@@ -150,8 +150,8 @@ namespace iobloc
 
             if (Panels.ContainsKey(Pnl.Highscore))
             {
-                Panels[Pnl.Highscore].SetText(string.Format($"{Highscore,3}"));
-                Panels[Pnl.Highscore].Change(true);
+                Panels[Pnl.Highscore].Text = new[] { string.Format($"{Highscore,3}") };
+                Panels[Pnl.Highscore].HasChanges = true;
             }
             Serializer.UpdateHighscore(ID, score);
         }
@@ -174,8 +174,8 @@ namespace iobloc
 
                 if (Panels.ContainsKey(Pnl.Level))
                 {
-                    Panels[Pnl.Level].SetText(string.Format($"L{_level,2}"));
-                    Panels[Pnl.Level].Change(true);
+                    Panels[Pnl.Level].Text = new[] { string.Format($"L{_level,2}") };
+                    Panels[Pnl.Level].HasChanges = true;
                 }
             }
         }
@@ -210,7 +210,7 @@ namespace iobloc
             if (Type != BoardType.Table)
             {
                 Main = new UIPanel(1, 1, Height, Width);
-                Main.SetText(Help, false);
+                Main.Text = Help;
                 Panels.Add(Pnl.Main, Main);
             }
 
@@ -246,7 +246,7 @@ namespace iobloc
         protected virtual void Change(bool set)
         {
             if (set)
-                Main.Change(true);
+                Main.HasChanges = true;
         }
 
         /// <summary>
@@ -285,7 +285,7 @@ namespace iobloc
             Next = null;
             IsRunning = true;
             foreach (var p in Panels.Values) // force refresh of panels
-                p.Change(true);
+                p.HasChanges = true;
         }
 
         /// <summary>
@@ -303,7 +303,8 @@ namespace iobloc
         /// </summary>
         public virtual void TogglePause()
         {
-            Main.ToggleText();
+            Main.IsText = !Main.IsText;
+            Main.HasChanges = true;
         }
 
         /// <summary>

@@ -9,28 +9,36 @@ namespace iobloc
         /// Start point is row vertical lines or column for horizontal lines
         /// </summary>
         /// <value></value>
-        public int From { get; private set; }
+        internal int From { get; private set; }
         /// <summary>
         /// End point is row vertical lines or column for horizontal lines
         /// </summary>
         /// <value></value>
-        public int To { get; private set; }
+        internal int To { get; private set; }
         /// <summary>
         /// Line placement is a row for horizontal lines and a column for vertical lines
         /// </summary>
         /// <value></value>
-        public int Position { get; private set; }
+        internal int Position { get; private set; }
         /// <summary>
         /// Orientation
         /// </summary>
         /// <value></value>
-        public bool IsVertical { get; private set; }
+        internal bool IsVertical { get; private set; }
         /// <summary>
         /// Type, either single or double
         /// </summary>
         /// <value></value>
-        public bool IsSingle { get; private set; }
+        internal bool IsSingle { get; private set; }
 
+        /// <summary>
+        /// Component of border
+        /// </summary>
+        /// <param name="from">starting position - distance from left if horizontal, distance from top if vertical</param>
+        /// <param name="to">ending position (inclusive)</param>
+        /// <param name="position">cross position - distance from top if horizontal, distance from left if vertical</param>
+        /// <param name="isVertical">vertical (true) or horizontal line</param>
+        /// <param name="isSingle">single line (true) or double line</param>
         public UIBorderLine(int from, int to, int position, bool isVertical, bool isSingle = true)
         {
             if (from < to)
@@ -53,7 +61,7 @@ namespace iobloc
         /// </summary>
         /// <param name="line">line to check against</param>
         /// <returns>symbol code</returns>
-        public int GetIntersectionSymbol(UIBorderLine line)
+        internal int GetIntersectionSymbol(UIBorderLine line)
         {
             if (IsVertical == line.IsVertical // parallel lines
                 || Position < line.From || Position > line.To || line.Position < From || line.Position > To) // no intersection

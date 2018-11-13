@@ -76,7 +76,7 @@ namespace iobloc
             Console.Clear();
             int w = border.Width;
             int h = border.Height;
-            // fit window to border
+            // fit window to border - don't use to maintain compatibility across OS console types
             //Resize(w, h);
 
             for (int row = 0; row < h; row++)
