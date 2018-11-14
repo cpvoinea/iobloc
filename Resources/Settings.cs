@@ -52,7 +52,7 @@ namespace iobloc
                 {"AllowedKeys", "LeftArrow,RightArrow,UpArrow,DownArrow"},
                 {"FrameMultiplier", "4"},
                 {"LevelThreshold", "10"},
-                {"Width", "10"},
+                {"Width", "20"},
                 {"Height", "20"},
                 {"BlockWidth", "2"},
             });

@@ -25,9 +25,10 @@ namespace iobloc
                     if (_piece.Mask[i, j] > 0)
                     {
                         int gx = _piece.X - 1 + i;
-                        int gy = _piece.Y - 2 + j;
+                        int gy = (_piece.Y - 2 + j) * BlockWidth;
                         if (gx >= 0)
-                            Main[gx, gy] = set ? (int)_piece.Color : 0;
+                            for (int k = 0; k < BlockWidth; k++)
+                                Main[gx, gy + k] = set ? (int)_piece.Color : 0;
                     }
             base.Change(set);
         }
@@ -82,7 +83,7 @@ namespace iobloc
                     if (piece.Mask[i, j] > 0)
                     {
                         int gx = piece.X - 1 + i;
-                        int gy = piece.Y - 2 + j;
+                        int gy = (piece.Y - 2 + j) * BlockWidth;
                         bool free = gy >= 0 && gy < Width && gx < Height &&
                             (gx < 0 && ignoreTop || gx >= 0 && Main[gx, gy] == 0);
                         if (!free)
