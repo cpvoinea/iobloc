@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 
 namespace iobloc
@@ -237,7 +238,7 @@ namespace iobloc
         {
             if (!dic.ContainsKey(key))
                 return defVal;
-            return double.Parse(dic[key]);
+            return double.Parse(dic[key], NumberStyles.Float, CultureInfo.InvariantCulture);
         }
 
         /// <summary>

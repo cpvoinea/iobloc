@@ -8,8 +8,9 @@ namespace iobloc
     /// </summary>
     static class UIPainter
     {
-        // initial window values to restore to
+        private const bool SAFE_MODE = true;
         private static int WinWidth = 48, WinHeight = 24, BuffWidth = 48, BuffHeight = 192;
+        private static int CurrentBorderHeight;
 
         /// <summary>
         /// Resize window to fit a border - not working on all OS
@@ -43,10 +44,13 @@ namespace iobloc
             // not hiding the cursor is sometimes usefull for debugging
             Console.CursorVisible = false;
             // remember initial values
-            WinWidth = Console.WindowWidth;
-            WinHeight = Console.WindowHeight;
-            BuffWidth = Console.BufferWidth;
-            BuffHeight = Console.BufferHeight;
+            if (!SAFE_MODE)
+            {
+                WinWidth = Console.WindowWidth;
+                WinHeight = Console.WindowHeight;
+                BuffWidth = Console.BufferWidth;
+                BuffHeight = Console.BufferHeight;
+            }
         }
 
         /// <summary>
@@ -59,12 +63,13 @@ namespace iobloc
             // show cursor again
             Console.CursorVisible = true;
             // restore initial values
-            try
-            {
-                Console.SetWindowSize(WinWidth, WinHeight);
-                Console.SetBufferSize(BuffWidth, BuffHeight);
-            }
-            catch { }
+            if (!SAFE_MODE)
+                try
+                {
+                    Console.SetWindowSize(WinWidth, WinHeight);
+                    Console.SetBufferSize(BuffWidth, BuffHeight);
+                }
+                catch { }
         }
 
         /// <summary>
@@ -77,7 +82,10 @@ namespace iobloc
             int w = border.Width;
             int h = border.Height;
             // fit window to border - don't use to maintain compatibility across OS console types
-            //Resize(w, h);
+            if (!SAFE_MODE)
+                Resize(w, h);
+            else
+                CurrentBorderHeight = h + 1;
 
             for (int row = 0; row < h; row++)
             {
@@ -172,7 +180,19 @@ namespace iobloc
         /// <returns>pressed key as string constant</returns>
         public static string InputWait()
         {
-            return Console.ReadKey(true).Key.ToString();
+            // on Mac the interception of key doesn't always work
+            // moving the cursor outside the border
+            if (SAFE_MODE)
+                Console.SetCursorPosition(0, CurrentBorderHeight);
+            var k = Console.ReadKey(true).Key.ToString();
+            // hiding pressed key
+            if (SAFE_MODE)
+            {
+                Console.SetCursorPosition(0, CurrentBorderHeight);
+                Console.Write("    ");
+            }
+
+            return k;
         }
 
         /// <summary>
