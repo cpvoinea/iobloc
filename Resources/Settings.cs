@@ -172,6 +172,8 @@ namespace iobloc
                 {"EnemyColor", "Red"},
                 {"NeutralColor", "Yellow"},
                 {"HighlightColor", "DarkGray"},
+                {"AssemblyPath", "iobloc.dll"},
+                {"ClassName", "iobloc.TableAI"},
             });
             // Menu
             Add(10, new Dictionary<string, string>());

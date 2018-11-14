@@ -1,7 +1,12 @@
 namespace iobloc
 {
-    class TableAI
+    class TableAI : ITableAI
     {
+        public int[][] GetMoves(int[] lines, int[] dice)
+        {
+            throw new System.NotImplementedException();
+        }
+
         private int[,] GetMoveMatrix(int[] lines, int[] dice)
         {
             int[,] result = new int[28, 28];

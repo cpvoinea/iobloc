@@ -68,15 +68,20 @@ namespace iobloc
                     string line = sr.ReadLine();
                     // first line contains board ID as key
                     int key = int.Parse(line.Split(' ')[0]);
+                    if (!Settings.ContainsKey(key))
+                        Settings.Add(key, new Dictionary<string, string>());
                     // empty line ends board settings
                     while (!string.IsNullOrEmpty(line) && !sr.EndOfStream)
                     {
                         line = sr.ReadLine();
                         // 2 words on each line (name = value) separated by space, extra words will be ignored as comments
-                        var attr = line.Split(' ');
+                        int i = line.IndexOf(' ');
+                        if (i <= 0)
+                            continue;
+                        string name = line.Substring(0, i);
+                        string val = line.Substring(i + 1);
                         // if setting name exists, it will be overwritten with file value as a string
-                        if (attr.Length >= 2 && Settings.ContainsKey(key) && Settings[key].ContainsKey(attr[0]))
-                            Settings[key][attr[0]] = attr[1];
+                        Settings[key][name] = val;
                     }
                 }
         }
@@ -227,17 +232,7 @@ namespace iobloc
             else
             {
                 var s = Settings[key];
-                try
-                {
-                    var asm = Assembly.LoadFrom(s[Settings.AssemblyPath]);
-                    if (asm != null)
-                    {
-                        var t = asm.GetType(s[Settings.ClassName]);
-                        if (t != null)
-                            board = asm.CreateInstance(t.FullName) as IBoard;
-                    }
-                }
-                catch { }
+                board = InstantiateFromAssembly<IBoard>(s[Settings.AssemblyPath], s[Settings.ClassName]);
             }
 
             if (board != null)
@@ -250,6 +245,22 @@ namespace iobloc
             if (!KeyToBoardIdMapping.ContainsKey(key))
                 return null;
             return GetBoard(KeyToBoardIdMapping[key]);
+        }
+
+        public static T InstantiateFromAssembly<T>(string assemblyPath, string className) where T : class
+        {
+            try
+            {
+                var asm = Assembly.LoadFrom(assemblyPath);
+                if (asm != null)
+                {
+                    var t = asm.GetType(className);
+                    if (t != null)
+                        return asm.CreateInstance(t.FullName) as T;
+                }
+            }
+            catch { }
+            return null;
         }
 
         /// <summary>
