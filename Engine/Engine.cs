@@ -23,19 +23,15 @@ namespace iobloc
         /// <param name="settingsFilePath">optional external settings file path, if null use default settings</param>
         public static void Start()
         {
-            IBaseBoard board = Serializer.GetBoard((int)BoardType.Menu);
+            IBoard menu = Serializer.GetBoard((int)BoardType.Menu);
+            IBoard board = menu;
             while (board != null)
             {
                 BoardRunner.Run(board);
-                // each IBaseBoard has a link to the next one until exit is called
-                IBoard next = board.Next;
-                if (next is IBaseBoard) // base board selected
-                    board = next as IBaseBoard;
-                else if (next != null) // custom board selected
-                {
-                    BoardRunner.Run(next);
-                    board = Serializer.GetBoard((int)BoardType.Menu);
-                }
+                if (board is IBaseBoard) // base board selected
+                    board = (board as IBaseBoard).Next; // continue to next board
+                else if (board != menu) // return to menu
+                    board = menu;
                 else // exit
                     board = null;
             }

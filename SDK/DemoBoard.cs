@@ -1,6 +1,6 @@
 namespace iobloc
 {
-    class DemoBoard : BasicBoard
+    public class DemoBoard : BasicBoard
     {
         int _cursor;
         bool _nailedIt;
@@ -8,10 +8,16 @@ namespace iobloc
         // this basic board has a main panel which is 14 blocks wide and 1 tall
         // is initialized as a color panel, the interval between frames is 100ms
         // and the only supported key is "I" which needs to be guessed as a game
-        public DemoBoard() : base(14, 1, null, 50, "I")
+        public DemoBoard() : base(14, 1, null, 50, "I") { }
+
+        public override void Start()
         {
             // set the pause screen help text without entering text mode
             MainPanel.SetText("Guess the key!");
+            _nailedIt = false;
+            if (MainPanel.IsTextMode)
+                MainPanel.SwitchMode();
+            base.Start();
         }
 
         // on each frame, if the key was not guessed then run an animation
@@ -39,7 +45,10 @@ namespace iobloc
         {
             // if key was already guessed, exit on next key press
             if (_nailedIt)
+            {
                 Stop();
+                return;
+            }
 
             // key was correctly guessed
             _nailedIt = true;
@@ -54,10 +63,12 @@ namespace iobloc
         {
             // if key was already guessed, exit on next key press
             if (_nailedIt)
+            {
                 Stop();
-            else
-                // otherwise just show the help screen
-                base.TogglePause();
+                return;
+            }
+
+            base.TogglePause();
         }
     }
 }

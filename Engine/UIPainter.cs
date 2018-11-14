@@ -8,7 +8,7 @@ namespace iobloc
     /// </summary>
     static class UIPainter
     {
-        private const bool SAFE_MODE = true;
+        private static bool SAFE_MODE = true; // made it static instead of const to avoid warnings
         private static int WinWidth = 48, WinHeight = 24, BuffWidth = 48, BuffHeight = 192;
         private static int CurrentBorderHeight;
 

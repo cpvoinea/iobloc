@@ -7,6 +7,9 @@ namespace iobloc
     /// </summary>
     sealed class Settings : Dictionary<int, Dictionary<string, string>>
     {
+        public const string AssemblyPath = "AssemblyPath";
+        public const string ClassName = "ClassName";
+        public const string Name = "Name";
         public const string MenuKeys = "MenuKeys";
         public const string Highscore = "Highscore";
         public const string Help = "Help";
@@ -51,6 +54,7 @@ namespace iobloc
                 {"LevelThreshold", "10"},
                 {"Width", "10"},
                 {"Height", "20"},
+                {"BlockWidth", "2"},
             });
             // Runner
             Add(2, new Dictionary<string, string>{
@@ -170,9 +174,7 @@ namespace iobloc
                 {"HighlightColor", "DarkGray"},
             });
             // Menu
-            Add(10, new Dictionary<string, string>{
-                {"Help", "Select:0-9,Exit:ESC,Help:Any"},
-            });
+            Add(10, new Dictionary<string, string>());
             // Fireworks
             Add(11, new Dictionary<string, string>{
                 {"Help", "WINNER!"},
@@ -188,6 +190,18 @@ namespace iobloc
                 {"FrameMultiplier", "1"},
                 {"Width", "7"},
                 {"Height", "7"}
+            });
+            Add(20, new Dictionary<string, string>{
+                {"AssemblyPath", "iobloc.dll"},
+                {"ClassName", "iobloc.DemoBoard"},
+                {"Name", "Demo"},
+                {"MenuKeys", "D"},
+            });
+            Add(21, new Dictionary<string, string>{
+                {"AssemblyPath", "iobloc.platform.dll"},
+                {"ClassName", "iobloc.platform.PlatformBoard"},
+                {"Name", "Platform"},
+                {"MenuKeys", "P"},
             });
         }
     }

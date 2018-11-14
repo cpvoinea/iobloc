@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 
 namespace iobloc
 {
@@ -16,26 +17,20 @@ namespace iobloc
         // external settings file is set by run argument and settings are saved here when program ends
         private static string SettingsFileName;
         // in-memory caching of boards
-        private static Dictionary<int, IBaseBoard> Boards = new Dictionary<int, IBaseBoard>();
+        private readonly static Dictionary<int, IBoard> Boards = new Dictionary<int, IBoard>();
         /// <summary>
         /// Access to settings as a dictionary where keys are board IDs
         /// </summary>
         /// <returns></returns>
-        public static Settings Settings = new Settings();
-        /// <summary>
-        /// List of menu items and keyboard shortcuts to access them, compiled from settings
-        /// </summary>
-        /// <typeparam name="int">board ID</typeparam>
-        /// <typeparam name="string[]">Shortcut key list</typeparam>
-        /// <returns></returns>
-        public static Dictionary<int, string[]> MenuKeys = new Dictionary<int, string[]>();
+        public readonly static Settings Settings = new Settings();
         /// <summary>
         /// List of highscores, compiled from settings, not all boards keep scores
         /// </summary>
-        /// <typeparam name="int"></typeparam>
-        /// <typeparam name="int"></typeparam>
-        /// <returns></returns>
-        public static Dictionary<int, int> Highscores = new Dictionary<int, int>();
+        public readonly static Dictionary<int, int> Highscores = new Dictionary<int, int>();
+        /// <summary>
+        /// Associate key shortcuts to board id
+        /// </summary>
+        private readonly static Dictionary<string, int> KeyToBoardIdMapping = new Dictionary<string, int>();
 
         /// <summary>
         /// Load settings, menu, highscores
@@ -91,14 +86,34 @@ namespace iobloc
         /// </summary>
         private static void ReadSettings()
         {
+            List<string> allowedKeys = new List<string>();
+            List<string> text = new List<string>();
             foreach (int key in Settings.Keys)
             {
                 var s = Settings[key];
                 if (s.ContainsKey(Settings.MenuKeys))
-                    MenuKeys.Add(key, s.GetList(Settings.MenuKeys));
+                {
+                    var shortcuts = s[Settings.MenuKeys];
+                    var shortcutList = shortcuts.Split(',');
+                    foreach (var sc in shortcutList)
+                        KeyToBoardIdMapping.Add(sc, key);
+                    allowedKeys.AddRange(shortcutList);
+
+                    if (Enum.IsDefined(typeof(BoardType), key))
+                        text.Add(string.Format($"{key}:{(BoardType)key}"));
+                    else
+                    {
+                        string name = s.ContainsKey(Settings.Name) ? s[Settings.Name] : "UNKNOWN";
+                        text.Add(string.Format($"{shortcuts}:{name}"));
+                    }
+                }
                 if (s.ContainsKey(Settings.Highscore))
                     Highscores.Add(key, s.GetInt(Settings.Highscore, 0));
             }
+            var menu = Settings[(int)BoardType.Menu];
+            menu[Settings.AllowedKeys] = string.Join(',', allowedKeys);
+            menu[Settings.Help] = string.Join(',', text);
+            menu[Settings.Height] = text.Count.ToString();
         }
 
         /// <summary>
@@ -186,31 +201,55 @@ namespace iobloc
         /// </summary>
         /// <param name="key">board ID</param>
         /// <returns>cached board</returns>
-        public static IBaseBoard GetBoard(int key)
+        public static IBoard GetBoard(int key)
         {
             if (Boards.ContainsKey(key))
                 return Boards[key];
-            IBaseBoard board = null;
-            switch ((BoardType)key)
+
+            IBoard board = null;
+            if (Enum.IsDefined(typeof(BoardType), key))
+                switch ((BoardType)key)
+                {
+                    case BoardType.Level: board = new LevelBoard(); break;
+                    case BoardType.Tetris: board = new TetrisBoard(); break;
+                    case BoardType.Runner: board = new RunnerBoard(); break;
+                    case BoardType.Helicopt: board = new HelicopterBoard(); break;
+                    case BoardType.Breakout: board = new BreakoutBoard(); break;
+                    case BoardType.Invaders: board = new InvadersBoard(); break;
+                    case BoardType.Snake: board = new SnakeBoard(); break;
+                    case BoardType.Sokoban: board = new SokobanBoard(); break;
+                    case BoardType.Table: board = new TableBoard(); break;
+                    case BoardType.Paint: board = new PaintBoard(); break;
+                    case BoardType.Menu: board = new MenuBoard(); break;
+                    case BoardType.Fireworks: board = new AnimationBoard(BoardType.Fireworks); break;
+                    case BoardType.RainingBlood: board = new AnimationBoard(BoardType.RainingBlood); break;
+                }
+            else
             {
-                case BoardType.Level: board = new LevelBoard(); break;
-                case BoardType.Tetris: board = new TetrisBoard(); break;
-                case BoardType.Runner: board = new RunnerBoard(); break;
-                case BoardType.Helicopt: board = new HelicopterBoard(); break;
-                case BoardType.Breakout: board = new BreakoutBoard(); break;
-                case BoardType.Invaders: board = new InvadersBoard(); break;
-                case BoardType.Snake: board = new SnakeBoard(); break;
-                case BoardType.Sokoban: board = new SokobanBoard(); break;
-                case BoardType.Table: board = new TableBoard(); break;
-                case BoardType.Paint: board = new PaintBoard(); break;
-                case BoardType.Menu: board = new MenuBoard(); break;
-                case BoardType.Fireworks: board = new AnimationBoard(BoardType.Fireworks); break;
-                case BoardType.RainingBlood: board = new AnimationBoard(BoardType.RainingBlood); break;
+                var s = Settings[key];
+                try
+                {
+                    var asm = Assembly.LoadFrom(s[Settings.AssemblyPath]);
+                    if (asm != null)
+                    {
+                        var t = asm.GetType(s[Settings.ClassName]);
+                        if (t != null)
+                            board = asm.CreateInstance(t.FullName) as IBoard;
+                    }
+                }
+                catch { }
             }
-            if (board == null)
-                return null;
-            Boards.Add(key, board);
+
+            if (board != null)
+                Boards.Add(key, board);
             return board;
+        }
+
+        public static IBoard GetBoard(string key)
+        {
+            if (!KeyToBoardIdMapping.ContainsKey(key))
+                return null;
+            return GetBoard(KeyToBoardIdMapping[key]);
         }
 
         /// <summary>
