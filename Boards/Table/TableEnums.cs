@@ -1,7 +1,7 @@
 namespace iobloc
 {
-    enum State { Running = 0, Ended = 1 }
-    enum Mode { Coop = 0, Single = 1, AI = 2 }
+    enum GameState { Running = 0, Ended = 1 }
+    enum PlayMode { Coop = 0, Single = 1, AI = 2 }
     enum PlayerSide { White = 0, Black = 1 }
     enum LineType
     {
