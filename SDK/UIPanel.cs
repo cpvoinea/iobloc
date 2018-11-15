@@ -61,17 +61,15 @@ namespace iobloc
         /// <param name="fromCol">Distance from left where panel begins</param>
         /// <param name="toRow">Distance from top where panel ends, including last row/param>
         /// <param name="toCol">Distance from left where panel ends, including last column</param>
-        /// <param name="textLength">Set to a value > 0 to enter text mode and initialize text lines array to this length</param>
         /// <param name="symbol">Character to be drawn in different colors as configured in grid matrix, defaults to full block</param>
         /// <returns></returns>
-        public UIPanel(int fromRow, int fromCol, int toRow, int toCol, bool isTextMode = false, char symbol = (char)UISymbol.BlockFull)
+        public UIPanel(int fromRow, int fromCol, int toRow, int toCol, char symbol = (char)UISymbol.BlockFull)
         {
             Symbol = symbol;
             FromRow = fromRow;
             FromCol = fromCol;
             Width = toCol - fromCol + 1;
             Height = toRow - fromRow + 1;
-            IsTextMode = isTextMode;
             HasChanges = true;
             _grid = new int[Height, Width];
         }

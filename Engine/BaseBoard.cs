@@ -128,7 +128,7 @@ namespace iobloc
             _score = score;
 
             if (Panels.ContainsKey(Pnl.Score))
-                Panels[Pnl.Score].SetText(string.Format($"{score,3}"));
+                Panels[Pnl.Score].SetText($"{score,3}");
             SetHighscore(score);
 
             if (LevelThreshold > 0 && score >= LevelThreshold * (_level + 1))
@@ -146,7 +146,7 @@ namespace iobloc
             Highscore = score;
 
             if (Panels.ContainsKey(Pnl.Highscore))
-                Panels[Pnl.Highscore].SetText(string.Format($"{Highscore,3}"));
+                Panels[Pnl.Highscore].SetText($"{Highscore,3}");
             Serializer.UpdateHighscore(ID, score);
         }
 
@@ -167,7 +167,7 @@ namespace iobloc
                 FrameInterval = Serializer.GetLevelInterval(FrameMultiplier, _level);
 
                 if (Panels.ContainsKey(Pnl.Level))
-                    Panels[Pnl.Level].SetText(string.Format($"L{_level,2}"));
+                    Panels[Pnl.Level].SetText($"L{_level,2}");
             }
         }
 
@@ -207,12 +207,12 @@ namespace iobloc
 
             // don't show level for these boards
             if (!new BoardType[] { BoardType.Fireworks, BoardType.RainingBlood, BoardType.Paint, BoardType.Table }.Contains(Type))
-                Panels.Add(Pnl.Level, new UIPanel(Border.Height - 1, (Border.Width + 1) / 2 - 2, Border.Height - 1, (Border.Width + 1) / 2, true));
+                Panels.Add(Pnl.Level, new UIPanel(Border.Height - 1, (Border.Width + 1) / 2 - 2, Border.Height - 1, (Border.Width + 1) / 2));
             if (Serializer.Highscores.ContainsKey(ID)) // don't add score panel if board doesn't keep score
             {
                 if (Border.Width > 8) // don't add highscore panel if there's no room
-                    Panels.Add(Pnl.Highscore, new UIPanel(0, 1, 0, 3, true));
-                Panels.Add(Pnl.Score, new UIPanel(0, Border.Width - 4, 0, Border.Width - 2, true));
+                    Panels.Add(Pnl.Highscore, new UIPanel(0, 1, 0, 3));
+                Panels.Add(Pnl.Score, new UIPanel(0, Border.Width - 4, 0, Border.Width - 2));
             }
         }
 

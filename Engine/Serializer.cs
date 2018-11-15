@@ -105,11 +105,11 @@ namespace iobloc
                     allowedKeys.AddRange(shortcutList);
 
                     if (Enum.IsDefined(typeof(BoardType), key))
-                        text.Add(string.Format($"{key}:{(BoardType)key}"));
+                        text.Add($"{key}:{(BoardType)key}");
                     else
                     {
                         string name = s.ContainsKey(Settings.Name) ? s[Settings.Name] : "UNKNOWN";
-                        text.Add(string.Format($"{shortcuts}:{name}"));
+                        text.Add($"{shortcuts}:{name}");
                     }
                 }
                 if (s.ContainsKey(Settings.Highscore))

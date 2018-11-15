@@ -9,15 +9,15 @@ namespace iobloc
 
         public TableModel(int h, int p)
         {
-            var pnlUpperLeft = new UIPanel(1, 1, 17, 6 * p, false, (char)UISymbol.BlockUpper);
-            var pnlLowerLeft = new UIPanel(h - 16, 1, h, 6 * p, false, (char)UISymbol.BlockLower);
-            var pnlUpperTaken = new UIPanel(1, 6 * p + 2, 15, 7 * p + 1, false, (char)UISymbol.BlockUpper);
-            _pnlDice = new UIPanel(h / 2 - 1, 6 * p + 2, h / 2 + 2, 7 * p + 1, true);
-            var pnlLowerTaken = new UIPanel(h - 14, 6 * p + 2, h, 7 * p + 1, false, (char)UISymbol.BlockLower);
-            var pnlUpperRight = new UIPanel(1, 7 * p + 3, 17, 13 * p + 2, false, (char)UISymbol.BlockUpper);
-            var pnlLowerRight = new UIPanel(h - 16, 7 * p + 3, h, 13 * p + 2, false, (char)UISymbol.BlockLower);
-            var pnlUpperOut = new UIPanel(1, 13 * p + 4, 16, 14 * p + 3, false, (char)UISymbol.BlockUpper);
-            var pnlLowerOut = new UIPanel(h - 15, 13 * p + 4, h, 14 * p + 3, false, (char)UISymbol.BlockLower);
+            var pnlUpperLeft = new UIPanel(1, 1, 17, 6 * p, (char)UISymbol.BlockUpper);
+            var pnlLowerLeft = new UIPanel(h - 16, 1, h, 6 * p, (char)UISymbol.BlockLower);
+            var pnlUpperTaken = new UIPanel(1, 6 * p + 2, 15, 7 * p + 1, (char)UISymbol.BlockUpper);
+            _pnlDice = new UIPanel(h / 2 - 1, 6 * p + 2, h / 2 + 2, 7 * p + 1);
+            var pnlLowerTaken = new UIPanel(h - 14, 6 * p + 2, h, 7 * p + 1, (char)UISymbol.BlockLower);
+            var pnlUpperRight = new UIPanel(1, 7 * p + 3, 17, 13 * p + 2, (char)UISymbol.BlockUpper);
+            var pnlLowerRight = new UIPanel(h - 16, 7 * p + 3, h, 13 * p + 2, (char)UISymbol.BlockLower);
+            var pnlUpperOut = new UIPanel(1, 13 * p + 4, 16, 14 * p + 3, (char)UISymbol.BlockUpper);
+            var pnlLowerOut = new UIPanel(h - 15, 13 * p + 4, h, 14 * p + 3, (char)UISymbol.BlockLower);
 
             for (int i = 0; i < 6; i++)
             {

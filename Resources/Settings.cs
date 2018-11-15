@@ -174,6 +174,7 @@ namespace iobloc
                 {"HighlightColor", "DarkGray"},
                 {"AssemblyPath", "iobloc.dll"},
                 {"ClassName", "iobloc.TableAI"},
+                {"PlayMode", "1"}, // 0=Coop, 1=Single, 2=AI
             });
             // Menu
             Add(10, new Dictionary<string, string>());
@@ -183,7 +184,7 @@ namespace iobloc
                 {"FrameMultiplier", "1"},
                 {"AllowedKeys", ""},
                 {"Width", "7"},
-                {"Height", "7"}
+                {"Height", "7"},
             });
             // Rain
             Add(12, new Dictionary<string, string>{
@@ -191,7 +192,7 @@ namespace iobloc
                 {"AllowedKeys", ""},
                 {"FrameMultiplier", "1"},
                 {"Width", "7"},
-                {"Height", "7"}
+                {"Height", "7"},
             });
             Add(20, new Dictionary<string, string>{
                 {"AssemblyPath", "iobloc.dll"},

@@ -12,9 +12,10 @@ namespace iobloc
         private PlayerSide _player;
         private LineType? _cursor;
         private LineType? _pickedFrom;
-        public State State { get; private set; }
         private TableLine Selected => _cursor.HasValue ? _model[_player, _cursor.Value] : null;
         private PlayerSide OtherPlayer => (PlayerSide)(1 - _player);
+        public bool CurrentPlayerIsAI => true;
+        public GameState State { get; private set; }
 
         public TableController(TableModel model)
         {
@@ -36,7 +37,7 @@ namespace iobloc
 
             _cursor = null;
             _pickedFrom = null;
-            State = State.Running;
+            State = GameState.Running;
             ThrowDice();
         }
 
@@ -144,7 +145,7 @@ namespace iobloc
             if (_allowed.Count == 0)
             {
                 if (_model[_player, LineType.Out].Count == 15)
-                    State = State.Ended;
+                    State = GameState.Ended;
                 else
                     EndTurn();
                 return;

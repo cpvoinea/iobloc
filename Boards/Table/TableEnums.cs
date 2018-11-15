@@ -1,5 +1,7 @@
 namespace iobloc
 {
+    enum State { Running = 0, Ended = 1 }
+    enum Mode { Coop = 0, Single = 1, AI = 2 }
     enum PlayerSide { White = 0, Black = 1 }
     enum LineType
     {
@@ -7,5 +9,4 @@ namespace iobloc
         Line13 = 12, Line14 = 13, Line15 = 14, Line16 = 15, Line17 = 16, Line18 = 17, Line19 = 18, Line20 = 19, Line21 = 20, Line22 = 21, Line23 = 22, Line24 = 23,
         Taken = 24, Out = 26
     }
-    enum State { Running = 0, Ended = 1 }
 }
