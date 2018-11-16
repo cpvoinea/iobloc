@@ -59,7 +59,7 @@ namespace iobloc
 
         protected override void Initialize()
         {
-            Level = 0; // for frame multiplier
+            Level = Serializer.MasterLevel; // for frame multiplier
             Panels[Pnl.Table.UpperLeft].SetText(Help, false);
             _controller.Initialize();
         }

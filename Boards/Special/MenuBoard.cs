@@ -44,7 +44,7 @@ namespace iobloc
         //      Overriden to display correct MasterLevel value
         public override void Start()
         {
-            Level = Settings.MasterLevel;
+            Level = Serializer.MasterLevel;
             base.Start();
             if (Help.Length == 1 && AllowedKeys.Length > 0)
             {

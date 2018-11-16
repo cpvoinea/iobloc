@@ -27,7 +27,7 @@ namespace iobloc
         public override void Start()
         {
             base.Start();
-            Level = Settings.MasterLevel;
+            Level = Serializer.MasterLevel;
             _startScore = 0;
             ResetLevel();
         }

@@ -11,7 +11,7 @@ namespace iobloc
         {
             for (int i = 0; i < 16; i++)
                 Main[0, i] = 15 - i;
-            Level = Settings.MasterLevel;
+            Level = Serializer.MasterLevel;
         }
 
         // Summary:
@@ -50,7 +50,7 @@ namespace iobloc
                     }
                     break;
                 case UIKey.Enter:
-                    Settings.MasterLevel = Level;
+                    Serializer.MasterLevel = Level;
                     Stop();
                     break;
             }

@@ -25,6 +25,11 @@ namespace iobloc
         private readonly static Dictionary<string, int> KeyToBoardIdMapping = new Dictionary<string, int>();
 
         // Summary:
+        //      A common and customizable level value across all boards.
+        //      During Initialization, board levels will be set to this value.
+        public static int MasterLevel { get; set; }
+
+        // Summary:
         //      Load settings, menu, highscores
         // Param: settingsFilePath: external settings file path
         public static void Load(string settingsFilePath = null)

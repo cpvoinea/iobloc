@@ -179,7 +179,7 @@ namespace iobloc
         //      Overwrite to initialize board or to restart (use IsInitialized value to setup the board again)
         protected virtual void Initialize()
         {
-            SetLevel(Settings.MasterLevel);
+            SetLevel(Serializer.MasterLevel);
             if (Serializer.Highscores.ContainsKey(ID))
             {
                 SetScore(0);
