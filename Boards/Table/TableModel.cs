@@ -3,7 +3,7 @@ namespace iobloc
     class TableModel
     {
         private readonly TableLine[] _lines = new TableLine[28];
-        public TableLine this[PlayerSide player, LineType type] { get { return _lines[GetIndex(player, type)]; } }
+        public TableLine this[PlayerSide side, LineType type] { get { return _lines[GetIndex(side, type)]; } }
         private readonly UIPanel _pnlDice;
         public UIPanel[] Panels { get; private set; }
 
@@ -52,35 +52,44 @@ namespace iobloc
             _pnlDice.SetText(dice);
         }
 
-        private int GetIndex(PlayerSide player, LineType type)
+        private int GetIndex(PlayerSide side, LineType type)
         {
             int index = (int)type;
             if (type == LineType.Taken || type == LineType.Out)
-                return index + (int)player;
-            if (player == PlayerSide.Black)
+                return index + (int)side;
+            if (side == PlayerSide.Black)
                 return 23 - index;
             return index;
         }
 
-        public int[] GetLines(PlayerSide player)
+        public int[] GetLines(PlayerSide side)
         {
             int[] result = new int[28];
             for (int i = 0; i < 24; i++)
             {
-                int l = player == PlayerSide.White ? i : 23 - i;
+                int l = side == PlayerSide.White ? i : 23 - i;
                 var line = _lines[l];
-                result[i] = line.Player == player ? line.Count : -line.Count;
+                result[i] = line.Player == side ? line.Count : -line.Count;
             }
-            int tl = 24 + (int)player;
+            int tl = 24 + (int)side;
             result[24] = _lines[tl].Count;
-            int otl = 25 - (int)player;
+            int otl = 25 - (int)side;
             result[25] = _lines[otl].Count;
-            int ol = 26 + (int)player;
+            int ol = 26 + (int)side;
             result[26] = _lines[ol].Count;
-            int ool = 27 - (int)player;
+            int ool = 27 - (int)side;
             result[27] = _lines[ool].Count;
 
             return result;
+        }
+
+        public LineType GetLineType(PlayerSide side, int index)
+        {
+            if (index < 24)
+                return (LineType)(side == PlayerSide.White ? index : 23 - index);
+            if (index < 26)
+                return LineType.Taken;
+            return LineType.Out;
         }
     }
 }

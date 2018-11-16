@@ -94,10 +94,9 @@ namespace iobloc
         {
             Text = textLines;
             if (setTextMode)
-            {
                 IsTextMode = true;
+            if (IsTextMode)
                 HasChanges = true;
-            }
         }
 
         /// <summary>
@@ -110,8 +109,8 @@ namespace iobloc
                 Text = new[] { text };
             else
                 Text[0] = text;
-            if (IsTextMode)
-                HasChanges = true;
+            IsTextMode = true;
+            HasChanges = true;
         }
 
         /// <summary>

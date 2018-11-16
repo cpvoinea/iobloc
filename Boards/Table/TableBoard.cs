@@ -2,13 +2,8 @@ namespace iobloc
 {
     class TableBoard : BaseBoard
     {
-        public static int BW, B, CP, CE, CN, CH;
-        private static string AssemblyPath, ClassName;
+        internal static int BW, B, CP, CE, CN, CH;
         private TableController _controller;
-        private PlayMode _mode;
-        private ITableAI _externalAI;
-        private ITableAI _internalAI;
-        private string _nextMove;
 
         public TableBoard() : base(BoardType.Table) { }
 
@@ -21,18 +16,6 @@ namespace iobloc
             CE = BoardSettings.GetColor(Settings.EnemyColor);
             CN = BoardSettings.GetColor(Settings.NeutralColor);
             CH = BoardSettings.GetColor("HighlightColor");
-
-            AssemblyPath = BoardSettings[Settings.AssemblyPath];
-            ClassName = BoardSettings[Settings.ClassName];
-            _mode = (PlayMode)BoardSettings.GetInt("PlayMode", 0);
-            if (_mode != PlayMode.Coop && !string.IsNullOrEmpty(AssemblyPath) && !string.IsNullOrEmpty(ClassName))
-            {
-                _externalAI = Serializer.InstantiateFromAssembly<ITableAI>(AssemblyPath, ClassName);
-                if (_externalAI == null)
-                    _externalAI = new TableAI();
-            }
-            if (_mode == PlayMode.AI)
-                _internalAI = new TableAI();
         }
 
         protected override void InitializeUI()
@@ -58,8 +41,20 @@ namespace iobloc
             Panels.Add(Pnl.Table.LowerRight, model.Panels[6]);
             Panels.Add(Pnl.Table.UpperOut, model.Panels[7]);
             Panels.Add(Pnl.Table.LowerOut, model.Panels[8]);
+            Main = Panels[Pnl.Table.UpperLeft];
 
-            _controller = new TableController(model);
+            int aiCount = BoardSettings.GetInt("AIs", 0);
+            string assemblyPath = BoardSettings[Settings.AssemblyPath];
+            string className = BoardSettings[Settings.ClassName];
+            ITableAI player1 = null;
+            ITableAI player2 = null;
+            if (aiCount > 0)
+            {
+                player2 = Serializer.InstantiateFromAssembly<ITableAI>(assemblyPath, className) ?? new TableAI();
+                if (aiCount == 2)
+                    player1 = new TableAI();
+            }
+            _controller = new TableController(model, player1, player2);
         }
 
         protected override void Initialize()
@@ -77,23 +72,23 @@ namespace iobloc
 
         public override void HandleInput(string key)
         {
-            if (_controller.CurrentPlayerIsAI)
-                return;
-            _nextMove = key;
+            if (key == "R")
+                _controller.Initialize();
+            else if (!_controller.CurrentPlayerIsAI)
+                switch (key)
+                {
+                    case UIKey.LeftArrow: _controller.CursorMove(true); break;
+                    case UIKey.RightArrow: _controller.CursorMove(false); break;
+                    case UIKey.UpArrow: _controller.CursorAction(); break;
+                }
         }
 
         public override void NextFrame()
         {
-            if (!string.IsNullOrEmpty(_nextMove))
-                switch (_nextMove)
-                {
-                    case UIKey.LeftArrow: _controller.Move(true); break;
-                    case UIKey.RightArrow: _controller.Move(false); break;
-                    case UIKey.UpArrow: _controller.Action(); break;
-                    case "R": _controller.Initialize(); break;
-                }
             if (_controller.State == GameState.Ended)
                 Win(true);
+            else if (_controller.CurrentPlayerIsAI)
+                _controller.PlayerAction();
         }
     }
 }

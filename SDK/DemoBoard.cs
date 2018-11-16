@@ -54,8 +54,6 @@ namespace iobloc
             _nailedIt = true;
             // replace pause help text with congratulation message
             MainPanel.SetText("Nailed it!");
-            // enter text mode to show message
-            MainPanel.SwitchMode();
         }
 
         // display help when an unsupported key is pressed

@@ -174,7 +174,7 @@ namespace iobloc
                 {"HighlightColor", "DarkGray"},
                 {"AssemblyPath", "iobloc.dll"},
                 {"ClassName", "iobloc.TableAI"},
-                {"PlayMode", "1"}, // 0=Coop, 1=Single, 2=AI
+                {"AIs", "2"},
             });
             // Menu
             Add(10, new Dictionary<string, string>());

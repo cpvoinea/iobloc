@@ -5,6 +5,8 @@ namespace iobloc
     /// </summary>
     static class Animations
     {
+        public static int SIZE = 7;
+
         private static readonly int[][][,] All = new int[][][,]{
             new int[][,]{
                 new int[,]{

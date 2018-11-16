@@ -37,11 +37,13 @@ namespace iobloc
         /// </summary>
         public static void Run(IBoard board)
         {
-            UIPainter.DrawBorder(board.Border); // initial setup
+            board.Start();
+            if (!board.IsRunning)
+                return;
 
+            UIPainter.DrawBorder(board.Border); // initial setup
             DateTime start = DateTime.Now; // frame start time
             int ticks = 0; // elapsed time in ms
-            board.Start();
             while (board.IsRunning)
             {
                 Paint(board);

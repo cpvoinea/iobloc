@@ -2,3 +2,4 @@ bin/*
 obj/*
 *.cache
 highscores.txt
+clines.exe

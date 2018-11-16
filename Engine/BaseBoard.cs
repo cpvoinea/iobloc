@@ -45,12 +45,7 @@ namespace iobloc
         protected int BlockSpace { get; private set; }
         protected int Block { get; private set; }
         /// <summary>
-        /// Main panel inside border rectangle
-        /// </summary>
-        /// <value></value>
-        protected UIPanel Main { get; private set; }
-        /// <summary>
-        /// Help text will be displayed in Main panel text mode when paused
+        /// Help text will be displayed in main panel text mode when paused
         /// </summary>
         /// <value></value>
         protected string[] Help { get; private set; }
@@ -90,6 +85,11 @@ namespace iobloc
         /// </summary>
         /// <value></value>
         public IBoard Next { get; protected set; }
+        /// <summary>
+        /// Main panel inside border rectangle
+        /// </summary>
+        /// <value></value>
+        protected UIPanel Main { get; set; }
         /// <summary>
         /// Get current score. Setting the score triggers level progression, highscore update and winning conditions
         /// </summary>
@@ -176,15 +176,16 @@ namespace iobloc
         /// </summary>
         protected virtual void InitializeSettings()
         {
-            BoardSettings = Serializer.Settings[ID];
+            BoardSettings = Serializer.Settings.ContainsKey(ID) ? Serializer.Settings[ID] : new Dictionary<string, string>();
+
             AllowedKeys = BoardSettings.GetList(Settings.AllowedKeys);
             Help = BoardSettings.GetList(Settings.Help);
             Width = BoardSettings.GetInt(Settings.Width, 10);
             Height = BoardSettings.GetInt(Settings.Height, 10);
-            BlockWidth = BoardSettings.GetInt(Settings.BlockWidth, 0);
-            BlockSpace = BoardSettings.GetInt(Settings.BlockSpace);
+            BlockWidth = BoardSettings.GetInt(Settings.BlockWidth, 1);
+            BlockSpace = BoardSettings.GetInt(Settings.BlockSpace, 0);
             Block = BlockWidth + BlockSpace;
-            FrameMultiplier = BoardSettings.GetReal(Settings.FrameMultiplier);
+            FrameMultiplier = BoardSettings.GetReal(Settings.FrameMultiplier, 1);
             LevelThreshold = BoardSettings.GetInt(Settings.LevelThreshold, 0);
         }
 

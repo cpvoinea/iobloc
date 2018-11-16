@@ -15,7 +15,7 @@ namespace iobloc
         // save highscores to this file for persistance
         private const string HighscoresFileName = "highscores.txt";
         // external settings file is set by run argument and settings are saved here when program ends
-        private static string SettingsFileName;
+        private static string SettingsFileName = "settings.txt";
         // in-memory caching of boards
         private readonly static Dictionary<int, IBoard> Boards = new Dictionary<int, IBoard>();
         /// <summary>
@@ -58,8 +58,9 @@ namespace iobloc
         /// <param name="settingsFilePath">external settings file, will be used for saving if it doesn't exist</param>
         private static void LoadSettings(string settingsFilePath)
         {
-            SettingsFileName = settingsFilePath;
-            if (string.IsNullOrEmpty(SettingsFileName) || !File.Exists(SettingsFileName))
+            if (!string.IsNullOrEmpty(settingsFilePath))
+                SettingsFileName = settingsFilePath;
+            if (!File.Exists(SettingsFileName))
                 return;
 
             using (var sr = File.OpenText(SettingsFileName))
@@ -115,7 +116,11 @@ namespace iobloc
                 if (s.ContainsKey(Settings.Highscore))
                     Highscores.Add(key, s.GetInt(Settings.Highscore, 0));
             }
-            var menu = Settings[(int)BoardType.Menu];
+
+            int menuId = (int)BoardType.Menu;
+            if (!Settings.ContainsKey(menuId))
+                Settings.Add(menuId, new Dictionary<string, string>());
+            var menu = Settings[menuId];
             menu[Settings.AllowedKeys] = string.Join(',', allowedKeys);
             menu[Settings.Help] = string.Join(',', text);
             menu[Settings.Height] = text.Count.ToString();
@@ -270,7 +275,7 @@ namespace iobloc
         /// <param name="key">setting name</param>
         /// <param name="defVal">default value</param>
         /// <returns>int value of setting</returns>
-        public static int GetInt(this Dictionary<string, string> dic, string key, int defVal = 1)
+        public static int GetInt(this Dictionary<string, string> dic, string key, int defVal = 0)
         {
             if (!dic.ContainsKey(key))
                 return defVal;

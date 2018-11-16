@@ -1,15 +1,25 @@
+using System.Collections.Generic;
+
 namespace iobloc
 {
     class TableAI : ITableAI
     {
+        const int L = 28;
+
         public int[][] GetMoves(int[] lines, int[] dice)
         {
-            throw new System.NotImplementedException();
+            List<int[]> result = new List<int[]>();
+            var allowed = GetMoveMatrix(lines, dice);
+            for (int from = L - 1; from >= 0; from--)
+                for (int to = 0; to < L; to++)
+                    if (allowed[from, to] > 0)
+                        result.Add(new[] { from, to, allowed[from, to] });
+            return result.ToArray();
         }
 
-        private int[,] GetMoveMatrix(int[] lines, int[] dice)
+        internal static int[,] GetMoveMatrix(int[] lines, int[] dice)
         {
-            int[,] result = new int[28, 28];
+            int[,] result = new int[L, L];
 
             if (lines[24] > 0)
             {
@@ -53,10 +63,10 @@ namespace iobloc
                                     if (lines[i] > 0)
                                         clearLeft = false;
                                 if (clearLeft)
-                                    for (; d <= 6; d++)
-                                        if (dice.Contains(d))
+                                    for (int i = from + 2; i <= 6; i++)
+                                        if (dice.Contains(i))
                                         {
-                                            result[from, to] = d;
+                                            result[from, to] = i;
                                             break;
                                         }
                             }
