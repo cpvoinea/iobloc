@@ -1,44 +1,26 @@
 namespace iobloc
 {
-    /// <summary>
-    /// Define a line by its position and orientation
-    /// </summary>
+    // Define a line by its position and orientation
     public struct UIBorderLine
     {
-        /// <summary>
-        /// Start point is row vertical lines or column for horizontal lines
-        /// </summary>
-        /// <value></value>
+        // Start point is row vertical lines or column for horizontal lines
         internal int From { get; private set; }
-        /// <summary>
-        /// End point is row vertical lines or column for horizontal lines
-        /// </summary>
-        /// <value></value>
+        // End point is row vertical lines or column for horizontal lines
         internal int To { get; private set; }
-        /// <summary>
-        /// Line placement is a row for horizontal lines and a column for vertical lines
-        /// </summary>
-        /// <value></value>
+        // Line placement is a row for horizontal lines and a column for vertical lines
         internal int Position { get; private set; }
-        /// <summary>
-        /// Orientation
-        /// </summary>
-        /// <value></value>
+        // Orientation
         internal bool IsVertical { get; private set; }
-        /// <summary>
-        /// Type, either single or double
-        /// </summary>
-        /// <value></value>
+        // Type, either single or double
         internal bool IsSingle { get; private set; }
 
-        /// <summary>
-        /// Component of border
-        /// </summary>
-        /// <param name="from">starting position - distance from left if horizontal, distance from top if vertical</param>
-        /// <param name="to">ending position (inclusive)</param>
-        /// <param name="position">cross position - distance from top if horizontal, distance from left if vertical</param>
-        /// <param name="isVertical">vertical (true) or horizontal line</param>
-        /// <param name="isSingle">single line (true) or double line</param>
+        // Summary:
+        //      Component of border
+        // Param: from: starting position - distance from left if horizontal, distance from top if vertical
+        // Param: to: ending position (inclusive)
+        // Param: position: cross position - distance from top if horizontal, distance from left if vertical
+        // Param: isVertical: vertical (true) or horizontal line
+        // Param: isSingle: single line (true) or double line
         public UIBorderLine(int from, int to, int position, bool isVertical, bool isSingle = true)
         {
             if (from < to)
@@ -56,11 +38,9 @@ namespace iobloc
             IsSingle = isSingle;
         }
 
-        /// <summary>
-        /// Depending on line type (single/double) and interection type (cross, T, corner) the intersection symbol is different
-        /// </summary>
-        /// <param name="line">line to check against</param>
-        /// <returns>symbol code</returns>
+        // Summary:
+        //      Depending on line type (single/double) and interection type (cross, T, corner) the intersection symbol is different
+        // Param: line: line to check against
         internal int GetIntersectionSymbol(UIBorderLine line)
         {
             if (IsVertical == line.IsVertical // parallel lines

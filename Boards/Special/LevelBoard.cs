@@ -1,15 +1,12 @@
 namespace iobloc
 {
-    /// <summary>
-    /// Display a list of colors representing levels to select the MasterLevel
-    /// </summary>
+    // Display a list of colors representing levels to select the MasterLevel
     class LevelBoard : BaseBoard
     {
         public LevelBoard() : base(BoardType.Level) { }
 
-        /// <summary>
-        /// A line of colors representing levels
-        /// </summary>
+        // Summary:
+        //      A line of colors representing levels
         protected override void Initialize()
         {
             for (int i = 0; i < 16; i++)
@@ -17,10 +14,8 @@ namespace iobloc
             Level = Settings.MasterLevel;
         }
 
-        /// <summary>
-        /// Mark selection cursor
-        /// </summary>
-        /// <param name="set"></param>
+        // Summary:
+        //      Mark selection cursor
         protected override void Change(bool set)
         {
             if (set)
@@ -32,10 +27,8 @@ namespace iobloc
                 Main[0, Level] = 15 - Level;
         }
 
-        /// <summary>
-        /// Move cursor left-right, select level
-        /// </summary>
-        /// <param name="key"></param>
+        // Summary:
+        //      Move cursor left-right, select level
         public override void HandleInput(string key)
         {
             switch (key)

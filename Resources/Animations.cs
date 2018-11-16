@@ -1,8 +1,6 @@
 namespace iobloc
 {
-    /// <summary>
-    /// Animation frames
-    /// </summary>
+    // Animation frames
     static class Animations
     {
         public static int SIZE = 7;

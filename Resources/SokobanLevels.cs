@@ -1,8 +1,6 @@
 namespace iobloc
 {
-    /// <summary>
-    /// Sokoban levels ar matrix maps, using runtime colors from settings
-    /// </summary>
+    // Sokoban levels ar matrix maps, using runtime colors from settings
     static class SokobanLevels
     {
         private static readonly int[][,] _levels;

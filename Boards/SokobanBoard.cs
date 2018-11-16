@@ -22,9 +22,8 @@ namespace iobloc
             WS = BoardSettings.GetInt("WinScore");
         }
 
-        /// <summary>
-        /// Overriden to initialize board level and score on re-start
-        /// </summary>
+        // Summary:
+        //      Overriden to initialize board level and score on re-start
         public override void Start()
         {
             base.Start();

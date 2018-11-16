@@ -1,16 +1,12 @@
 namespace iobloc
 {
-    /// <summary>
-    /// Display list of available boards to link through Next
-    /// </summary>
+    // Display list of available boards to link through Next
     class MenuBoard : BaseBoard
     {
         bool _exit;
 
-        /// <summary>
-        /// A text board with each line item having its own shortcut key(s)
-        /// </summary>
-        /// <returns></returns>
+        // Summary:
+        //      A text board with each line item having its own shortcut key(s)
         public MenuBoard() : base(BoardType.Menu) { }
 
         private void DrawLogo()
@@ -35,9 +31,8 @@ namespace iobloc
                         Main[i, j] = r.Next(15) + 1;
         }
 
-        /// <summary>
-        /// Initialize in text mode
-        /// </summary>
+        // Summary:
+        //      Initialize in text mode
         protected override void Initialize()
         {
             base.Initialize();
@@ -45,9 +40,8 @@ namespace iobloc
             Main.SwitchMode();
         }
 
-        /// <summary>
-        /// Overriden to display correct MasterLevel value
-        /// </summary>
+        // Summary:
+        //      Overriden to display correct MasterLevel value
         public override void Start()
         {
             Level = Settings.MasterLevel;
@@ -64,10 +58,8 @@ namespace iobloc
             }
         }
 
-        /// <summary>
-        /// Link to correct menu item board based on key
-        /// </summary>
-        /// <param name="key"></param>
+        // Summary:
+        //      Link to correct menu item board based on key
         public override void HandleInput(string key)
         {
             Next = Serializer.GetBoard(key);

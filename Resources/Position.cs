@@ -1,8 +1,6 @@
 namespace iobloc
 {
-    /// <summary>
-    /// A common structure currently used by Snake
-    /// </summary>
+    // A common structure currently used by Snake
     struct Position
     {
         public int Row { get; set; }

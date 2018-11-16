@@ -1,8 +1,6 @@
 namespace iobloc
 {
-    /// <summary>
-    /// Panel name constants
-    /// </summary>
+    // Panel name constants
     static class Pnl
     {
         public const string Main = "main";

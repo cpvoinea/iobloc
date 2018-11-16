@@ -6,10 +6,9 @@ using System.Reflection;
 
 namespace iobloc
 {
-    /// <summary>
-    /// Handle persistence and caching of resources: settings, highscores, board caching, speed constants,
-    /// Also include some external helpers for accessing dictionaries and arrays
-    /// </summary>
+    // Summary:
+    //      Handle persistence and caching of resources: settings, highscores, board caching, speed constants,
+    //      Also include some external helpers for accessing dictionaries and arrays
     static class Serializer
     {
         // save highscores to this file for persistance
@@ -18,24 +17,16 @@ namespace iobloc
         private static string SettingsFileName = "settings.txt";
         // in-memory caching of boards
         private readonly static Dictionary<int, IBoard> Boards = new Dictionary<int, IBoard>();
-        /// <summary>
-        /// Access to settings as a dictionary where keys are board IDs
-        /// </summary>
-        /// <returns></returns>
+        // Access to settings as a dictionary where keys are board IDs
         public readonly static Settings Settings = new Settings();
-        /// <summary>
-        /// List of highscores, compiled from settings, not all boards keep scores
-        /// </summary>
+        // List of highscores, compiled from settings, not all boards keep scores
         public readonly static Dictionary<int, int> Highscores = new Dictionary<int, int>();
-        /// <summary>
-        /// Associate key shortcuts to board id
-        /// </summary>
+        // Associate key shortcuts to board id
         private readonly static Dictionary<string, int> KeyToBoardIdMapping = new Dictionary<string, int>();
 
-        /// <summary>
-        /// Load settings, menu, highscores
-        /// </summary>
-        /// <param name="settingsFilePath">external settings file path</param>
+        // Summary:
+        //      Load settings, menu, highscores
+        // Param: settingsFilePath: external settings file path
         public static void Load(string settingsFilePath = null)
         {
             LoadSettings(settingsFilePath);
@@ -43,19 +34,17 @@ namespace iobloc
             LoadHighscores();
         }
 
-        /// <summary>
-        /// Save settings, highscores
-        /// </summary>
+        // Summary:
+        //      Save settings, highscores
         public static void Save()
         {
             SaveSettings();
             SaveHighscores();
         }
 
-        /// <summary>
-        /// If external settings file, overwrite default settings from file values
-        /// </summary>
-        /// <param name="settingsFilePath">external settings file, will be used for saving if it doesn't exist</param>
+        // Summary:
+        //      If external settings file, overwrite default settings from file values
+        // Param: settingsFilePath: external settings file, will be used for saving if it doesn't exist
         private static void LoadSettings(string settingsFilePath)
         {
             if (!string.IsNullOrEmpty(settingsFilePath))
@@ -87,9 +76,8 @@ namespace iobloc
                 }
         }
 
-        /// <summary>
-        /// Iterate settings and extract menu option and highscore if exist
-        /// </summary>
+        // Summary:
+        //      Iterate settings and extract menu option and highscore if exist
         private static void ReadSettings()
         {
             List<string> allowedKeys = new List<string>();
@@ -126,9 +114,8 @@ namespace iobloc
             menu[Settings.Height] = text.Count.ToString();
         }
 
-        /// <summary>
-        /// If external settings file was used but file does not exist, create it
-        /// </summary>
+        // Summary:
+        //      If external settings file was used but file does not exist, create it
         private static void SaveSettings()
         {
             if (string.IsNullOrEmpty(SettingsFileName) || File.Exists(SettingsFileName))
@@ -149,9 +136,8 @@ namespace iobloc
             }
         }
 
-        /// <summary>
-        /// Highscores are persisted to a text file
-        /// </summary>
+        // Summary:
+        //      Highscores are persisted to a text file
         private static void LoadHighscores()
         {
             // leave default value at first run
@@ -172,9 +158,8 @@ namespace iobloc
                 }
         }
 
-        /// <summary>
-        /// Persist highscores to file
-        /// </summary>
+        // Summary:
+        //      Persist highscores to file
         private static void SaveHighscores()
         {
             // each line has to int values: ID and highscore
@@ -185,32 +170,27 @@ namespace iobloc
             }
         }
 
-        /// <summary>
-        /// In-memory update of highscore, if it is the case
-        /// </summary>
-        /// <param name="key">board ID</param>
-        /// <param name="score">score to be checked against highscore</param>
+        // Summary:
+        //      In-memory update of highscore, if it is the case
+        // Param: key: board ID
+        // Param: score: score to be checked against highscore
         public static void UpdateHighscore(int key, int score)
         {
             if (Highscores.ContainsKey(key) && Highscores[key] < score)
                 Highscores[key] = score;
         }
 
-        /// <summary>
-        /// Calculate frame interval for certain level and board frameMultiplier setting.
-        /// Currently values are between 50ms and 200ms (depending on level) multiplied by frameMultiplier
-        /// </summary>
-        /// <param name="frameMultiplier">board configured setting</param>
-        /// <param name="level">level to calculate for</param>
-        /// <returns></returns>
+        // Summary:
+        //      Calculate frame interval for certain level and board frameMultiplier setting.
+        //      Currently values are between 50ms and 200ms (depending on level) multiplied by frameMultiplier
+        // Param: frameMultiplier: board configured setting
+        // Param: level: level to calculate for
         public static int GetLevelInterval(double frameMultiplier, int level) => (int)(frameMultiplier * (200 - 10 * level));
 
-        /// <summary>
-        /// Get board from cache or create a new one and add it to cache.
-        /// To save memory and keep board states on transitions.
-        /// </summary>
-        /// <param name="key">board ID</param>
-        /// <returns>cached board</returns>
+        // Summary:
+        //      Get board from cache or create a new one and add it to cache.
+        //      To save memory and keep board states on transitions.
+        // Param: key: board ID
         public static IBoard GetBoard(int key)
         {
             if (Boards.ContainsKey(key))
@@ -268,13 +248,11 @@ namespace iobloc
             return null;
         }
 
-        /// <summary>
-        /// Parse an int setting value or get a default value if not exists
-        /// </summary>
-        /// <param name="dic">board settings</param>
-        /// <param name="key">setting name</param>
-        /// <param name="defVal">default value</param>
-        /// <returns>int value of setting</returns>
+        // Summary:
+        //      Parse an int setting value or get a default value if not exists
+        // Param: dic: board settings
+        // Param: key: setting name
+        // Param: defVal: default value
         public static int GetInt(this Dictionary<string, string> dic, string key, int defVal = 0)
         {
             if (!dic.ContainsKey(key))
@@ -282,13 +260,11 @@ namespace iobloc
             return int.Parse(dic[key]);
         }
 
-        /// <summary>
-        /// Parse a double setting value or get a default value
-        /// </summary>
-        /// <param name="dic">board settings</param>
-        /// <param name="key">setting name</param>
-        /// <param name="defVal">default value</param>
-        /// <returns>double value of setting</returns>
+        // Summary:
+        //      Parse a double setting value or get a default value
+        // Param: dic: board settings
+        // Param: key: setting name
+        // Param: defVal: default value
         public static double GetReal(this Dictionary<string, string> dic, string key, double defVal = 0)
         {
             if (!dic.ContainsKey(key))
@@ -296,12 +272,10 @@ namespace iobloc
             return double.Parse(dic[key], NumberStyles.Float, CultureInfo.InvariantCulture);
         }
 
-        /// <summary>
-        /// Split comma-separated list of strings from a setting value
-        /// </summary>
-        /// <param name="dic">board settings</param>
-        /// <param name="key">setting name</param>
-        /// <returns>string list</returns>
+        // Summary:
+        //      Split comma-separated list of strings from a setting value
+        // Param: dic: board settings
+        // Param: key: setting name
         public static string[] GetList(this Dictionary<string, string> dic, string key)
         {
             if (!dic.ContainsKey(key))
@@ -309,12 +283,10 @@ namespace iobloc
             return dic[key].Split(',');
         }
 
-        /// <summary>
-        /// Parse a color value from setting color name
-        /// </summary>
-        /// <param name="dic">board settings</param>
-        /// <param name="key">setting name</param>
-        /// <returns>int value of color</returns>
+        // Summary:
+        //      Parse a color value from setting color name
+        // Param: dic: board settings
+        // Param: key: setting name
         public static int GetColor(this Dictionary<string, string> dic, string key)
         {
             if (!dic.ContainsKey(key))
@@ -322,12 +294,10 @@ namespace iobloc
             return (int)Enum.Parse(typeof(ConsoleColor), dic[key]);
         }
 
-        /// <summary>
-        /// Check if array contains value
-        /// </summary>
-        /// <param name="array"></param>
-        /// <param name="val"></param>
-        /// <returns></returns>
+        // Summary:
+        //      Check if array contains value
+        // Param: array: 
+        // Param: val: 
         public static bool Contains<T>(this T[] array, T val)
         {
             foreach (T k in array)

@@ -2,34 +2,23 @@ using System.Collections.Generic;
 
 namespace iobloc
 {
-    /// <summary>
-    /// A matrix of box drawing UISymbol that construct a grid of lines around panels
-    /// </summary>
+    // A matrix of box drawing UISymbol that construct a grid of lines around panels
     public struct UIBorder
     {
         // box drawing matrix
         private readonly int[,] _grid;
         private readonly List<UIBorderLine> _lines;
-        /// <summary>
-        /// Access to box drawing symbol matrix
-        /// </summary>
+        // Access to box drawing symbol matrix
         internal int this[int row, int col] => _grid[row, col];
-        /// <summary>
-        /// Maximum width
-        /// </summary>
-        /// <value></value>
+        // Maximum width
         internal int Width { get; private set; }
-        /// <summary>
-        /// Maximum height
-        /// </summary>
-        /// <value></value>
+        // Maximum height
         internal int Height { get; private set; }
 
-        /// <summary>
-        /// Initialize to a rectangle of width x height with double line borders
-        /// </summary>
-        /// <param name="width">include start and end vertical lines</param>
-        /// <param name="height">includes start and end horizontal lines</param>
+        // Summary:
+        //      Initialize to a rectangle of width x height with double line borders
+        // Param: width: include start and end vertical lines
+        // Param: height: includes start and end horizontal lines
         public UIBorder(int width, int height)
         {
             Width = width;
@@ -45,10 +34,9 @@ namespace iobloc
             });
         }
 
-        /// <summary>
-        /// Add extra lines and calculates intersections and UISymbol
-        /// </summary>
-        /// <param name="lines">interior lines to be added</param>
+        // Summary:
+        //      Add extra lines and calculates intersections and UISymbol
+        // Param: lines: interior lines to be added
         public void AddLines(UIBorderLine[] lines)
         {
             _lines.AddRange(lines);

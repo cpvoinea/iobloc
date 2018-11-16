@@ -1,8 +1,6 @@
 namespace iobloc
 {
-    /// <summary>
-    /// The simplest board, has no input, just iterates frames and exists to menu
-    /// </summary>
+    // The simplest board, has no input, just iterates frames and exists to menu
     class AnimationBoard : BaseBoard
     {
         // all frames
@@ -10,33 +8,27 @@ namespace iobloc
         // iterate animation frames
         private int _currentFrame;
 
-        /// <summary>
-        /// Initialize frames from resources
-        /// </summary>
-        /// <param name="type">type of animation</param>
-        /// <returns></returns>
+        // Summary:
+        //      Initialize frames from resources
+        // Param: type: type of animation
         public AnimationBoard(BoardType type) : base(type)
         {
             _animation = Animations.Get(type);
         }
 
-        /// <summary>
-        /// Overwrite Initialize to simplify, only FrameInterval needs to be set from constant level
-        /// </summary>
+        // Summary:
+        //      Overwrite Initialize to simplify, only FrameInterval needs to be set from constant level
         protected override void Initialize()
         {
             Level = 0; // for FrameInterval value, so that animation has consistent speed
         }
 
-        /// <summary>
-        /// Not used
-        /// </summary>
-        /// <param name="key"></param>
+        // Summary:
+        //      Not used
         public override void HandleInput(string key) { }
 
-        /// <summary>
-        /// Copy next frame to grid, repeat from 0 when end is reached
-        /// </summary>
+        // Summary:
+        //      Copy next frame to grid, repeat from 0 when end is reached
         public override void NextFrame()
         {
             var a = _animation[_currentFrame++];

@@ -2,69 +2,47 @@ using System.Collections.Generic;
 
 namespace iobloc
 {
-    /// <summary>
-    /// A board which can be run in the UI. The algorithm is:
-    /// Draw(board.Border)
-    /// board.Start()
-    /// do
-    ///   Draw(board.Panels)
-    ///   key <= Input()
-    ///   if (board.AllowedKeys contains key)
-    ///     board.HandleInput(key)
-    ///   else board.TogglePause()
-    ///   wait for board.FrameInterval (ms)
-    ///   board.NextFrame()
-    /// while (key is not Escape)
-    /// board.Stop()
-    /// </summary>
+    // A board which can be run in the UI. The algorithm is:
+    // Draw(board.Border)
+    // board.Start()
+    // do
+    //   Draw(board.Panels)
+    //   key <= Input()
+    //   if (board.AllowedKeys contains key)
+    //     board.HandleInput(key)
+    //   else board.TogglePause()
+    //   wait for board.FrameInterval (ms)
+    //   board.NextFrame()
+    // while (key is not Escape)
+    // board.Stop()
     public interface IBoard
     {
-        /// <summary>
-        /// Get border around the Panels, to draw in UI
-        /// </summary>
-        /// <value>a collection of lines</value>
+        // Get border around the Panels, to draw in UI
         UIBorder Border { get; }
-        /// <summary>
-        /// Rectangulars to draw in UI
-        /// </summary>
-        /// <value></value>
+        // Rectangulars to draw in UI
         Dictionary<string, UIPanel> Panels { get; }
-        /// <summary>
-        /// Duration between frames in ms
-        /// </summary>
-        /// <value></value>
+        // Duration between frames in ms
         int FrameInterval { get; }
-        /// <summary>
-        /// List of shortcut keys which are handled by board
-        /// </summary>
-        /// <value></value>
+        // List of shortcut keys which are handled by board
         string[] AllowedKeys { get; }
-        /// <summary>
-        /// Is true while board is running, false when board needs to exit
-        /// </summary>
-        /// <value></value>
+        // Is true while board is running, false when board needs to exit
         bool IsRunning { get; }
 
-        /// <summary>
-        /// Initialize the board and start running
-        /// </summary>
+        // Summary:
+        //      Initialize the board and start running
         void Start();
-        /// <summary>
-        /// Stop running and cleanup
-        /// </summary>
+        // Summary:
+        //      Stop running and cleanup
         void Stop();
-        /// <summary>
-        /// Turns pause mode on and off
-        /// </summary>
+        // Summary:
+        //      Turns pause mode on and off
         void TogglePause();
-        /// <summary>
-        /// Move to next frame; not all boards use frames, some are static
-        /// </summary>
+        // Summary:
+        //      Move to next frame; not all boards use frames, some are static
         void NextFrame();
-        /// <summary>
-        /// Handle allowed key
-        /// </summary>
-        /// <param name="key">key value as string constant</param>
+        // Summary:
+        //      Handle allowed key
+        // Param: key: key value as string constant
         void HandleInput(string key);
     }
 }

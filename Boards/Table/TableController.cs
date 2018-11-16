@@ -334,6 +334,8 @@ namespace iobloc
                     Put(action.Line);
                     break;
             }
+
+            ShowAllowed();
         }
     }
 }

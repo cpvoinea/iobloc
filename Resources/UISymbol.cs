@@ -1,8 +1,6 @@
 namespace iobloc
 {
-    /// <summary>
-    /// Character code constants
-    /// </summary>
+    // Character code constants
     static class UISymbol
     {
         public const int None = 0;

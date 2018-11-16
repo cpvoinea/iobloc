@@ -1,8 +1,6 @@
 namespace iobloc
 {
-    /// <summary>
-    /// Tetris piece struct with rotation maps for each piece
-    /// </summary>
+    // Tetris piece struct with rotation maps for each piece
     struct TetrisPiece
     {
         // basic tetrominos
@@ -10,36 +8,19 @@ namespace iobloc
         // orientation and type are used to determine piece footprint (mask)
         private int Orientation { get; set; }
 
-        /// <summary>
-        /// Tetromino type
-        /// </summary>
-        /// <value></value>
+        // Tetromino type
         public int Type { get; private set; }
-        /// <summary>
-        /// Piece footprint as a 4x4 matrix
-        /// </summary>
-        /// <value></value>
+        // Piece footprint as a 4x4 matrix
         public int[,] Mask { get; private set; }
-        /// <summary>
-        /// Mask distance to top (can be negativ on piece entry)
-        /// </summary>
-        /// <value></value>
+        // Mask distance to top (can be negativ on piece entry)
         public int X { get; private set; }
-        /// <summary>
-        /// Mask distance to left
-        /// </summary>
-        /// <value></value>
+        // Mask distance to left
         public int Y { get; private set; }
-        /// <summary>
-        /// Color depends on type
-        /// </summary>
+        // Color depends on type
         public int Color => 15 - Type;
 
-        /// <summary>
-        /// Construct a piece which can only move or rotate
-        /// </summary>
-        /// <param name="type"></param>
-        /// <param name="orientation"></param>
+        // Summary:
+        //      Construct a piece which can only move or rotate
         public TetrisPiece(int type, int orientation)
         {
             Type = type;
@@ -60,12 +41,8 @@ namespace iobloc
             Y = p.Y;
         }
 
-        /// <summary>
-        /// Decide on a mask from type and rotation
-        /// </summary>
-        /// <param name="type"></param>
-        /// <param name="orientation"></param>
-        /// <returns></returns>
+        // Summary:
+        //      Decide on a mask from type and rotation
         private static int[,] GetMask(PieceType type, int orientation)
         {
             switch (type)
@@ -242,10 +219,8 @@ namespace iobloc
             return null;
         }
 
-        /// <summary>
-        /// Change orientation (and mask)
-        /// </summary>
-        /// <returns></returns>
+        // Summary:
+        //      Change orientation (and mask)
         public TetrisPiece Rotate()
         {
             var p = new TetrisPiece(this);
@@ -254,10 +229,8 @@ namespace iobloc
             return p;
         }
 
-        /// <summary>
-        ///  Strafe left
-        /// </summary>
-        /// <returns></returns>
+        // Summary:
+        //      Strafe left
         public TetrisPiece Left()
         {
             var p = new TetrisPiece(this);
@@ -265,10 +238,8 @@ namespace iobloc
             return p;
         }
 
-        /// <summary>
-        /// Strafe right
-        /// </summary>
-        /// <returns></returns>
+        // Summary:
+        //      Strafe right
         public TetrisPiece Right()
         {
             var p = new TetrisPiece(this);
@@ -276,10 +247,8 @@ namespace iobloc
             return p;
         }
 
-        /// <summary>
-        /// Strafe down
-        /// </summary>
-        /// <returns></returns>
+        // Summary:
+        //      Strafe down
         public TetrisPiece Down()
         {
             var p = new TetrisPiece(this);

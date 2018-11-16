@@ -2,9 +2,7 @@ using System.Collections.Generic;
 
 namespace iobloc
 {
-    /// <summary>
-    /// Base board handles common operations like loading settings and initialization
-    /// </summary>
+    // Base board handles common operations like loading settings and initialization
     abstract class BaseBoard : IBaseBoard
     {
         // internal code of board
@@ -22,92 +20,56 @@ namespace iobloc
         // internal level, in some cases decides victory condition
         private int _level;
 
-        /// <summary>
-        /// Settings for this board type only
-        /// </summary>
-        /// <value></value>
+        // Settings for this board type only
         protected Dictionary<string, string> BoardSettings { get; private set; }
-        /// <summary>
-        /// Main width, excluding borders
-        /// </summary>
-        /// <value></value>
+        // Main width, excluding borders
         protected int Width { get; private set; }
-        /// <summary>
-        /// Main height, excluding borders
-        /// </summary>
-        /// <value></value>
+        // Main height, excluding borders
         protected int Height { get; private set; }
-        /// <summary>
-        /// Custom block width to compensate vertical-to-horizontal size ratio
-        /// </summary>
-        /// <value></value>
+        // Custom block width to compensate vertical-to-horizontal size ratio
         protected int BlockWidth { get; private set; }
         protected int BlockSpace { get; private set; }
         protected int Block { get; private set; }
-        /// <summary>
-        /// Help text will be displayed in main panel text mode when paused
-        /// </summary>
-        /// <value></value>
+        // Help text will be displayed in main panel text mode when paused
         protected string[] Help { get; private set; }
-        /// <summary>
-        /// Is set to true after first initialization, ca be used for re-initialization like postbacks
-        /// </summary>
-        /// <value></value>
+        // Summary:
+        //      Is set to true after first initialization, ca be used for re-initialization like postbacks
         protected bool IsInitialized { get; private set; }
 
-        /// <summary>
-        /// Get border around the Panels, to draw in UI
-        /// </summary>
-        /// <value>a collection of lines</value>
+        // Summary:
+        //      Get border around the Panels, to draw in UI
         public UIBorder Border { get; private set; }
-        /// <summary>
-        /// Rectangulars to draw in UI
-        /// </summary>
-        /// <value></value>
+        // Summary:
+        //      Rectangulars to draw in UI
         public Dictionary<string, UIPanel> Panels { get; private set; }
-        /// <summary>
-        /// Duration between frames in ms
-        /// </summary>
-        /// <value></value>
+        // Summary:
+        //      Duration between frames in ms
         public int FrameInterval { get; private set; }
-        /// <summary>
-        /// Is true while board is running, false when board needs to exit
-        /// </summary>
-        /// <value></value>
+        // Summary:
+        //      Is true while board is running, false when board needs to exit
         public bool IsRunning { get; private set; }
-        /// <summary>
-        /// List of shortcut keys which are handled by board
-        /// </summary>
-        /// <value></value>
+        // Summary:
+        //      List of shortcut keys which are handled by board
         public string[] AllowedKeys { get; protected set; }
-        /// <summary>
-        /// Reference to next board to run, null to terminate
-        /// </summary>
-        /// <value></value>
+        // Summary:
+        //      Reference to next board to run, null to terminate
         public IBoard Next { get; protected set; }
-        /// <summary>
-        /// Main panel inside border rectangle
-        /// </summary>
-        /// <value></value>
+        // Summary:
+        //      Main panel inside border rectangle
         protected UIPanel Main { get; set; }
-        /// <summary>
-        /// Get current score. Setting the score triggers level progression, highscore update and winning conditions
-        /// </summary>
-        /// <returns></returns>
+        // Summary:
+        //      Get current score. Setting the score triggers level progression, highscore update and winning conditions
         protected int Score { get { return _score; } set { SetScore(value); } }
-        /// <summary>
-        /// Get current level. Setting the level triggers FrameInterval update and winning conditions
-        /// </summary>
-        /// <returns></returns>
+        // Summary:
+        //      Get current level. Setting the level triggers FrameInterval update and winning conditions
         protected int Level { get { return _level; } set { SetLevel(value); } }
 
-        /// <summary>
-        /// Initialize with internal board type,
-        /// Get settings with InitializeSettings(),
-        /// Construct UI elements with InitializeUI() and
-        /// Reset the board by calling Initialize()
-        /// </summary>
-        /// <param name="type">supported BoardType</param>
+        // Summary:
+        //      Initialize with internal board type,
+        //      Get settings with InitializeSettings(),
+        //      Construct UI elements with InitializeUI() and
+        //      Reset the board by calling Initialize()
+        // Param: type: supported BoardType
         protected BaseBoard(BoardType type)
         {
             Type = type;
@@ -117,10 +79,9 @@ namespace iobloc
             IsInitialized = true;
         }
 
-        /// <summary>
-        /// If new score is different than current, update highscore and progress level
-        /// </summary>
-        /// <param name="score">new score</param>
+        // Summary:
+        //      If new score is different than current, update highscore and progress level
+        // Param: score: new score
         private void SetScore(int score)
         {
             if (score != 0 && score == _score)
@@ -135,10 +96,10 @@ namespace iobloc
                 SetLevel(_level + 1);
         }
 
-        /// <summary>
-        /// If new score is better than highscore, update global highscore
-        /// </summary>
-        /// <param name="score">new score</param>
+        // Summary:
+        //      If new score is better than highscore, update global highscore
+
+        // Param: score: new score
         private void SetHighscore(int score)
         {
             if (score < Highscore)
@@ -150,10 +111,8 @@ namespace iobloc
             Serializer.UpdateHighscore(ID, score);
         }
 
-        /// <summary>
-        /// If new level is different than current level update FrameInterval and check winning condition
-        /// </summary>
-        /// <param name="level"></param>
+        // Summary:
+        //      If new level is different than current level update FrameInterval and check winning condition
         protected void SetLevel(int level)
         {
             if (level > 0 && level == _level)
@@ -171,9 +130,8 @@ namespace iobloc
             }
         }
 
-        /// <summary>
-        /// Set common setting values; can be overriden to initialize extra values
-        /// </summary>
+        // Summary:
+        //      Set common setting values; can be overriden to initialize extra values
         protected virtual void InitializeSettings()
         {
             BoardSettings = Serializer.Settings.ContainsKey(ID) ? Serializer.Settings[ID] : new Dictionary<string, string>();
@@ -189,10 +147,9 @@ namespace iobloc
             LevelThreshold = BoardSettings.GetInt(Settings.LevelThreshold, 0);
         }
 
-        /// <summary>
-        /// Set basic rectangle border with main panel and (optional) highscore, score and level panels;
-        /// Can be overwritten to add extra elements: lines and panels
-        /// </summary>
+        // Summary:
+        //      Set basic rectangle border with main panel and (optional) highscore, score and level panels;
+        //      Can be overwritten to add extra elements: lines and panels
         protected virtual void InitializeUI()
         {
             Border = new UIBorder(Width + 2, Height + 2);
@@ -217,10 +174,9 @@ namespace iobloc
             }
         }
 
-        /// <summary>
-        /// Initialize Level = MasterLevel, Score = 0
-        /// Overwrite to initialize board or to restart (use IsInitialized value to setup the board again)
-        /// </summary>
+        // Summary:
+        //      Initialize Level = MasterLevel, Score = 0
+        //      Overwrite to initialize board or to restart (use IsInitialized value to setup the board again)
         protected virtual void Initialize()
         {
             SetLevel(Settings.MasterLevel);
@@ -231,19 +187,17 @@ namespace iobloc
             }
         }
 
-        /// <summary>
-        /// Used to set/unset board panels to new values during gameplay
-        /// </summary>
-        /// <param name="set">when true it should also mark the panel as changed</param>
+        // Summary:
+        //      Used to set/unset board panels to new values during gameplay
+        // Param: set: when true it should also mark the panel as changed
         protected virtual void Change(bool set)
         {
             if (set)
                 Main.Change();
         }
 
-        /// <summary>
-        /// Set Next board to Fireworks animation, re-initialize on exit
-        /// </summary>
+        // Summary:
+        //      Set Next board to Fireworks animation, re-initialize on exit
         protected void Win(bool exit = false)
         {
             if (Next == null)
@@ -255,10 +209,9 @@ namespace iobloc
             }
         }
 
-        /// <summary>
-        /// Set Next board to Rain animation and re-initialize
-        /// </summary>
-        /// <param name="exit">when true, the board also stops running</param>
+        // Summary:
+        //      Set Next board to Rain animation and re-initialize
+        // Param: exit: when true, the board also stops running
         protected void Lose(bool exit = true)
         {
             if (Next == null)
@@ -268,10 +221,9 @@ namespace iobloc
                 Stop();
         }
 
-        /// <summary>
-        /// Runs every time a bord is opened by BoardRunner,
-        /// Set Next to null, IsRunning to true, refresh all panels
-        /// </summary>
+        // Summary:
+        //      Runs every time a bord is opened by BoardRunner,
+        //      Set Next to null, IsRunning to true, refresh all panels
         public virtual void Start()
         {
             Next = null;
@@ -280,9 +232,8 @@ namespace iobloc
                 p.Change();
         }
 
-        /// <summary>
-        /// Stop running and return to menu
-        /// </summary>
+        // Summary:
+        //      Stop running and return to menu
         public void Stop()
         {
             if (Next == null && Type != BoardType.Menu) // if no animation, return to menu, unless already in menu
@@ -290,23 +241,20 @@ namespace iobloc
             IsRunning = false;
         }
 
-        /// <summary>
-        /// Turns pause mode on and off
-        /// </summary>
+        // Summary:
+        //      Turns pause mode on and off
         public virtual void TogglePause()
         {
             Main.SwitchMode();
         }
 
-        /// <summary>
-        /// Move to next frame; not all boards use frames, some are static
-        /// </summary>
+        // Summary:
+        //      Move to next frame; not all boards use frames, some are static
         public virtual void NextFrame() { }
 
-        /// <summary>
-        /// Handle allowed key
-        /// </summary>
-        /// <param name="key">key value as string constant</param>
+        // Summary:
+        //      Handle allowed key
+        // Param: key: key value as string constant
         public abstract void HandleInput(string key);
     }
 }

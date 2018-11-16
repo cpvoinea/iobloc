@@ -3,38 +3,35 @@ using System.Threading;
 
 namespace iobloc
 {
-    /// <summary>
-    /// Minimalist running of IBoard. The algorithm is:
-    /// Draw(board.Border)
-    /// board.Start()
-    /// do
-    ///   Draw(board.Panels)
-    ///   key <= Input()
-    ///   if (board.AllowedKeys contains key)
-    ///     board.HandleInput(key)
-    ///   else board.TogglePause()
-    ///   wait for board.FrameInterval (ms)
-    ///   board.NextFrame()
-    /// while (key is not Escape)
-    /// board.Stop()
-    /// </summary>
+    // Minimalist running of IBoard. The algorithm is:
+    // Draw(board.Border)
+    // board.Start()
+    // do
+    //   Draw(board.Panels)
+    //   key <= Input()
+    //   if (board.AllowedKeys contains key)
+    //     board.HandleInput(key)
+    //   else board.TogglePause()
+    //   wait for board.FrameInterval (ms)
+    //   board.NextFrame()
+    // while (key is not Escape)
+    // board.Stop()
     public static class BoardRunner
     {
-        /// <summary>
-        /// Minimalist running of IBoard. The algorithm is:
-        /// Draw(board.Border)
-        /// board.Start()
-        /// do
-        ///   Draw(board.Panels)
-        ///   key <= Input()
-        ///   if (board.AllowedKeys contains key)
-        ///     board.HandleInput(key)
-        ///   else board.TogglePause()
-        ///   wait for board.FrameInterval (ms)
-        ///   board.NextFrame()
-        /// while (key is not Escape)
-        /// board.Stop()
-        /// </summary>
+        // Summary:
+        // Minimalist running of IBoard. The algorithm is:
+        // Draw(board.Border)
+        // board.Start()
+        // do
+        //   Draw(board.Panels)
+        //   key <= Input()
+        //   if (board.AllowedKeys contains key)
+        //     board.HandleInput(key)
+        //   else board.TogglePause()
+        //   wait for board.FrameInterval (ms)
+        //   board.NextFrame()
+        // while (key is not Escape)
+        // board.Stop()
         public static void Run(IBoard board)
         {
             board.Start();
@@ -74,11 +71,8 @@ namespace iobloc
             }
         }
 
-        /// <summary>
-        /// Decide on key reaction: exit on Escape, handle AllowedKeys or pause on rest
-        /// </summary>
-        /// <param name="board"></param>
-        /// <returns>true if paused</returns>
+        // Summary:
+        //      Decide on key reaction: exit on Escape, handle AllowedKeys or pause on rest
         private static bool HandleInput(IBoard board)
         {
             string key = UIPainter.Input();
@@ -95,11 +89,9 @@ namespace iobloc
             return false;
         }
 
-        /// <summary>
-        /// Use HasChanges property to decide if draw is needed and set it to false if drawn
-        /// </summary>
-        /// <param name="board"></param>
-        /// <param name="togglePause">toggle pause before drawing (switch to text mode or back)</param>
+        // Summary:
+        //      Use HasChanges property to decide if draw is needed and set it to false if drawn
+        // Param: togglePause: toggle pause before drawing (switch to text mode or back)
         private static void Paint(IBoard board, bool togglePause = false)
         {
             if (togglePause)

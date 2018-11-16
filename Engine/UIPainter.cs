@@ -3,20 +3,17 @@ using System.Text;
 
 namespace iobloc
 {
-    /// <summary>
-    /// Use System.Console to paint and get input
-    /// </summary>
+    // Use System.Console to paint and get input
     static class UIPainter
     {
         private static bool SAFE_MODE = true; // made it static instead of const to avoid warnings
         private static int WinWidth = 48, WinHeight = 24, BuffWidth = 48, BuffHeight = 192;
         private static int CurrentBorderHeight;
 
-        /// <summary>
-        /// Resize window to fit a border - not working on all OS
-        /// </summary>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
+        // Summary:
+        //      Resize window to fit a border - not working on all OS
+        // Param: width: 
+        // Param: height: 
         private static void Resize(int width, int height)
         {
             // add extra column for cursor (?)
@@ -34,9 +31,8 @@ namespace iobloc
             while (!success && width < 16);
         }
 
-        /// <summary>
-        /// Use console for drawing
-        /// </summary>
+        // Summary:
+        //      Use console for drawing
         public static void Initialize()
         {
             // support box drawing
@@ -53,9 +49,8 @@ namespace iobloc
             }
         }
 
-        /// <summary>
-        /// Restore console to original state
-        /// </summary>
+        // Summary:
+        //      Restore console to original state
         public static void Exit()
         {
             // just in case, restore color
@@ -72,10 +67,9 @@ namespace iobloc
                 catch { }
         }
 
-        /// <summary>
-        /// Draw a border consisting of horizontal and vertical lines and clear the rest of the screen
-        /// </summary>
-        /// <param name="border">a collection of lines</param>
+        // Summary:
+        //      Draw a border consisting of horizontal and vertical lines and clear the rest of the screen
+        // Param: border: a collection of lines
         public static void DrawBorder(UIBorder border)
         {
             Console.Clear();
@@ -103,11 +97,10 @@ namespace iobloc
             }
         }
 
-        /// <summary>
-        /// Draw a panel inside a rectangular area.
-        /// The panel has either lines of text or a multi-colored matrix with a single character
-        /// </summary>
-        /// <param name="panel">panel to draw</param>
+        // Summary:
+        //      Draw a panel inside a rectangular area.
+        //      The panel has either lines of text or a multi-colored matrix with a single character
+        // Param: panel: panel to draw
         public static void DrawPanel(UIPanel panel)
         {
             if (panel.IsTextMode)
@@ -116,11 +109,10 @@ namespace iobloc
                 DrawPanelColor(panel);
         }
 
-        /// <summary>
-        /// Put centered lines of text inside a rectangle, clear the rest
-        /// </summary>
-        /// <param name="panel">panel defines rectangle</param>
-        /// <param name="lines">text lines to write</param>
+        // Summary:
+        //      Put centered lines of text inside a rectangle, clear the rest
+        // Param: panel: panel defines rectangle
+        // Param: lines: text lines to write
         private static void DrawPanelText(UIPanel panel, string[] lines)
         {
             // use empty line to clear where text is missing
@@ -144,10 +136,9 @@ namespace iobloc
             }
         }
 
-        /// <summary>
-        /// Draw a matrix containing a symbol of multiple colors, 0 representing background color
-        /// </summary>
-        /// <param name="panel">panel defines rectangle and color matrix</param>
+        // Summary:
+        //      Draw a matrix containing a symbol of multiple colors, 0 representing background color
+        // Param: panel: panel defines rectangle and color matrix
         private static void DrawPanelColor(UIPanel panel)
         {
             for (int row = 0; row < panel.Height; row++)
@@ -174,10 +165,8 @@ namespace iobloc
             Console.ResetColor();
         }
 
-        /// <summary>
-        /// Wait until key is pressed and return key
-        /// </summary>
-        /// <returns>pressed key as string constant</returns>
+        // Summary:
+        //      Wait until key is pressed and return key
         public static string InputWait()
         {
             // on Mac the interception of key doesn't always work
@@ -195,10 +184,8 @@ namespace iobloc
             return k;
         }
 
-        /// <summary>
-        /// Check if key is pressed and return it, return null if no key is pressed
-        /// </summary>
-        /// <returns>key string or null</returns>
+        // Summary:
+        //      Check if key is pressed and return it, return null if no key is pressed
         public static string Input()
         {
             if (Console.KeyAvailable)
