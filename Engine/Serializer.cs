@@ -61,6 +61,8 @@ namespace iobloc
                 while (!sr.EndOfStream)
                 {
                     string line = sr.ReadLine();
+                    if(string.IsNullOrWhiteSpace(line))
+                        break;
                     // first line contains board ID as key
                     int key = int.Parse(line.Split(' ')[0]);
                     if (!Settings.ContainsKey(key))
