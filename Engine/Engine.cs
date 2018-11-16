@@ -6,7 +6,7 @@ namespace iobloc
         // Summary:
         //      Load settings from default or external file,
         //      Initialize UI
-        // Param: settingsFilePath: 
+        // Parameters: settingsFilePath: 
         public static void Initialize(string settingsFilePath)
         {
             Serializer.Load(settingsFilePath);
@@ -16,7 +16,7 @@ namespace iobloc
         // Summary:
         //      Display menu board
         //      Handle linking of boards (menu->game->animation->menu->etc)
-        // Param: settingsFilePath: optional external settings file path, if null use default settings
+        // Parameters: settingsFilePath: optional external settings file path, if null use default settings
         public static void Start()
         {
             IBoard menu = Serializer.GetBoard((int)BoardType.Menu);

@@ -16,11 +16,11 @@ namespace iobloc
 
         // Summary:
         //      Component of border
-        // Param: from: starting position - distance from left if horizontal, distance from top if vertical
-        // Param: to: ending position (inclusive)
-        // Param: position: cross position - distance from top if horizontal, distance from left if vertical
-        // Param: isVertical: vertical (true) or horizontal line
-        // Param: isSingle: single line (true) or double line
+        // Parameters: from: starting position - distance from left if horizontal, distance from top if vertical
+        // Parameters: to: ending position (inclusive)
+        // Parameters: position: cross position - distance from top if horizontal, distance from left if vertical
+        // Parameters: isVertical: vertical (true) or horizontal line
+        // Parameters: isSingle: single line (true) or double line
         public UIBorderLine(int from, int to, int position, bool isVertical, bool isSingle = true)
         {
             if (from < to)
@@ -40,7 +40,7 @@ namespace iobloc
 
         // Summary:
         //      Depending on line type (single/double) and interection type (cross, T, corner) the intersection symbol is different
-        // Param: line: line to check against
+        // Parameters: line: line to check against
         internal int GetIntersectionSymbol(UIBorderLine line)
         {
             if (IsVertical == line.IsVertical // parallel lines

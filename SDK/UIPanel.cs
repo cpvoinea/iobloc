@@ -27,11 +27,11 @@ namespace iobloc
 
         // Summary:
         //      Initialize panel
-        // Param: fromRow: Distance from top where panel begins
-        // Param: fromCol: Distance from left where panel begins
-        // Param: toRow: Distance from top where panel ends, including last row/param>
-        // Param: toCol: Distance from left where panel ends, including last column
-        // Param: symbol: Character to be drawn in different colors as configured in grid matrix, defaults to full block
+        // Parameters: fromRow: Distance from top where panel begins
+        // Parameters: fromCol: Distance from left where panel begins
+        // Parameters: toRow: Distance from top where panel ends, including last row/param>
+        // Parameters: toCol: Distance from left where panel ends, including last column
+        // Parameters: symbol: Character to be drawn in different colors as configured in grid matrix, defaults to full block
         public UIPanel(int fromRow, int fromCol, int toRow, int toCol, char symbol = (char)UISymbol.BlockFull)
         {
             Symbol = symbol;
@@ -45,7 +45,7 @@ namespace iobloc
 
         // Summary:
         //      Set color matrix to same value
-        // Param: val: value defaults to 0
+        // Parameters: val: value defaults to 0
         public void Clear(int val = 0)
         {
             for (int i = 0; i < Height; i++)
@@ -55,8 +55,8 @@ namespace iobloc
 
         // Summary:
         //      Set lines of text for text mode, enters text mode and marks changes if required
-        // Param: textLines: text
-        // Param: setTextMode: switch to text mode
+        // Parameters: textLines: text
+        // Parameters: setTextMode: switch to text mode
         public void SetText(string[] textLines, bool setTextMode = true)
         {
             Text = textLines;

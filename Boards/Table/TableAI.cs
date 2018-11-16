@@ -10,10 +10,20 @@ namespace iobloc
         {
             List<int[]> result = new List<int[]>();
             var allowed = GetMoveMatrix(lines, dice);
-            for (int from = L - 1; from >= 0; from--)
-                for (int to = 0; to < L; to++)
-                    if (allowed[from, to] > 0)
-                        result.Add(new[] { from, to, allowed[from, to] });
+            for (int k = dice.Length - 1; k >= 0; k--)
+            {
+                int d = dice[k];
+                bool found = false;
+                for (int from = L - 1; from >= 0 && !found; from--)
+                    for (int to = 0; to < L && !found; to++)
+                        if (allowed[from, to] == d)
+                        {
+                            result.Add(new[] { from, to, d });
+                            allowed[from, to] = 0;
+                            found = true;
+                        }
+            }
+
             return result.ToArray();
         }
 

@@ -17,8 +17,8 @@ namespace iobloc
 
         // Summary:
         //      Initialize to a rectangle of width x height with double line borders
-        // Param: width: include start and end vertical lines
-        // Param: height: includes start and end horizontal lines
+        // Parameters: width: include start and end vertical lines
+        // Parameters: height: includes start and end horizontal lines
         public UIBorder(int width, int height)
         {
             Width = width;
@@ -36,7 +36,7 @@ namespace iobloc
 
         // Summary:
         //      Add extra lines and calculates intersections and UISymbol
-        // Param: lines: interior lines to be added
+        // Parameters: lines: interior lines to be added
         public void AddLines(UIBorderLine[] lines)
         {
             _lines.AddRange(lines);

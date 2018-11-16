@@ -73,7 +73,7 @@ namespace iobloc
 
         // Summary:
         //      Handle allowed key
-        // Param: key: key value as string literal
+        // Parameters: key: key value as string literal
         public abstract void HandleInput(string key);
 
         // Summary:

@@ -88,7 +88,7 @@ namespace iobloc
             int c = Player == PlayerSide.White ? CP : CE;
             Take();
             _picked++;
-            Set(Count + _picked, c);
+            Set(Count + _picked + 1, c);
             Change();
         }
 
@@ -105,7 +105,7 @@ namespace iobloc
         {
             if (_picked == 0)
                 return;
-            Set(Count + _picked, 0);
+            Set(Count + _picked + 1, 0);
             _picked--;
             Change();
         }

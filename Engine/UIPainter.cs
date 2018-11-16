@@ -12,8 +12,8 @@ namespace iobloc
 
         // Summary:
         //      Resize window to fit a border - not working on all OS
-        // Param: width: 
-        // Param: height: 
+        // Parameters: width: 
+        // Parameters: height: 
         private static void Resize(int width, int height)
         {
             // add extra column for cursor (?)
@@ -69,7 +69,7 @@ namespace iobloc
 
         // Summary:
         //      Draw a border consisting of horizontal and vertical lines and clear the rest of the screen
-        // Param: border: a collection of lines
+        // Parameters: border: a collection of lines
         public static void DrawBorder(UIBorder border)
         {
             Console.Clear();
@@ -100,7 +100,7 @@ namespace iobloc
         // Summary:
         //      Draw a panel inside a rectangular area.
         //      The panel has either lines of text or a multi-colored matrix with a single character
-        // Param: panel: panel to draw
+        // Parameters: panel: panel to draw
         public static void DrawPanel(UIPanel panel)
         {
             if (panel.IsTextMode)
@@ -111,8 +111,8 @@ namespace iobloc
 
         // Summary:
         //      Put centered lines of text inside a rectangle, clear the rest
-        // Param: panel: panel defines rectangle
-        // Param: lines: text lines to write
+        // Parameters: panel: panel defines rectangle
+        // Parameters: lines: text lines to write
         private static void DrawPanelText(UIPanel panel, string[] lines)
         {
             // use empty line to clear where text is missing
@@ -138,7 +138,7 @@ namespace iobloc
 
         // Summary:
         //      Draw a matrix containing a symbol of multiple colors, 0 representing background color
-        // Param: panel: panel defines rectangle and color matrix
+        // Parameters: panel: panel defines rectangle and color matrix
         private static void DrawPanelColor(UIPanel panel)
         {
             for (int row = 0; row < panel.Height; row++)

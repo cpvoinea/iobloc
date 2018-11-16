@@ -69,7 +69,7 @@ namespace iobloc
         //      Get settings with InitializeSettings(),
         //      Construct UI elements with InitializeUI() and
         //      Reset the board by calling Initialize()
-        // Param: type: supported BoardType
+        // Parameters: type: supported BoardType
         protected BaseBoard(BoardType type)
         {
             Type = type;
@@ -81,7 +81,7 @@ namespace iobloc
 
         // Summary:
         //      If new score is different than current, update highscore and progress level
-        // Param: score: new score
+        // Parameters: score: new score
         private void SetScore(int score)
         {
             if (score != 0 && score == _score)
@@ -99,7 +99,7 @@ namespace iobloc
         // Summary:
         //      If new score is better than highscore, update global highscore
 
-        // Param: score: new score
+        // Parameters: score: new score
         private void SetHighscore(int score)
         {
             if (score < Highscore)
@@ -141,10 +141,10 @@ namespace iobloc
             Width = BoardSettings.GetInt(Settings.Width, 10);
             Height = BoardSettings.GetInt(Settings.Height, 10);
             BlockWidth = BoardSettings.GetInt(Settings.BlockWidth, 1);
-            BlockSpace = BoardSettings.GetInt(Settings.BlockSpace, 0);
+            BlockSpace = BoardSettings.GetInt(Settings.BlockSpace);
             Block = BlockWidth + BlockSpace;
             FrameMultiplier = BoardSettings.GetReal(Settings.FrameMultiplier, 1);
-            LevelThreshold = BoardSettings.GetInt(Settings.LevelThreshold, 0);
+            LevelThreshold = BoardSettings.GetInt(Settings.LevelThreshold);
         }
 
         // Summary:
@@ -189,7 +189,7 @@ namespace iobloc
 
         // Summary:
         //      Used to set/unset board panels to new values during gameplay
-        // Param: set: when true it should also mark the panel as changed
+        // Parameters: set: when true it should also mark the panel as changed
         protected virtual void Change(bool set)
         {
             if (set)
@@ -211,7 +211,7 @@ namespace iobloc
 
         // Summary:
         //      Set Next board to Rain animation and re-initialize
-        // Param: exit: when true, the board also stops running
+        // Parameters: exit: when true, the board also stops running
         protected void Lose(bool exit = true)
         {
             if (Next == null)
@@ -254,7 +254,7 @@ namespace iobloc
 
         // Summary:
         //      Handle allowed key
-        // Param: key: key value as string constant
+        // Parameters: key: key value as string constant
         public abstract void HandleInput(string key);
     }
 }

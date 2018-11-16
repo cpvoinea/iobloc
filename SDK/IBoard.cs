@@ -42,7 +42,7 @@ namespace iobloc
         void NextFrame();
         // Summary:
         //      Handle allowed key
-        // Param: key: key value as string constant
+        // Parameters: key: key value as string constant
         void HandleInput(string key);
     }
 }

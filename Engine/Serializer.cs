@@ -31,7 +31,7 @@ namespace iobloc
 
         // Summary:
         //      Load settings, menu, highscores
-        // Param: settingsFilePath: external settings file path
+        // Parameters: settingsFilePath: external settings file path
         public static void Load(string settingsFilePath = null)
         {
             LoadSettings(settingsFilePath);
@@ -49,7 +49,7 @@ namespace iobloc
 
         // Summary:
         //      If external settings file, overwrite default settings from file values
-        // Param: settingsFilePath: external settings file, will be used for saving if it doesn't exist
+        // Parameters: settingsFilePath: external settings file, will be used for saving if it doesn't exist
         private static void LoadSettings(string settingsFilePath)
         {
             if (!string.IsNullOrEmpty(settingsFilePath))
@@ -61,7 +61,7 @@ namespace iobloc
                 while (!sr.EndOfStream)
                 {
                     string line = sr.ReadLine();
-                    if(string.IsNullOrWhiteSpace(line))
+                    if (string.IsNullOrWhiteSpace(line))
                         break;
                     // first line contains board ID as key
                     int key = int.Parse(line.Split(' ')[0]);
@@ -179,8 +179,8 @@ namespace iobloc
 
         // Summary:
         //      In-memory update of highscore, if it is the case
-        // Param: key: board ID
-        // Param: score: score to be checked against highscore
+        // Parameters: key: board ID
+        // Parameters: score: score to be checked against highscore
         public static void UpdateHighscore(int key, int score)
         {
             if (Highscores.ContainsKey(key) && Highscores[key] < score)
@@ -190,14 +190,14 @@ namespace iobloc
         // Summary:
         //      Calculate frame interval for certain level and board frameMultiplier setting.
         //      Currently values are between 50ms and 200ms (depending on level) multiplied by frameMultiplier
-        // Param: frameMultiplier: board configured setting
-        // Param: level: level to calculate for
+        // Parameters: frameMultiplier: board configured setting
+        // Parameters: level: level to calculate for
         public static int GetLevelInterval(double frameMultiplier, int level) => (int)(frameMultiplier * (200 - 10 * level));
 
         // Summary:
         //      Get board from cache or create a new one and add it to cache.
         //      To save memory and keep board states on transitions.
-        // Param: key: board ID
+        // Parameters: key: board ID
         public static IBoard GetBoard(int key)
         {
             if (Boards.ContainsKey(key))
@@ -255,11 +255,18 @@ namespace iobloc
             return null;
         }
 
+        public static string GetString(this Dictionary<string, string> dic, string key)
+        {
+            if (!dic.ContainsKey(key))
+                return string.Empty;
+            return dic[key];
+        }
+
         // Summary:
         //      Parse an int setting value or get a default value if not exists
-        // Param: dic: board settings
-        // Param: key: setting name
-        // Param: defVal: default value
+        // Parameters: dic: board settings
+        // Parameters: key: setting name
+        // Parameters: defVal: default value
         public static int GetInt(this Dictionary<string, string> dic, string key, int defVal = 0)
         {
             if (!dic.ContainsKey(key))
@@ -269,9 +276,9 @@ namespace iobloc
 
         // Summary:
         //      Parse a double setting value or get a default value
-        // Param: dic: board settings
-        // Param: key: setting name
-        // Param: defVal: default value
+        // Parameters: dic: board settings
+        // Parameters: key: setting name
+        // Parameters: defVal: default value
         public static double GetReal(this Dictionary<string, string> dic, string key, double defVal = 0)
         {
             if (!dic.ContainsKey(key))
@@ -281,8 +288,8 @@ namespace iobloc
 
         // Summary:
         //      Split comma-separated list of strings from a setting value
-        // Param: dic: board settings
-        // Param: key: setting name
+        // Parameters: dic: board settings
+        // Parameters: key: setting name
         public static string[] GetList(this Dictionary<string, string> dic, string key)
         {
             if (!dic.ContainsKey(key))
@@ -292,8 +299,8 @@ namespace iobloc
 
         // Summary:
         //      Parse a color value from setting color name
-        // Param: dic: board settings
-        // Param: key: setting name
+        // Parameters: dic: board settings
+        // Parameters: key: setting name
         public static int GetColor(this Dictionary<string, string> dic, string key)
         {
             if (!dic.ContainsKey(key))
@@ -303,8 +310,8 @@ namespace iobloc
 
         // Summary:
         //      Check if array contains value
-        // Param: array: 
-        // Param: val: 
+        // Parameters: array: 
+        // Parameters: val: 
         public static bool Contains<T>(this T[] array, T val)
         {
             foreach (T k in array)

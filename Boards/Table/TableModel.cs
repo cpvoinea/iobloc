@@ -82,14 +82,5 @@ namespace iobloc
 
             return result;
         }
-
-        public LineType GetLineType(PlayerSide side, int index)
-        {
-            if (index < 24)
-                return (LineType)(side == PlayerSide.White ? index : 23 - index);
-            if (index < 26)
-                return LineType.Taken;
-            return LineType.Out;
-        }
     }
 }

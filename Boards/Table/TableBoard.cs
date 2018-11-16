@@ -3,7 +3,9 @@ namespace iobloc
     class TableBoard : BaseBoard
     {
         internal static int BW, B, CP, CE, CN, CH;
+        private const int SF = 3;
         private TableController _controller;
+        private bool _skipFrame;
 
         public TableBoard() : base(BoardType.Table) { }
 
@@ -44,8 +46,8 @@ namespace iobloc
             Main = Panels[Pnl.Table.UpperLeft];
 
             int aiCount = BoardSettings.GetInt("AIs", 0);
-            string assemblyPath = BoardSettings[Settings.AssemblyPath];
-            string className = BoardSettings[Settings.ClassName];
+            string assemblyPath = BoardSettings.GetString(Settings.AssemblyPath);
+            string className = BoardSettings.GetString(Settings.ClassName);
             ITableAI player1 = null;
             ITableAI player2 = null;
             if (aiCount > 0)
@@ -61,6 +63,7 @@ namespace iobloc
         {
             Level = Serializer.MasterLevel; // for frame multiplier
             Panels[Pnl.Table.UpperLeft].SetText(Help, false);
+            _skipFrame = true;
             _controller.Initialize();
         }
 
@@ -88,7 +91,15 @@ namespace iobloc
             if (_controller.State == GameState.Ended)
                 Win(true);
             else if (_controller.CurrentPlayerIsAI)
-                _controller.PlayerAction();
+            {
+                if (_skipFrame)
+                    _skipFrame = false;
+                else
+                {
+                    _controller.PlayerAction();
+                    _skipFrame = true;
+                }
+            }
         }
     }
 }

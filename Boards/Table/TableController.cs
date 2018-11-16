@@ -29,7 +29,6 @@ namespace iobloc
         public void Initialize()
         {
             _model.Clear();
-            _model.ClearSelection();
             _model[PlayerSide.White, LineType.Line1].Initialize(2, PlayerSide.Black);
             _model[PlayerSide.White, LineType.Line6].Initialize(5, PlayerSide.White);
             _model[PlayerSide.White, LineType.Line8].Initialize(3, PlayerSide.White);
@@ -58,41 +57,56 @@ namespace iobloc
             ShowDice();
             ShowAllowed();
 
+            _cursor = null;
+            _pickedFrom = null;
             if (CurrentPlayerIsAI)
-            {
-                _actionQueue.Clear();
-                var moves = CurrentPlayer.GetMoves(_model.GetLines(_side), _dice.ToArray());
-                foreach (var m in moves)
-                {
-                    LineType from = _model.GetLineType(_side, m[0]);
-                    LineType to = _model.GetLineType(_side, m[1]);
-                    _actionQueue.Enqueue(new Action(ActionType.Pick, from));
-                    _actionQueue.Enqueue(new Action(ActionType.Put, to));
-                }
-
-                PlayerAction();
-            }
+                GetPlayerMoves();
         }
 
-        private void UpdateDice(LineType from, LineType to)
+        private void RemoveDice(int val)
         {
-            int d = from - to;
-            if (from == LineType.Taken)
-                d = 24 - (int)to;
-            else if (to == LineType.Out)
-                foreach (int dd in _dice)
-                    if (dd >= d)
-                    {
-                        d = dd;
-                        break;
-                    }
-            _dice.Remove(d);
+            _dice.Remove(val);
             ShowDice();
         }
 
         private void ShowDice()
         {
             _model.ShowDice(string.Join<int>(",", _dice).Split(','));
+        }
+
+        private int GetDice(LineType from, LineType to)
+        {
+            if (from == LineType.Taken)
+                return 24 - (int)to;
+            else if (to == LineType.Out)
+            {
+                int line = (int)from + 1;
+                if (_dice.Contains(line))
+                    return line;
+                else
+                    foreach (int d in _dice)
+                        if (d > line)
+                            return d;
+            }
+            else
+                return from - to;
+            return 0;
+        }
+
+        private void GetPlayerMoves()
+        {
+            _actionQueue.Clear();
+            var moves = CurrentPlayer.GetMoves(_model.GetLines(_side), _dice.ToArray());
+            foreach (var m in moves)
+            {
+                LineType from = (LineType)m[0];
+                LineType to = (LineType)m[1];
+                int dice = m[2];
+                _actionQueue.Enqueue(new Action(ActionType.Select, from, dice));
+                _actionQueue.Enqueue(new Action(ActionType.Pick, from, dice));
+                _actionQueue.Enqueue(new Action(ActionType.Select, to, dice));
+                _actionQueue.Enqueue(new Action(ActionType.Put, to, dice));
+            }
         }
 
         private void SetAllowedFrom()
@@ -263,7 +277,7 @@ namespace iobloc
             _pickedFrom = null;
         }
 
-        private void Put(LineType to)
+        private void Put(LineType to, int dice)
         {
             // unpick
             _model[_side, _pickedFrom.Value].Unpick();
@@ -278,7 +292,7 @@ namespace iobloc
             }
             // put
             line.Put(_side);
-            UpdateDice(_pickedFrom.Value, to);
+            RemoveDice(dice);
             _pickedFrom = null;
         }
 
@@ -308,7 +322,7 @@ namespace iobloc
                 return;
 
             if (_pickedFrom.HasValue && _cursor != _pickedFrom) // put
-                Put(_cursor.Value);
+                Put(_cursor.Value, GetDice(_pickedFrom.Value, _cursor.Value));
             else // take/put back
             {
                 if (!_pickedFrom.HasValue) // take
@@ -321,24 +335,21 @@ namespace iobloc
 
         public void PlayerAction()
         {
-            if (_actionQueue.Count == 0)
-            {
-                EndTurn();
-                return;
-            }
-
             var action = _actionQueue.Dequeue();
             switch (action.Type)
             {
+                case ActionType.Select:
+                    _model[_side, action.Line].Select(true);
+                    break;
                 case ActionType.Pick:
                     Pick(action.Line);
+                    ShowAllowed();
                     break;
                 case ActionType.Put:
-                    Put(action.Line);
+                    Put(action.Line, action.Dice);
+                    ShowAllowed();
                     break;
             }
-
-            ShowAllowed();
         }
     }
 }

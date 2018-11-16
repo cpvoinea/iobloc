@@ -91,7 +91,7 @@ namespace iobloc
 
         // Summary:
         //      Use HasChanges property to decide if draw is needed and set it to false if drawn
-        // Param: togglePause: toggle pause before drawing (switch to text mode or back)
+        // Parameters: togglePause: toggle pause before drawing (switch to text mode or back)
         private static void Paint(IBoard board, bool togglePause = false)
         {
             if (togglePause)
