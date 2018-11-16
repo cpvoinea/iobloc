@@ -322,7 +322,10 @@ namespace iobloc
         public void PlayerAction()
         {
             if (_actionQueue.Count == 0)
+            {
+                EndTurn();
                 return;
+            }
 
             var action = _actionQueue.Dequeue();
             switch (action.Type)
