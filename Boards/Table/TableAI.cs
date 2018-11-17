@@ -9,19 +9,20 @@ namespace iobloc
         public int[][] GetMoves(int[] lines, int[] dice)
         {
             List<int[]> result = new List<int[]>();
-            var allowed = GetMoveMatrix(lines, dice);
-            for (int k = dice.Length - 1; k >= 0; k--)
+            List<int> remaining = new List<int>(dice);
+            for (int i = dice.Length - 1; i >= 0; i--)
             {
-                int d = dice[k];
-                bool found = false;
-                for (int from = L - 1; from >= 0 && !found; from--)
-                    for (int to = 0; to < L && !found; to++)
-                        if (allowed[from, to] == d)
-                        {
-                            result.Add(new[] { from, to, d });
-                            allowed[from, to] = 0;
-                            found = true;
-                        }
+                int d = dice[i];
+                var matrix = GetMoveMatrix(lines, remaining.ToArray());
+                var move = GetNextMove(matrix, lines, d);
+                if (move == null)
+                    result.Add(new int[3]);
+                else
+                {
+                    result.Add(move);
+                    lines = DoMove(lines, move[0], move[1]);
+                }
+                remaining.Remove(d);
             }
 
             return result.ToArray();
@@ -86,6 +87,41 @@ namespace iobloc
             }
 
             return result;
+        }
+
+        internal static int[] GetNextMove(int[,] matrix, int[] lines, int dice)
+        {
+            bool canTakeOut = true;
+            for (int i = 6; i < 24 && canTakeOut; i++)
+                if (lines[i] > 0)
+                    canTakeOut = false;
+            if (canTakeOut)
+            {
+                for (int i = 0; i < 6; i++)
+                    if (matrix[i, 26] == dice)
+                        return new[] { i, 26, dice };
+                for (int j = 0; j < 5; j++)
+                    if (lines[j] == 0 || lines[j] == -1 && matrix[j + dice, j] > 0)
+                        return new[] { j + dice, j, dice };
+            }
+            for (int from = L - 1; from >= 0; from--)
+                for (int to = 0; to < L; to++)
+                    if (matrix[from, to] == dice)
+                        return new[] { from, to, dice };
+            return null;
+        }
+
+        internal int[] DoMove(int[] lines, int from, int to)
+        {
+            lines[from]--;
+            if (lines[to] < 0)
+            {
+                lines[25]++;
+                lines[to] = 1;
+            }
+            else
+                lines[to]++;
+            return lines;
         }
     }
 }

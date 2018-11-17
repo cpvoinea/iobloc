@@ -2,7 +2,7 @@ namespace iobloc
 {
     enum GameState { Running = 0, Ended = 1 }
     enum PlayerSide { White = 0, Black = 1 }
-    enum ActionType { Select, Pick, Put }
+    enum ActionType { None = 0, Select, Pick, Put }
     enum LineType
     {
         Line1 = 0, Line2 = 1, Line3 = 2, Line4 = 3, Line5 = 4, Line6 = 5, Line7 = 6, Line8 = 7, Line9 = 8, Line10 = 9, Line11 = 10, Line12 = 11,

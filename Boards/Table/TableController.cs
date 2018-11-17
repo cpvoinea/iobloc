@@ -102,10 +102,15 @@ namespace iobloc
                 LineType from = (LineType)m[0];
                 LineType to = (LineType)m[1];
                 int dice = m[2];
-                _actionQueue.Enqueue(new Action(ActionType.Select, from, dice));
-                _actionQueue.Enqueue(new Action(ActionType.Pick, from, dice));
-                _actionQueue.Enqueue(new Action(ActionType.Select, to, dice));
-                _actionQueue.Enqueue(new Action(ActionType.Put, to, dice));
+                if (dice == 0)
+                    _actionQueue.Enqueue(new Action(ActionType.None, 0, 0));
+                else
+                {
+                    _actionQueue.Enqueue(new Action(ActionType.Select, from, dice));
+                    _actionQueue.Enqueue(new Action(ActionType.Pick, from, dice));
+                    _actionQueue.Enqueue(new Action(ActionType.Select, to, dice));
+                    _actionQueue.Enqueue(new Action(ActionType.Put, to, dice));
+                }
             }
         }
 
@@ -338,6 +343,9 @@ namespace iobloc
             var action = _actionQueue.Dequeue();
             switch (action.Type)
             {
+                case ActionType.None:
+                    ShowAllowed();
+                    break;
                 case ActionType.Select:
                     _model[_side, action.Line].Select(true);
                     break;
