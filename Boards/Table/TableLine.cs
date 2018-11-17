@@ -6,7 +6,8 @@ namespace iobloc
         private readonly int _startRow;
         private readonly int _direction;
         private readonly bool? _isDark;
-        private bool _isHighlight;
+        private bool _setHighlight;
+        private bool _setBackground;
         private int Background => _isDark.HasValue ? (_isDark.Value ? Table.CD : Table.CL) : 0;
         public Panel Panel { get; private set; }
         public int Count { get; private set; }
@@ -18,40 +19,43 @@ namespace iobloc
             _startRow = row;
             _direction = isLower ? -1 : 1;
             _isDark = isDark;
-            _isHighlight = false;
+            _setHighlight = false;
+            _setBackground = false;
             Count = 0;
             IsWhite = null;
 
             Panel = panel;
-            for (int i = 1; i < panel.Height; i++)
-                Set(i, Background);
+            Initialize(0, null);
         }
 
-        public void Initialize(int count, bool isWhite)
+        public void Initialize(int count, bool? isWhite)
         {
             Count = count;
             IsWhite = isWhite;
-            for (int i = 1; i <= count; i++)
-                Set(i, isWhite);
+            for (int i = 1; i < Panel.Height; i++)
+                if (i <= count)
+                    Set(i, isWhite);
+                else
+                    Set(i);
         }
 
-        public void ClearSelect()
+        public void SetBackground(bool set)
         {
-            Set(0);
-            _isHighlight = false;
+            _setBackground = set;
+            Initialize(Count, IsWhite);
             Change();
         }
 
-        public void Select(bool set, bool highlight = false)
+        public void SetHighlight(bool set)
         {
-            if (set)
-            {
-                Set(0, highlight ? Table.CH : Table.CN);
-                if (highlight)
-                    _isHighlight = true;
-            }
-            else
-                Set(0, _isHighlight && !highlight ? Table.CH : 0);
+            _setHighlight = set;
+            Set(0, set ? Table.CH : 0);
+            Change();
+        }
+
+        public void SetCursor(bool set)
+        {
+            Set(0, set ? Table.CN : (_setHighlight ? Table.CH : 0));
             Change();
         }
 
@@ -78,16 +82,17 @@ namespace iobloc
             Change();
         }
 
-        private void Set(int row, bool? isWhite = null)
+        private void Set(int row, bool? isWhite)
         {
-            int c = isWhite.HasValue ? (isWhite.Value ? Table.CP : Table.CE) : Background;
+            int c = isWhite.HasValue ? (isWhite.Value ? Table.CP : Table.CE) : 0;
             Set(row, c);
         }
 
-        private void Set(int row, int val)
+        private void Set(int row, int val = 0)
         {
             for (int i = 0; i < Table.BW; i++)
-                Panel[_startRow + row * _direction, _startCol * Table.B + i] = val;
+                Panel[_startRow + row * _direction, _startCol * Table.B + i] =
+                row == 0 || val > 0 ? val : (_setBackground ? Background : 0);
         }
 
         private void Change()

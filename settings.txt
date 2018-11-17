@@ -3,9 +3,9 @@ MenuKeys D9
 Help ==GAMEPLAY==,|Selection:|,|LEFT-RIGHT|,|Action: UP|,|Restart: R|,+==OPTIONS=+,|Freedom: F|,|Marking: M|,|Numbers: N|,|Backgnd: B|,+----------+,| Exit: ESC|,|Pause: ANY|,============
 AllowedKeys LeftArrow,RightArrow,UpArrow,R,F,M,N,B
 FrameMultiplier 1
-Width 31
+Width 45
 Height 36
-BlockWidth 2
+BlockWidth 3
 BlockSpace 0
 PlayerColor Blue
 EnemyColor Red

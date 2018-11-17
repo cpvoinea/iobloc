@@ -23,8 +23,8 @@ namespace iobloc
                 bool isDark = i % 2 == 0;
                 _lines[i] = new TableLine(pnlLowerRight, 5 - i, pnlLowerRight.Height - 1, true, isDark);
                 _lines[i + 6] = new TableLine(pnlLowerLeft, 5 - i, pnlLowerLeft.Height - 1, true, isDark);
-                _lines[i + 12] = new TableLine(pnlUpperLeft, i, 0, false, !isDark);
-                _lines[i + 18] = new TableLine(pnlUpperRight, i, 0, false, !isDark);
+                _lines[i + 12] = new TableLine(pnlUpperLeft, i, 0, false, isDark);
+                _lines[i + 18] = new TableLine(pnlUpperRight, i, 0, false, isDark);
             }
             _lines[24] = new TableLine(pnlUpperTaken, 0, 0, false);
             _lines[25] = new TableLine(pnlLowerTaken, 0, pnlLowerTaken.Height - 1, true);
@@ -41,13 +41,19 @@ namespace iobloc
             _lines[23].Initialize(2, true);
         }
 
-        public void ClearSelection()
+        public void SetBackground(bool set)
         {
             foreach (var l in _lines)
-                l.ClearSelect();
+                l.SetBackground(set);
         }
 
-        private int GetIndex(bool isWhite, int line)
+        public void ClearHighlight()
+        {
+            foreach (var l in _lines)
+                l.SetHighlight(false);
+        }
+
+        public int GetIndex(bool isWhite, int line)
         {
             if (line < 24)
                 return isWhite ? line : 23 - line;

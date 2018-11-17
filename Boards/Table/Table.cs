@@ -8,16 +8,19 @@ namespace iobloc
         internal static int BW, B, CP, CE, CN, CD, CL, CH;
         private const int SF = 3;
         private readonly Random _random = new Random();
-        private bool _skipFrame;
-        private bool _useHighlight;
-        private bool _useCursor;
+        private bool _useFreeMove = false;
+        private bool _useMarking = false;
+        private bool _useNumbers = false;
+        private bool _useBackground = false;
         private TableBoard _board;
+        private ITableAI _player1;
+        private ITableAI _player2;
         private readonly List<int> _dice = new List<int>();
+        private readonly Queue<TableAction> _actions = new Queue<TableAction>();
+        private readonly List<int> _allowed = new List<int>();
         private bool _isWhite;
         private int? _cursor;
         private int? _pickedFrom;
-        private ITableAI _player1;
-        private ITableAI _player2;
         private ITableAI CurrentPlayer => _isWhite ? _player1 : _player2;
         public bool IsCurrentPlayerAI => CurrentPlayer != null;
 
@@ -90,8 +93,8 @@ namespace iobloc
                 textLeft += $"{12 - i,2}".PadLeft(padLeft + 2).PadRight(Block);
                 textRight += $"{6 - i,2}".PadLeft(padLeft + 2).PadRight(Block);
             }
-            Panels[Pnl.Table.MiddleLeft].SetText(textLeft);
-            Panels[Pnl.Table.MiddleRight].SetText(textRight);
+            Panels[Pnl.Table.MiddleLeft].SetText(textLeft.Split(','), false);
+            Panels[Pnl.Table.MiddleRight].SetText(textRight.Split(','), false);
         }
 
         protected override void Initialize()
@@ -100,7 +103,7 @@ namespace iobloc
             _board = new TableBoard(Panels);
             _cursor = null;
             _pickedFrom = null;
-            _skipFrame = true;
+
             ThrowDice();
         }
 
@@ -128,6 +131,71 @@ namespace iobloc
             Panels[Pnl.Table.Dice].SetText(string.Join<int>(",", _dice));
         }
 
+        private void CursorMove(bool left)
+        {
+            if (_useFreeMove)
+            {
+                if (!_cursor.HasValue)
+                    _cursor = left ? 23 : 0;
+                else
+                {
+                    _board[_isWhite, _cursor.Value].SetCursor(false);
+                    if (_cursor < 24)
+                    {
+                        if (_cursor.Value < 12)
+                            _cursor += left ? 1 : -1;
+                        else if (_cursor.Value < 24)
+                            _cursor += left ? -1 : 1;
+                        if (_cursor < 0)
+                            _cursor = 26 + (_isWhite ? 0 : 1);
+                        if (_cursor >= 24)
+                        {
+                            _cursor = 24 + (_isWhite ? 0 : 1);
+                        }
+                    }
+                    else if (_cursor < 26)
+                        _cursor = left ? 23 : 0;
+                    else
+                        _cursor = left ? 0 : 23;
+                }
+
+                _board[_isWhite, _cursor.Value].SetCursor(true);
+            }
+            else
+            {
+                if (_cursor.HasValue)
+                    _board[_isWhite, _cursor.Value].SetCursor(false);
+                if (_allowed.Count > 0)
+                {
+                    int i = _allowed.IndexOf(_cursor.Value);
+                    if (!_cursor.HasValue || i < 0)
+                        _cursor = _allowed[left ? _allowed.Count - 1 : 0];
+                    else
+                    {
+                        if (_cursor.Value < 12)
+                            i += left ? 1 : -1;
+                        else if (_cursor.Value < 24)
+                            i += left ? -1 : 1;
+                        else if (_cursor.Value < 26)
+                            i--;
+                        else
+                            i++;
+                        if (i < 0)
+                            i = _allowed.Count - 1;
+                        if (i >= _allowed.Count)
+                            i = 0;
+                        _cursor = _allowed[i];
+                    }
+
+                    _board[_isWhite, _cursor.Value].SetCursor(true);
+                }
+            }
+        }
+
+        private void CursorAction()
+        {
+        }
+
         public override void TogglePause()
         {
             var pnl = Panels[Pnl.Table.UpperLeft];
@@ -136,31 +204,50 @@ namespace iobloc
 
         public override void HandleInput(string key)
         {
-            if (key == "R")
-                Initialize();
-            else if (!IsCurrentPlayerAI)
-                switch (key)
-                {
-                    // case UIKey.LeftArrow: CursorMove(true); break;
-                    // case UIKey.RightArrow: CursorMove(false); break;
-                    // case UIKey.UpArrow: CursorAction(); break;
-                }
+            switch (key)
+            {
+                case "R":
+                    Initialize();
+                    break;
+                case "F":
+                    _useFreeMove = !_useFreeMove;
+                    if (!_useFreeMove && _cursor.HasValue)
+                    {
+                        _board[_isWhite, _cursor.Value].SetCursor(false);
+                        _cursor = null;
+                    }
+                    break;
+                case "M":
+                    _useMarking = !_useMarking;
+                    if (_useMarking)
+                    {
+                        _board.ClearHighlight();
+                        if (_cursor.HasValue)
+                            _board[_isWhite, _cursor.Value].SetCursor(true);
+                    }
+                    break;
+                case "N":
+                    _useNumbers = !_useNumbers;
+                    Panels[Pnl.Table.MiddleLeft].SwitchMode();
+                    Panels[Pnl.Table.MiddleRight].SwitchMode();
+                    break;
+                case "B":
+                    _useBackground = !_useBackground;
+                    _board.SetBackground(_useBackground);
+                    break;
+                case UIKey.LeftArrow:
+                case UIKey.RightArrow:
+                    CursorMove(key == UIKey.LeftArrow);
+                    break;
+                case UIKey.UpArrow:
+                    if (_actions.Count == 0)
+                        CursorAction();
+                    break;
+            }
         }
 
         public override void NextFrame()
         {
-            // if (State == GameState.Ended)
-            //     Win(true);
-            // else if (CurrentPlayerIsAI)
-            // {
-            //     if (_skipFrame)
-            //         _skipFrame = false;
-            //     else
-            //     {
-            //         PlayerAction();
-            //         _skipFrame = true;
-            //     }
-            // }
         }
     }
 }

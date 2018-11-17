@@ -6,8 +6,11 @@ namespace iobloc
     // Use System.Console to paint and get input
     static class Renderer
     {
+        private const int MinWidth = 102;
+        private const int MinHeight = 44;
         private static bool SAFE_MODE = true; // made it static instead of const to avoid warnings
-        private static int WinWidth = 48, WinHeight = 24, BuffWidth = 48, BuffHeight = 192;
+        private static int WinWidth = MinWidth;
+        private static int WinHeight = MinHeight;
         private static int CurrentBorderHeight;
 
         // Summary:
@@ -40,13 +43,10 @@ namespace iobloc
             // not hiding the cursor is sometimes usefull for debugging
             Console.CursorVisible = false;
             // remember initial values
-            if (!SAFE_MODE)
-            {
-                WinWidth = Console.WindowWidth;
-                WinHeight = Console.WindowHeight;
-                BuffWidth = Console.BufferWidth;
-                BuffHeight = Console.BufferHeight;
-            }
+            WinWidth = Console.WindowWidth;
+            WinHeight = Console.WindowHeight;
+            if (SAFE_MODE)
+                Resize(MinWidth, MinHeight);
         }
 
         // Summary:
@@ -58,13 +58,8 @@ namespace iobloc
             // show cursor again
             Console.CursorVisible = true;
             // restore initial values
-            if (!SAFE_MODE)
-                try
-                {
-                    Console.SetWindowSize(WinWidth, WinHeight);
-                    Console.SetBufferSize(BuffWidth, BuffHeight);
-                }
-                catch { }
+            try { Resize(WinWidth, WinHeight); }
+            catch { }
         }
 
         // Summary:
