@@ -1,7 +1,7 @@
 namespace iobloc
 {
-    // Built-in boards
-    enum BoardType
+    // Built-in games
+    enum GameType
     {
         Level = 0,
         Tetris = 1,
@@ -16,5 +16,6 @@ namespace iobloc
         Menu = 10,
         Fireworks = 11,
         RainingBlood = 12,
+        Logo = 13,
     }
 }

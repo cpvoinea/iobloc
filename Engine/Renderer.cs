@@ -4,7 +4,7 @@ using System.Text;
 namespace iobloc
 {
     // Use System.Console to paint and get input
-    static class UIPainter
+    static class Renderer
     {
         private static bool SAFE_MODE = true; // made it static instead of const to avoid warnings
         private static int WinWidth = 48, WinHeight = 24, BuffWidth = 48, BuffHeight = 192;
@@ -70,7 +70,7 @@ namespace iobloc
         // Summary:
         //      Draw a border consisting of horizontal and vertical lines and clear the rest of the screen
         // Parameters: border: a collection of lines
-        public static void DrawBorder(UIBorder border)
+        public static void DrawBorder(Border border)
         {
             Console.Clear();
             int w = border.Width;
@@ -101,7 +101,7 @@ namespace iobloc
         //      Draw a panel inside a rectangular area.
         //      The panel has either lines of text or a multi-colored matrix with a single character
         // Parameters: panel: panel to draw
-        public static void DrawPanel(UIPanel panel)
+        public static void DrawPanel(Panel panel)
         {
             if (panel.IsTextMode)
                 DrawPanelText(panel, panel.Text);
@@ -113,7 +113,7 @@ namespace iobloc
         //      Put centered lines of text inside a rectangle, clear the rest
         // Parameters: panel: panel defines rectangle
         // Parameters: lines: text lines to write
-        private static void DrawPanelText(UIPanel panel, string[] lines)
+        private static void DrawPanelText(Panel panel, string[] lines)
         {
             // use empty line to clear where text is missing
             string empty = new String(' ', panel.Width);
@@ -139,7 +139,7 @@ namespace iobloc
         // Summary:
         //      Draw a matrix containing a symbol of multiple colors, 0 representing background color
         // Parameters: panel: panel defines rectangle and color matrix
-        private static void DrawPanelColor(UIPanel panel)
+        private static void DrawPanelColor(Panel panel)
         {
             for (int row = 0; row < panel.Height; row++)
             {
@@ -157,7 +157,7 @@ namespace iobloc
                     else
                     {
                         Console.ForegroundColor = (ConsoleColor)last; // use matrix color
-                        Console.Write(new string(panel.Symbol, col - from)); // and panel-defined symbol
+                        Console.Write(new string(panel.BlockChar, col - from)); // and panel-defined symbol
                     }
                 }
             }

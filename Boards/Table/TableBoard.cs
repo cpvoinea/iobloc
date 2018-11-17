@@ -1,105 +1,70 @@
+using System.Collections.Generic;
+
 namespace iobloc
 {
-    class TableBoard : BaseBoard
+    class TableBoard
     {
-        internal static int BW, B, CP, CE, CN, CH;
-        private const int SF = 3;
-        private TableController _controller;
-        private bool _skipFrame;
+        private readonly TableLine[] _lines = new TableLine[28];
+        public TableLine this[bool isWhite, int line] { get { return _lines[GetIndex(isWhite, line)]; } }
 
-        public TableBoard() : base(BoardType.Table) { }
-
-        protected override void InitializeSettings()
+        public TableBoard(Dictionary<string, Panel> panels)
         {
-            base.InitializeSettings();
-            BW = BlockWidth;
-            B = Block;
-            CP = BoardSettings.GetColor(Settings.PlayerColor);
-            CE = BoardSettings.GetColor(Settings.EnemyColor);
-            CN = BoardSettings.GetColor(Settings.NeutralColor);
-            CH = BoardSettings.GetColor("HighlightColor");
-        }
+            var pnlUpperLeft = panels[Pnl.Table.UpperLeft];
+            var pnlLowerLeft = panels[Pnl.Table.LowerLeft];
+            var pnlUpperTaken = panels[Pnl.Table.UpperTaken];
+            var pnlLowerTaken = panels[Pnl.Table.LowerTaken];
+            var pnlUpperRight = panels[Pnl.Table.UpperRight];
+            var pnlLowerRight = panels[Pnl.Table.LowerRight];
+            var pnlUpperOut = panels[Pnl.Table.UpperOut];
+            var pnlLowerOut = panels[Pnl.Table.LowerOut];
 
-        protected override void InitializeUI()
-        {
-            base.InitializeUI();
-
-            Border.AddLines(new[]
+            for (int i = 0; i < 6; i++)
             {
-                new UIBorderLine(0, Height + 1, 6 * Block + 1, true),
-                new UIBorderLine(0, Height + 1, 7 * Block + 2, true),
-                new UIBorderLine(0, Height + 1, 13 * Block + 3, true),
-                new UIBorderLine(6 * Block + 1, 7 * Block + 2, Height / 2 - 2, false),
-                new UIBorderLine(6 * Block + 1, 7 * Block + 2, Height / 2 + 3, false)
-            });
-
-            var model = new TableModel(Height, Block);
-            Panels.Add(Pnl.Table.UpperLeft, model.Panels[0]);
-            Panels.Add(Pnl.Table.LowerLeft, model.Panels[1]);
-            Panels.Add(Pnl.Table.UpperTaken, model.Panels[2]);
-            Panels.Add(Pnl.Table.Dice, model.Panels[3]);
-            Panels.Add(Pnl.Table.LowerTaken, model.Panels[4]);
-            Panels.Add(Pnl.Table.UpperRight, model.Panels[5]);
-            Panels.Add(Pnl.Table.LowerRight, model.Panels[6]);
-            Panels.Add(Pnl.Table.UpperOut, model.Panels[7]);
-            Panels.Add(Pnl.Table.LowerOut, model.Panels[8]);
-            Main = Panels[Pnl.Table.UpperLeft];
-
-            int aiCount = BoardSettings.GetInt("AIs", 0);
-            string assemblyPath = BoardSettings.GetString(Settings.AssemblyPath);
-            string className = BoardSettings.GetString(Settings.ClassName);
-            ITableAI player1 = null;
-            ITableAI player2 = null;
-            if (aiCount > 0)
-            {
-                player2 = Serializer.InstantiateFromAssembly<ITableAI>(assemblyPath, className) ?? new TableAI();
-                if (aiCount == 2)
-                    player1 = new TableAI();
+                bool isDark = i % 2 == 0;
+                _lines[i] = new TableLine(pnlLowerRight, 5 - i, pnlLowerRight.Height - 1, true, isDark);
+                _lines[i + 6] = new TableLine(pnlLowerLeft, 5 - i, pnlLowerLeft.Height - 1, true, isDark);
+                _lines[i + 12] = new TableLine(pnlUpperLeft, i, 0, false, !isDark);
+                _lines[i + 18] = new TableLine(pnlUpperRight, i, 0, false, !isDark);
             }
-            _controller = new TableController(model, player1, player2);
+            _lines[24] = new TableLine(pnlUpperTaken, 0, 0, false);
+            _lines[25] = new TableLine(pnlLowerTaken, 0, pnlLowerTaken.Height - 1, true);
+            _lines[26] = new TableLine(pnlLowerOut, 0, pnlLowerOut.Height - 1, true);
+            _lines[27] = new TableLine(pnlUpperOut, 0, 0, false);
+
+            _lines[0].Initialize(2, false);
+            _lines[5].Initialize(5, true);
+            _lines[7].Initialize(3, true);
+            _lines[11].Initialize(5, false);
+            _lines[12].Initialize(5, true);
+            _lines[16].Initialize(3, false);
+            _lines[18].Initialize(5, false);
+            _lines[23].Initialize(2, true);
         }
 
-        protected override void Initialize()
+        public void ClearSelection()
         {
-            Level = Serializer.MasterLevel; // for frame multiplier
-            Panels[Pnl.Table.UpperLeft].SetText(Help, false);
-            _skipFrame = true;
-            _controller.Initialize();
+            foreach (var l in _lines)
+                l.ClearSelect();
         }
 
-        public override void TogglePause()
+        private int GetIndex(bool isWhite, int line)
         {
-            var pnl = Panels[Pnl.Table.UpperLeft];
-            pnl.SwitchMode();
+            if (line < 24)
+                return isWhite ? line : 23 - line;
+            if (line < 26)
+                return isWhite ? 24 : 25;
+            return isWhite ? 26 : 27;
         }
 
-        public override void HandleInput(string key)
+        public int[] GetLines(bool isWhite)
         {
-            if (key == "R")
-                _controller.Initialize();
-            else if (!_controller.CurrentPlayerIsAI)
-                switch (key)
-                {
-                    case UIKey.LeftArrow: _controller.CursorMove(true); break;
-                    case UIKey.RightArrow: _controller.CursorMove(false); break;
-                    case UIKey.UpArrow: _controller.CursorAction(); break;
-                }
-        }
-
-        public override void NextFrame()
-        {
-            if (_controller.State == GameState.Ended)
-                Win(true);
-            else if (_controller.CurrentPlayerIsAI)
+            int[] result = new int[28];
+            for (int i = 0; i < 28; i++)
             {
-                if (_skipFrame)
-                    _skipFrame = false;
-                else
-                {
-                    _controller.PlayerAction();
-                    _skipFrame = true;
-                }
+                var line = this[isWhite, i];
+                result[i] = line.IsWhite == isWhite ? line.Count : -line.Count;
             }
+            return result;
         }
     }
 }

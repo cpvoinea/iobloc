@@ -1,14 +1,16 @@
 9 Table
 MenuKeys D9
-Help Move: LEFT-RIGHT,Pick/Put: UP_ARROW,Restart: R,Exit: ESC,Pause: ANY
-AllowedKeys LeftArrow,RightArrow,UpArrow,R
+Help ==GAMEPLAY==,|Selection:|,|LEFT-RIGHT|,|Action: UP|,|Restart: R|,+==OPTIONS=+,|Freedom: F|,|Marking: M|,|Numbers: N|,|Backgnd: B|,+----------+,| Exit: ESC|,|Pause: ANY|,============
+AllowedKeys LeftArrow,RightArrow,UpArrow,R,F,M,N,B
 FrameMultiplier 1
-Width 45
+Width 31
 Height 36
 BlockWidth 2
-BlockSpace 1
+BlockSpace 0
 PlayerColor Blue
 EnemyColor Red
 NeutralColor Yellow
-HighlightColor DarkGray
+DarkColor DarkGray
+LightColor Gray
+HighlightColor White
 AIs 2

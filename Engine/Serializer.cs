@@ -7,7 +7,7 @@ using System.Reflection;
 namespace iobloc
 {
     // Summary:
-    //      Handle persistence and caching of resources: settings, highscores, board caching, speed constants,
+    //      Handle persistence and caching of resources: settings, highscores, game caching, speed constants,
     //      Also include some external helpers for accessing dictionaries and arrays
     static class Serializer
     {
@@ -15,18 +15,18 @@ namespace iobloc
         private const string HighscoresFileName = "highscores.txt";
         // external settings file is set by run argument and settings are saved here when program ends
         private static string SettingsFileName = "settings.txt";
-        // in-memory caching of boards
-        private readonly static Dictionary<int, IBoard> Boards = new Dictionary<int, IBoard>();
-        // Access to settings as a dictionary where keys are board IDs
+        // in-memory caching of games
+        private readonly static Dictionary<int, IGame> Games = new Dictionary<int, IGame>();
+        // Access to settings as a dictionary where keys are game IDs
         public readonly static Settings Settings = new Settings();
-        // List of highscores, compiled from settings, not all boards keep scores
+        // List of highscores, compiled from settings, not all games keep scores
         public readonly static Dictionary<int, int> Highscores = new Dictionary<int, int>();
-        // Associate key shortcuts to board id
-        private readonly static Dictionary<string, int> KeyToBoardIdMapping = new Dictionary<string, int>();
+        // Associate id shortcuts to game id
+        private readonly static Dictionary<string, int> KeyToGameIdMapping = new Dictionary<string, int>();
 
         // Summary:
-        //      A common and customizable level value across all boards.
-        //      During Initialization, board levels will be set to this value.
+        //      A common and customizable level value across all games.
+        //      During Initialization, game levels will be set to this value.
         public static int MasterLevel { get; set; }
 
         // Summary:
@@ -63,11 +63,11 @@ namespace iobloc
                     string line = sr.ReadLine();
                     if (string.IsNullOrWhiteSpace(line))
                         break;
-                    // first line contains board ID as key
-                    int key = int.Parse(line.Split(' ')[0]);
-                    if (!Settings.ContainsKey(key))
-                        Settings.Add(key, new Dictionary<string, string>());
-                    // empty line ends board settings
+                    // first line contains game ID as id
+                    int id = int.Parse(line.Split(' ')[0]);
+                    if (!Settings.ContainsKey(id))
+                        Settings.Add(id, new Dictionary<string, string>());
+                    // empty line ends game settings
                     while (!string.IsNullOrEmpty(line) && !sr.EndOfStream)
                     {
                         line = sr.ReadLine();
@@ -78,7 +78,7 @@ namespace iobloc
                         string name = line.Substring(0, i);
                         string val = line.Substring(i + 1);
                         // if setting name exists, it will be overwritten with file value as a string
-                        Settings[key][name] = val;
+                        Settings[id][name] = val;
                     }
                 }
         }
@@ -89,19 +89,19 @@ namespace iobloc
         {
             List<string> allowedKeys = new List<string>();
             List<string> text = new List<string>();
-            foreach (int key in Settings.Keys)
+            foreach (int id in Settings.Keys)
             {
-                var s = Settings[key];
+                var s = Settings[id];
                 if (s.ContainsKey(Settings.MenuKeys))
                 {
                     var shortcuts = s[Settings.MenuKeys];
                     var shortcutList = shortcuts.Split(',');
                     foreach (var sc in shortcutList)
-                        KeyToBoardIdMapping.Add(sc, key);
+                        KeyToGameIdMapping.Add(sc, id);
                     allowedKeys.AddRange(shortcutList);
 
-                    if (Enum.IsDefined(typeof(BoardType), key))
-                        text.Add($"{key}:{(BoardType)key}");
+                    if (Enum.IsDefined(typeof(GameType), id))
+                        text.Add($"{id}:{(GameType)id}");
                     else
                     {
                         string name = s.ContainsKey(Settings.Name) ? s[Settings.Name] : "UNKNOWN";
@@ -109,10 +109,10 @@ namespace iobloc
                     }
                 }
                 if (s.ContainsKey(Settings.Highscore))
-                    Highscores.Add(key, s.GetInt(Settings.Highscore, 0));
+                    Highscores.Add(id, s.GetInt(Settings.Highscore, 0));
             }
 
-            int menuId = (int)BoardType.Menu;
+            int menuId = (int)GameType.Menu;
             if (!Settings.ContainsKey(menuId))
                 Settings.Add(menuId, new Dictionary<string, string>());
             var menu = Settings[menuId];
@@ -130,14 +130,14 @@ namespace iobloc
 
             using (var sw = File.CreateText(SettingsFileName))
             {
-                foreach (int key in Settings.Keys)
+                foreach (int id in Settings.Keys)
                 {
-                    // first line is board ID as key of dictionary
-                    sw.WriteLine($"{key} {(BoardType)key}");
+                    // first line is game ID as id of dictionary
+                    sw.WriteLine($"{id} {(GameType)id}");
                     // setting values as "name value" (separated by space)
-                    foreach (string k in Settings[key].Keys)
-                        sw.WriteLine($"{k} {Settings[key][k]}");
-                    // empty line to mark the end of settings for this board
+                    foreach (string k in Settings[id].Keys)
+                        sw.WriteLine($"{k} {Settings[id][k]}");
+                    // empty line to mark the end of settings for this game
                     sw.WriteLine();
                 }
             }
@@ -158,9 +158,9 @@ namespace iobloc
                     string[] line = sr.ReadLine().Split(' ');
                     if (line.Length >= 2)
                     {
-                        int key = int.Parse(line[0]);
-                        if (Highscores.ContainsKey(key))
-                            Highscores[key] = int.Parse(line[1]);
+                        int id = int.Parse(line[0]);
+                        if (Highscores.ContainsKey(id))
+                            Highscores[id] = int.Parse(line[1]);
                     }
                 }
         }
@@ -172,71 +172,71 @@ namespace iobloc
             // each line has to int values: ID and highscore
             using (var sw = File.CreateText(HighscoresFileName))
             {
-                foreach (int key in Highscores.Keys)
-                    sw.WriteLine($"{key} {Highscores[key]}");
+                foreach (int id in Highscores.Keys)
+                    sw.WriteLine($"{id} {Highscores[id]}");
             }
         }
 
         // Summary:
         //      In-memory update of highscore, if it is the case
-        // Parameters: key: board ID
+        // Parameters: id: game ID
         // Parameters: score: score to be checked against highscore
-        public static void UpdateHighscore(int key, int score)
+        public static void UpdateHighscore(int id, int score)
         {
-            if (Highscores.ContainsKey(key) && Highscores[key] < score)
-                Highscores[key] = score;
+            if (Highscores.ContainsKey(id) && Highscores[id] < score)
+                Highscores[id] = score;
         }
 
         // Summary:
-        //      Calculate frame interval for certain level and board frameMultiplier setting.
+        //      Calculate frame interval for certain level and game frameMultiplier setting.
         //      Currently values are between 50ms and 200ms (depending on level) multiplied by frameMultiplier
-        // Parameters: frameMultiplier: board configured setting
+        // Parameters: frameMultiplier: game configured setting
         // Parameters: level: level to calculate for
         public static int GetLevelInterval(double frameMultiplier, int level) => (int)(frameMultiplier * (200 - 10 * level));
 
         // Summary:
-        //      Get board from cache or create a new one and add it to cache.
-        //      To save memory and keep board states on transitions.
-        // Parameters: key: board ID
-        public static IBoard GetBoard(int key)
+        //      Get game from cache or create a new one and add it to cache.
+        //      To save memory and keep game states on transitions.
+        // Parameters: id: game ID
+        public static IGame GetGame(int id)
         {
-            if (Boards.ContainsKey(key))
-                return Boards[key];
+            if (Games.ContainsKey(id))
+                return Games[id];
 
-            IBoard board = null;
-            if (Enum.IsDefined(typeof(BoardType), key))
-                switch ((BoardType)key)
+            IGame game = null;
+            if (Enum.IsDefined(typeof(GameType), id))
+                switch ((GameType)id)
                 {
-                    case BoardType.Level: board = new LevelBoard(); break;
-                    case BoardType.Tetris: board = new TetrisBoard(); break;
-                    case BoardType.Runner: board = new RunnerBoard(); break;
-                    case BoardType.Helicopt: board = new HelicopterBoard(); break;
-                    case BoardType.Breakout: board = new BreakoutBoard(); break;
-                    case BoardType.Invaders: board = new InvadersBoard(); break;
-                    case BoardType.Snake: board = new SnakeBoard(); break;
-                    case BoardType.Sokoban: board = new SokobanBoard(); break;
-                    case BoardType.Table: board = new TableBoard(); break;
-                    case BoardType.Paint: board = new PaintBoard(); break;
-                    case BoardType.Menu: board = new MenuBoard(); break;
-                    case BoardType.Fireworks: board = new AnimationBoard(BoardType.Fireworks); break;
-                    case BoardType.RainingBlood: board = new AnimationBoard(BoardType.RainingBlood); break;
+                    case GameType.Level: game = new LevelSelection(); break;
+                    case GameType.Tetris: game = new Tetris(); break;
+                    case GameType.Runner: game = new Runner(); break;
+                    case GameType.Helicopt: game = new Helicopter(); break;
+                    case GameType.Breakout: game = new Breakout(); break;
+                    case GameType.Invaders: game = new Invaders(); break;
+                    case GameType.Snake: game = new Snake(); break;
+                    case GameType.Sokoban: game = new Sokoban(); break;
+                    case GameType.Table: game = new Table(); break;
+                    case GameType.Paint: game = new Paint(); break;
+                    case GameType.Menu: game = new Menu(); break;
+                    case GameType.Fireworks: game = new EndAnimation(GameType.Fireworks); break;
+                    case GameType.RainingBlood: game = new EndAnimation(GameType.RainingBlood); break;
                 }
             else
             {
-                var s = Settings[key];
-                board = InstantiateFromAssembly<IBoard>(s[Settings.AssemblyPath], s[Settings.ClassName]);
+                var s = Settings[id];
+                game = InstantiateFromAssembly<IGame>(s[Settings.AssemblyPath], s[Settings.ClassName]);
             }
 
-            if (board != null)
-                Boards.Add(key, board);
-            return board;
+            if (game != null)
+                Games.Add(id, game);
+            return game;
         }
 
-        public static IBoard GetBoard(string key)
+        public static IGame GetGame(string id)
         {
-            if (!KeyToBoardIdMapping.ContainsKey(key))
+            if (!KeyToGameIdMapping.ContainsKey(id))
                 return null;
-            return GetBoard(KeyToBoardIdMapping[key]);
+            return GetGame(KeyToGameIdMapping[id]);
         }
 
         public static T InstantiateFromAssembly<T>(string assemblyPath, string className) where T : class
@@ -255,57 +255,57 @@ namespace iobloc
             return null;
         }
 
-        public static string GetString(this Dictionary<string, string> dic, string key)
+        public static string GetString(this Dictionary<string, string> dic, string id)
         {
-            if (!dic.ContainsKey(key))
+            if (!dic.ContainsKey(id))
                 return string.Empty;
-            return dic[key];
+            return dic[id];
         }
 
         // Summary:
         //      Parse an int setting value or get a default value if not exists
-        // Parameters: dic: board settings
-        // Parameters: key: setting name
+        // Parameters: dic: game settings
+        // Parameters: id: setting name
         // Parameters: defVal: default value
-        public static int GetInt(this Dictionary<string, string> dic, string key, int defVal = 0)
+        public static int GetInt(this Dictionary<string, string> dic, string id, int defVal = 0)
         {
-            if (!dic.ContainsKey(key))
+            if (!dic.ContainsKey(id))
                 return defVal;
-            return int.Parse(dic[key]);
+            return int.Parse(dic[id]);
         }
 
         // Summary:
         //      Parse a double setting value or get a default value
-        // Parameters: dic: board settings
-        // Parameters: key: setting name
+        // Parameters: dic: game settings
+        // Parameters: id: setting name
         // Parameters: defVal: default value
-        public static double GetReal(this Dictionary<string, string> dic, string key, double defVal = 0)
+        public static double GetReal(this Dictionary<string, string> dic, string id, double defVal = 0)
         {
-            if (!dic.ContainsKey(key))
+            if (!dic.ContainsKey(id))
                 return defVal;
-            return double.Parse(dic[key], NumberStyles.Float, CultureInfo.InvariantCulture);
+            return double.Parse(dic[id], NumberStyles.Float, CultureInfo.InvariantCulture);
         }
 
         // Summary:
         //      Split comma-separated list of strings from a setting value
-        // Parameters: dic: board settings
-        // Parameters: key: setting name
-        public static string[] GetList(this Dictionary<string, string> dic, string key)
+        // Parameters: dic: game settings
+        // Parameters: id: setting name
+        public static string[] GetList(this Dictionary<string, string> dic, string id)
         {
-            if (!dic.ContainsKey(key))
+            if (!dic.ContainsKey(id))
                 return new string[0];
-            return dic[key].Split(',');
+            return dic[id].Split(',');
         }
 
         // Summary:
         //      Parse a color value from setting color name
-        // Parameters: dic: board settings
-        // Parameters: key: setting name
-        public static int GetColor(this Dictionary<string, string> dic, string key)
+        // Parameters: dic: game settings
+        // Parameters: id: setting name
+        public static int GetColor(this Dictionary<string, string> dic, string id)
         {
-            if (!dic.ContainsKey(key))
+            if (!dic.ContainsKey(id))
                 return 0;
-            return (int)Enum.Parse(typeof(ConsoleColor), dic[key]);
+            return (int)Enum.Parse(typeof(ConsoleColor), dic[id]);
         }
 
         // Summary:

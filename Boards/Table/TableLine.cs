@@ -1,128 +1,93 @@
 namespace iobloc
 {
-    class TableLine
+    struct TableLine
     {
-        int BW => TableBoard.BW;
-        int B => TableBoard.B;
-        int CP => TableBoard.CP;
-        int CE => TableBoard.CE;
-        int CN => TableBoard.CN;
-        int CH => TableBoard.CH;
         private readonly int _startCol;
         private readonly int _startRow;
         private readonly int _direction;
-        private int _picked;
+        private readonly bool? _isDark;
         private bool _isHighlight;
-
-        public UIPanel Panel { get; private set; }
-        public PlayerSide? Player { get; private set; }
+        private int Background => _isDark.HasValue ? (_isDark.Value ? Table.CD : Table.CL) : 0;
+        public Panel Panel { get; private set; }
         public int Count { get; private set; }
+        public bool? IsWhite { get; private set; }
 
-        public TableLine(UIPanel panel, int col, int row = 0, bool isLower = false)
+        public TableLine(Panel panel, int col, int row, bool isLower, bool? isDark = null)
         {
-            Panel = panel;
             _startCol = col;
             _startRow = row;
             _direction = isLower ? -1 : 1;
-        }
-
-        public void Clear()
-        {
-            for (int i = 0; i < Panel.Height; i++)
-                Set(i, 0);
-            Player = null;
+            _isDark = isDark;
+            _isHighlight = false;
             Count = 0;
-            _picked = 0;
-            _isHighlight = false;
-            Change();
+            IsWhite = null;
+
+            Panel = panel;
+            for (int i = 1; i < panel.Height; i++)
+                Set(i, Background);
         }
 
-        public void ClearSelection()
+        public void Initialize(int count, bool isWhite)
         {
-            Set(0, 0);
-            _isHighlight = false;
-            Change();
-        }
-
-        public bool CanPut(PlayerSide player)
-        {
-            return Count <= 1 || Player == player;
-        }
-
-        public bool HasAny(PlayerSide player)
-        {
-            return Player == player && Count > 0;
-        }
-
-        public void Initialize(int count, PlayerSide player)
-        {
-            var c = player == PlayerSide.White ? CP : CE;
-            for (int i = 1; i < Panel.Height; i++)
-                Set(i, i <= count ? c : 0);
-
-            Player = player;
             Count = count;
-            _picked = 0;
+            IsWhite = isWhite;
+            for (int i = 1; i <= count; i++)
+                Set(i, isWhite);
+        }
+
+        public void ClearSelect()
+        {
+            Set(0);
             _isHighlight = false;
+            Change();
         }
 
         public void Select(bool set, bool highlight = false)
         {
             if (set)
             {
-                Set(0, highlight ? CH : CN);
+                Set(0, highlight ? Table.CH : Table.CN);
                 if (highlight)
                     _isHighlight = true;
             }
             else
-            {
-                Set(0, _isHighlight && !highlight ? CH : 0);
-            }
+                Set(0, _isHighlight && !highlight ? Table.CH : 0);
             Change();
         }
 
         public void Pick()
         {
-            if (!Player.HasValue)
-                return;
-            int c = Player == PlayerSide.White ? CP : CE;
-            Take();
-            _picked++;
-            Set(Count + _picked + 1, c);
-            Change();
-        }
-
-        public void Take()
-        {
-            Set(Count, 0);
+            Set(Panel.Height - 1, IsWhite);
             Count--;
             if (Count == 0)
-                Player = null;
+                IsWhite = null;
             Change();
         }
 
         public void Unpick()
         {
-            if (_picked == 0)
-                return;
-            Set(Count + _picked + 1, 0);
-            _picked--;
+            Set(Panel.Height - 1);
             Change();
         }
 
-        public void Put(PlayerSide player)
+        public void Put(bool isWhite)
         {
-            int c = player == PlayerSide.White ? CP : CE;
             Count++;
-            Set(Count, c);
-            Player = player;
+            Set(Count, isWhite);
+            IsWhite = isWhite;
             Change();
+        }
+
+        private void Set(int row, bool? isWhite = null)
+        {
+            int c = isWhite.HasValue ? (isWhite.Value ? Table.CP : Table.CE) : Background;
+            Set(row, c);
         }
 
         private void Set(int row, int val)
         {
-            for (int i = 0; i < BW; i++)
-                Panel[_startRow + row * _direction, _startCol * B + i] = val;
+            for (int i = 0; i < Table.BW; i++)
+                Panel[_startRow + row * _direction, _startCol * Table.B + i] = val;
         }
 
         private void Change()

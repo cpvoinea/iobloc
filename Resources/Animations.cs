@@ -1,12 +1,13 @@
 namespace iobloc
 {
-    // Animation frames
+    // EndAnimation frames
     static class Animations
     {
-        public static int SIZE = 7;
+        public const int SIZE_ENDING = 7;
+        public const int SIZE_LOGO = 10;
 
         private static readonly int[][][,] All = new int[][][,]{
-            new int[][,]{
+            new[]{
                 new int[,]{
                     {0, 0, 0, 0, 0, 0, 0},
                     {0, 0, 0, 0, 0, 0, 0},
@@ -71,7 +72,7 @@ namespace iobloc
                     {0, 14, 0, 0, 0, 8, 0}
                 },
             },
-            new int[][,]{
+            new[]{
                 new int[,]{
                     {0, 12, 0, 0, 12, 0, 0},
                     {0, 0, 0, 0, 0, 0, 0},
@@ -136,8 +137,23 @@ namespace iobloc
                     {0, 12, 0, 0, 12, 0, 0},
                 },
             },
+            new[]{
+                new[,]{
+                    {0,0,1,1,0,0,1,1,0,0},
+                    {0,0,1,1,0,1,0,0,1,0},
+                    {0,0,1,1,0,0,1,1,0,0},
+                    {0,0,0,0,0,0,0,0,0,0},
+                    {0,1,1,0,0,0,1,1,0,0},
+                    {0,1,1,1,1,0,1,1,0,0},
+                    {0,1,1,1,1,0,1,1,1,0},
+                    {0,0,0,0,0,0,0,0,0,0},
+                    {0,0,1,1,0,0,1,1,1,0},
+                    {0,1,0,0,1,0,1,0,0,0},
+                    {0,0,1,1,0,0,1,1,1,0},
+                },
+            },
         };
 
-        public static int[][,] Get(BoardType type) => All[type - BoardType.Fireworks];
+        public static int[][,] Get(GameType type) => All[type - GameType.Fireworks];
     }
 }

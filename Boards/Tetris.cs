@@ -2,12 +2,12 @@ using System;
 
 namespace iobloc
 {
-    class TetrisBoard : BaseBoard
+    class Tetris : BaseGame
     {
         private readonly Random _random = new Random();
         private TetrisPiece _piece;
 
-        public TetrisBoard() : base(BoardType.Tetris) { }
+        public Tetris() : base(GameType.Tetris) { }
 
         protected override void Initialize()
         {

@@ -29,13 +29,13 @@ iobloc settings.txt
 ```sh
 dotnet add package iobloc
 ```
-* implement **iobloc.BasicBoard** abstract class to create a new game
-* alternatively, implement **iobloc.IBoard** interface to create everything from scratch
-* check demo code from [release 2.5](https://github.com/cpvoinea/iobloc/releases/tag/v2.5) to get an idea about how to implement boards
+* implement **iobloc.BasicGame** abstract class to create a new game
+* alternatively, implement **iobloc.IGame** interface to create everything from scratch
+* check demo code from [release 2.5](https://github.com/cpvoinea/iobloc/releases/tag/v2.5) to get an idea about how to implement games
 ```cs
 class Program
 {
-    class HelloWorld : BasicBoard
+    class HelloWorld : BasicGame
     {
         public HelloWorld() : base(12, 1, "Hello World!") { }
 
@@ -52,7 +52,7 @@ class Program
 * use a modified settings file as command argument
 * add a new section (sections are separated by empty lines) with the following settings:
   * **AssemblyPath** is path to dll containing new game, path cannot contain spaces
-  * **ClassName** is the fully formed name of the class which is implementing **IBoard** interface
+  * **ClassName** is the fully formed name of the class which is implementing **IGame** interface
   * **Name** is the display name used in the menu
   * **MenuKeys** is the shortcut key in the menu
 * the game will show up in the menu and will run if dll loading is successful

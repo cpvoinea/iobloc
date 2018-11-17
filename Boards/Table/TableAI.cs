@@ -6,26 +6,10 @@ namespace iobloc
     {
         const int L = 28;
 
-        public int[][] GetMoves(int[] lines, int[] dice)
+        public int[] NextMove(int[] lines, int[] dice)
         {
-            List<int[]> result = new List<int[]>();
-            List<int> remaining = new List<int>(dice);
-            for (int i = dice.Length - 1; i >= 0; i--)
-            {
-                int d = dice[i];
-                var matrix = GetMoveMatrix(lines, remaining.ToArray());
-                var move = GetNextMove(matrix, lines, d);
-                if (move == null)
-                    result.Add(new int[3]);
-                else
-                {
-                    result.Add(move);
-                    lines = DoMove(lines, move[0], move[1]);
-                }
-                remaining.Remove(d);
-            }
-
-            return result.ToArray();
+            var matrix = GetMoveMatrix(lines, dice);
+            return GetNextMove(matrix, lines, dice[0]);
         }
 
         internal static int[,] GetMoveMatrix(int[] lines, int[] dice)

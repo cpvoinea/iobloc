@@ -1,14 +1,14 @@
 namespace iobloc
 {
-    public class DemoBoard : BasicBoard
+    public class Demo : BasicGame
     {
         int _cursor;
         bool _nailedIt;
 
-        // this basic board has a main panel which is 14 blocks wide and 1 tall
+        // this basic game has a main panel which is 14 blocks wide and 1 tall
         // is initialized as a color panel, the interval between frames is 100ms
         // and the only supported key is "I" which needs to be guessed as a game
-        public DemoBoard() : base(14, 1, null, 50, "I") { }
+        public Demo() : base(14, 1, null, 50, "I") { }
 
         public override void Start()
         {

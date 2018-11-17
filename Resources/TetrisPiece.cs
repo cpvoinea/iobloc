@@ -27,7 +27,7 @@ namespace iobloc
             Orientation = orientation;
             // mask is set once and changed only on rotations
             Mask = GetMask((PieceType)type, orientation);
-            // start position is top-center of board
+            // start position is top-center of game
             X = -1;
             Y = 5;
         }

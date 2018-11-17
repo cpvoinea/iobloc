@@ -1,9 +1,9 @@
 namespace iobloc
 {
     // Display a list of colors representing levels to select the MasterLevel
-    class LevelBoard : BaseBoard
+    class LevelSelection : BaseGame
     {
-        public LevelBoard() : base(BoardType.Level) { }
+        public LevelSelection() : base(GameType.Level) { }
 
         // Summary:
         //      A line of colors representing levels

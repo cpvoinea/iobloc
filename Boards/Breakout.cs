@@ -2,7 +2,7 @@ using System;
 
 namespace iobloc
 {
-    class BreakoutBoard : BaseBoard
+    class Breakout : BaseGame
     {
         private int CP, CE, CN, BR;
         private int LT => (Width + BlockSpace) / Block * BR;
@@ -14,15 +14,15 @@ namespace iobloc
         private double _angle;
         private int _targets = int.MaxValue;
 
-        public BreakoutBoard() : base(BoardType.Breakout) { }
+        public Breakout() : base(GameType.Breakout) { }
 
         protected override void InitializeSettings()
         {
             base.InitializeSettings();
-            CP = BoardSettings.GetColor(Settings.PlayerColor);
-            CE = BoardSettings.GetColor(Settings.EnemyColor);
-            CN = BoardSettings.GetColor(Settings.NeutralColor);
-            BR = BoardSettings.GetInt("BlockRows");
+            CP = GameSettings.GetColor(Settings.PlayerColor);
+            CE = GameSettings.GetColor(Settings.EnemyColor);
+            CN = GameSettings.GetColor(Settings.NeutralColor);
+            BR = GameSettings.GetInt("BlockRows");
         }
 
         protected override void Initialize()

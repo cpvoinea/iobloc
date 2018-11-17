@@ -1,7 +1,7 @@
 namespace iobloc
 {
-    // The simplest board, has no input, just iterates frames and exists to menu
-    class AnimationBoard : BaseBoard
+    // The simplest game, has no input, just iterates frames and exists to menu
+    class EndAnimation : BaseGame
     {
         // all frames
         private readonly int[][,] _animation;
@@ -11,7 +11,7 @@ namespace iobloc
         // Summary:
         //      Initialize frames from resources
         // Param: type: type of animation
-        public AnimationBoard(BoardType type) : base(type)
+        public EndAnimation(GameType type) : base(type)
         {
             _animation = Animations.Get(type);
         }
@@ -32,8 +32,8 @@ namespace iobloc
         public override void NextFrame()
         {
             var a = _animation[_currentFrame++];
-            for (int i = 0; i < Height && i < Animations.SIZE; i++)
-                for (int j = 0; j < Width && j < Animations.SIZE; j++)
+            for (int i = 0; i < Height && i < Animations.SIZE_ENDING; i++)
+                for (int j = 0; j < Width && j < Animations.SIZE_ENDING; j++)
                     Main[i, j] = a[i, j];
             if (_currentFrame >= _animation.Length)
                 _currentFrame = 0;

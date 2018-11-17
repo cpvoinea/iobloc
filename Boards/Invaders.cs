@@ -1,6 +1,6 @@
 namespace iobloc
 {
-    class InvadersBoard : BaseBoard
+    class Invaders : BaseGame
     {
         private int CP, CE, CN, AR, AC;
         private int LT => AR * AC;
@@ -12,16 +12,16 @@ namespace iobloc
         private bool _movingRight;
         private int _targets = int.MaxValue;
 
-        public InvadersBoard() : base(BoardType.Invaders) { }
+        public Invaders() : base(GameType.Invaders) { }
 
         protected override void InitializeSettings()
         {
             base.InitializeSettings();
-            CP = BoardSettings.GetColor(Settings.PlayerColor);
-            CE = BoardSettings.GetColor(Settings.EnemyColor);
-            CN = BoardSettings.GetColor(Settings.NeutralColor);
-            AR = BoardSettings.GetInt("AlienRows");
-            AC = BoardSettings.GetInt("AlienCols");
+            CP = GameSettings.GetColor(Settings.PlayerColor);
+            CE = GameSettings.GetColor(Settings.EnemyColor);
+            CN = GameSettings.GetColor(Settings.NeutralColor);
+            AR = GameSettings.GetInt("AlienRows");
+            AC = GameSettings.GetInt("AlienCols");
         }
 
         protected override void Initialize()

@@ -1,6 +1,7 @@
+
 namespace iobloc
 {
-    class SokobanBoard : BaseBoard
+    class Sokoban : BaseGame
     {
         int P, B, W, T, R, H, WS;
         int _targets = int.MaxValue;
@@ -8,22 +9,22 @@ namespace iobloc
         int _row;
         int _col;
 
-        public SokobanBoard() : base(BoardType.Sokoban) { }
+        public Sokoban() : base(GameType.Sokoban) { }
 
         protected override void InitializeSettings()
         {
             base.InitializeSettings();
-            P = BoardSettings.GetColor(Settings.PlayerColor);
-            B = BoardSettings.GetColor("BlockColor");
-            W = BoardSettings.GetColor("WallColor");
-            T = BoardSettings.GetColor("TargetColor");
-            R = BoardSettings.GetColor("TargetBlockColor");
-            H = BoardSettings.GetColor("TargetPlayerColor");
-            WS = BoardSettings.GetInt("WinScore");
+            P = GameSettings.GetColor(Settings.PlayerColor);
+            B = GameSettings.GetColor("BlockColor");
+            W = GameSettings.GetColor("WallColor");
+            T = GameSettings.GetColor("TargetColor");
+            R = GameSettings.GetColor("TargetBlockColor");
+            H = GameSettings.GetColor("TargetPlayerColor");
+            WS = GameSettings.GetInt("WinScore");
         }
 
         // Summary:
-        //      Overriden to initialize board level and score on re-start
+        //      Overriden to initialize game level and score on re-start
         public override void Start()
         {
             base.Start();
@@ -106,12 +107,12 @@ namespace iobloc
 
         void ResetLevel()
         {
-            var board = SokobanLevels.Get(Level);
+            var game = SokobanLevels.Get(Level);
             _targets = 0;
             for (int i = 0; i < Height && i < 6; i++)
                 for (int j = 0; j < Width && j / BlockWidth < 4; j += BlockWidth)
                 {
-                    int v = board[i, j / BlockWidth];
+                    int v = game[i, j / BlockWidth];
                     SetBlock(i, j, v);
                     if (v == P)
                     {

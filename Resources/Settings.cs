@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace iobloc
 {
-    // Dictionary of settings for each board ID, a board setting is a collection of (name,value) string pairs
+    // Dictionary of settings for each game ID, a game setting is a collection of (name,value) string pairs
     sealed class Settings : Dictionary<int, Dictionary<string, string>>
     {
         private static bool EXTERNAL_SETTINGS = true;
@@ -149,8 +149,8 @@ namespace iobloc
                 {"Help", "Move_cursor:ARROWS,Toggle_draw:ENTER,Select_color:1-7,Toggle_shade:8,Write_color:9,Erase_color:0,Reset:R"},
                 {"AllowedKeys", "LeftArrow,RightArrow,UpArrow,DownArrow,Enter,R,D0,D1,D2,D3,D4,D5,D6,D7,D8,D9,NumPad0,NumPad1,NumPad2,NumPad3,NumPad4,NumPad5,NumPad6,NumPad7,NumPad8,NumPad9"},
                 {"FrameMultiplier", "0"},
-                {"Width", "80"},
-                {"Height", "40"},
+                {"Width", "40"},
+                {"Height", "20"},
                 {"BlockWidth", "2"},
             });
             // Table
@@ -189,15 +189,17 @@ namespace iobloc
                 {"Width", "7"},
                 {"Height", "7"},
             });
+            // Demo
             Add(20, new Dictionary<string, string>{
                 {"AssemblyPath", "iobloc.dll"},
-                {"ClassName", "iobloc.DemoBoard"},
+                {"ClassName", "iobloc.Demo"},
                 {"Name", "Demo"},
                 {"MenuKeys", "D"},
             });
+            // Platform
             Add(21, new Dictionary<string, string>{
                 {"AssemblyPath", "iobloc.platform.dll"},
-                {"ClassName", "iobloc.platform.PlatformBoard"},
+                {"ClassName", "iobloc.platform.PlatformGame"},
                 {"Name", "Platform"},
                 {"MenuKeys", "P"},
             });

@@ -7,7 +7,7 @@ namespace iobloc
     {
         static void Main(string[] args)
         {
-            // new DemoBoard().Run();
+            // new Demo().Run();
             // rudimentary logging
             StringBuilder errors = new StringBuilder();
             try
@@ -17,6 +17,7 @@ namespace iobloc
                 // initialization of environment
                 Engine.Initialize(settingsFilePath);
                 // open to menu
+                Console.Clear();
                 Engine.Start();
             }
             catch (Exception ex)

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace iobloc
 {
-    class SnakeBoard : BaseBoard
+    class Snake : BaseGame
     {
         int CP, CN;
         readonly Random _random = new Random();
@@ -14,13 +14,13 @@ namespace iobloc
         int _nextH;
         int _nextV;
 
-        public SnakeBoard() : base(BoardType.Snake) { }
+        public Snake() : base(GameType.Snake) { }
 
         protected override void InitializeSettings()
         {
             base.InitializeSettings();
-            CP = BoardSettings.GetColor(Settings.PlayerColor);
-            CN = BoardSettings.GetColor(Settings.NeutralColor);
+            CP = GameSettings.GetColor(Settings.PlayerColor);
+            CN = GameSettings.GetColor(Settings.NeutralColor);
         }
 
         protected override void Initialize()

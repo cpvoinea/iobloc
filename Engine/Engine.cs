@@ -10,26 +10,26 @@ namespace iobloc
         public static void Initialize(string settingsFilePath)
         {
             Serializer.Load(settingsFilePath);
-            UIPainter.Initialize();
+            Renderer.Initialize();
         }
 
         // Summary:
-        //      Display menu board
-        //      Handle linking of boards (menu->game->animation->menu->etc)
+        //      Display menu game
+        //      Handle linking of games (menu->game->animation->menu->etc)
         // Parameters: settingsFilePath: optional external settings file path, if null use default settings
         public static void Start()
         {
-            IBoard menu = Serializer.GetBoard((int)BoardType.Menu);
-            IBoard board = menu;
-            while (board != null)
+            IGame menu = Serializer.GetGame((int)GameType.Menu);
+            IGame game = menu;
+            while (game != null)
             {
-                BoardRunner.Run(board);
-                if (board is IBaseBoard) // base board selected
-                    board = (board as IBaseBoard).Next; // continue to next board
-                else if (board != menu) // return to menu
-                    board = menu;
+                GameRunner.Run(game);
+                if (game is IBaseGame) // base game selected
+                    game = (game as IBaseGame).Next; // continue to next game
+                else if (game != menu) // return to menu
+                    game = menu;
                 else // exit
-                    board = null;
+                    game = null;
             }
         }
 
@@ -39,7 +39,7 @@ namespace iobloc
         public static void Stop()
         {
             Serializer.Save();
-            UIPainter.Exit();
+            Renderer.Exit();
         }
     }
 }
