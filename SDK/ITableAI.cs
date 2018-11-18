@@ -15,6 +15,6 @@ namespace iobloc
         //      for doubles there is a value for each available double to a maximum of 4
         // Returns:
         //      an array of length 3: [from_line_index, to_line_index, used_dice_value]
-        int[] NextMove(int[] lines, int[] dice);
+        int[][] GetMoves(int[] lines, int[] dice);
     }
 }

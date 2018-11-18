@@ -1,6 +1,6 @@
 namespace iobloc
 {
-    enum ActionType { Skip, Select, Pick, Put }
+    enum ActionType { Skip, Select, Take, Put }
 
     struct TableAction
     {

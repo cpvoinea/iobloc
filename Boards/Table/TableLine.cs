@@ -53,24 +53,18 @@ namespace iobloc
             Change();
         }
 
-        public void SetCursor(bool set)
+        public void Select(bool set, int picked)
         {
             Set(0, set ? Table.CN : (_setHighlight ? Table.CH : 0));
+            Set(Panel.Height - 1, picked);
             Change();
         }
 
-        public void Pick()
+        public void Take()
         {
-            Set(Panel.Height - 1, IsWhite);
             Count--;
             if (Count == 0)
                 IsWhite = null;
-            Change();
-        }
-
-        public void Unpick()
-        {
-            Set(Panel.Height - 1);
             Change();
         }
 

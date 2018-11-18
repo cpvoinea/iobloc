@@ -53,15 +53,6 @@ namespace iobloc
                 l.SetHighlight(false);
         }
 
-        public int GetIndex(bool isWhite, int line)
-        {
-            if (line < 24)
-                return isWhite ? line : 23 - line;
-            if (line < 26)
-                return isWhite ? 24 : 25;
-            return isWhite ? 26 : 27;
-        }
-
         public int[] GetLines(bool isWhite)
         {
             int[] result = new int[28];
@@ -71,6 +62,15 @@ namespace iobloc
                 result[i] = line.IsWhite == isWhite ? line.Count : -line.Count;
             }
             return result;
+        }
+
+        private int GetIndex(bool isWhite, int line)
+        {
+            if (line < 24)
+                return isWhite ? line : 23 - line;
+            if (line < 26)
+                return isWhite ? 24 : 25;
+            return isWhite ? 26 : 27;
         }
     }
 }

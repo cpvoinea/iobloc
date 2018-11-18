@@ -13,4 +13,4 @@ NeutralColor Yellow
 DarkColor DarkGray
 LightColor Gray
 HighlightColor White
-AIs 2
+AIs 1

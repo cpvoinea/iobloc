@@ -6,10 +6,20 @@ namespace iobloc
     {
         const int L = 28;
 
-        public int[] NextMove(int[] lines, int[] dice)
+        public int[][] GetMoves(int[] lines, int[] dice)
         {
             var matrix = GetMoveMatrix(lines, dice);
-            return GetNextMove(matrix, lines, dice[0]);
+            return new[] { GetNextMove(matrix, lines, dice[0]) };
+        }
+
+        public static int[] GetAllowedTake(int[] lines, int[] dice)
+        {
+            return new int[0];
+        }
+
+        public static int[] GetAllowedPut(int[] lines, int[] dice, int from)
+        {
+            return new int[0];
         }
 
         internal static int[,] GetMoveMatrix(int[] lines, int[] dice)

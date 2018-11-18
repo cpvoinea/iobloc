@@ -43,11 +43,9 @@ namespace iobloc
             string className = GameSettings.GetString(Settings.ClassName);
 
             if (aiCount > 0)
-            {
-                _player2 = Serializer.InstantiateFromAssembly<ITableAI>(assemblyPath, className) ?? new TableAI();
-                if (aiCount == 2)
-                    _player1 = new TableAI();
-            }
+                _player2 = new TableAI();
+            if (aiCount > 1)
+                _player1 = Serializer.InstantiateFromAssembly<ITableAI>(assemblyPath, className) ?? new TableAI();
         }
 
         protected override void InitializeUI()
@@ -107,6 +105,36 @@ namespace iobloc
             ThrowDice();
         }
 
+        private void SetMoves()
+        {
+            var lines = _board.GetLines(_isWhite);
+
+            _allowed.Clear();
+            if (_pickedFrom.HasValue)
+                _allowed.AddRange(TableAI.GetAllowedPut(lines, _dice.ToArray(), _pickedFrom.Value));
+            else
+                _allowed.AddRange(TableAI.GetAllowedTake(lines, _dice.ToArray()));
+
+            if (IsCurrentPlayerAI)
+            {
+                var moves = CurrentPlayer.GetMoves(lines, _dice.ToArray());
+                foreach (var m in moves)
+                {
+                    AddAction(ActionType.Skip, m[0], m[2]);
+                    AddAction(ActionType.Select, m[0], m[2]);
+                    AddAction(ActionType.Take, m[0], m[2]);
+                    AddAction(ActionType.Select, m[0], m[2]);
+                    AddAction(ActionType.Select, m[1], m[2]);
+                    AddAction(ActionType.Put, m[1], m[2]);
+                }
+            }
+        }
+
+        private void AddAction(ActionType type, int line, int dice)
+        {
+            _actions.Enqueue(new TableAction(type, line, dice));
+        }
+
         private void ThrowDice()
         {
             int d1 = _random.Next(6) + 1;
@@ -118,6 +146,8 @@ namespace iobloc
                 _dice.AddRange(_dice);
             _dice.Sort();
             ShowDice();
+
+            SetMoves();
         }
 
         private void RemoveDice(int val)
@@ -131,15 +161,38 @@ namespace iobloc
             Panels[Pnl.Table.Dice].SetText(string.Join<int>(",", _dice));
         }
 
+        private void Select(bool set)
+        {
+            if (!_cursor.HasValue)
+                return;
+            _board[_isWhite, _cursor.Value].Select(set, set && _pickedFrom.HasValue ? (_isWhite ? CP : CE) : 0);
+        }
+
+        private void Take(int line)
+        {
+            _board[_isWhite, line].Take();
+            _pickedFrom = line;
+            _cursor = line;
+            Select(true);
+        }
+
+        private void Put(int line, int dice)
+        {
+            _board[_isWhite, line].Put(_isWhite);
+            _pickedFrom = null;
+            _cursor = line;
+            Select(true);
+        }
+
         private void CursorMove(bool left)
         {
+            Select(false);
             if (_useFreeMove)
             {
                 if (!_cursor.HasValue)
                     _cursor = left ? 23 : 0;
                 else
                 {
-                    _board[_isWhite, _cursor.Value].SetCursor(false);
                     if (_cursor < 24)
                     {
                         if (_cursor.Value < 12)
@@ -158,13 +211,9 @@ namespace iobloc
                     else
                         _cursor = left ? 0 : 23;
                 }
-
-                _board[_isWhite, _cursor.Value].SetCursor(true);
             }
             else
             {
-                if (_cursor.HasValue)
-                    _board[_isWhite, _cursor.Value].SetCursor(false);
                 if (_allowed.Count > 0)
                 {
                     int i = _allowed.IndexOf(_cursor.Value);
@@ -186,14 +235,17 @@ namespace iobloc
                             i = 0;
                         _cursor = _allowed[i];
                     }
-
-                    _board[_isWhite, _cursor.Value].SetCursor(true);
                 }
             }
+            Select(true);
         }
 
         private void CursorAction()
         {
+            if (_pickedFrom.HasValue)
+                Put(_cursor.Value, 0);
+            else
+                Take(_cursor.Value);
         }
 
         public override void TogglePause()
@@ -213,7 +265,7 @@ namespace iobloc
                     _useFreeMove = !_useFreeMove;
                     if (!_useFreeMove && _cursor.HasValue)
                     {
-                        _board[_isWhite, _cursor.Value].SetCursor(false);
+                        Select(false);
                         _cursor = null;
                     }
                     break;
@@ -222,8 +274,7 @@ namespace iobloc
                     if (_useMarking)
                     {
                         _board.ClearHighlight();
-                        if (_cursor.HasValue)
-                            _board[_isWhite, _cursor.Value].SetCursor(true);
+                        Select(true);
                     }
                     break;
                 case "N":
@@ -248,6 +299,24 @@ namespace iobloc
 
         public override void NextFrame()
         {
+            if(_actions.Count == 0)
+                return;
+            var action = _actions.Dequeue();
+            switch(action.Type)
+            {
+                case ActionType.Skip: break;
+                case ActionType.Select:
+                    Select(false);
+                    _cursor = action.Line;
+                    Select(true);
+                    break;
+                case ActionType.Take:
+                    Take(action.Line);
+                    break;
+                case ActionType.Put:
+                    Put(action.Line, action.Dice);
+                    break;
+            }
         }
     }
 }
