@@ -4,7 +4,7 @@ Help ==GAMEPLAY==,|Selection:|,|LEFT-RIGHT|,|Action: UP|,|Restart: R|,+==OPTIONS
 AllowedKeys LeftArrow,RightArrow,UpArrow,R,F,M,N,B
 FrameMultiplier 1
 Width 45
-Height 36
+Height 40
 BlockWidth 3
 BlockSpace 0
 PlayerColor Blue

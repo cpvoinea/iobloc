@@ -6,7 +6,7 @@ namespace iobloc
     // Use System.Console to paint and get input
     static class Renderer
     {
-        private const int MinWidth = 102;
+        private const int MinWidth = 103;
         private const int MinHeight = 44;
         private static bool SAFE_MODE = true; // made it static instead of const to avoid warnings
         private static int WinWidth = MinWidth;
@@ -45,7 +45,7 @@ namespace iobloc
             // remember initial values
             WinWidth = Console.WindowWidth;
             WinHeight = Console.WindowHeight;
-            if (SAFE_MODE)
+            if (SAFE_MODE || (WinWidth < MinWidth && WinWidth <= Console.LargestWindowWidth || WinHeight < MinHeight && WinHeight <= Console.LargestWindowHeight))
                 Resize(MinWidth, MinHeight);
         }
 
@@ -166,11 +166,11 @@ namespace iobloc
         {
             // on Mac the interception of key doesn't always work
             // moving the cursor outside the border
-            if (SAFE_MODE)
+            if (SAFE_MODE && CurrentBorderHeight < Console.WindowHeight)
                 Console.SetCursorPosition(0, CurrentBorderHeight);
             var k = Console.ReadKey(true).Key.ToString();
             // hiding pressed key
-            if (SAFE_MODE)
+            if (SAFE_MODE && CurrentBorderHeight < Console.WindowHeight)
             {
                 Console.SetCursorPosition(0, CurrentBorderHeight);
                 Console.Write("    ");
