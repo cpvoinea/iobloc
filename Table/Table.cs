@@ -111,28 +111,67 @@ namespace iobloc
 
             _allowed.Clear();
             if (_pickedFrom.HasValue)
+            {
                 _allowed.AddRange(TableAI.GetAllowedPut(lines, _dice.ToArray(), _pickedFrom.Value));
+                if (!IsCurrentPlayerAI)
+                {
+                    if (_allowed.Count == 0)
+                        EndTurn();
+                    else if (_allowed.Count == 1)
+                        AddPut(_pickedFrom.Value, _allowed[0], TableAI.GetDice(_pickedFrom.Value, _allowed[0], _dice.ToArray()));
+                }
+            }
             else
+            {
                 _allowed.AddRange(TableAI.GetAllowedTake(lines, _dice.ToArray()));
+                if (!IsCurrentPlayerAI)
+                {
+                    if (_allowed.Count == 0)
+                        EndTurn();
+                    else if (_allowed.Count == 1)
+                        AddTake(_allowed[0]);
+                }
+            }
+            if (_allowed.Count == 0)
+                return;
+            if (_useMarking)
+                foreach (int line in _allowed)
+                    _board[_isWhite, line].SetHighlight(true);
 
             if (IsCurrentPlayerAI)
             {
                 var moves = CurrentPlayer.GetMoves(lines, _dice.ToArray());
                 foreach (var m in moves)
                 {
-                    AddAction(ActionType.Skip, m[0], m[2]);
-                    AddAction(ActionType.Select, m[0], m[2]);
-                    AddAction(ActionType.Take, m[0], m[2]);
-                    AddAction(ActionType.Select, m[0], m[2]);
-                    AddAction(ActionType.Select, m[1], m[2]);
-                    AddAction(ActionType.Put, m[1], m[2]);
+                    AddTake(m[0]);
+                    AddPut(m[0], m[1], m[2]);
                 }
             }
         }
 
-        private void AddAction(ActionType type, int line, int dice)
+        private void AddTake(int line)
         {
-            _actions.Enqueue(new TableAction(type, line, dice));
+            _actions.Enqueue(new TableAction(ActionType.Skip, 0, 0));
+            _actions.Enqueue(new TableAction(ActionType.Select, line, 0));
+            _actions.Enqueue(new TableAction(ActionType.Take, line, 0));
+            _actions.Enqueue(new TableAction(ActionType.Select, line, 0));
+        }
+
+        private void AddPut(int from, int to, int dice)
+        {
+            if (from < 24)
+                for (int i = from - 1; i > to; i++)
+                    _actions.Enqueue(new TableAction(ActionType.Select, i, 0));
+            _actions.Enqueue(new TableAction(ActionType.Select, to, 0));
+            _actions.Enqueue(new TableAction(ActionType.Put, to, dice));
+        }
+
+        private void EndTurn()
+        {
+            _isWhite = !_isWhite;
+            _cursor = null;
+            _pickedFrom = null;
+            ThrowDice();
         }
 
         private void ThrowDice()
@@ -174,6 +213,8 @@ namespace iobloc
             _pickedFrom = line;
             _cursor = line;
             Select(true);
+
+            SetMoves();
         }
 
         private void Put(int line, int dice)
@@ -182,6 +223,8 @@ namespace iobloc
             _pickedFrom = null;
             _cursor = line;
             Select(true);
+
+            SetMoves();
         }
 
         private void CursorMove(bool left)
@@ -216,24 +259,29 @@ namespace iobloc
             {
                 if (_allowed.Count > 0)
                 {
-                    int i = _allowed.IndexOf(_cursor.Value);
-                    if (!_cursor.HasValue || i < 0)
+                    if (!_cursor.HasValue)
                         _cursor = _allowed[left ? _allowed.Count - 1 : 0];
                     else
                     {
-                        if (_cursor.Value < 12)
-                            i += left ? 1 : -1;
-                        else if (_cursor.Value < 24)
-                            i += left ? -1 : 1;
-                        else if (_cursor.Value < 26)
-                            i--;
-                        else
-                            i++;
+                        int i = _allowed.IndexOf(_cursor.Value);
                         if (i < 0)
-                            i = _allowed.Count - 1;
-                        if (i >= _allowed.Count)
-                            i = 0;
-                        _cursor = _allowed[i];
+                            _cursor = _allowed[left ? _allowed.Count - 1 : 0];
+                        else
+                        {
+                            if (_cursor.Value < 12)
+                                i += left ? 1 : -1;
+                            else if (_cursor.Value < 24)
+                                i += left ? -1 : 1;
+                            else if (_cursor.Value < 26)
+                                i--;
+                            else
+                                i++;
+                            if (i < 0)
+                                i = _allowed.Count - 1;
+                            if (i >= _allowed.Count)
+                                i = 0;
+                            _cursor = _allowed[i];
+                        }
                     }
                 }
             }
@@ -271,11 +319,9 @@ namespace iobloc
                     break;
                 case "M":
                     _useMarking = !_useMarking;
-                    if (_useMarking)
-                    {
-                        _board.ClearHighlight();
-                        Select(true);
-                    }
+                    foreach (int line in _allowed)
+                        _board[_isWhite, line].SetHighlight(_useMarking);
+                    Select(true);
                     break;
                 case "N":
                     _useNumbers = !_useNumbers;
@@ -291,7 +337,7 @@ namespace iobloc
                     CursorMove(key == UIKey.LeftArrow);
                     break;
                 case UIKey.UpArrow:
-                    if (_actions.Count == 0)
+                    if (_actions.Count == 0 && _cursor.HasValue)
                         CursorAction();
                     break;
             }
@@ -299,10 +345,10 @@ namespace iobloc
 
         public override void NextFrame()
         {
-            if(_actions.Count == 0)
+            if (_actions.Count == 0)
                 return;
             var action = _actions.Dequeue();
-            switch(action.Type)
+            switch (action.Type)
             {
                 case ActionType.Skip: break;
                 case ActionType.Select:
