@@ -5,13 +5,12 @@ namespace iobloc
 {
     class Table : BaseGame
     {
-        internal static int BW, B, CP, CE, CN, CD, CL, CH;
-        private const int SF = 3;
+        private int BW, B, CP, CE, CN, CD, CL, CH;
         private readonly Random _random = new Random();
-        private bool _useFreeMove = false;
-        private bool _useMarking = false;
-        private bool _useNumbers = false;
-        private bool _useBackground = false;
+        private bool _useFreeMove = true;
+        private bool _useMarking = true;
+        private bool _useNumbers = true;
+        private bool _useBackground = true;
         private TableBoard _board;
         private ITableAI _player1;
         private ITableAI _player2;
@@ -21,8 +20,6 @@ namespace iobloc
         private bool _isWhite;
         private int? _cursor;
         private int? _pickedFrom;
-        private ITableAI CurrentPlayer => _isWhite ? _player1 : _player2;
-        public bool IsCurrentPlayerAI => CurrentPlayer != null;
 
         public Table() : base(GameType.Table) { }
 
@@ -36,7 +33,7 @@ namespace iobloc
             CN = GameSettings.GetColor(Settings.NeutralColor);
             CD = GameSettings.GetColor("DarkColor");
             CL = GameSettings.GetColor("LightColor");
-            CH = GameSettings.GetColor("HighlightColor");
+            CH = GameSettings.GetColor("MarkingColor");
 
             int aiCount = GameSettings.GetInt("AIs", 0);
             string assemblyPath = GameSettings.GetString(Settings.AssemblyPath);
@@ -111,59 +108,12 @@ namespace iobloc
 
             _allowed.Clear();
             if (_pickedFrom.HasValue)
-            {
                 _allowed.AddRange(TableAI.GetAllowedPut(lines, _dice.ToArray(), _pickedFrom.Value));
-                if (!IsCurrentPlayerAI)
-                {
-                    if (_allowed.Count == 0)
-                        EndTurn();
-                    else if (_allowed.Count == 1)
-                        AddPut(_pickedFrom.Value, _allowed[0], TableAI.GetDice(_pickedFrom.Value, _allowed[0], _dice.ToArray()));
-                }
-            }
             else
-            {
                 _allowed.AddRange(TableAI.GetAllowedTake(lines, _dice.ToArray()));
-                if (!IsCurrentPlayerAI)
-                {
-                    if (_allowed.Count == 0)
-                        EndTurn();
-                    else if (_allowed.Count == 1)
-                        AddTake(_allowed[0]);
-                }
-            }
-            if (_allowed.Count == 0)
-                return;
             if (_useMarking)
                 foreach (int line in _allowed)
-                    _board[_isWhite, line].SetHighlight(true);
-
-            if (IsCurrentPlayerAI)
-            {
-                var moves = CurrentPlayer.GetMoves(lines, _dice.ToArray());
-                foreach (var m in moves)
-                {
-                    AddTake(m[0]);
-                    AddPut(m[0], m[1], m[2]);
-                }
-            }
-        }
-
-        private void AddTake(int line)
-        {
-            _actions.Enqueue(new TableAction(ActionType.Skip, 0, 0));
-            _actions.Enqueue(new TableAction(ActionType.Select, line, 0));
-            _actions.Enqueue(new TableAction(ActionType.Take, line, 0));
-            _actions.Enqueue(new TableAction(ActionType.Select, line, 0));
-        }
-
-        private void AddPut(int from, int to, int dice)
-        {
-            if (from < 24)
-                for (int i = from - 1; i > to; i++)
-                    _actions.Enqueue(new TableAction(ActionType.Select, i, 0));
-            _actions.Enqueue(new TableAction(ActionType.Select, to, 0));
-            _actions.Enqueue(new TableAction(ActionType.Put, to, dice));
+                    _board[_isWhite, line].SetMarking(true);
         }
 
         private void EndTurn()
@@ -298,8 +248,7 @@ namespace iobloc
 
         public override void TogglePause()
         {
-            var pnl = Panels[Pnl.Table.UpperLeft];
-            pnl.SwitchMode();
+            Main.SwitchMode();
         }
 
         public override void HandleInput(string key)
@@ -320,7 +269,7 @@ namespace iobloc
                 case "M":
                     _useMarking = !_useMarking;
                     foreach (int line in _allowed)
-                        _board[_isWhite, line].SetHighlight(_useMarking);
+                        _board[_isWhite, line].SetMarking(_useMarking);
                     Select(true);
                     break;
                 case "N":

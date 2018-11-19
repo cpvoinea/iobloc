@@ -7,7 +7,7 @@ namespace iobloc
         private readonly TableLine[] _lines = new TableLine[28];
         public TableLine this[bool isWhite, int line] { get { return _lines[GetIndex(isWhite, line)]; } }
 
-        public TableBoard(Dictionary<string, Panel> panels)
+        public TableBoard(Dictionary<string, Panel> panels, int bw, int b)
         {
             var pnlUpperLeft = panels[Pnl.Table.UpperLeft];
             var pnlLowerLeft = panels[Pnl.Table.LowerLeft];
@@ -21,15 +21,15 @@ namespace iobloc
             for (int i = 0; i < 6; i++)
             {
                 bool isDark = i % 2 == 0;
-                _lines[i] = new TableLine(pnlLowerRight, 5 - i, pnlLowerRight.Height - 1, true, isDark);
-                _lines[i + 6] = new TableLine(pnlLowerLeft, 5 - i, pnlLowerLeft.Height - 1, true, isDark);
-                _lines[i + 12] = new TableLine(pnlUpperLeft, i, 0, false, isDark);
-                _lines[i + 18] = new TableLine(pnlUpperRight, i, 0, false, isDark);
+                _lines[i] = new TableLine(pnlLowerRight, bw, b, 5 - i, pnlLowerRight.Height - 1, true);
+                _lines[i + 6] = new TableLine(pnlLowerLeft, bw, b, 5 - i, pnlLowerLeft.Height - 1, true);
+                _lines[i + 12] = new TableLine(pnlUpperLeft, bw, b, i, 0, false);
+                _lines[i + 18] = new TableLine(pnlUpperRight, bw, b, i, 0, false);
             }
-            _lines[24] = new TableLine(pnlUpperTaken, 0, 0, false);
-            _lines[25] = new TableLine(pnlLowerTaken, 0, pnlLowerTaken.Height - 1, true);
-            _lines[26] = new TableLine(pnlLowerOut, 0, pnlLowerOut.Height - 1, true);
-            _lines[27] = new TableLine(pnlUpperOut, 0, 0, false);
+            _lines[24] = new TableLine(pnlUpperTaken, bw, b, 0, 0, false);
+            _lines[25] = new TableLine(pnlLowerTaken, bw, b, 0, pnlLowerTaken.Height - 1, true);
+            _lines[26] = new TableLine(pnlLowerOut, bw, b, 0, pnlLowerOut.Height - 1, true);
+            _lines[27] = new TableLine(pnlUpperOut, bw, b, 0, 0, false);
 
             _lines[0].Initialize(2, false);
             _lines[5].Initialize(5, true);
@@ -39,12 +39,6 @@ namespace iobloc
             _lines[16].Initialize(3, false);
             _lines[18].Initialize(5, false);
             _lines[23].Initialize(2, true);
-        }
-
-        public void SetBackground(bool set)
-        {
-            foreach (var l in _lines)
-                l.SetBackground(set);
         }
 
         public int[] GetLines(bool isWhite)

@@ -12,5 +12,5 @@ EnemyColor Red
 NeutralColor Yellow
 DarkColor DarkGray
 LightColor Gray
-HighlightColor Green
-AIs 1
+MarkingColor White
+AIs 0

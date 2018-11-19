@@ -2,91 +2,74 @@ namespace iobloc
 {
     class TableLine
     {
+        private readonly int _bw;
+        private readonly int _b;
         private readonly int _startCol;
         private readonly int _startRow;
         private readonly int _direction;
-        private readonly bool? _isDark;
-        private bool _setHighlight;
-        private bool _setBackground;
-        private int Background => _isDark.HasValue ? (_isDark.Value ? Table.CD : Table.CL) : 0;
+        private int _marking;
+        private int _background;
         public Panel Panel { get; private set; }
         public int Count { get; private set; }
-        public bool? IsWhite { get; private set; }
 
-        public TableLine(Panel panel, int col, int row, bool isLower, bool? isDark = null)
+        public TableLine(Panel panel, int bw, int b, int col, int row, bool isLower)
         {
+            Panel = panel;
+            _bw = bw;
+            _b = b;
             _startCol = col;
             _startRow = row;
             _direction = isLower ? -1 : 1;
-            _isDark = isDark;
-            _setHighlight = false;
-            _setBackground = false;
-            Count = 0;
-            IsWhite = null;
-
-            Panel = panel;
-            Initialize(0, null);
         }
 
-        public void Initialize(int count, bool? isWhite)
+        public void Initialize(int count, int color)
         {
             Count = count;
-            IsWhite = isWhite;
-            for (int i = 1; i < Panel.Height; i++)
-                if (i <= count)
-                    Set(i, isWhite);
-                else
-                    Set(i);
+            for (int i = 1; i <= count; i++)
+                Set(i, color);
         }
 
-        public void SetBackground(bool set)
+        public void SetBackground(int background)
         {
-            _setBackground = set;
-            Initialize(Count, IsWhite);
+            _background = background;
+            for (int i = Count + 1; i < Panel.Height; i++)
+                Set(i, background);
             Change();
         }
 
-        public void SetHighlight(bool set)
+        public void SetMarking(int marking)
         {
-            _setHighlight = set;
-            Set(0, set ? Table.CH : 0);
+            _marking = marking;
+            Set(0, marking);
             Change();
         }
 
-        public void Select(bool set, int picked)
+        public void Select(int select, int hover)
         {
-            Set(0, set ? Table.CN : (_setHighlight ? Table.CH : 0));
-            Set(Panel.Height - 1, picked);
+            Set(0, select == 0 && _marking > 0 ? _marking : select);
+            Set(Panel.Height - 1, hover);
             Change();
         }
 
         public void Take()
         {
+            Set(Count, 0);
             Count--;
-            if (Count == 0)
-                IsWhite = null;
             Change();
         }
 
-        public void Put(bool isWhite)
+        public void Put(int color)
         {
             Count++;
-            Set(Count, isWhite);
-            IsWhite = isWhite;
+            Set(Count, color);
             Change();
         }
 
-        private void Set(int row, bool? isWhite)
+        private void Set(int row, int val)
         {
-            int c = isWhite.HasValue ? (isWhite.Value ? Table.CP : Table.CE) : 0;
-            Set(row, c);
-        }
-
-        private void Set(int row, int val = 0)
-        {
-            for (int i = 0; i < Table.BW; i++)
-                Panel[_startRow + row * _direction, _startCol * Table.B + i] =
-                row == 0 || val > 0 ? val : (_setBackground ? Background : 0);
+            for (int i = 0; i < _bw; i++)
+                Panel[_startRow + row * _direction, _startCol * _b + i] =
+                row == 0 || val > 0 ? val : _background;
         }
 
         private void Change()
