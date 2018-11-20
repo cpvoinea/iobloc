@@ -257,6 +257,9 @@ namespace iobloc
 
         private void SetAllowedTo()
         {
+            int from = _picked.Value;
+            _allowed.Add(from);
+
             ShowAllowed();
         }
 
