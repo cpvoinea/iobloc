@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace iobloc
 {
-    class TableAI : ITableAI
+    public class TableAI : ITableAI
     {
         const int L = 28;
 
