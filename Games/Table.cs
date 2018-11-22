@@ -250,7 +250,7 @@ namespace iobloc
                             newValue = _cursor.Value + (left ? 1 : -1);
                         else if (_cursor < 24)
                             newValue = _cursor.Value + (left ? -1 : 1);
-                        if (_cursor < 0)
+                        if (newValue < 0)
                             newValue = 26;
                     }
                     else if (_cursor < 26)
@@ -441,7 +441,7 @@ namespace iobloc
             else
             {
                 for (int i = 0; i < 24; i++)
-                    if (CanTakeFrom(i))
+                    if (CanTake(this[i]) && CanTakeFrom(i))
                         _allowed.Add(i);
             }
         }
