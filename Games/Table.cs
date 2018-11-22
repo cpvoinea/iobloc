@@ -301,6 +301,58 @@ namespace iobloc
                 AddAction(ActionType.Take);
         }
 
+        private void SetAllowed()
+        {
+            Change(false);
+            if (_useMarking)
+                ChangeMarking(false);
+            _allowed.Clear();
+
+            if (_dice.Count == 0)
+            {
+                EndTurn();
+                return;
+            }
+            if (_picked.HasValue)
+            {
+                SetAllowedTo();
+                if (_allowed.Count == 1)
+                {
+                    Travel(_picked.Value, _allowed[0]);
+                    AddAction(ActionType.Put);
+                }
+            }
+            else
+            {
+                SetAllowedFrom();
+                if (_allowed.Count == 1)
+                {
+                    AddAction(ActionType.Select, _allowed[0]);
+                    AddAction(ActionType.Take);
+                }
+            }
+            if (_allowed.Count == 0)
+            {
+                EndTurn();
+                return;
+            }
+            _allowed.Sort();
+
+            if (_useMarking)
+                ChangeMarking(true);
+            if (!_cursor.HasValue)
+                _cursor = _allowed[_allowed.Count - 1];
+            Change(true);
+        }
+
+        private void Travel(int from, int to)
+        {
+            if (from < 24)
+                for (int i = from - 1; i > to; i--)
+                    AddAction(ActionType.Select, i);
+            AddAction(ActionType.Select, to);
+        }
+
         #endregion
 
         #region Doing Actions
@@ -374,34 +426,6 @@ namespace iobloc
         #endregion
 
         #region Helpers
-        private void SetAllowed()
-        {
-            Change(false);
-            if (_useMarking)
-                ChangeMarking(false);
-            _allowed.Clear();
-
-            if (_dice.Count == 0)
-            {
-                EndTurn();
-                return;
-            }
-            if (_picked.HasValue)
-                SetAllowedTo();
-            else
-                SetAllowedFrom();
-            if (_allowed.Count == 0)
-            {
-                EndTurn();
-                return;
-            }
-            _allowed.Sort();
-
-            if (_useMarking)
-                ChangeMarking(true);
-            Change(true);
-        }
-
         private void RemoveDice(int from, int to)
         {
             int val = from - to;
@@ -428,6 +452,10 @@ namespace iobloc
                 for (int i = 0; i < 24; i++)
                     if (CanTake(this[i]) && CanTakeFrom(i))
                         _allowed.Add(i);
+                if (CanTakeOut())
+                    for (int i = 0; i < 6; i++)
+                        if (CanTakeOutFrom(i))
+                            _allowed.Add(i);
             }
         }
 
@@ -441,7 +469,7 @@ namespace iobloc
                 if (to >= 0 && CanPut(this[to]))
                     _allowed.Add(to);
             }
-            if (CanTakeOut(from))
+            if (CanTakeOut() && CanTakeOutFrom(from))
                 _allowed.Add(26);
         }
 
@@ -453,13 +481,18 @@ namespace iobloc
             return false;
         }
 
-        private bool CanTakeOut(int from)
+        private bool CanTakeOut()
         {
-            if (from >= 6)
-                return false;
             for (int i = 6; i <= 24; i++)
                 if (CanTake(this[i]))
                     return false;
+            return true;
+        }
+
+        private bool CanTakeOutFrom(int from)
+        {
+            if (from >= 6)
+                return false;
             if (_dice.Contains(from + 1))
                 return true;
             for (int i = from + 1; i < 6; i++)
@@ -478,6 +511,18 @@ namespace iobloc
             return line.Count <= 1 || line.IsWhite == _isWhite;
         }
 
+        private static int GetIndex(bool isWhite, int line)
+        {
+            if (line < 24)
+                return isWhite ? line : 23 - line;
+            if (line < 26)
+                return isWhite ? 24 : 25;
+            return isWhite ? 26 : 27;
+        }
+
+        #endregion
+
+        #region AI
         private int[] GetLines()
         {
             int[] result = new int[28];
@@ -487,15 +532,6 @@ namespace iobloc
                 result[i] = line.IsWhite == _isWhite ? line.Count : -line.Count;
             }
             return result;
-        }
-
-        private static int GetIndex(bool isWhite, int line)
-        {
-            if (line < 24)
-                return isWhite ? line : 23 - line;
-            if (line < 26)
-                return isWhite ? 24 : 25;
-            return isWhite ? 26 : 27;
         }
 
         #endregion
