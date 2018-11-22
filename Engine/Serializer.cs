@@ -54,7 +54,9 @@ namespace iobloc
         {
             if (!string.IsNullOrEmpty(settingsFilePath))
                 SettingsFileName = settingsFilePath;
-            if (!File.Exists(SettingsFileName))
+            if (File.Exists(SettingsFileName))
+                Settings.Clear();
+            else
                 return;
 
             using (var sr = File.OpenText(SettingsFileName))

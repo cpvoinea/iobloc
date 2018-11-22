@@ -26,9 +26,9 @@ namespace iobloc
         #region Settings
         private int CP, CE, CN, CD, CL, CM;
         private readonly Random _random = new Random();
-        private bool _useFreeMove = true;
+        private bool _useFreeMove = false;
         private bool _useMarking = true;
-        private bool _useBackground = true;
+        private bool _useBackground = false;
         private bool _isWhite = true;
         private ITableAI _player1;
         private ITableAI _player2;
@@ -123,8 +123,8 @@ namespace iobloc
                 textLeft += $"{12 - i,2}".PadLeft(padLeft + 2).PadRight(Block);
                 textRight += $"{6 - i,2}".PadLeft(padLeft + 2).PadRight(Block);
             }
-            Panels[Pnl.Table.MiddleLeft].SetText(textLeft.Split(','));
-            Panels[Pnl.Table.MiddleRight].SetText(textRight.Split(','));
+            Panels[Pnl.Table.MiddleLeft].SetText(textLeft.Split(','), false);
+            Panels[Pnl.Table.MiddleRight].SetText(textRight.Split(','), false);
         }
 
         protected override void Initialize()
@@ -301,47 +301,6 @@ namespace iobloc
                 AddAction(ActionType.Take);
         }
 
-        private void SetAllowed()
-        {
-            Change(false);
-            if (_useMarking)
-                ChangeMarking(false);
-            _allowed.Clear();
-
-            if (_dice.Count == 0)
-            {
-                EndTurn();
-                return;
-            }
-            if (_picked.HasValue)
-            {
-                SetAllowedTo();
-                if (_allowed.Count == 1)
-                {
-                    AddAction(ActionType.Select, _allowed[0]);
-                    AddAction(ActionType.Put);
-                }
-            }
-            else
-            {
-                SetAllowedFrom();
-                if (_allowed.Count == 1)
-                {
-                    AddAction(ActionType.Select, _allowed[0]);
-                    AddAction(ActionType.Take);
-                }
-            }
-            if (_allowed.Count == 0)
-            {
-                EndTurn();
-                return;
-            }
-
-            if (_useMarking)
-                ChangeMarking(true);
-            Change(true);
-        }
-
         #endregion
 
         #region Doing Actions
@@ -415,12 +374,38 @@ namespace iobloc
         #endregion
 
         #region Helpers
+        private void SetAllowed()
+        {
+            Change(false);
+            if (_useMarking)
+                ChangeMarking(false);
+            _allowed.Clear();
+
+            if (_dice.Count == 0)
+            {
+                EndTurn();
+                return;
+            }
+            if (_picked.HasValue)
+                SetAllowedTo();
+            else
+                SetAllowedFrom();
+            if (_allowed.Count == 0)
+            {
+                EndTurn();
+                return;
+            }
+            _allowed.Sort();
+
+            if (_useMarking)
+                ChangeMarking(true);
+            Change(true);
+        }
+
         private void RemoveDice(int from, int to)
         {
             int val = from - to;
-            if (from == 24)
-                val = to + 1;
-            else if (to == 26)
+            if (to == 26)
             {
                 if (_dice.Contains(from + 1))
                     val = from + 1;

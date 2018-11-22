@@ -5,7 +5,6 @@ namespace iobloc
     // Dictionary of settings for each game ID, a game setting is a collection of (name,value) string pairs
     sealed class Settings : Dictionary<int, Dictionary<string, string>>
     {
-        private static bool EXTERNAL_SETTINGS = true;
         public const string AssemblyPath = "AssemblyPath";
         public const string ClassName = "ClassName";
         public const string Name = "Name";
@@ -25,9 +24,6 @@ namespace iobloc
 
         public Settings()
         {
-            if (EXTERNAL_SETTINGS)
-                return;
-
             // Level
             Add(0, new Dictionary<string, string>{
                 {"MenuKeys", "D0,NumPad0"},
@@ -156,20 +152,22 @@ namespace iobloc
             // Table
             Add(9, new Dictionary<string, string>{
                 {"MenuKeys", "D9,NumPad9"},
-                {"Help", "Move:LEFT-RIGHT,Pick/Put:UP_ARROW,Restart:R,Exit:ESC,Pause:ANY"},
-                {"AllowedKeys", "LeftArrow,RightArrow,UpArrow,R"},
-                {"FrameMultiplier", "10"},
-                {"Width", "101"},
-                {"Height", "36"},
-                {"BlockWidth", "6"},
+                {"Help", "Help ==GAMEPLAY==,|Selection:|,|LEFT-RIGHT|,|Action: UP|,|Restart: R|,+==OPTIONS=+,|Freedom: F|,|Marking: M|,|Numbers: N|,|Backgnd: B|,+----------+,| Exit: ESC|,|Pause: ANY|,============"},
+                {"AllowedKeys", "LeftArrow,RightArrow,UpArrow,R,F,M,N,B"},
+                {"FrameMultiplier", "1"},
+                {"Width", "59"},
+                {"Height", "40"},
+                {"BlockWidth", "3"},
                 {"BlockSpace", "1"},
                 {"PlayerColor", "Blue"},
                 {"EnemyColor", "Red"},
                 {"NeutralColor", "Yellow"},
-                {"HighlightColor", "DarkGray"},
+                {"MarkingColor", "White"},
+                {"DarkColor", "DarkGray"},
+                {"LightColor", "Gray"},
                 {"AssemblyPath", "iobloc.dll"},
                 {"ClassName", "iobloc.TableAI"},
-                {"AIs", "2"},
+                {"AIs", "0"},
             });
             // Menu
             Add(10, new Dictionary<string, string>());

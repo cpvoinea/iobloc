@@ -6,9 +6,9 @@ namespace iobloc
     // Use System.Console to paint and get input
     static class Renderer
     {
+        private static bool SAFE_MODE = true; // made it static instead of const to avoid warnings
         private const int MinWidth = 103;
         private const int MinHeight = 44;
-        private static bool SAFE_MODE = true; // made it static instead of const to avoid warnings
         private static int WinWidth = MinWidth;
         private static int WinHeight = MinHeight;
         private static int CurrentBorderHeight;
