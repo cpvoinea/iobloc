@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace iobloc
 {
@@ -35,8 +36,7 @@ namespace iobloc
         private ITableAI _player2;
         // panel lines 0-23 are main board, 24-25 are taken, 26-27 are out
         private readonly TableLine[] _lines = new TableLine[28];
-        private TableLine this[bool w, int i] => _lines[GetIndex(w, i)];
-        private TableLine this[int i] => this[_isWhite, i];
+        private TableLine this[int i] => _lines[GetIndex(_isWhite, i)];
         // currently available dice
         private readonly List<int> _dice = new List<int>();
         // currently allowed moves
@@ -206,6 +206,12 @@ namespace iobloc
 
         private void EndTurn()
         {
+            if (_lines[25].Count == 15 || _lines[26].Count == 15)
+            {
+                Initialize();
+                return;
+            }
+
             _isWhite = !_isWhite;
             _cursor = null;
             _picked = null;
@@ -223,7 +229,7 @@ namespace iobloc
                 _dice.AddRange(_dice);
             _dice.Sort();
             ShowDice();
-            SetAllowedFrom();
+            SetAllowed();
         }
 
         private void RemoveDice(int val)
@@ -237,34 +243,22 @@ namespace iobloc
             Panels[Pnl.Table.Dice].SetText(string.Join<int>(",", _dice));
         }
 
-        private void SetAllowedFrom()
+        private void SetAllowed()
         {
-            if (CanTake(this[24]))
+            Change(false);
+            if (_useMarking)
+                ChangeMarking(false);
+            _allowed.Clear();
+            if (_dice.Count == 0)
             {
-                if (HasDiceFrom(24, false))
-                    _allowed.Add(GetIndex(_isWhite, 24));
+                EndTurn();
+                return;
             }
+
+            if (_picked.HasValue)
+                SetAllowedTo();
             else
-            {
-                bool canTakeOut = CanTakeOut();
-                for (int i = 0; i < 24; i++)
-                    if (CanTake(this[i]) && HasDiceFrom(i, canTakeOut))
-                        _allowed.Add(GetIndex(_isWhite, i));
-            }
-
-            ShowAllowed();
-        }
-
-        private void SetAllowedTo()
-        {
-            int from = _picked.Value;
-            _allowed.Add(from);
-
-            ShowAllowed();
-        }
-
-        private void ShowAllowed()
-        {
+                SetAllowedFrom();
             if (_allowed.Count == 0)
             {
                 EndTurn();
@@ -273,38 +267,59 @@ namespace iobloc
 
             if (_useMarking)
                 ChangeMarking(true);
+            Change(true);
         }
 
-        private bool HasDiceFrom(int from, bool canTakeOut)
+        private void SetAllowedFrom()
         {
-            if (_dice.Count == 0)
-                return false;
-            foreach (int d in _dice)
+            if (CanTake(this[24]))
+            {
+                if (CanTakeFrom(24))
+                    _allowed.Add(24);
+            }
+            else
+            {
+                for (int i = 0; i < 24; i++)
+                    if (CanTakeFrom(i))
+                        _allowed.Add(i);
+            }
+        }
+
+        private void SetAllowedTo()
+        {
+            int from = _picked.Value;
+            _allowed.Add(from);
+            foreach (int d in _dice.Distinct())
+            {
+                int to = from - d;
+                if (to >= 0 && CanPut(this[to]))
+                    _allowed.Add(to);
+            }
+            if (CanTakeOut(from))
+                _allowed.Add(26);
+        }
+
+        private bool CanTakeFrom(int from)
+        {
+            foreach (int d in _dice.Distinct())
                 if (from - d >= 0 && CanPut(this[from - d]))
                     return true;
-            if (canTakeOut && from < 6)
-            {
-                if (_dice.Contains(from + 1))
-                    return true;
-                bool leftIsClear = true;
-                bool hasDice = false;
-                for (int i = from + 1; i < 6 && leftIsClear; i++)
-                {
-                    leftIsClear &= !CanTake(this[i]);
-                    hasDice |= _dice.Contains(i + 1);
-                }
-                return leftIsClear && hasDice;
-            }
-
             return false;
         }
 
-        private bool CanTakeOut()
+        private bool CanTakeOut(int from)
         {
+            if (from >= 6)
+                return false;
             for (int i = 6; i <= 24; i++)
                 if (CanTake(this[i]))
                     return false;
-            return true;
+            if (_dice.Contains(from + 1))
+                return true;
+            for (int i = from + 1; i < 6; i++)
+                if (CanTake(this[i]))
+                    return false;
+            return _dice.Any(d => d > from + 1);
         }
 
         private bool CanTake(TableLine line)
@@ -321,31 +336,37 @@ namespace iobloc
         {
             if (!_cursor.HasValue || !CanTake(Cursor))
                 return;
+
             Cursor.Take(BackColor);
             _picked = _cursor;
-            if (_useMarking)
-                ChangeMarking(false);
-            SetAllowedTo();
-            Change(true);
+
+            SetAllowed();
         }
 
         private void Put()
         {
-            if (!_cursor.HasValue || !CanPut(Cursor))
+            if (!_cursor.HasValue || _allowed.Contains(_cursor.Value))
                 return;
 
             if (Cursor.IsWhite != _isWhite && Cursor.Count > 0)
             {
                 Cursor.Take(BackColor);
-                TableLine captured = this[!_isWhite, 24];
+                TableLine captured = _lines[GetIndex(!_isWhite, 24)];
                 captured.Put(!_isWhite, _isWhite ? CE : CP);
             }
+
             Cursor.Put(_isWhite, Color);
             _picked = null;
-            if (_useMarking)
-                ChangeMarking(false);
-            SetAllowedFrom();
-            Change(true);
+
+            SetAllowed();
+        }
+
+        private void CursorAction()
+        {
+            if (_picked.HasValue)
+                Put();
+            else
+                Take();
         }
 
         private void CursorMove(bool left)
@@ -438,10 +459,7 @@ namespace iobloc
                     CursorMove(key == UIKey.LeftArrow);
                     break;
                 case UIKey.UpArrow:
-                    if (_picked.HasValue)
-                        Put();
-                    else
-                        Take();
+                    CursorAction();
                     break;
             }
         }
