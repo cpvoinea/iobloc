@@ -6,59 +6,57 @@ namespace iobloc
 {
     class Table : BaseGame
     {
-        enum ActionType { Skip, Select, Take, Put }
+        #region Action struct
+        enum ActionType { Skip, Select, Take, Put, Throw }
 
         struct Action
         {
             public ActionType Type { get; private set; }
-            public TableLine Line { get; private set; }
-            public int Dice { get; private set; }
+            public int? Line { get; private set; }
 
-            public Action(ActionType type, TableLine line, int dice)
+            public Action(ActionType type, int? line)
             {
                 Type = type;
                 Line = line;
-                Dice = dice;
             }
         }
 
-        // colors
+        #endregion
+
+        #region Settings
         private int CP, CE, CN, CD, CL, CM;
-        // for dice
         private readonly Random _random = new Random();
-        // cursor is moving freely
         private bool _useFreeMove = true;
-        // highlight allowed lines to move from/to
         private bool _useMarking = true;
-        // background color for lines
         private bool _useBackground = true;
+        private bool _isWhite = true;
         private ITableAI _player1;
         private ITableAI _player2;
-        // panel lines 0-23 are main board, 24-25 are taken, 26-27 are out
         private readonly TableLine[] _lines = new TableLine[28];
+
+        #endregion
+
+        #region Accessors
         private TableLine this[int i] => _lines[GetIndex(_isWhite, i)];
-        // currently available dice
+        private ITableAI CurrentPlayer => _isWhite ? _player1 : _player2;
+        private TableLine Cursor => this[_cursor.Value];
+        private int Color => _isWhite ? CP : CE;
+        private int BackColor => _useBackground && _cursor.HasValue && _cursor.Value < 24 ? (_cursor.Value % 2 == (_isWhite ? 0 : 1) ? CD : CL) : 0;
+
+        #endregion
+
+        #region Variables - need initialization
         private readonly List<int> _dice = new List<int>();
-        // currently allowed moves
         private readonly List<int> _allowed = new List<int>();
         private readonly Queue<Action> _actions = new Queue<Action>();
-        // current player is white
-        private bool _isWhite = true;
-        // cursor position, if any
         private int? _cursor;
-        // picked position, if any
         private int? _picked;
-        // AI player, if any
-        private ITableAI CurrentPlayer => _isWhite ? _player1 : _player2;
-        // cursor line
-        private TableLine Cursor => this[_cursor.Value];
-        // cursor color
-        private int Color => _isWhite ? CP : CE;
-        // cursor background
-        private int BackColor => _useBackground && _cursor.HasValue && _cursor.Value < 24 ? (_cursor.Value % 2 == (_isWhite ? 0 : 1) ? CD : CL) : 0;
+
+        #endregion
 
         public Table() : base(GameType.Table) { }
 
+        #region Initialization
         protected override void InitializeSettings()
         {
             base.InitializeSettings();
@@ -106,7 +104,6 @@ namespace iobloc
             Main = Panels[Pnl.Table.UpperLeft];
             // text panels
             Main.SetText(Help, false);
-            Panels[Pnl.Table.Dice].SwitchMode();
             // numbers in middle panels
             int padLeft = (BlockWidth - 2) / 2;
             string textLeft = "";
@@ -132,6 +129,12 @@ namespace iobloc
 
         protected override void Initialize()
         {
+            _actions.Clear();
+            _allowed.Clear();
+            _dice.Clear();
+            _cursor = null;
+            _picked = null;
+
             Level = Serializer.MasterLevel; // for frame multiplier
             // re-create lines
             for (int i = 0; i < 6; i++)
@@ -157,11 +160,12 @@ namespace iobloc
             if (_useBackground)
                 ChangeBackground(_useBackground);
 
-            _cursor = null;
-            _picked = null;
-            ThrowDice();
+            AddAction(ActionType.Throw);
         }
 
+        #endregion
+
+        #region UI
         // show cursor
         protected override void Change(bool set)
         {
@@ -204,6 +208,19 @@ namespace iobloc
             Panels[Pnl.Table.MiddleRight].SwitchMode();
         }
 
+        private void ShowDice()
+        {
+            Panels[Pnl.Table.Dice].SetText(string.Join<int>(",", _dice));
+        }
+
+        #endregion
+
+        #region Adding Actions
+        private void AddAction(ActionType type, int? line = null)
+        {
+            _actions.Enqueue(new Action(type, line));
+        }
+
         private void EndTurn()
         {
             if (_lines[25].Count == 15 || _lines[26].Count == 15)
@@ -215,10 +232,142 @@ namespace iobloc
             _isWhite = !_isWhite;
             _cursor = null;
             _picked = null;
-            ThrowDice();
+            AddAction(ActionType.Throw);
         }
 
-        private void ThrowDice()
+        private void CursorMove(bool left)
+        {
+            int? newValue = _cursor;
+            if (_useFreeMove)
+            {
+                if (!_cursor.HasValue)
+                    newValue = left ? 23 : 0;
+                else
+                {
+                    if (_cursor < 24)
+                    {
+                        if (_cursor < 12)
+                            newValue = _cursor.Value + (left ? 1 : -1);
+                        else if (_cursor < 24)
+                            newValue = _cursor.Value + (left ? -1 : 1);
+                        if (_cursor < 0)
+                            newValue = 26;
+                    }
+                    else if (_cursor < 26)
+                        newValue = left ? 23 : 26;
+                    else
+                        newValue = left ? 0 : 24;
+                }
+            }
+            else
+            {
+                if (_allowed.Count > 0)
+                {
+                    if (!_cursor.HasValue)
+                        newValue = _allowed[left ? _allowed.Count - 1 : 0];
+                    else
+                    {
+                        int i = _allowed.IndexOf(_cursor.Value);
+                        if (i < 0)
+                            newValue = _allowed[left ? _allowed.Count - 1 : 0];
+                        else
+                        {
+                            if (_cursor < 12)
+                                i += left ? 1 : -1;
+                            else if (_cursor < 24)
+                                i += left ? -1 : 1;
+                            else if (_cursor < 26)
+                                i--;
+                            else
+                                i++;
+                            if (i < 0)
+                                i = _allowed.Count - 1;
+                            if (i >= _allowed.Count)
+                                i = 0;
+                            newValue = _allowed[i];
+                        }
+                    }
+                }
+            }
+
+            AddAction(ActionType.Select, newValue);
+        }
+
+        private void CursorAction()
+        {
+            if (_picked.HasValue)
+                AddAction(ActionType.Put);
+            else
+                AddAction(ActionType.Take);
+        }
+
+        private void SetAllowed()
+        {
+            Change(false);
+            if (_useMarking)
+                ChangeMarking(false);
+            _allowed.Clear();
+
+            if (_dice.Count == 0)
+            {
+                EndTurn();
+                return;
+            }
+            if (_picked.HasValue)
+            {
+                SetAllowedTo();
+                if (_allowed.Count == 1)
+                {
+                    AddAction(ActionType.Select, _allowed[0]);
+                    AddAction(ActionType.Put);
+                }
+            }
+            else
+            {
+                SetAllowedFrom();
+                if (_allowed.Count == 1)
+                {
+                    AddAction(ActionType.Select, _allowed[0]);
+                    AddAction(ActionType.Take);
+                }
+            }
+            if (_allowed.Count == 0)
+            {
+                EndTurn();
+                return;
+            }
+
+            if (_useMarking)
+                ChangeMarking(true);
+            Change(true);
+        }
+
+        #endregion
+
+        #region Doing Actions
+        private void DoAction(Action action)
+        {
+            switch (action.Type)
+            {
+                case ActionType.Skip: break;
+                case ActionType.Select:
+                    Change(false);
+                    _cursor = action.Line;
+                    Change(true);
+                    break;
+                case ActionType.Take:
+                    Take();
+                    break;
+                case ActionType.Put:
+                    Put();
+                    break;
+                case ActionType.Throw:
+                    Throw();
+                    break;
+            }
+        }
+
+        private void Throw()
         {
             int d1 = _random.Next(6) + 1;
             int d2 = _random.Next(6) + 1;
@@ -229,45 +378,57 @@ namespace iobloc
                 _dice.AddRange(_dice);
             _dice.Sort();
             ShowDice();
+
             SetAllowed();
         }
 
-        private void RemoveDice(int val)
+        private void Take()
         {
+            if (!_cursor.HasValue || _picked.HasValue || !_allowed.Contains(_cursor.Value))
+                return;
+
+            Cursor.Take(BackColor);
+            _picked = _cursor;
+
+            SetAllowed();
+        }
+
+        private void Put()
+        {
+            if (!_cursor.HasValue || !_picked.HasValue || !_allowed.Contains(_cursor.Value))
+                return;
+
+            if (Cursor.IsWhite != _isWhite && Cursor.Count > 0)
+            {
+                Cursor.Take(BackColor);
+                TableLine captured = _lines[GetIndex(!_isWhite, 24)];
+                captured.Put(!_isWhite, _isWhite ? CE : CP);
+            }
+
+            Cursor.Put(_isWhite, Color);
+            RemoveDice(_picked.Value, _cursor.Value);
+            _picked = null;
+
+            SetAllowed();
+        }
+
+        #endregion
+
+        #region Helpers
+        private void RemoveDice(int from, int to)
+        {
+            int val = from - to;
+            if (from == 24)
+                val = to + 1;
+            else if (to == 26)
+            {
+                if (_dice.Contains(from + 1))
+                    val = from + 1;
+                else
+                    val = _dice.First(d => d > from + 1);
+            }
             _dice.Remove(val);
             ShowDice();
-        }
-
-        private void ShowDice()
-        {
-            Panels[Pnl.Table.Dice].SetText(string.Join<int>(",", _dice));
-        }
-
-        private void SetAllowed()
-        {
-            Change(false);
-            if (_useMarking)
-                ChangeMarking(false);
-            _allowed.Clear();
-            if (_dice.Count == 0)
-            {
-                EndTurn();
-                return;
-            }
-
-            if (_picked.HasValue)
-                SetAllowedTo();
-            else
-                SetAllowedFrom();
-            if (_allowed.Count == 0)
-            {
-                EndTurn();
-                return;
-            }
-
-            if (_useMarking)
-                ChangeMarking(true);
-            Change(true);
         }
 
         private void SetAllowedFrom()
@@ -332,100 +493,29 @@ namespace iobloc
             return line.Count <= 1 || line.IsWhite == _isWhite;
         }
 
-        private void Take()
+        private int[] GetLines()
         {
-            if (!_cursor.HasValue || !CanTake(Cursor))
-                return;
-
-            Cursor.Take(BackColor);
-            _picked = _cursor;
-
-            SetAllowed();
-        }
-
-        private void Put()
-        {
-            if (!_cursor.HasValue || _allowed.Contains(_cursor.Value))
-                return;
-
-            if (Cursor.IsWhite != _isWhite && Cursor.Count > 0)
+            int[] result = new int[28];
+            for (int i = 0; i < 28; i++)
             {
-                Cursor.Take(BackColor);
-                TableLine captured = _lines[GetIndex(!_isWhite, 24)];
-                captured.Put(!_isWhite, _isWhite ? CE : CP);
+                var line = this[i];
+                result[i] = line.IsWhite == _isWhite ? line.Count : -line.Count;
             }
-
-            Cursor.Put(_isWhite, Color);
-            _picked = null;
-
-            SetAllowed();
+            return result;
         }
 
-        private void CursorAction()
+        private static int GetIndex(bool isWhite, int line)
         {
-            if (_picked.HasValue)
-                Put();
-            else
-                Take();
+            if (line < 24)
+                return isWhite ? line : 23 - line;
+            if (line < 26)
+                return isWhite ? 24 : 25;
+            return isWhite ? 26 : 27;
         }
 
-        private void CursorMove(bool left)
-        {
-            Change(false);
-            if (_useFreeMove)
-            {
-                if (!_cursor.HasValue)
-                    _cursor = left ? 23 : 0;
-                else
-                {
-                    if (_cursor < 24)
-                    {
-                        if (_cursor.Value < 12)
-                            _cursor += left ? 1 : -1;
-                        else if (_cursor.Value < 24)
-                            _cursor += left ? -1 : 1;
-                        if (_cursor < 0)
-                            _cursor = 26;
-                    }
-                    else if (_cursor < 26)
-                        _cursor = left ? 23 : 26;
-                    else
-                        _cursor = left ? 0 : 24;
-                }
-            }
-            else
-            {
-                if (_allowed.Count > 0)
-                {
-                    if (!_cursor.HasValue)
-                        _cursor = _allowed[left ? _allowed.Count - 1 : 0];
-                    else
-                    {
-                        int i = _allowed.IndexOf(_cursor.Value);
-                        if (i < 0)
-                            _cursor = _allowed[left ? _allowed.Count - 1 : 0];
-                        else
-                        {
-                            if (_cursor.Value < 12)
-                                i += left ? 1 : -1;
-                            else if (_cursor.Value < 24)
-                                i += left ? -1 : 1;
-                            else if (_cursor.Value < 26)
-                                i--;
-                            else
-                                i++;
-                            if (i < 0)
-                                i = _allowed.Count - 1;
-                            if (i >= _allowed.Count)
-                                i = 0;
-                            _cursor = _allowed[i];
-                        }
-                    }
-                }
-            }
-            Change(true);
-        }
+        #endregion
 
+        #region Implementation
         public override void TogglePause()
         {
             Main.SwitchMode();
@@ -456,36 +546,23 @@ namespace iobloc
                     break;
                 case UIKey.LeftArrow:
                 case UIKey.RightArrow:
-                    CursorMove(key == UIKey.LeftArrow);
+                    if (_actions.Count == 0)
+                        CursorMove(key == UIKey.LeftArrow);
                     break;
                 case UIKey.UpArrow:
-                    CursorAction();
+                    if (_actions.Count == 0)
+                        CursorAction();
                     break;
             }
         }
 
         public override void NextFrame()
         {
+            if (_actions.Count == 0)
+                return;
+            DoAction(_actions.Dequeue());
         }
 
-        private int[] GetLines()
-        {
-            int[] result = new int[28];
-            for (int i = 0; i < 28; i++)
-            {
-                var line = this[i];
-                result[i] = line.IsWhite == _isWhite ? line.Count : -line.Count;
-            }
-            return result;
-        }
-
-        private static int GetIndex(bool isWhite, int line)
-        {
-            if (line < 24)
-                return isWhite ? line : 23 - line;
-            if (line < 26)
-                return isWhite ? 24 : 25;
-            return isWhite ? 26 : 27;
-        }
+        #endregion
     }
 }
