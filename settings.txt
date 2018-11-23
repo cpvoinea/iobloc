@@ -2,7 +2,7 @@
 MenuKeys D9,NumPad9
 Help Help ==GAMEPLAY==,|Selection:|,|LEFT-RIGHT|,|Action: UP|,|Restart: R|,+==OPTIONS=+,|Freedom: F|,|Marking: M|,|Numbers: N|,|Backgnd: B|,+----------+,| Exit: ESC|,|Pause: ANY|,============
 AllowedKeys LeftArrow,RightArrow,UpArrow,R,F,M,N,B
-FrameMultiplier 1
+FrameMultiplier 0.1
 Width 59
 Height 40
 BlockWidth 3
@@ -15,7 +15,7 @@ DarkColor DarkGray
 LightColor Gray
 AssemblyPath iobloc.dll
 ClassName iobloc.TableAI
-AIs 0
+AIs 2
 
 
 0 Level

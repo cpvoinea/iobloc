@@ -26,10 +26,10 @@ namespace iobloc
         #region Settings
         private int CP, CE, CN, CD, CL, CM;
         private readonly Random _random = new Random();
-        private bool _useFreeMove = false;
+        private bool _useFreeMove;
         private bool _useMarking = true;
-        private bool _useBackground = false;
-        private bool _isWhite = true;
+        private bool _useBackground;
+        private bool _isWhite;
         private ITableAI _player1;
         private ITableAI _player2;
         private readonly TableLine[] _lines = new TableLine[28];
@@ -129,13 +129,9 @@ namespace iobloc
 
         protected override void Initialize()
         {
-            _actions.Clear();
-            _allowed.Clear();
-            _dice.Clear();
-            _cursor = null;
-            _picked = null;
-
             Level = Serializer.MasterLevel; // for frame multiplier
+            Reset();
+
             // re-create lines
             for (int i = 0; i < 6; i++)
             {
@@ -161,6 +157,15 @@ namespace iobloc
                 ChangeBackground(_useBackground);
 
             AddAction(ActionType.Throw);
+        }
+
+        private void Reset()
+        {
+            _actions.Clear();
+            _allowed.Clear();
+            _dice.Clear();
+            _cursor = null;
+            _picked = null;
         }
 
         #endregion
@@ -227,9 +232,6 @@ namespace iobloc
                 return;
             }
 
-            _isWhite = !_isWhite;
-            _cursor = null;
-            _picked = null;
             AddAction(ActionType.Throw);
         }
 
@@ -300,6 +302,34 @@ namespace iobloc
                 AddAction(ActionType.Take);
         }
 
+        private void AutoActions()
+        {
+            if (CurrentPlayer != null)
+            {
+                var moves = CurrentPlayer.GetMoves(GetLines(), _dice.ToArray());
+                foreach (var m in moves)
+                {
+                    AddAction(ActionType.Select, m[0]);
+                    AddAction(ActionType.Take);
+                    Travel(m[0], m[1]);
+                    AddAction(ActionType.Put, m[1]);
+                }
+            }
+            else
+            {
+                if (!_picked.HasValue && _allowed.Count == 1)
+                {
+                    AddAction(ActionType.Select, _allowed[0]);
+                    AddAction(ActionType.Take);
+                }
+                else if (_picked.HasValue && _allowed.Count == 2)
+                {
+                    Travel(_picked.Value, _allowed.First(x => x != _picked.Value));
+                    AddAction(ActionType.Put);
+                }
+            }
+        }
+
         private void SetAllowed()
         {
             Change(false);
@@ -312,24 +342,18 @@ namespace iobloc
                 EndTurn();
                 return;
             }
+
             if (_picked.HasValue)
             {
                 _allowed.AddRange(GetAllowedTo(_picked.Value));
-                if (CurrentPlayer == null && _allowed.Count == 1)
-                {
-                    Travel(_picked.Value, _allowed[0]);
-                    AddAction(ActionType.Put);
-                }
+                if (CurrentPlayer == null)
+                    _allowed.Add(_picked.Value);
             }
             else
             {
                 _allowed.AddRange(GetAllowedFrom());
-                if (CurrentPlayer == null && _allowed.Count == 1)
-                {
-                    AddAction(ActionType.Select, _allowed[0]);
-                    AddAction(ActionType.Take);
-                }
             }
+
             if (_allowed.Count == 0)
             {
                 EndTurn();
@@ -379,9 +403,10 @@ namespace iobloc
 
         private void Throw()
         {
+            _isWhite = !_isWhite;
+
             int d1 = _random.Next(6) + 1;
             int d2 = _random.Next(6) + 1;
-            _dice.Clear();
             _dice.Add(d1);
             _dice.Add(d2);
             if (d1 == d2)
@@ -390,6 +415,7 @@ namespace iobloc
             ShowDice();
 
             SetAllowed();
+            AutoActions();
         }
 
         private void Take()
@@ -401,6 +427,8 @@ namespace iobloc
             _picked = _cursor;
 
             SetAllowed();
+            if (CurrentPlayer == null)
+                AutoActions();
         }
 
         private void Put()
@@ -499,17 +527,6 @@ namespace iobloc
             if (_actions.Count == 0)
                 return;
             DoAction(_actions.Dequeue());
-            if (_actions.Count == 0 && CurrentPlayer != null && _dice.Count > 0)
-            {
-                var moves = CurrentPlayer.GetMoves(GetLines(), _dice.ToArray());
-                foreach (var m in moves)
-                {
-                    AddAction(ActionType.Select, m[0]);
-                    AddAction(ActionType.Take);
-                    Travel(m[0], m[1]);
-                    AddAction(ActionType.Put, m[1]);
-                }
-            }
         }
 
         #endregion
