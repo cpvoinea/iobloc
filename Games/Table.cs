@@ -46,11 +46,12 @@ namespace iobloc
         #endregion
 
         #region Variables - need initialization
+        private static readonly object QueueSync = new object();
+        private readonly List<int> _dice = new List<int>();
         private readonly List<int> _allowed = new List<int>();
         private readonly Queue<Action> _actions = new Queue<Action>();
-        private readonly List<int> _dice = new List<int>();
         private int? _cursor;
-        private int? _picked;
+        private int? _taken;
 
         #endregion
 
@@ -130,7 +131,6 @@ namespace iobloc
         protected override void Initialize()
         {
             Level = Serializer.MasterLevel; // for frame multiplier
-            Reset();
 
             // re-create lines
             for (int i = 0; i < 6; i++)
@@ -159,15 +159,6 @@ namespace iobloc
             AddAction(ActionType.Throw);
         }
 
-        private void Reset()
-        {
-            _actions.Clear();
-            _allowed.Clear();
-            _dice.Clear();
-            _cursor = null;
-            _picked = null;
-        }
-
         #endregion
 
         #region UI
@@ -176,7 +167,7 @@ namespace iobloc
             if (!_cursor.HasValue)
                 return;
             int cc = !set && Cursor.IsMarked ? CM : (set ? CN : 0);
-            int ch = set && _picked.HasValue ? Color : 0;
+            int ch = set && _taken.HasValue ? Color : 0;
             Cursor.Set(0, cc);
             Cursor.Set(Main.Height - 1, ch);
         }
@@ -194,15 +185,13 @@ namespace iobloc
 
         private void ChangeMarking(bool set)
         {
-            Change(false);
-            int cm = set ? CM : 0;
+            int cm = _useMarking && set ? CM : 0;
             foreach (int i in _allowed)
             {
                 TableLine line = this[i];
                 line.Set(0, cm);
                 line.Mark(set);
             }
-            Change(true);
         }
 
         private void ChangeNumbers()
@@ -226,13 +215,11 @@ namespace iobloc
 
         private void EndTurn()
         {
+            ChangeMarking(false);
             if (_lines[25].Count == 15 || _lines[26].Count == 15)
-            {
                 Initialize();
-                return;
-            }
-
-            AddAction(ActionType.Throw);
+            else
+                AddAction(ActionType.Throw);
         }
 
         private void CursorMove(bool left)
@@ -290,13 +277,13 @@ namespace iobloc
                 }
             }
 
-            if (newValue != _cursor)
+            if (newValue.HasValue && newValue != _cursor)
                 AddAction(ActionType.Select, newValue);
         }
 
         private void CursorAction()
         {
-            if (_picked.HasValue)
+            if (_taken.HasValue)
                 AddAction(ActionType.Put);
             else
                 AddAction(ActionType.Take);
@@ -312,60 +299,22 @@ namespace iobloc
                     AddAction(ActionType.Select, m[0]);
                     AddAction(ActionType.Take);
                     Travel(m[0], m[1]);
-                    AddAction(ActionType.Put, m[1]);
+                    AddAction(ActionType.Put);
                 }
             }
             else
             {
-                if (!_picked.HasValue && _allowed.Count == 1)
+                if (!_taken.HasValue && _allowed.Count == 1)
                 {
                     AddAction(ActionType.Select, _allowed[0]);
                     AddAction(ActionType.Take);
                 }
-                else if (_picked.HasValue && _allowed.Count == 2)
+                else if (_taken.HasValue && _allowed.Count == 2)
                 {
-                    Travel(_picked.Value, _allowed.First(x => x != _picked.Value));
+                    Travel(_taken.Value, _allowed.First(x => x != _taken.Value));
                     AddAction(ActionType.Put);
                 }
             }
-        }
-
-        private void SetAllowed()
-        {
-            Change(false);
-            if (_useMarking)
-                ChangeMarking(false);
-            _allowed.Clear();
-
-            if (_dice.Count == 0)
-            {
-                EndTurn();
-                return;
-            }
-
-            if (_picked.HasValue)
-            {
-                _allowed.AddRange(GetAllowedTo(_picked.Value));
-                if (CurrentPlayer == null)
-                    _allowed.Add(_picked.Value);
-            }
-            else
-            {
-                _allowed.AddRange(GetAllowedFrom());
-            }
-
-            if (_allowed.Count == 0)
-            {
-                EndTurn();
-                return;
-            }
-
-            _allowed.Sort();
-            if (_useMarking)
-                ChangeMarking(true);
-            if (CurrentPlayer == null && !_cursor.HasValue)
-                _cursor = _allowed[_allowed.Count - 1];
-            Change(true);
         }
 
         private void Travel(int from, int to)
@@ -379,32 +328,68 @@ namespace iobloc
         #endregion
 
         #region Doing Actions
-        private void DoAction(Action action)
+        private void Take()
         {
-            switch (action.Type)
+            if (!_cursor.HasValue || _taken.HasValue || !_allowed.Contains(_cursor.Value))
+                return;
+
+            Cursor.Take(BackColor);
+            _taken = _cursor;
+            SetAllowed();
+        }
+
+        private void Put()
+        {
+            if (!_cursor.HasValue || !_taken.HasValue || !_allowed.Contains(_cursor.Value))
+                return;
+
+            if (Cursor.IsWhite != _isWhite && Cursor.Count > 0)
             {
-                case ActionType.Skip: break;
-                case ActionType.Select:
-                    Change(false);
-                    _cursor = action.Line;
-                    Change(true);
-                    break;
-                case ActionType.Take:
-                    Take();
-                    break;
-                case ActionType.Put:
-                    Put();
-                    break;
-                case ActionType.Throw:
-                    Throw();
-                    break;
+                Cursor.Take(BackColor);
+                var captured = _lines[GetIndex(!_isWhite, 24)];
+                captured.Put(!_isWhite, _isWhite ? CE : CP);
             }
+
+            Cursor.Put(_isWhite, Color);
+            RemoveDice(GetDice(_taken.Value, _cursor.Value));
+            _taken = null;
+            SetAllowed();
         }
 
         private void Throw()
         {
+            Change(false);
             _isWhite = !_isWhite;
+            _taken = null;
+            SetDice();
+            SetAllowed();
+        }
 
+        private void SetCursor(int c)
+        {
+            Change(false);
+            _cursor = c;
+            Change(true);
+        }
+
+        private void SetAllowed()
+        {
+            Change(false);
+            if (_allowed.Count > 0)
+            {
+                ChangeMarking(false);
+                _allowed.Clear();
+            }
+            _allowed.AddRange(_taken.HasValue ? GetAllowedTo(_taken.Value) : GetAllowedFrom());
+            if (_taken.HasValue && CurrentPlayer == null)
+                _allowed.Add(_taken.Value);
+            ChangeMarking(true);
+            Change(true);
+        }
+
+        private void SetDice()
+        {
+            _dice.Clear();
             int d1 = _random.Next(6) + 1;
             int d2 = _random.Next(6) + 1;
             _dice.Add(d1);
@@ -413,43 +398,12 @@ namespace iobloc
                 _dice.AddRange(_dice);
             _dice.Sort();
             ShowDice();
-
-            SetAllowed();
-            AutoActions();
         }
 
-        private void Take()
+        private void RemoveDice(int d)
         {
-            if (!_cursor.HasValue || _picked.HasValue || !_allowed.Contains(_cursor.Value))
-                return;
-
-            Cursor.Take(BackColor);
-            _picked = _cursor;
-
-            SetAllowed();
-            if (CurrentPlayer == null)
-                AutoActions();
-        }
-
-        private void Put()
-        {
-            if (!_cursor.HasValue || !_picked.HasValue || !_allowed.Contains(_cursor.Value))
-                return;
-
-            if (Cursor.IsWhite != _isWhite && Cursor.Count > 0)
-            {
-                Cursor.Take(BackColor);
-                TableLine captured = _lines[GetIndex(!_isWhite, 24)];
-                captured.Put(!_isWhite, _isWhite ? CE : CP);
-            }
-
-            Cursor.Put(_isWhite, Color);
-            int d = GetDice(_picked.Value, _cursor.Value);
             _dice.Remove(d);
             ShowDice();
-            _picked = null;
-
-            SetAllowed();
         }
 
         #endregion
@@ -495,8 +449,6 @@ namespace iobloc
                     Initialize();
                     break;
                 case "F":
-                    Change(false);
-                    _cursor = null;
                     _useFreeMove = !_useFreeMove;
                     break;
                 case "M":
@@ -513,11 +465,19 @@ namespace iobloc
                 case UIKey.LeftArrow:
                 case UIKey.RightArrow:
                     if (_actions.Count == 0)
-                        CursorMove(key == UIKey.LeftArrow);
+                        lock (QueueSync)
+                        {
+                            if (_actions.Count == 0)
+                                CursorMove(key == UIKey.LeftArrow);
+                        }
                     break;
                 case UIKey.UpArrow:
                     if (_actions.Count == 0)
-                        CursorAction();
+                        lock (QueueSync)
+                        {
+                            if (_actions.Count == 0)
+                                CursorAction();
+                        }
                     break;
             }
         }
@@ -526,7 +486,38 @@ namespace iobloc
         {
             if (_actions.Count == 0)
                 return;
-            DoAction(_actions.Dequeue());
+            lock (QueueSync)
+            {
+                if (_actions.Count == 0)
+                    return;
+                var a = _actions.Dequeue();
+                switch (a.Type)
+                {
+                    case ActionType.Skip: break;
+                    case ActionType.Select:
+                        SetCursor(a.Line.Value);
+                        break;
+                    case ActionType.Take:
+                        Take();
+                        if (CurrentPlayer == null)
+                            AutoActions();
+                        break;
+                    case ActionType.Put:
+                        Put();
+                        if (_dice.Count == 0 || _allowed.Count == 0)
+                            EndTurn();
+                        else if (CurrentPlayer == null)
+                            AutoActions();
+                        break;
+                    case ActionType.Throw:
+                        Throw();
+                        if (_allowed.Count == 0)
+                            EndTurn();
+                        else
+                            AutoActions();
+                        break;
+                }
+            }
         }
 
         #endregion

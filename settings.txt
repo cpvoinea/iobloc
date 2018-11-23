@@ -2,7 +2,7 @@
 MenuKeys D9,NumPad9
 Help Help ==GAMEPLAY==,|Selection:|,|LEFT-RIGHT|,|Action: UP|,|Restart: R|,+==OPTIONS=+,|Freedom: F|,|Marking: M|,|Numbers: N|,|Backgnd: B|,+----------+,| Exit: ESC|,|Pause: ANY|,============
 AllowedKeys LeftArrow,RightArrow,UpArrow,R,F,M,N,B
-FrameMultiplier 0.1
+FrameMultiplier 0.01
 Width 59
 Height 40
 BlockWidth 3
