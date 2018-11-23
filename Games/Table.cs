@@ -46,9 +46,9 @@ namespace iobloc
         #endregion
 
         #region Variables - need initialization
-        private readonly List<int> _dice = new List<int>();
         private readonly List<int> _allowed = new List<int>();
         private readonly Queue<Action> _actions = new Queue<Action>();
+        private readonly List<int> _dice = new List<int>();
         private int? _cursor;
         private int? _picked;
 
@@ -340,6 +340,7 @@ namespace iobloc
                 return;
             }
 
+            _allowed.Sort();
             if (_useMarking)
                 ChangeMarking(true);
             if (!_cursor.HasValue)
@@ -425,6 +426,19 @@ namespace iobloc
             SetAllowed();
         }
 
+        #endregion
+
+        #region AI
+        private int[] GetAllowedFrom()
+        {
+            return TableAI.GetAllowedFrom(GetLines(), _dice.ToArray());
+        }
+
+        private int[] GetAllowedTo(int from)
+        {
+            return TableAI.GetAllowedTo(GetLines(), _dice.ToArray(), from);
+        }
+
         private void RemoveDice(int from, int to)
         {
             int val = from - to;
@@ -437,81 +451,6 @@ namespace iobloc
             }
             _dice.Remove(val);
             ShowDice();
-        }
-
-        #endregion
-
-        #region AI
-        private int[] GetAllowedFrom()
-        {
-            if (CanTake(this[24]))
-            {
-                if (CanTakeFrom(24))
-                    return new[] { 24 };
-            }
-
-            List<int> result = new List<int>();
-            for (int i = 0; i < 24; i++)
-                if (CanTake(this[i]) && CanTakeFrom(i))
-                    result.Add(i);
-            if (CanTakeOut())
-                for (int i = 0; i < 6; i++)
-                    if (CanTakeOutFrom(i))
-                        result.Add(i);
-            return result.ToArray();
-        }
-
-        private int[] GetAllowedTo(int from)
-        {
-            List<int> result = new List<int> { from };
-            foreach (int d in _dice.Distinct())
-            {
-                int to = from - d;
-                if (to >= 0 && CanPut(this[to]))
-                    result.Add(to);
-            }
-            if (CanTakeOut() && CanTakeOutFrom(from))
-                result.Add(26);
-
-            return result.ToArray();
-        }
-
-        private bool CanTakeFrom(int from)
-        {
-            foreach (int d in _dice.Distinct())
-                if (from - d >= 0 && CanPut(this[from - d]))
-                    return true;
-            return false;
-        }
-
-        private bool CanTakeOut()
-        {
-            for (int i = 6; i <= 24; i++)
-                if (CanTake(this[i]))
-                    return false;
-            return true;
-        }
-
-        private bool CanTakeOutFrom(int from)
-        {
-            if (from >= 6)
-                return false;
-            if (_dice.Contains(from + 1))
-                return true;
-            for (int i = from + 1; i < 6; i++)
-                if (CanTake(this[i]))
-                    return false;
-            return _dice.Any(d => d > from + 1);
-        }
-
-        private bool CanTake(TableLine line)
-        {
-            return line.Count > 0 && line.IsWhite == _isWhite;
-        }
-
-        private bool CanPut(TableLine line)
-        {
-            return line.Count <= 1 || line.IsWhite == _isWhite;
         }
 
         private static int GetIndex(bool isWhite, int line)
