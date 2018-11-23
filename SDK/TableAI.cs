@@ -7,7 +7,51 @@ namespace iobloc
     {
         public int[][] GetMoves(int[] lines, int[] dice)
         {
-            return new int[][];
+            List<int> remainingDice = new List<int>(dice);
+            List<int[]> moves = new List<int[]>();
+            while (remainingDice.Count > 0)
+            {
+                var m = GetNextMove(lines, dice);
+                if (m == null)
+                    break;
+                moves.Add(m);
+                lines = Move(lines, m[0], m[1]);
+                remainingDice.Remove(m[2]);
+            }
+
+            return moves.ToArray();
+        }
+
+        private int[] GetNextMove(int[] lines, int[] dice)
+        {
+            if (dice.Length == 0)
+                return null;
+
+            var allowed = GetAllowedFrom(lines, dice);
+            if (allowed.Length == 0)
+                return null;
+            int farthest = allowed.Max();
+
+            allowed = GetAllowedTo(lines, dice, farthest);
+            if (allowed.Length == 0)
+                return null;
+            int closest = allowed.Min();
+
+            return new[] { farthest, closest, GetDice(dice, farthest, closest) };
+        }
+
+        private int[] Move(int[] lines, int from, int to)
+        {
+            lines[from]--;
+            if (lines[to] < 0)
+            {
+                lines[25]++;
+                lines[to] = 1;
+            }
+            else
+                lines[to]++;
+
+            return lines;
         }
 
         public static int[] GetAllowedFrom(int[] lines, int[] dice)
@@ -45,6 +89,20 @@ namespace iobloc
                 result.Add(26);
 
             return result.ToArray();
+        }
+
+        public static int GetDice(int[] dice, int from, int to)
+        {
+            int val = from - to;
+            if (to == 26)
+            {
+                if (dice.Contains(from + 1))
+                    val = from + 1;
+                else
+                    val = dice.First(d => d > from + 1);
+            }
+
+            return val;
         }
 
         private static bool CanTakeFrom(int[] lines, int[] dice, int from)

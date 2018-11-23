@@ -166,7 +166,6 @@ namespace iobloc
         #endregion
 
         #region UI
-        // show cursor
         protected override void Change(bool set)
         {
             if (!_cursor.HasValue)
@@ -177,7 +176,6 @@ namespace iobloc
             Cursor.Set(Main.Height - 1, ch);
         }
 
-        // toggle background
         private void ChangeBackground(bool set)
         {
             for (int i = 0; i < 24; i++)
@@ -189,7 +187,6 @@ namespace iobloc
             }
         }
 
-        // toggle highlight
         private void ChangeMarking(bool set)
         {
             Change(false);
@@ -203,7 +200,6 @@ namespace iobloc
             Change(true);
         }
 
-        // toggle numbers
         private void ChangeNumbers()
         {
             Panels[Pnl.Table.MiddleLeft].SwitchMode();
@@ -319,7 +315,7 @@ namespace iobloc
             if (_picked.HasValue)
             {
                 _allowed.AddRange(GetAllowedTo(_picked.Value));
-                if (_allowed.Count == 1)
+                if (CurrentPlayer == null && _allowed.Count == 1)
                 {
                     Travel(_picked.Value, _allowed[0]);
                     AddAction(ActionType.Put);
@@ -328,7 +324,7 @@ namespace iobloc
             else
             {
                 _allowed.AddRange(GetAllowedFrom());
-                if (_allowed.Count == 1)
+                if (CurrentPlayer == null && _allowed.Count == 1)
                 {
                     AddAction(ActionType.Select, _allowed[0]);
                     AddAction(ActionType.Take);
@@ -343,7 +339,7 @@ namespace iobloc
             _allowed.Sort();
             if (_useMarking)
                 ChangeMarking(true);
-            if (!_cursor.HasValue)
+            if (CurrentPlayer == null && !_cursor.HasValue)
                 _cursor = _allowed[_allowed.Count - 1];
             Change(true);
         }
@@ -420,7 +416,9 @@ namespace iobloc
             }
 
             Cursor.Put(_isWhite, Color);
-            RemoveDice(_picked.Value, _cursor.Value);
+            int d = GetDice(_picked.Value, _cursor.Value);
+            _dice.Remove(d);
+            ShowDice();
             _picked = null;
 
             SetAllowed();
@@ -429,29 +427,9 @@ namespace iobloc
         #endregion
 
         #region AI
-        private int[] GetAllowedFrom()
-        {
-            return TableAI.GetAllowedFrom(GetLines(), _dice.ToArray());
-        }
-
-        private int[] GetAllowedTo(int from)
-        {
-            return TableAI.GetAllowedTo(GetLines(), _dice.ToArray(), from);
-        }
-
-        private void RemoveDice(int from, int to)
-        {
-            int val = from - to;
-            if (to == 26)
-            {
-                if (_dice.Contains(from + 1))
-                    val = from + 1;
-                else
-                    val = _dice.First(d => d > from + 1);
-            }
-            _dice.Remove(val);
-            ShowDice();
-        }
+        private int[] GetAllowedFrom() => TableAI.GetAllowedFrom(GetLines(), _dice.ToArray());
+        private int[] GetAllowedTo(int from) => TableAI.GetAllowedTo(GetLines(), _dice.ToArray(), from);
+        private int GetDice(int from, int to) => TableAI.GetDice(_dice.ToArray(), from, to);
 
         private static int GetIndex(bool isWhite, int line)
         {
@@ -521,6 +499,17 @@ namespace iobloc
             if (_actions.Count == 0)
                 return;
             DoAction(_actions.Dequeue());
+            if (_actions.Count == 0 && CurrentPlayer != null && _dice.Count > 0)
+            {
+                var moves = CurrentPlayer.GetMoves(GetLines(), _dice.ToArray());
+                foreach (var m in moves)
+                {
+                    AddAction(ActionType.Select, m[0]);
+                    AddAction(ActionType.Take);
+                    Travel(m[0], m[1]);
+                    AddAction(ActionType.Put, m[1]);
+                }
+            }
         }
 
         #endregion
