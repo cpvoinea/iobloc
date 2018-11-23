@@ -58,7 +58,7 @@ namespace iobloc
         {
             if (CanTake(lines, 24))
             {
-                if (CanTakeFrom(lines, dice, 24))
+                if (CanPutFrom(lines, dice, 24))
                     return new[] { 24 };
 
                 return new int[0];
@@ -68,7 +68,7 @@ namespace iobloc
                 List<int> result = new List<int>();
                 bool canTakeOut = CanTakeOut(lines);
                 for (int i = 0; i < 24; i++)
-                    if (CanTakeFrom(lines, dice, i) || i < 6 && canTakeOut && CanTakeOutFrom(lines, dice, i))
+                    if (CanTake(lines, i) && (CanPutFrom(lines, dice, i) || i < 6 && canTakeOut && CanTakeOutFrom(lines, dice, i)))
                         result.Add(i);
 
                 return result.ToArray();
@@ -90,30 +90,8 @@ namespace iobloc
             return result.ToArray();
         }
 
-        public static int GetDice(int[] dice, int from, int to)
+        private static bool CanPutFrom(int[] lines, int[] dice, int from)
         {
-            if (from == to)
-                return 0;
-
-            int val = from - to;
-            if (to == 26)
-            {
-                if (dice.Contains(from + 1))
-                    val = from + 1;
-                else
-                    val = dice.First(d => d > from + 1);
-            }
-
-            if (!dice.Contains(val))
-                throw new System.Exception($"{val} is an invalid dice value");
-
-            return val;
-        }
-
-        private static bool CanTakeFrom(int[] lines, int[] dice, int from)
-        {
-            if (!CanTake(lines, from))
-                return false;
             foreach (int d in dice.Distinct())
                 if (from - d >= 0 && CanPut(lines, from - d))
                     return true;
@@ -130,8 +108,6 @@ namespace iobloc
 
         private static bool CanTakeOutFrom(int[] lines, int[] dice, int from)
         {
-            if (!CanTake(lines, from))
-                return false;
             if (dice.Contains(from + 1))
                 return true;
             for (int i = from + 1; i < 6; i++)
@@ -142,5 +118,22 @@ namespace iobloc
 
         private static bool CanTake(int[] lines, int from) => lines[from] > 0;
         private static bool CanPut(int[] lines, int to) => lines[to] >= -1;
+
+        public static int GetDice(int[] dice, int from, int to)
+        {
+            if (from == to)
+                return 0;
+
+            int val = from - to;
+            if (to == 26)
+            {
+                if (dice.Contains(from + 1))
+                    val = from + 1;
+                else
+                    val = dice.First(d => d > from + 1);
+            }
+
+            return val;
+        }
     }
 }

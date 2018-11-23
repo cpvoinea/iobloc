@@ -25,6 +25,14 @@ namespace iobloc
             IsMarked = false;
         }
 
+        public void Initialize()
+        {
+            Count = 0;
+            IsMarked = false;
+            for (int i = 1; i < Panel.Height; i++)
+                Set(i, 0);
+        }
+
         public void Initialize(int count, bool isWhite, int color)
         {
             Count = count;

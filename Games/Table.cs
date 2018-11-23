@@ -12,12 +12,12 @@ namespace iobloc
         struct Action
         {
             public ActionType Type { get; private set; }
-            public int? Line { get; private set; }
+            public int? Param { get; private set; }
 
-            public Action(ActionType type, int? line)
+            public Action(ActionType type, int? param)
             {
                 Type = type;
-                Line = line;
+                Param = param;
             }
         }
 
@@ -27,7 +27,7 @@ namespace iobloc
         private int CP, CE, CN, CD, CL, CM;
         private readonly Random _random = new Random();
         private bool _useFreeMove;
-        private bool _useMarking = true;
+        private bool _useMarking;
         private bool _useBackground;
         private bool _isWhite;
         private ITableAI _player1;
@@ -126,13 +126,7 @@ namespace iobloc
             }
             Panels[Pnl.Table.MiddleLeft].SetText(textLeft.Split(','), false);
             Panels[Pnl.Table.MiddleRight].SetText(textRight.Split(','), false);
-        }
 
-        protected override void Initialize()
-        {
-            Level = Serializer.MasterLevel; // for frame multiplier
-
-            // re-create lines
             for (int i = 0; i < 6; i++)
             {
                 bool isDark = i % 2 == 0;
@@ -145,6 +139,17 @@ namespace iobloc
             _lines[25] = new TableLine(Panels[Pnl.Table.LowerTaken], BlockWidth, Block, 0, Main.Height - 1, true);
             _lines[26] = new TableLine(Panels[Pnl.Table.LowerOut], BlockWidth, Block, 0, Main.Height - 1, true);
             _lines[27] = new TableLine(Panels[Pnl.Table.UpperOut], BlockWidth, Block, 0, 0, false);
+        }
+
+        protected override void Initialize()
+        {
+            if (!IsInitialized)
+                Level = Serializer.MasterLevel;
+            else
+            {
+                for (int i = 0; i < _lines.Length; i++)
+                    _lines[i].Initialize();
+            }
             _lines[0].Initialize(2, false, CE);
             _lines[5].Initialize(5, true, CP);
             _lines[7].Initialize(3, true, CP);
@@ -185,7 +190,7 @@ namespace iobloc
 
         private void ChangeMarking(bool set)
         {
-            int cm = _useMarking && set ? CM : 0;
+            int cm = set ? CM : 0;
             foreach (int i in _allowed)
             {
                 TableLine line = this[i];
@@ -208,15 +213,16 @@ namespace iobloc
         #endregion
 
         #region Adding Actions
-        private void AddAction(ActionType type, int? line = null)
+        private void AddAction(ActionType type, int? param = null)
         {
-            _actions.Enqueue(new Action(type, line));
+            _actions.Enqueue(new Action(type, param));
         }
 
         private void EndTurn()
         {
-            ChangeMarking(false);
-            if (_lines[25].Count == 15 || _lines[26].Count == 15)
+            if (_useMarking)
+                ChangeMarking(false);
+            if (_lines[26].Count == 15 || _lines[27].Count == 15)
                 Initialize();
             else
                 AddAction(ActionType.Throw);
@@ -283,43 +289,46 @@ namespace iobloc
 
         private void CursorAction()
         {
+            if (!_cursor.HasValue)
+                return;
+
             if (_taken.HasValue)
-                AddAction(ActionType.Put);
+                AddAction(ActionType.Put, GetDice(_taken.Value, _cursor.Value));
             else
                 AddAction(ActionType.Take);
         }
 
-        private void AutoActions()
+        private void AIAction()
         {
-            if (CurrentPlayer != null)
+            if (CurrentPlayer == null)
+                return;
+
+            var moves = CurrentPlayer.GetMoves(GetLines(), _dice.ToArray());
+            foreach (var m in moves)
             {
-                var moves = CurrentPlayer.GetMoves(GetLines(), _dice.ToArray());
-                foreach (var m in moves)
-                {
-                    AddAction(ActionType.Select, m[0]);
-                    AddAction(ActionType.Take);
-                    Travel(m[0], m[1]);
-                    AddAction(ActionType.Put);
-                }
+                AddAction(ActionType.Skip);
+                AddAction(ActionType.Select, m[0]);
+                AddAction(ActionType.Take);
+                Travel(m[0], m[1]);
+                AddAction(ActionType.Put, m[2]);
             }
-            else
+        }
+
+        private void AutoAction()
+        {
+            if (CurrentPlayer != null || _actions.Count > 0 || _allowed.Count == 0 || _allowed.Count > 2)
+                return;
+            if (_taken.HasValue && _allowed.Count == 2)
             {
-                if (!_taken.HasValue && _allowed.Count == 1)
-                {
-                    AddAction(ActionType.Select, _allowed[0]);
-                    AddAction(ActionType.Take);
-                }
-                else if (_taken.HasValue && _allowed.Count == 2)
-                {
-                    Travel(_taken.Value, _allowed.First(x => x != _taken.Value));
-                    AddAction(ActionType.Put);
-                }
+                int to = _allowed.First(x => x != _taken);
+                Travel(_taken.Value, to);
+                AddAction(ActionType.Put, GetDice(_taken.Value, to));
             }
         }
 
         private void Travel(int from, int to)
         {
-            if (from < 24)
+            if (from < 24 && to < 24)
                 for (int i = from - 1; i > to; i--)
                     AddAction(ActionType.Select, i);
             AddAction(ActionType.Select, to);
@@ -336,9 +345,11 @@ namespace iobloc
             Cursor.Take(BackColor);
             _taken = _cursor;
             SetAllowed();
+
+            AutoAction();
         }
 
-        private void Put()
+        private void Put(int dice)
         {
             if (!_cursor.HasValue || !_taken.HasValue || !_allowed.Contains(_cursor.Value))
                 return;
@@ -351,24 +362,37 @@ namespace iobloc
             }
 
             Cursor.Put(_isWhite, Color);
-            int d = GetDice(_taken.Value, _cursor.Value);
-            _dice.Remove(d);
-            ShowDice();
             _taken = null;
+            _dice.Remove(dice);
+            ShowDice();
             SetAllowed();
+
+            if (_dice.Count == 0 || _allowed.Count == 0)
+                EndTurn();
+            else
+                AutoAction();
         }
 
         private void Throw()
         {
             Change(false);
             _isWhite = !_isWhite;
+            _cursor = null;
             _taken = null;
             SetDice();
             SetAllowed();
+
+            if (_allowed.Count == 0)
+                EndTurn();
+            else
+                AIAction();
         }
 
         private void SetCursor(int c)
         {
+            if (c == _cursor)
+                return;
+
             Change(false);
             _cursor = c;
             Change(true);
@@ -376,17 +400,26 @@ namespace iobloc
 
         private void SetAllowed()
         {
-            Change(false);
             if (_allowed.Count > 0)
             {
-                ChangeMarking(false);
+                if (_useMarking)
+                    ChangeMarking(false);
                 _allowed.Clear();
             }
-            _allowed.AddRange(_taken.HasValue ? GetAllowedTo(_taken.Value) : GetAllowedFrom());
-            if (_taken.HasValue && CurrentPlayer == null)
-                _allowed.Add(_taken.Value);
-            ChangeMarking(true);
-            Change(true);
+            if (_dice.Count == 0)
+                return;
+
+            if (_taken.HasValue)
+            {
+                _allowed.AddRange(GetAllowedTo(_taken.Value));
+                if (CurrentPlayer == null)
+                    _allowed.Add(_taken.Value);
+            }
+            else
+                _allowed.AddRange(GetAllowedFrom());
+
+            if (_useMarking)
+                ChangeMarking(true);
         }
 
         private void SetDice()
@@ -461,19 +494,11 @@ namespace iobloc
                 case UIKey.LeftArrow:
                 case UIKey.RightArrow:
                     if (_actions.Count == 0)
-                        lock (QueueSync)
-                        {
-                            if (_actions.Count == 0)
-                                CursorMove(key == UIKey.LeftArrow);
-                        }
+                        CursorMove(key == UIKey.LeftArrow);
                     break;
                 case UIKey.UpArrow:
                     if (_actions.Count == 0)
-                        lock (QueueSync)
-                        {
-                            if (_actions.Count == 0)
-                                CursorAction();
-                        }
+                        CursorAction();
                     break;
             }
         }
@@ -487,30 +512,22 @@ namespace iobloc
                 if (_actions.Count == 0)
                     return;
                 var a = _actions.Dequeue();
+                while (a.Type == ActionType.Select && a.Param == _cursor)
+                    a = _actions.Dequeue();
                 switch (a.Type)
                 {
                     case ActionType.Skip: break;
                     case ActionType.Select:
-                        SetCursor(a.Line.Value);
+                        SetCursor(a.Param.Value);
                         break;
                     case ActionType.Take:
                         Take();
-                        if (CurrentPlayer == null)
-                            AutoActions();
                         break;
                     case ActionType.Put:
-                        Put();
-                        if (_dice.Count == 0 || _allowed.Count == 0)
-                            EndTurn();
-                        else if (CurrentPlayer == null)
-                            AutoActions();
+                        Put(a.Param.Value);
                         break;
                     case ActionType.Throw:
                         Throw();
-                        if (_allowed.Count == 0)
-                            EndTurn();
-                        else
-                            AutoActions();
                         break;
                 }
             }
