@@ -351,7 +351,9 @@ namespace iobloc
             }
 
             Cursor.Put(_isWhite, Color);
-            RemoveDice(GetDice(_taken.Value, _cursor.Value));
+            int d = GetDice(_taken.Value, _cursor.Value);
+            _dice.Remove(d);
+            ShowDice();
             _taken = null;
             SetAllowed();
         }
@@ -397,12 +399,6 @@ namespace iobloc
             if (d1 == d2)
                 _dice.AddRange(_dice);
             _dice.Sort();
-            ShowDice();
-        }
-
-        private void RemoveDice(int d)
-        {
-            _dice.Remove(d);
             ShowDice();
         }
 

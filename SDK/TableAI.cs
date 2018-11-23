@@ -66,18 +66,10 @@ namespace iobloc
             else
             {
                 List<int> result = new List<int>();
-                if (CanTakeOut(lines))
-                {
-                    for (int i = 0; i < 6; i++)
-                        if (CanTakeOutFrom(lines, dice, i))
-                            result.Add(i);
-                }
-                else
-                {
-                    for (int i = 0; i < 24; i++)
-                        if (CanTakeFrom(lines, dice, i))
-                            result.Add(i);
-                }
+                bool canTakeOut = CanTakeOut(lines);
+                for (int i = 0; i < 24; i++)
+                    if (CanTakeFrom(lines, dice, i) || i < 6 && canTakeOut && CanTakeOutFrom(lines, dice, i))
+                        result.Add(i);
 
                 return result.ToArray();
             }
@@ -111,6 +103,9 @@ namespace iobloc
                 else
                     val = dice.First(d => d > from + 1);
             }
+
+            if (!dice.Contains(val))
+                throw new System.Exception($"{val} is an invalid dice value");
 
             return val;
         }
