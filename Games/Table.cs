@@ -192,6 +192,7 @@ namespace iobloc
         // toggle highlight
         private void ChangeMarking(bool set)
         {
+            Change(false);
             int cm = set ? CM : 0;
             foreach (int i in _allowed)
             {
@@ -199,6 +200,7 @@ namespace iobloc
                 line.Set(0, cm);
                 line.Mark(set);
             }
+            Change(true);
         }
 
         // toggle numbers
@@ -240,20 +242,20 @@ namespace iobloc
             int? newValue = _cursor;
             if (_useFreeMove)
             {
-                if (!_cursor.HasValue)
+                if (!newValue.HasValue)
                     newValue = left ? 23 : 0;
                 else
                 {
-                    if (_cursor < 24)
+                    if (newValue < 24)
                     {
-                        if (_cursor < 12)
-                            newValue = _cursor.Value + (left ? 1 : -1);
-                        else if (_cursor < 24)
-                            newValue = _cursor.Value + (left ? -1 : 1);
+                        if (newValue < 12)
+                            newValue = newValue.Value + (left ? 1 : -1);
+                        else if (newValue < 24)
+                            newValue = newValue.Value + (left ? -1 : 1);
                         if (newValue < 0)
                             newValue = 26;
                     }
-                    else if (_cursor < 26)
+                    else if (newValue < 26)
                         newValue = left ? 23 : 26;
                     else
                         newValue = left ? 0 : 24;
@@ -263,20 +265,20 @@ namespace iobloc
             {
                 if (_allowed.Count > 0)
                 {
-                    if (!_cursor.HasValue)
+                    if (!newValue.HasValue)
                         newValue = _allowed[left ? _allowed.Count - 1 : 0];
                     else
                     {
-                        int i = _allowed.IndexOf(_cursor.Value);
+                        int i = _allowed.IndexOf(newValue.Value);
                         if (i < 0)
                             newValue = _allowed[left ? _allowed.Count - 1 : 0];
                         else
                         {
-                            if (_cursor < 12)
+                            if (newValue < 12)
                                 i += left ? 1 : -1;
-                            else if (_cursor < 24)
+                            else if (newValue < 24)
                                 i += left ? -1 : 1;
-                            else if (_cursor < 26)
+                            else if (newValue < 26)
                                 i--;
                             else
                                 i++;
@@ -290,7 +292,8 @@ namespace iobloc
                 }
             }
 
-            AddAction(ActionType.Select, newValue);
+            if (newValue != _cursor)
+                AddAction(ActionType.Select, newValue);
         }
 
         private void CursorAction()
@@ -315,7 +318,7 @@ namespace iobloc
             }
             if (_picked.HasValue)
             {
-                SetAllowedTo();
+                _allowed.AddRange(GetAllowedTo(_picked.Value));
                 if (_allowed.Count == 1)
                 {
                     Travel(_picked.Value, _allowed[0]);
@@ -324,7 +327,7 @@ namespace iobloc
             }
             else
             {
-                SetAllowedFrom();
+                _allowed.AddRange(GetAllowedFrom());
                 if (_allowed.Count == 1)
                 {
                     AddAction(ActionType.Select, _allowed[0]);
@@ -336,7 +339,6 @@ namespace iobloc
                 EndTurn();
                 return;
             }
-            _allowed.Sort();
 
             if (_useMarking)
                 ChangeMarking(true);
@@ -423,9 +425,6 @@ namespace iobloc
             SetAllowed();
         }
 
-        #endregion
-
-        #region Helpers
         private void RemoveDice(int from, int to)
         {
             int val = from - to;
@@ -440,37 +439,41 @@ namespace iobloc
             ShowDice();
         }
 
-        private void SetAllowedFrom()
+        #endregion
+
+        #region AI
+        private int[] GetAllowedFrom()
         {
             if (CanTake(this[24]))
             {
                 if (CanTakeFrom(24))
-                    _allowed.Add(24);
+                    return new[] { 24 };
             }
-            else
-            {
-                for (int i = 0; i < 24; i++)
-                    if (CanTake(this[i]) && CanTakeFrom(i))
-                        _allowed.Add(i);
-                if (CanTakeOut())
-                    for (int i = 0; i < 6; i++)
-                        if (CanTakeOutFrom(i))
-                            _allowed.Add(i);
-            }
+
+            List<int> result = new List<int>();
+            for (int i = 0; i < 24; i++)
+                if (CanTake(this[i]) && CanTakeFrom(i))
+                    result.Add(i);
+            if (CanTakeOut())
+                for (int i = 0; i < 6; i++)
+                    if (CanTakeOutFrom(i))
+                        result.Add(i);
+            return result.ToArray();
         }
 
-        private void SetAllowedTo()
+        private int[] GetAllowedTo(int from)
         {
-            int from = _picked.Value;
-            _allowed.Add(from);
+            List<int> result = new List<int> { from };
             foreach (int d in _dice.Distinct())
             {
                 int to = from - d;
                 if (to >= 0 && CanPut(this[to]))
-                    _allowed.Add(to);
+                    result.Add(to);
             }
             if (CanTakeOut() && CanTakeOutFrom(from))
-                _allowed.Add(26);
+                result.Add(26);
+
+            return result.ToArray();
         }
 
         private bool CanTakeFrom(int from)
@@ -520,9 +523,6 @@ namespace iobloc
             return isWhite ? 26 : 27;
         }
 
-        #endregion
-
-        #region AI
         private int[] GetLines()
         {
             int[] result = new int[28];
