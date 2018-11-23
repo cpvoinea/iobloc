@@ -152,7 +152,7 @@ namespace iobloc
             // Table
             Add(9, new Dictionary<string, string>{
                 {"MenuKeys", "D9,NumPad9"},
-                {"Help", "Help ==GAMEPLAY==,|Selection:|,|LEFT-RIGHT|,|Action: UP|,|Restart: R|,+==OPTIONS=+,|Freedom: F|,|Marking: M|,|Numbers: N|,|Backgnd: B|,+----------+,| Exit: ESC|,|Pause: ANY|,============"},
+                {"Help", "==GAMEPLAY==,|Selection:|,|LEFT-RIGHT|,|Action: UP|,|Restart: R|,+==OPTIONS=+,|Freedom: F|,|Marking: M|,|Numbers: N|,|Backgnd: B|,+----------+,| Exit: ESC|,|Pause: ANY|,============"},
                 {"AllowedKeys", "LeftArrow,RightArrow,UpArrow,R,F,M,N,B"},
                 {"FrameMultiplier", "1"},
                 {"Width", "59"},

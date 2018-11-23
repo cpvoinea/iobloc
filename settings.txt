@@ -1,6 +1,6 @@
 9 Table
 MenuKeys D9,NumPad9
-Help Help ==GAMEPLAY==,|Selection:|,|LEFT-RIGHT|,|Action: UP|,|Restart: R|,+==OPTIONS=+,|Freedom: F|,|Marking: M|,|Numbers: N|,|Backgnd: B|,+----------+,| Exit: ESC|,|Pause: ANY|,============
+Help ==GAMEPLAY==,|Selection:|,|LEFT-RIGHT|,|Action: UP|,|Restart: R|,+==OPTIONS=+,|Freedom: F|,|Marking: M|,|Numbers: N|,|Backgnd: B|,+----------+,| Exit: ESC|,|Pause: ANY|,============
 AllowedKeys LeftArrow,RightArrow,UpArrow,R,F,M,N,B
 FrameMultiplier 1
 Width 59
@@ -16,6 +16,7 @@ LightColor Gray
 AssemblyPath iobloc.dll
 ClassName iobloc.TableAI
 AIs 1
+
 
 0 Level
 MenuKeys D0,NumPad0
@@ -160,7 +161,7 @@ MenuKeys D
 
 21 21
 AssemblyPath iobloc.platform.dll
-ClassName iobloc.platform.PlatformGame
+ClassName iobloc.platform.Platform
 Name Platform
 MenuKeys P
 
