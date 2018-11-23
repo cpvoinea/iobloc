@@ -370,7 +370,10 @@ namespace iobloc
             if (_dice.Count == 0 || _allowed.Count == 0)
                 EndTurn();
             else
+            {
                 AutoAction();
+                Change(true);
+            }
         }
 
         private void Throw()

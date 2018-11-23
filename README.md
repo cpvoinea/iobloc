@@ -12,7 +12,7 @@
 ## Changing the settings
 * run the game with a command argument
 ```sh
-iobloc settings.txt
+iobloc mysettings.txt
 ```
 * this will create the settings file which can be modified
 * each line is a setting consisting of two literals: name and value; the rest of the words are ignored
@@ -22,7 +22,6 @@ iobloc settings.txt
   * *Help* text can be changed, each comma ',' indicating a new line of text
   * *FrameMultiplier* is used to calculate the game speed, higher values means slower speed
   * it is **not** recommended to change *AllowedKeys* as they are sometimes hardcoded when handled
-* setting values cannot contain spaces because everything after the first space is ignored
 * run the game again with the same argument to use the settings
 ## Using the SDK
 * install [nuget package](https://www.nuget.org/packages/iobloc/)
@@ -58,12 +57,10 @@ class Program
 * the game will show up in the menu and will run if dll loading is successful
 ## v2.6
 * 9 games: tetris, runner, helicopter, breakout, invaders, snake, sokoban, paint, table
-* table co-op
+* simple table AI
 * bonus pack of sudoku levels
 * level progression, ending animations
 * multi-platform
 * SDK as nuget package (+demo game)
 * dynamic integration of external games
 * extensive documentation
-## v3.0 (planned)
-* AI opponent
