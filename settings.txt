@@ -119,7 +119,7 @@ MenuKeys D9,NumPad9
 Highscore 0
 Help ==GAMEPLAY==,|Selection:|,|LEFT-RIGHT|,|Action: UP|,|Restart: R|,+==OPTIONS=+,|Freedom: F|,|Marking: M|,|Numbers: N|,|Backgnd: B|,+----------+,| Exit: ESC|,|Pause: ANY|,============
 AllowedKeys LeftArrow,RightArrow,UpArrow,R,F,M,N,B
-FrameMultiplier 1
+FrameMultiplier 0.01
 LevelThreshold 1
 Width 59
 Height 40
@@ -133,7 +133,7 @@ DarkColor DarkGray
 LightColor Gray
 AssemblyPath iobloc.dll
 ClassName iobloc.BasicAI
-AIs 0
+AIs 2
 
 10 Menu
 AllowedKeys D0,NumPad0,D1,NumPad1,D2,NumPad2,D3,NumPad3,D4,NumPad4,D5,NumPad5,D6,NumPad6,D7,NumPad7,D8,NumPad8,D9,NumPad9

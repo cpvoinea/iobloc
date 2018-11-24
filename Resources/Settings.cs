@@ -155,7 +155,7 @@ namespace iobloc
                 {"Highscore", "0"},
                 {"Help", "==GAMEPLAY==,|Selection:|,|LEFT-RIGHT|,|Action: UP|,|Restart: R|,+==OPTIONS=+,|Freedom: F|,|Marking: M|,|Numbers: N|,|Backgnd: B|,+----------+,| Exit: ESC|,|Pause: ANY|,============"},
                 {"AllowedKeys", "LeftArrow,RightArrow,UpArrow,R,F,M,N,B"},
-                {"FrameMultiplier", "1"},
+                {"FrameMultiplier", "0.01"},
                 {"LevelThreshold", "1"},
                 {"Width", "59"},
                 {"Height", "40"},
@@ -169,7 +169,7 @@ namespace iobloc
                 {"LightColor", "Gray"},
                 {"AssemblyPath", "iobloc.dll"},
                 {"ClassName", "iobloc.BasicAI"},
-                {"AIs", "0"},
+                {"AIs", "2"},
             });
             // Menu
             Add(10, new Dictionary<string, string>());
