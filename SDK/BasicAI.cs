@@ -3,9 +3,9 @@ using System.Linq;
 
 namespace iobloc
 {
-    public class TableAI : ITableAI
+    public class BasicAI : ITableAI
     {
-        public int[][] GetMoves(int[] lines, int[] dice)
+        public virtual int[][] GetMoves(int[] lines, int[] dice)
         {
             List<int> remainingDice = new List<int>(dice);
             List<int[]> moves = new List<int[]>();
@@ -22,7 +22,7 @@ namespace iobloc
             return moves.ToArray();
         }
 
-        private int[] GetNextMove(int[] lines, int[] dice)
+        protected virtual int[] GetNextMove(int[] lines, int[] dice)
         {
             if (dice.Length == 0)
                 return null;

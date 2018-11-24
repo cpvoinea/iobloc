@@ -164,7 +164,7 @@ namespace iobloc
             }
 
             // don't show level for these games
-            if (!new GameType[] { GameType.Fireworks, GameType.RainingBlood, GameType.Paint, GameType.Table }.Contains(Type))
+            if (!new GameType[] { GameType.Fireworks, GameType.RainingBlood, GameType.Paint }.Contains(Type))
                 Panels.Add(Pnl.Level, new Panel(Border.Height - 1, (Border.Width + 1) / 2 - 2, Border.Height - 1, (Border.Width + 1) / 2));
             if (Serializer.Highscores.ContainsKey(ID)) // don't add score panel if game doesn't keep score
             {

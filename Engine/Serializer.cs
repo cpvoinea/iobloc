@@ -127,7 +127,7 @@ namespace iobloc
         //      If external settings file was used but file does not exist, create it
         private static void SaveSettings()
         {
-            if (string.IsNullOrEmpty(SettingsFileName) || File.Exists(SettingsFileName))
+            if (string.IsNullOrEmpty(SettingsFileName))
                 return;
 
             using (var sw = File.CreateText(SettingsFileName))

@@ -152,9 +152,11 @@ namespace iobloc
             // Table
             Add(9, new Dictionary<string, string>{
                 {"MenuKeys", "D9,NumPad9"},
+                {"Highscore", "0"},
                 {"Help", "==GAMEPLAY==,|Selection:|,|LEFT-RIGHT|,|Action: UP|,|Restart: R|,+==OPTIONS=+,|Freedom: F|,|Marking: M|,|Numbers: N|,|Backgnd: B|,+----------+,| Exit: ESC|,|Pause: ANY|,============"},
                 {"AllowedKeys", "LeftArrow,RightArrow,UpArrow,R,F,M,N,B"},
                 {"FrameMultiplier", "1"},
+                {"LevelThreshold", "1"},
                 {"Width", "59"},
                 {"Height", "40"},
                 {"BlockWidth", "3"},
@@ -166,7 +168,7 @@ namespace iobloc
                 {"DarkColor", "DarkGray"},
                 {"LightColor", "Gray"},
                 {"AssemblyPath", "iobloc.dll"},
-                {"ClassName", "iobloc.TableAI"},
+                {"ClassName", "iobloc.BasicAI"},
                 {"AIs", "0"},
             });
             // Menu
@@ -187,20 +189,20 @@ namespace iobloc
                 {"Width", "7"},
                 {"Height", "7"},
             });
-            // Demo
-            Add(20, new Dictionary<string, string>{
-                {"AssemblyPath", "iobloc.dll"},
-                {"ClassName", "iobloc.Demo"},
-                {"Name", "Demo"},
-                {"MenuKeys", "D"},
-            });
-            // Platform
-            Add(21, new Dictionary<string, string>{
-                {"AssemblyPath", "iobloc.platform.dll"},
-                {"ClassName", "iobloc.platform.PlatformGame"},
-                {"Name", "Platform"},
-                {"MenuKeys", "P"},
-            });
+            // // Demo
+            // Add(20, new Dictionary<string, string>{
+            //     {"AssemblyPath", "iobloc.dll"},
+            //     {"ClassName", "iobloc.Demo"},
+            //     {"Name", "Demo"},
+            //     {"MenuKeys", "D"},
+            // });
+            // // Platform
+            // Add(21, new Dictionary<string, string>{
+            //     {"AssemblyPath", "iobloc.platform.dll"},
+            //     {"ClassName", "iobloc.platform.Platfor"},
+            //     {"Name", "Platform"},
+            //     {"MenuKeys", "P"},
+            // });
         }
     }
 }

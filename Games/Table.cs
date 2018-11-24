@@ -73,9 +73,9 @@ namespace iobloc
             string assemblyPath = GameSettings.GetString(Settings.AssemblyPath);
             string className = GameSettings.GetString(Settings.ClassName);
             if (aiCount > 0)
-                _player2 = new TableAI();
+                _player2 = new BasicAI();
             if (aiCount > 1)
-                _player1 = Serializer.InstantiateFromAssembly<ITableAI>(assemblyPath, className) ?? new TableAI();
+                _player1 = Serializer.InstantiateFromAssembly<ITableAI>(assemblyPath, className) ?? new BasicAI();
         }
 
         protected override void InitializeUI()
@@ -143,13 +143,17 @@ namespace iobloc
 
         protected override void Initialize()
         {
-            if (!IsInitialized)
-                Level = Serializer.MasterLevel;
-            else
+            if (IsInitialized)
             {
                 for (int i = 0; i < _lines.Length; i++)
                     _lines[i].Initialize();
             }
+            else
+            {
+                Level = Serializer.MasterLevel;
+                Score = 0;
+            }
+
             _lines[0].Initialize(2, false, CE);
             _lines[5].Initialize(5, true, CP);
             _lines[7].Initialize(3, true, CP);
@@ -197,6 +201,7 @@ namespace iobloc
                 line.Set(0, cm);
                 line.Mark(set);
             }
+            Change(true);
         }
 
         private void ChangeNumbers()
@@ -222,8 +227,16 @@ namespace iobloc
         {
             if (_useMarking)
                 ChangeMarking(false);
-            if (_lines[26].Count == 15 || _lines[27].Count == 15)
-                Initialize();
+            if (_lines[26].Count == 15)
+            {
+                Score++;
+                Win(true);
+            }
+            else if (_lines[27].Count == 15)
+            {
+                Score--;
+                Lose();
+            }
             else
                 AddAction(ActionType.Throw);
         }
@@ -293,7 +306,7 @@ namespace iobloc
                 return;
 
             if (_taken.HasValue)
-                AddAction(ActionType.Put, GetDice(_taken.Value, _cursor.Value));
+                AddAction(ActionType.Put);
             else
                 AddAction(ActionType.Take);
         }
@@ -310,19 +323,30 @@ namespace iobloc
                 AddAction(ActionType.Select, m[0]);
                 AddAction(ActionType.Take);
                 Travel(m[0], m[1]);
-                AddAction(ActionType.Put, m[2]);
+                AddAction(ActionType.Put);
             }
         }
 
         private void AutoAction()
         {
-            if (CurrentPlayer != null || _actions.Count > 0 || _allowed.Count == 0 || _allowed.Count > 2)
+            if (CurrentPlayer != null || _actions.Count > 0)
                 return;
-            if (_taken.HasValue && _allowed.Count == 2)
+
+            if (!_taken.HasValue && _allowed.Count == 1)
             {
-                int to = _allowed.First(x => x != _taken);
+                AddAction(ActionType.Select, _allowed[0]);
+                AddAction(ActionType.Take);
+            }
+            else if (_taken.HasValue && _allowed.Count == 2)
+            {
+                int to = _allowed.First(x => x != _taken.Value);
                 Travel(_taken.Value, to);
-                AddAction(ActionType.Put, GetDice(_taken.Value, to));
+                AddAction(ActionType.Put);
+            }
+            else if (!_cursor.HasValue || !_allowed.Contains(_cursor.Value))
+            {
+                int to = _allowed.Max();
+                AddAction(ActionType.Select, to);
             }
         }
 
@@ -349,7 +373,7 @@ namespace iobloc
             AutoAction();
         }
 
-        private void Put(int dice)
+        private void Put()
         {
             if (!_cursor.HasValue || !_taken.HasValue || !_allowed.Contains(_cursor.Value))
                 return;
@@ -362,33 +386,31 @@ namespace iobloc
             }
 
             Cursor.Put(_isWhite, Color);
+            _dice.Remove(GetDice(_taken.Value, _cursor.Value));
             _taken = null;
-            _dice.Remove(dice);
             ShowDice();
             SetAllowed();
 
             if (_dice.Count == 0 || _allowed.Count == 0)
                 EndTurn();
             else
-            {
                 AutoAction();
-                Change(true);
-            }
         }
 
         private void Throw()
         {
             Change(false);
             _isWhite = !_isWhite;
-            _cursor = null;
-            _taken = null;
             SetDice();
             SetAllowed();
 
             if (_allowed.Count == 0)
                 EndTurn();
             else
+            {
                 AIAction();
+                AutoAction();
+            }
         }
 
         private void SetCursor(int c)
@@ -420,9 +442,11 @@ namespace iobloc
             }
             else
                 _allowed.AddRange(GetAllowedFrom());
+            _allowed.Sort();
 
             if (_useMarking)
                 ChangeMarking(true);
+            Change(true);
         }
 
         private void SetDice()
@@ -441,9 +465,9 @@ namespace iobloc
         #endregion
 
         #region AI
-        private int[] GetAllowedFrom() => TableAI.GetAllowedFrom(GetLines(), _dice.ToArray());
-        private int[] GetAllowedTo(int from) => TableAI.GetAllowedTo(GetLines(), _dice.ToArray(), from);
-        private int GetDice(int from, int to) => TableAI.GetDice(_dice.ToArray(), from, to);
+        private int[] GetAllowedFrom() => BasicAI.GetAllowedFrom(GetLines(), _dice.ToArray());
+        private int[] GetAllowedTo(int from) => BasicAI.GetAllowedTo(GetLines(), _dice.ToArray(), from);
+        private int GetDice(int from, int to) => BasicAI.GetDice(_dice.ToArray(), from, to);
 
         private static int GetIndex(bool isWhite, int line)
         {
@@ -527,7 +551,7 @@ namespace iobloc
                         Take();
                         break;
                     case ActionType.Put:
-                        Put(a.Param.Value);
+                        Put();
                         break;
                     case ActionType.Throw:
                         Throw();
