@@ -30,18 +30,18 @@ namespace iobloc
         protected int BlockWidth { get; private set; }
         protected int BlockSpace { get; private set; }
         protected int Block { get; private set; }
-        // Help text will be displayed in main panel text mode when paused
+        // Help text will be displayed in main pane text mode when paused
         protected string[] Help { get; private set; }
         // Summary:
         //      Is set to true after first initialization, ca be used for re-initialization like postbacks
         protected bool IsInitialized { get; private set; }
 
         // Summary:
-        //      Get border around the Panels, to draw in UI
+        //      Get border around the Panes, to draw in UI
         public Border Border { get; private set; }
         // Summary:
         //      Rectangulars to draw in UI
-        public Dictionary<string, Panel> Panels { get; private set; }
+        public Dictionary<string, Pane> Panes { get; private set; }
         // Summary:
         //      Duration between frames in ms
         public int FrameInterval { get; private set; }
@@ -55,8 +55,8 @@ namespace iobloc
         //      Reference to next game to run, null to terminate
         public IGame Next { get; protected set; }
         // Summary:
-        //      Main panel inside border rectangle
-        protected Panel Main { get; set; }
+        //      Main pane inside border rectangle
+        protected Pane Main { get; set; }
         // Summary:
         //      Get current score. Setting the score triggers level progression, highscore update and winning conditions
         protected int Score { get { return _score; } set { SetScore(value); } }
@@ -88,8 +88,8 @@ namespace iobloc
                 return;
             _score = score;
 
-            if (Panels.ContainsKey(Pnl.Score))
-                Panels[Pnl.Score].SetText($"{score,3}");
+            if (Panes.ContainsKey(Pnl.Score))
+                Panes[Pnl.Score].SetText($"{score,3}");
             SetHighscore(score);
 
             if (LevelThreshold > 0 && score >= LevelThreshold * (_level + 1))
@@ -106,8 +106,8 @@ namespace iobloc
                 return;
             Highscore = score;
 
-            if (Panels.ContainsKey(Pnl.Highscore))
-                Panels[Pnl.Highscore].SetText($"{Highscore,3}");
+            if (Panes.ContainsKey(Pnl.Highscore))
+                Panes[Pnl.Highscore].SetText($"{Highscore,3}");
             Serializer.UpdateHighscore(ID, score);
         }
 
@@ -125,8 +125,8 @@ namespace iobloc
                 _level = level;
                 FrameInterval = Serializer.GetLevelInterval(FrameMultiplier, _level);
 
-                if (Panels.ContainsKey(Pnl.Level))
-                    Panels[Pnl.Level].SetText($"L{_level,2}");
+                if (Panes.ContainsKey(Pnl.Level))
+                    Panes[Pnl.Level].SetText($"L{_level,2}");
             }
         }
 
@@ -148,29 +148,29 @@ namespace iobloc
         }
 
         // Summary:
-        //      Set basic rectangle border with main panel and (optional) highscore, score and level panels;
-        //      Can be overwritten to add extra elements: lines and panels
+        //      Set basic rectangle border with main pane and (optional) highscore, score and level panes;
+        //      Can be overwritten to add extra elements: lines and panes
         protected virtual void InitializeUI()
         {
             Border = new Border(Width + 2, Height + 2);
-            Panels = new Dictionary<string, Panel>();
+            Panes = new Dictionary<string, Pane>();
 
             // don't use main for these games
             if (Type != GameType.Table)
             {
-                Main = new Panel(1, 1, Height, Width);
+                Main = new Pane(1, 1, Height, Width);
                 Main.SetText(Help, false);
-                Panels.Add(Pnl.Main, Main);
+                Panes.Add(Pnl.Main, Main);
             }
 
             // don't show level for these games
             if (!new GameType[] { GameType.Fireworks, GameType.RainingBlood, GameType.Paint }.Contains(Type))
-                Panels.Add(Pnl.Level, new Panel(Border.Height - 1, (Border.Width + 1) / 2 - 2, Border.Height - 1, (Border.Width + 1) / 2));
-            if (Serializer.Highscores.ContainsKey(ID)) // don't add score panel if game doesn't keep score
+                Panes.Add(Pnl.Level, new Pane(Border.Height - 1, (Border.Width + 1) / 2 - 2, Border.Height - 1, (Border.Width + 1) / 2));
+            if (Serializer.Highscores.ContainsKey(ID)) // don't add score pane if game doesn't keep score
             {
-                if (Border.Width > 8) // don't add highscore panel if there's no room
-                    Panels.Add(Pnl.Highscore, new Panel(0, 1, 0, 3));
-                Panels.Add(Pnl.Score, new Panel(0, Border.Width - 4, 0, Border.Width - 2));
+                if (Border.Width > 8) // don't add highscore pane if there's no room
+                    Panes.Add(Pnl.Highscore, new Pane(0, 1, 0, 3));
+                Panes.Add(Pnl.Score, new Pane(0, Border.Width - 4, 0, Border.Width - 2));
             }
         }
 
@@ -188,8 +188,8 @@ namespace iobloc
         }
 
         // Summary:
-        //      Used to set/unset game panels to new values during gameplay
-        // Parameters: set: when true it should also mark the panel as changed
+        //      Used to set/unset game panes to new values during gameplay
+        // Parameters: set: when true it should also mark the pane as changed
         protected virtual void Change(bool set)
         {
             if (set)
@@ -223,12 +223,12 @@ namespace iobloc
 
         // Summary:
         //      Runs every time a bord is opened by GameRunner,
-        //      Set Next to null, IsRunning to true, refresh all panels
+        //      Set Next to null, IsRunning to true, refresh all panes
         public virtual void Start()
         {
             Next = null;
             IsRunning = true;
-            foreach (var p in Panels.Values) // force refresh of panels
+            foreach (var p in Panes.Values) // force refresh of panes
                 p.Change();
         }
 

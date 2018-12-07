@@ -5,18 +5,18 @@ namespace iobloc
         int _cursor;
         bool _nailedIt;
 
-        // this basic game has a main panel which is 14 blocks wide and 1 tall
-        // is initialized as a color panel, the interval between frames is 100ms
+        // this basic game has a main pane which is 14 blocks wide and 1 tall
+        // is initialized as a color pane, the interval between frames is 100ms
         // and the only supported key is "I" which needs to be guessed as a game
         public Demo() : base(14, 1, null, 50, "I") { }
 
         public override void Start()
         {
             // set the pause screen help text without entering text mode
-            MainPanel.SetText("Guess the key!");
+            Main.SetText("Guess the key!");
             _nailedIt = false;
-            if (MainPanel.IsTextMode)
-                MainPanel.SwitchMode();
+            if (Main.IsTextMode)
+                Main.SwitchMode();
             base.Start();
         }
 
@@ -28,16 +28,16 @@ namespace iobloc
                 return;
 
             // unshow current cursor position
-            MainPanel[0, _cursor] = 0;
+            Main[0, _cursor] = 0;
             // move cursor to next position
             _cursor++;
             // go back to start if end is reached
-            if (_cursor >= MainPanel.Width)
+            if (_cursor >= Main.Width)
                 _cursor = 0;
             // set color for current position
-            MainPanel[0, _cursor] = MainPanel.Width - _cursor;
-            // mark main panel as changed to paint
-            MainPanel.Change();
+            Main[0, _cursor] = Main.Width - _cursor;
+            // mark main pane as changed to paint
+            Main.Change();
         }
 
         // when an allowed key is pressed, it is handled here
@@ -53,7 +53,7 @@ namespace iobloc
             // key was correctly guessed
             _nailedIt = true;
             // replace pause help text with congratulation message
-            MainPanel.SetText("Nailed it!");
+            Main.SetText("Nailed it!");
         }
 
         // display help when an unsupported key is pressed

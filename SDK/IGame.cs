@@ -6,7 +6,7 @@ namespace iobloc
     // Draw(game.Border)
     // game.Start()
     // do
-    //   Draw(game.Panels)
+    //   Draw(game.Panes)
     //   key <= Input()
     //   if (game.AllowedKeys contains key)
     //     game.HandleInput(key)
@@ -17,10 +17,10 @@ namespace iobloc
     // game.Stop()
     public interface IGame
     {
-        // Get border around the Panels, to draw in UI
+        // Get border around the Panes, to draw in UI
         Border Border { get; }
         // Rectangulars to draw in UI
-        Dictionary<string, Panel> Panels { get; }
+        Dictionary<string, Pane> Panes { get; }
         // Duration between frames in ms
         int FrameInterval { get; }
         // List of shortcut keys which are handled by game

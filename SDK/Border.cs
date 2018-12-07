@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace iobloc
 {
-    // A matrix of box drawing Symbol that construct a grid of lines around panels
+    // A matrix of box drawing Symbol that construct a grid of lines around panes
     public struct Border
     {
         // box drawing matrix

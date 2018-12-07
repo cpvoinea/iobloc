@@ -1,29 +1,33 @@
+using System;
+
 namespace iobloc
 {
     // Entry point to application, handle initialization and disposal
-    static class Engine
+    class Engine : IDisposable
     {
-        // Summary:
-        //      Load settings from default or external file,
-        //      Initialize UI
-        // Parameters: settingsFilePath: 
-        public static void Initialize(string settingsFilePath)
+        private readonly string _settingsFilePath;
+        private readonly IRenderer _renderer;
+
+        public Engine(string settingsFilePath, bool runInForm)
         {
-            Serializer.Load(settingsFilePath);
-            Renderer.Initialize();
+            _settingsFilePath = settingsFilePath;
+            _renderer = runInForm ? (IRenderer)new FormRenderer() : new ConsoleRenderer();
+            Serializer.Load(_settingsFilePath);
         }
 
         // Summary:
         //      Display menu game
         //      Handle linking of games (menu->game->animation->menu->etc)
         // Parameters: settingsFilePath: optional external settings file path, if null use default settings
-        public static void Start()
+        public void Start()
         {
             IGame menu = Serializer.GetGame((int)GameType.Menu);
             IGame game = menu;
             while (game != null)
             {
-                GameRunner.Run(game);
+                var runner = new GameRunner(_renderer, game);
+                runner.Run();
+
                 if (game is IBaseGame) // base game selected
                     game = (game as IBaseGame).Next; // continue to next game
                 else if (game != menu) // return to menu
@@ -33,13 +37,10 @@ namespace iobloc
             }
         }
 
-        // Summary:
-        //      Save settings if external file is used,
-        //      Restore UI to previous state, in case errors need to be displayed
-        public static void Stop()
+        public void Dispose()
         {
-            Serializer.Save();
-            Renderer.Exit();
+            Serializer.Save(_settingsFilePath);
+            _renderer.Dispose();
         }
     }
 }

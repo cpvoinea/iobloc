@@ -1,5 +1,4 @@
 using System;
-using System.Threading;
 
 namespace iobloc
 {
@@ -7,7 +6,7 @@ namespace iobloc
     // Draw(game.Border)
     // game.Start()
     // do
-    //   Draw(game.Panels)
+    //   Draw(game.Panes)
     //   key <= Input()
     //   if (game.AllowedKeys contains key)
     //     game.HandleInput(key)
@@ -16,73 +15,29 @@ namespace iobloc
     //   game.NextFrame()
     // while (key is not Escape)
     // game.Stop()
-    public static class GameRunner
+    public class GameRunner
     {
-        // Summary:
-        // Minimalist running of IGame. The algorithm is:
-        // Draw(game.Border)
-        // game.Start()
-        // do
-        //   Draw(game.Panels)
-        //   key <= Input()
-        //   if (game.AllowedKeys contains key)
-        //     game.HandleInput(key)
-        //   else game.TogglePause()
-        //   wait for game.FrameInterval (ms)
-        //   game.NextFrame()
-        // while (key is not Escape)
-        // game.Stop()
-        public static void Run(IGame game)
+        private readonly IRenderer _renderer;
+        private readonly IGame _game;
+
+        public GameRunner(IRenderer renderer, IGame game)
         {
-            game.Start();
-            if (!game.IsRunning)
-                return;
-
-            Renderer.DrawBorder(game.Border); // initial setup
-            DateTime start = DateTime.Now; // frame start time
-            int ticks = 0; // elapsed time in ms
-            while (game.IsRunning)
-            {
-                Paint(game);
-                bool paused = HandleInput(game);
-                if (!game.IsRunning)
-                    break;
-
-                if (paused)
-                {
-                    Paint(game, true); // toggle to paused and draw
-                    if (!game.IsRunning)
-                        break;
-                    Renderer.InputWait(); // wait for any key press
-                    Paint(game, true); // unpause and draw
-                }
-
-                if (game.IsRunning && game.FrameInterval > 0)
-                {
-                    Thread.Sleep(20);
-                    ticks = (int)DateTime.Now.Subtract(start).TotalMilliseconds;
-                    if (ticks > game.FrameInterval) // move to next frame
-                    {
-                        game.NextFrame();
-                        start = DateTime.Now;
-                        ticks -= game.FrameInterval;
-                    }
-                }
-            }
+            _renderer = renderer;
+            _game = game;
         }
 
         // Summary:
         //      Decide on key reaction: exit on Escape, handle AllowedKeys or pause on rest
-        private static bool HandleInput(IGame game)
+        private bool HandleInput()
         {
-            string key = Renderer.Input();
+            string key = _renderer.Input();
             if (key == null)
                 return false;
 
             if (key == UIKey.Escape)
-                game.Stop(); // stop on Escape
-            else if (game.AllowedKeys.Contains(key))
-                game.HandleInput(key); // handle if key is allowed
+                _game.Stop(); // stop on Escape
+            else if (_game.AllowedKeys.Contains(key))
+                _game.HandleInput(key); // handle if key is allowed
             else
                 return true; // pause if key is not allowed
 
@@ -92,16 +47,65 @@ namespace iobloc
         // Summary:
         //      Use HasChanges property to decide if draw is needed and set it to false if drawn
         // Parameters: togglePause: toggle pause before drawing (switch to text mode or back)
-        private static void Paint(IGame game, bool togglePause = false)
+        private void Paint(bool togglePause = false)
         {
             if (togglePause)
-                game.TogglePause();
-            foreach (var p in game.Panels.Values)
+                _game.TogglePause();
+            foreach (var p in _game.Panes.Values)
                 if (p.HasChanges)
                 {
-                    Renderer.DrawPanel(p);
+                    _renderer.DrawPane(p);
                     p.Change(false);
                 }
+        }
+
+        // Summary:
+        // Minimalist running of IGame. The algorithm is:
+        // Draw(game.Border)
+        // game.Start()
+        // do
+        //   Draw(game.Panes)
+        //   key <= Input()
+        //   if (game.AllowedKeys contains key)
+        //     game.HandleInput(key)
+        //   else game.TogglePause()
+        //   wait for game.FrameInterval (ms)
+        //   game.NextFrame()
+        // while (key is not Escape)
+        // game.Stop()
+        public void Run()
+        {
+            _game.Start();
+            if (!_game.IsRunning)
+                return;
+
+            _renderer.DrawBorder(_game.Border);
+            _renderer.NextInLoop += NextFrame;
+            _renderer.StartLoop(_game.FrameInterval);
+            while (_game.IsRunning)
+            {
+                Paint();
+                bool paused = HandleInput();
+                if (!_game.IsRunning)
+                    break;
+
+                if (paused)
+                {
+                    Paint(true); // toggle to paused and draw
+                    if (!_game.IsRunning)
+                        break;
+                    _renderer.InputWait(); // wait for any key press
+                    Paint(true); // unpause and draw
+                }
+            }
+            _renderer.StopLoop();
+            _renderer.NextInLoop -= NextFrame;
+        }
+
+        void NextFrame()
+        {
+            if (_game.IsRunning)
+                _game.NextFrame();
         }
     }
 }

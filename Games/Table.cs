@@ -90,22 +90,22 @@ namespace iobloc
                 new BorderLine(6 * Block + 1, 7 * Block + 2, Height / 2 - 2, false),
                 new BorderLine(6 * Block + 1, 7 * Block + 2, Height / 2 + 3, false)
             });
-            // panels
-            Panels.Add(Pnl.Table.UpperLeft, new Panel(1, 1, 17, 6 * Block, (char)Symbol.BlockUpper));
-            Panels.Add(Pnl.Table.MiddleLeft, new Panel(18, 1, Height - 17, 6 * Block));
-            Panels.Add(Pnl.Table.LowerLeft, new Panel(Height - 16, 1, Height, 6 * Block, (char)Symbol.BlockLower));
-            Panels.Add(Pnl.Table.UpperTaken, new Panel(1, 6 * Block + 2, 17, 7 * Block + 1, (char)Symbol.BlockUpper));
-            Panels.Add(Pnl.Table.Dice, new Panel(Height / 2 - 1, 6 * Block + 2, Height / 2 + 2, 7 * Block + 1));
-            Panels.Add(Pnl.Table.LowerTaken, new Panel(Height - 16, 6 * Block + 2, Height, 7 * Block + 1, (char)Symbol.BlockLower));
-            Panels.Add(Pnl.Table.UpperRight, new Panel(1, 7 * Block + 3, 17, 13 * Block + 2, (char)Symbol.BlockUpper));
-            Panels.Add(Pnl.Table.MiddleRight, new Panel(18, 7 * Block + 3, Height - 17, 13 * Block + 2));
-            Panels.Add(Pnl.Table.LowerRight, new Panel(Height - 16, 7 * Block + 3, Height, 13 * Block + 2, (char)Symbol.BlockLower));
-            Panels.Add(Pnl.Table.UpperOut, new Panel(1, 13 * Block + 4, 17, 14 * Block + 3, (char)Symbol.BlockUpper));
-            Panels.Add(Pnl.Table.LowerOut, new Panel(Height - 16, 13 * Block + 4, Height, 14 * Block + 3, (char)Symbol.BlockLower));
-            Main = Panels[Pnl.Table.UpperLeft];
-            // text panels
+            // panes
+            Panes.Add(Pnl.Table.UpperLeft, new Pane(1, 1, 17, 6 * Block, (char)Symbol.BlockUpper));
+            Panes.Add(Pnl.Table.MiddleLeft, new Pane(18, 1, Height - 17, 6 * Block));
+            Panes.Add(Pnl.Table.LowerLeft, new Pane(Height - 16, 1, Height, 6 * Block, (char)Symbol.BlockLower));
+            Panes.Add(Pnl.Table.UpperTaken, new Pane(1, 6 * Block + 2, 17, 7 * Block + 1, (char)Symbol.BlockUpper));
+            Panes.Add(Pnl.Table.Dice, new Pane(Height / 2 - 1, 6 * Block + 2, Height / 2 + 2, 7 * Block + 1));
+            Panes.Add(Pnl.Table.LowerTaken, new Pane(Height - 16, 6 * Block + 2, Height, 7 * Block + 1, (char)Symbol.BlockLower));
+            Panes.Add(Pnl.Table.UpperRight, new Pane(1, 7 * Block + 3, 17, 13 * Block + 2, (char)Symbol.BlockUpper));
+            Panes.Add(Pnl.Table.MiddleRight, new Pane(18, 7 * Block + 3, Height - 17, 13 * Block + 2));
+            Panes.Add(Pnl.Table.LowerRight, new Pane(Height - 16, 7 * Block + 3, Height, 13 * Block + 2, (char)Symbol.BlockLower));
+            Panes.Add(Pnl.Table.UpperOut, new Pane(1, 13 * Block + 4, 17, 14 * Block + 3, (char)Symbol.BlockUpper));
+            Panes.Add(Pnl.Table.LowerOut, new Pane(Height - 16, 13 * Block + 4, Height, 14 * Block + 3, (char)Symbol.BlockLower));
+            Main = Panes[Pnl.Table.UpperLeft];
+            // text panes
             Main.SetText(Help, false);
-            // numbers in middle panels
+            // numbers in middle panes
             int padLeft = (BlockWidth - 2) / 2;
             string textLeft = "";
             string textRight = "";
@@ -114,7 +114,7 @@ namespace iobloc
                 textLeft += $"{13 + i,2}".PadLeft(padLeft + 2).PadRight(Block);
                 textRight += $"{19 + i,2}".PadLeft(padLeft + 2).PadRight(Block);
             }
-            for (int i = 0; i < Panels[Pnl.Table.MiddleLeft].Height - 1; i++)
+            for (int i = 0; i < Panes[Pnl.Table.MiddleLeft].Height - 1; i++)
             {
                 textLeft += ",";
                 textRight += ",";
@@ -124,21 +124,21 @@ namespace iobloc
                 textLeft += $"{12 - i,2}".PadLeft(padLeft + 2).PadRight(Block);
                 textRight += $"{6 - i,2}".PadLeft(padLeft + 2).PadRight(Block);
             }
-            Panels[Pnl.Table.MiddleLeft].SetText(textLeft.Split(','), false);
-            Panels[Pnl.Table.MiddleRight].SetText(textRight.Split(','), false);
+            Panes[Pnl.Table.MiddleLeft].SetText(textLeft.Split(','), false);
+            Panes[Pnl.Table.MiddleRight].SetText(textRight.Split(','), false);
 
             for (int i = 0; i < 6; i++)
             {
                 bool isDark = i % 2 == 0;
-                _lines[i] = new TableLine(Panels[Pnl.Table.LowerRight], BlockWidth, Block, 5 - i, Main.Height - 1, true);
-                _lines[i + 6] = new TableLine(Panels[Pnl.Table.LowerLeft], BlockWidth, Block, 5 - i, Main.Height - 1, true);
-                _lines[i + 12] = new TableLine(Panels[Pnl.Table.UpperLeft], BlockWidth, Block, i, 0, false);
-                _lines[i + 18] = new TableLine(Panels[Pnl.Table.UpperRight], BlockWidth, Block, i, 0, false);
+                _lines[i] = new TableLine(Panes[Pnl.Table.LowerRight], BlockWidth, Block, 5 - i, Main.Height - 1, true);
+                _lines[i + 6] = new TableLine(Panes[Pnl.Table.LowerLeft], BlockWidth, Block, 5 - i, Main.Height - 1, true);
+                _lines[i + 12] = new TableLine(Panes[Pnl.Table.UpperLeft], BlockWidth, Block, i, 0, false);
+                _lines[i + 18] = new TableLine(Panes[Pnl.Table.UpperRight], BlockWidth, Block, i, 0, false);
             }
-            _lines[24] = new TableLine(Panels[Pnl.Table.UpperTaken], BlockWidth, Block, 0, 0, false);
-            _lines[25] = new TableLine(Panels[Pnl.Table.LowerTaken], BlockWidth, Block, 0, Main.Height - 1, true);
-            _lines[26] = new TableLine(Panels[Pnl.Table.LowerOut], BlockWidth, Block, 0, Main.Height - 1, true);
-            _lines[27] = new TableLine(Panels[Pnl.Table.UpperOut], BlockWidth, Block, 0, 0, false);
+            _lines[24] = new TableLine(Panes[Pnl.Table.UpperTaken], BlockWidth, Block, 0, 0, false);
+            _lines[25] = new TableLine(Panes[Pnl.Table.LowerTaken], BlockWidth, Block, 0, Main.Height - 1, true);
+            _lines[26] = new TableLine(Panes[Pnl.Table.LowerOut], BlockWidth, Block, 0, Main.Height - 1, true);
+            _lines[27] = new TableLine(Panes[Pnl.Table.UpperOut], BlockWidth, Block, 0, 0, false);
         }
 
         protected override void Initialize()
@@ -206,13 +206,13 @@ namespace iobloc
 
         private void ChangeNumbers()
         {
-            Panels[Pnl.Table.MiddleLeft].SwitchMode();
-            Panels[Pnl.Table.MiddleRight].SwitchMode();
+            Panes[Pnl.Table.MiddleLeft].SwitchMode();
+            Panes[Pnl.Table.MiddleRight].SwitchMode();
         }
 
         private void ShowDice()
         {
-            Panels[Pnl.Table.Dice].SetText(string.Join<int>(",", _dice));
+            Panes[Pnl.Table.Dice].SetText(string.Join<int>(",", _dice));
         }
 
         #endregion

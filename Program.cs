@@ -1,33 +1,32 @@
 ﻿using System;
 using System.Text;
+using System.Windows.Forms;
 
 namespace iobloc
 {
     class Program
     {
+        private static bool USE_FORMS = false;
+
+        [STAThread]
         static void Main(string[] args)
         {
-            // new Demo().Run();
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+
             // rudimentary logging
             StringBuilder errors = new StringBuilder();
+            Console.Clear();
             try
             {
                 // optional external settings file
-                var settingsFilePath = args.Length > 0 ? args[0] : null;
-                // initialization of environment
-                Engine.Initialize(settingsFilePath);
-                // open to menu
-                Console.Clear();
-                Engine.Start();
+                string settingsFilePath = args.Length > 0 ? args[0] : null;
+                using (Engine engine = new Engine(settingsFilePath, USE_FORMS))
+                    engine.Start();
             }
             catch (Exception ex)
             {
                 errors.AppendLine(ex.ToString());
-            }
-            finally
-            {
-                // restore environment
-                Engine.Stop();
             }
 
             // show eventual errors

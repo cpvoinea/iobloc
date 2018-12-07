@@ -2,7 +2,7 @@ namespace iobloc
 {
     class TableLine
     {
-        private Panel Panel { get; set; }
+        private Pane Pane { get; set; }
         private int BlockWidth { get; set; }
         private int Block { get; set; }
         private int StartCol { get; set; }
@@ -12,9 +12,9 @@ namespace iobloc
         public bool IsWhite { get; private set; }
         public bool IsMarked { get; private set; }
 
-        public TableLine(Panel panel, int blockWidth, int block, int col, int row, bool isLower)
+        public TableLine(Pane pane, int blockWidth, int block, int col, int row, bool isLower)
         {
-            Panel = panel;
+            Pane = pane;
             BlockWidth = blockWidth;
             Block = block;
             StartCol = col;
@@ -29,7 +29,7 @@ namespace iobloc
         {
             Count = 0;
             IsMarked = false;
-            for (int i = 1; i < Panel.Height; i++)
+            for (int i = 1; i < Pane.Height; i++)
                 Set(i, 0);
         }
 
@@ -62,8 +62,8 @@ namespace iobloc
         public void Set(int row, int color)
         {
             for (int i = 0; i < BlockWidth; i++)
-                Panel[StartRow + row * Direction, StartCol * Block + i] = color;
-            Panel.Change();
+                Pane[StartRow + row * Direction, StartCol * Block + i] = color;
+            Pane.Change();
         }
     }
 }

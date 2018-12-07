@@ -189,14 +189,14 @@ namespace iobloc
                 {"Width", "7"},
                 {"Height", "7"},
             });
-            // // Demo
-            // Add(20, new Dictionary<string, string>{
-            //     {"AssemblyPath", "iobloc.dll"},
-            //     {"ClassName", "iobloc.Demo"},
-            //     {"Name", "Demo"},
-            //     {"MenuKeys", "D"},
-            // });
-            // // Platform
+            // Demo
+            Add(20, new Dictionary<string, string>{
+                {"AssemblyPath", "iobloc.dll"},
+                {"ClassName", "iobloc.Demo"},
+                {"Name", "Demo"},
+                {"MenuKeys", "D"},
+            });
+            // Platform
             // Add(21, new Dictionary<string, string>{
             //     {"AssemblyPath", "iobloc.platform.dll"},
             //     {"ClassName", "iobloc.platform.Platfor"},

@@ -1,38 +1,38 @@
 namespace iobloc
 {
     // A matrix of values representing a rectangle component that needs to be drawn.
-    // There are 2 ways to draw a panel: as lines of text or as a color matrix
-    public class Panel
+    // There are 2 ways to draw a pane: as lines of text or as a color matrix
+    public class Pane
     {
-        // panel color matrix
+        // pane color matrix
         private readonly int[,] _grid;
         // Access to color matrix
         public int this[int row, int col] { get { return _grid[row, col]; } set { _grid[row, col] = value; } }
         // Character to be drawn in different colors as configured in grid matrix
         internal char BlockChar { get; private set; }
-        // Distance from top where panel begins
+        // Distance from top where pane begins
         internal int FromRow { get; private set; }
-        // Distance from left where panel begins
+        // Distance from left where pane begins
         internal int FromCol { get; private set; }
-        // Number of columns in panel
+        // Number of columns in pane
         public int Width { get; private set; }
-        // Number of rows in panel
+        // Number of rows in pane
         public int Height { get; private set; }
         // Lines of text to be displayed in text mode
         internal string[] Text { get; private set; }
         // Indicates if text mode (true) or color mode (false)
         internal bool IsTextMode { get; private set; }
-        // If true, panel has changed and should be drawn again
+        // If true, pane has changed and should be drawn again
         internal bool HasChanges { get; private set; }
 
         // Summary:
-        //      Initialize panel
-        // Parameters: fromRow: Distance from top where panel begins
-        // Parameters: fromCol: Distance from left where panel begins
-        // Parameters: toRow: Distance from top where panel ends, including last row/param>
-        // Parameters: toCol: Distance from left where panel ends, including last column
+        //      Initialize pane
+        // Parameters: fromRow: Distance from top where pane begins
+        // Parameters: fromCol: Distance from left where pane begins
+        // Parameters: toRow: Distance from top where pane ends, including last row/param>
+        // Parameters: toCol: Distance from left where pane ends, including last column
         // Parameters: symbol: Character to be drawn in different colors as configured in grid matrix, defaults to full block
-        public Panel(int fromRow, int fromCol, int toRow, int toCol, char blockChar = (char)Symbol.BlockFull)
+        public Pane(int fromRow, int fromCol, int toRow, int toCol, char blockChar = (char)Symbol.BlockFull)
         {
             BlockChar = blockChar;
             FromRow = fromRow;
@@ -82,7 +82,7 @@ namespace iobloc
         }
 
         // Summary:
-        //      Mark the panel with changes or not
+        //      Mark the pane with changes or not
         public void Change(bool hasChanges = true)
         {
             HasChanges = hasChanges;
