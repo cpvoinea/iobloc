@@ -1,35 +1,37 @@
 using System;
 using System.Text;
-using System.Timers;
+using System.Threading;
 
 namespace iobloc
 {
     // Use System.Console to paint and get input
-    public class ConsoleRenderer : IRenderer
+    public static class ConsoleRunner
     {
+        private static IGame Game = null;
+
+        #region UI
+
         private static bool SAFE_MODE = true; // made it static instead of const to avoid warnings
         private const int MinWidth = 103;
         private const int MinHeight = 44;
-        private readonly int _winWidth = MinWidth;
-        private readonly int _winHeight = MinHeight;
-        private static int _currentBorderHeight;
-        private readonly Timer _timer = new Timer();
-
-        public event LoopHandler NextInLoop;
+        private static int WinWidth = MinWidth;
+        private static int WinHeight = MinHeight;
+        private static int CurrentBorderHeight;
 
         // Summary:
         //      Use console for drawing
-        public ConsoleRenderer()
+        public static void Initialize()
         {
             // support box drawing
             Console.OutputEncoding = Encoding.UTF8;
             // not hiding the cursor is sometimes usefull for debugging
             Console.CursorVisible = false;
             // remember initial values
-            _winWidth = Console.WindowWidth;
-            _winHeight = Console.WindowHeight;
-            if (SAFE_MODE || (_winWidth < MinWidth && _winWidth <= Console.LargestWindowWidth || _winHeight < MinHeight && _winHeight <= Console.LargestWindowHeight))
+            WinWidth = Console.WindowWidth;
+            WinHeight = Console.WindowHeight;
+            if (SAFE_MODE || (WinWidth < MinWidth && WinWidth <= Console.LargestWindowWidth || WinHeight < MinHeight && WinHeight <= Console.LargestWindowHeight))
                 Resize(MinWidth, MinHeight);
+            Console.Clear();
         }
 
         // Summary:
@@ -109,33 +111,10 @@ namespace iobloc
             Console.ResetColor();
         }
 
-        private void OnNextInLoop(object sender, ElapsedEventArgs args)
-        {
-            if (NextInLoop != null)
-                NextInLoop();
-        }
-
-        public void StartLoop(int interval)
-        {
-            StopLoop();
-            if (interval == 0)
-                return;
-
-            _timer.Interval = interval;
-            _timer.Elapsed += OnNextInLoop;
-            _timer.Start();
-        }
-
-        public void StopLoop()
-        {
-            _timer.Stop();
-            _timer.Elapsed -= OnNextInLoop;
-        }
-
         // Summary:
         //      Draw a border consisting of horizontal and vertical lines and clear the rest of the screen
         // Parameters: border: a collection of lines
-        public void DrawBorder(Border border)
+        private static void DrawBorder(Border border)
         {
             Console.Clear();
             int w = border.Width;
@@ -144,7 +123,7 @@ namespace iobloc
             if (!SAFE_MODE)
                 Resize(w, h);
             else
-                _currentBorderHeight = h + 1;
+                CurrentBorderHeight = h + 1;
 
             for (int row = 0; row < h; row++)
             {
@@ -166,7 +145,7 @@ namespace iobloc
         //      Draw a pane inside a rectangular area.
         //      The pane has either lines of text or a multi-colored matrix with a single character
         // Parameters: pane: pane to draw
-        public void DrawPane(Pane pane)
+        private static void DrawPane(Pane pane)
         {
             if (pane.IsTextMode)
                 DrawPaneText(pane, pane.Text);
@@ -176,17 +155,17 @@ namespace iobloc
 
         // Summary:
         //      Wait until key is pressed and return key
-        public string InputWait()
+        private static string InputWait()
         {
             // on Mac the interception of key doesn't always work
             // moving the cursor outside the border
-            if (SAFE_MODE && _currentBorderHeight < Console.WindowHeight)
-                Console.SetCursorPosition(0, _currentBorderHeight);
+            if (SAFE_MODE && CurrentBorderHeight < Console.WindowHeight)
+                Console.SetCursorPosition(0, CurrentBorderHeight);
             var k = Console.ReadKey(true).Key.ToString();
             // hiding pressed key
-            if (SAFE_MODE && _currentBorderHeight < Console.WindowHeight)
+            if (SAFE_MODE && CurrentBorderHeight < Console.WindowHeight)
             {
-                Console.SetCursorPosition(0, _currentBorderHeight);
+                Console.SetCursorPosition(0, CurrentBorderHeight);
                 Console.Write("    ");
             }
 
@@ -195,23 +174,111 @@ namespace iobloc
 
         // Summary:
         //      Check if key is pressed and return it, return null if no key is pressed
-        public string Input()
+        private static string Input()
         {
             if (Console.KeyAvailable)
                 return InputWait();
             return null;
         }
 
-        public void Dispose()
+        #endregion
+
+        // Summary:
+        //      Decide on key reaction: exit on Escape, handle AllowedKeys or pause on rest
+        private static bool HandleInput()
         {
-            StopLoop();
-            _timer.Dispose();
+            string key = Input();
+            if (key == null)
+                return false;
+
+            if (key == UIKey.Escape)
+                Game.Stop(); // stop on Escape
+            else if (Game.AllowedKeys.Contains(key))
+                Game.HandleInput(key); // handle if key is allowed
+            else
+                return true; // pause if key is not allowed
+
+            return false;
+        }
+
+        // Summary:
+        //      Use HasChanges property to decide if draw is needed and set it to false if drawn
+        // Parameters: togglePause: toggle pause before drawing (switch to text mode or back)
+        private static void DrawAll(bool togglePause = false)
+        {
+            if (togglePause)
+                Game.TogglePause();
+            foreach (var p in Game.Panes.Values)
+                if (p.HasChanges)
+                {
+                    DrawPane(p);
+                    p.Change(false);
+                }
+        }
+
+        // Summary:
+        // Minimalist running of IGame. The algorithm is:
+        // Draw(game.Border)
+        // game.Start()
+        // do
+        //   Draw(game.Panes)
+        //   key <= Input()
+        //   if (game.AllowedKeys contains key)
+        //     game.HandleInput(key)
+        //   else game.TogglePause()
+        //   wait for game.FrameInterval (ms)
+        //   game.NextFrame()
+        // while (key is not Escape)
+        // game.Stop()
+        public static void Run(IGame game)
+        {
+            Game = game;
+
+            Game.Start();
+            if (!Game.IsRunning)
+                return;
+
+            DrawBorder(Game.Border);
+            DateTime start = DateTime.Now; // frame start time
+            int ticks = 0; // elapsed time in ms
+            while (Game.IsRunning)
+            {
+                DrawAll();
+                bool paused = HandleInput();
+                if (!Game.IsRunning)
+                    break;
+
+                if (paused)
+                {
+                    DrawAll(true); // toggle to paused and draw
+                    if (!Game.IsRunning)
+                        break;
+                    InputWait(); // wait for any key press
+                    DrawAll(true); // unpause and draw
+                }
+
+                if (Game.IsRunning && Game.FrameInterval > 0)
+                {
+                    Thread.Sleep(20);
+                    ticks = (int)DateTime.Now.Subtract(start).TotalMilliseconds;
+                    if (ticks > game.FrameInterval) // move to next frame
+                    {
+                        Game.NextFrame();
+                        start = DateTime.Now;
+                        ticks -= game.FrameInterval;
+                    }
+                }
+            }
+        }
+
+        public static void Exit()
+        {
             // just in case, restore color
             Console.ResetColor();
             // show cursor again
             Console.CursorVisible = true;
             // restore initial values
-            Resize(_winWidth, _winHeight);
+            Resize(WinWidth, WinHeight);
         }
     }
 }

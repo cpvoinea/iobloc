@@ -11,10 +11,10 @@ namespace iobloc
     //      Also include some external helpers for accessing dictionaries and arrays
     static class Serializer
     {
+        // external settings file is set by run argument and settings are saved here when program ends
+        public const string SettingsFileName = "settings.txt";
         // save highscores to this file for persistance
         private const string HighscoresFileName = "highscores.txt";
-        // external settings file is set by run argument and settings are saved here when program ends
-        private const string SettingsFileName = "settings.txt";
         // in-memory caching of games
         private readonly static Dictionary<int, IGame> Games = new Dictionary<int, IGame>();
         // Access to settings as a dictionary where keys are game IDs
@@ -32,34 +32,33 @@ namespace iobloc
         // Summary:
         //      Load settings, menu, highscores
         // Parameters: settingsFilePath: external settings file path
-        public static void Load(string settingsFilePath)
+        public static void Load()
         {
-            LoadSettings(settingsFilePath);
+            Games.Clear();
+            LoadSettings();
             ReadSettings();
             LoadHighscores();
         }
 
         // Summary:
         //      Save settings, highscores
-        public static void Save(string settingsFilePath)
+        public static void Save()
         {
-            SaveSettings(settingsFilePath);
+            SaveSettings();
             SaveHighscores();
         }
 
         // Summary:
         //      If external settings file, overwrite default settings from file values
         // Parameters: settingsFilePath: external settings file, will be used for saving if it doesn't exist
-        private static void LoadSettings(string settingsFilePath)
+        private static void LoadSettings()
         {
-            if (!string.IsNullOrEmpty(settingsFilePath))
-                settingsFilePath = SettingsFileName;
-            if (File.Exists(settingsFilePath))
+            if (File.Exists(SettingsFileName))
                 Settings.Clear();
             else
                 return;
 
-            using (var sr = File.OpenText(settingsFilePath))
+            using (var sr = File.OpenText(SettingsFileName))
                 while (!sr.EndOfStream)
                 {
                     string line = sr.ReadLine();
@@ -91,6 +90,8 @@ namespace iobloc
         {
             List<string> allowedKeys = new List<string>();
             List<string> text = new List<string>();
+            KeyToGameIdMapping.Clear();
+            Highscores.Clear();
             foreach (int id in Settings.Keys)
             {
                 var s = Settings[id];
@@ -125,12 +126,9 @@ namespace iobloc
 
         // Summary:
         //      If external settings file was used but file does not exist, create it
-        private static void SaveSettings(string settingsFilePath)
+        private static void SaveSettings()
         {
-            if (string.IsNullOrEmpty(settingsFilePath))
-                return;
-
-            using (var sw = File.CreateText(settingsFilePath))
+            using (var sw = File.CreateText(SettingsFileName))
             {
                 foreach (int id in Settings.Keys)
                 {
