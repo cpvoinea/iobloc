@@ -30,7 +30,7 @@ namespace iobloc
             {15, Color.White}
         };
         private readonly TableLayoutPanel _grid = new TableLayoutPanel();
-        private readonly System.Timers.Timer _timer = new System.Timers.Timer();
+        private static Timer _timer = new Timer();
         private string _key = null;
 
         public event LoopHandler NextInLoop;
@@ -38,6 +38,7 @@ namespace iobloc
         public FormRenderer()
         {
             InitializeComponent();
+            _timer.Tick += OnNextInLoop;
         }
 
         #region Windows Form Designer
@@ -64,7 +65,7 @@ namespace iobloc
 
         #endregion
 
-        private void OnNextInLoop(object sender, System.Timers.ElapsedEventArgs args)
+        private void OnNextInLoop(object sender, EventArgs args)
         {
             if (NextInLoop != null)
                 NextInLoop();
@@ -77,8 +78,6 @@ namespace iobloc
                 return;
 
             _timer.Interval = interval;
-            _timer.Elapsed += OnNextInLoop;
-            _timer.Enabled = true;
             _timer.Start();
             Application.DoEvents();
         }
@@ -86,8 +85,6 @@ namespace iobloc
         public void StopLoop()
         {
             _timer.Stop();
-            _timer.Enabled = false;
-            _timer.Elapsed -= OnNextInLoop;
         }
 
         [STAThread]
@@ -124,41 +121,39 @@ namespace iobloc
                         c.Text = ((char)border[row, col]).ToString();
                     }
 
-            this.Show();
+            Application.Run(this);
+            Application.DoEvents();
         }
 
         public void DrawPane(Pane pane)
         {
-            _grid.Invoke((MethodInvoker)delegate
+            SuspendLayout();
+            for (int row = 0; row < pane.Height; row++)
+                for (int col = 0; col < pane.Width; col++)
+                {
+                    var c = Cell(pane, row, col);
+                    c.BackColor = Color.FromKnownColor(KnownColor.Control);
+                    c.Text = string.Empty;
+                }
+
+            if (pane.IsTextMode)
             {
-                SuspendLayout();
-                for (int row = 0; row < pane.Height; row++)
-                    for (int col = 0; col < pane.Width; col++)
+                for (int row = 0; row < pane.Text.Length && row < pane.Height; row++)
+                    for (int col = 0; col < pane.Text[row].Length && col < pane.Width; col++)
                     {
                         var c = Cell(pane, row, col);
-                        c.BackColor = Color.FromKnownColor(KnownColor.Control);
-                        c.Text = string.Empty;
+                        c.Text = pane.Text[row][col].ToString();
                     }
-
-                if (pane.IsTextMode)
-                {
-                    for (int row = 0; row < pane.Text.Length && row < pane.Height; row++)
-                        for (int col = 0; col < pane.Text[row].Length && col < pane.Width; col++)
-                        {
-                            var c = Cell(pane, row, col);
-                            c.Text = pane.Text[row][col].ToString();
-                        }
-                }
-                else
-                {
-                    for (int row = 0; row < pane.Height; row++)
-                        for (int col = 0; col < pane.Width; col++)
-                            if (pane[row, col] > 0)
-                                Cell(pane, row, col).BackColor = COLOR[pane[row, col]];
-                }
-                ResumeLayout(true);
-                Refresh();
-            });
+            }
+            else
+            {
+                for (int row = 0; row < pane.Height; row++)
+                    for (int col = 0; col < pane.Width; col++)
+                        if (pane[row, col] > 0)
+                            Cell(pane, row, col).BackColor = COLOR[pane[row, col]];
+            }
+            ResumeLayout(true);
+            Refresh();
         }
 
         private Control Cell(Pane pane, int row, int col)
@@ -193,6 +188,7 @@ namespace iobloc
         protected override void Dispose(bool disposing)
         {
             StopLoop();
+            _timer.Tick -= OnNextInLoop;
             _timer.Dispose();
             base.Dispose(disposing);
         }

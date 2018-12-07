@@ -6,7 +6,7 @@ namespace iobloc
 {
     class Program
     {
-        private static bool USE_FORMS = false;
+        private static bool USE_FORMS = true;
 
         [STAThread]
         static void Main(string[] args)
