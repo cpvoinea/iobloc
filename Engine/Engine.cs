@@ -27,35 +27,31 @@ namespace iobloc
         private void InitializeComponent()
         {
             this.SuspendLayout();
-            // 
-            // _panel
-            // 
-            this._panel = new TableLayoutPanel();
-            this._panel.Dock = DockStyle.Fill;
-            this._panel.ColumnCount = 1;
-            this._panel.RowCount = 5;
-            this._panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100f));
-            float p = 100f / this._panel.RowCount;
-            for (int i = 0; i < this._panel.RowCount; i++)
-                this._panel.RowStyles.Add(new RowStyle(SizeType.Percent, p));
             //
-            // buttons
+            // _btnSettings
             //
             this._btnSettings = new Button();
             this._btnSettings.Dock = DockStyle.Fill;
             this._btnSettings.Text = "&Settings";
             this._btnSettings.Click += btnSettings_Click;
-            this._panel.Controls.Add(this._btnSettings);
+            //
+            // _btnConsole
+            //
             this._btnConsole = new Button();
             this._btnConsole.Dock = DockStyle.Fill;
             this._btnConsole.Text = "&Console";
+            this._btnConsole.Enabled = false;
             this._btnConsole.Click += btnConsole_Click;
-            this._panel.Controls.Add(this._btnConsole);
+            //
+            // _btnForm
+            //
             this._btnForm = new Button();
             this._btnForm.Dock = DockStyle.Fill;
             this._btnForm.Text = "&Form";
             this._btnForm.Click += btnForm_Click;
-            this._panel.Controls.Add(this._btnForm);
+            //
+            // _btnExit
+            //
             this._btnExit = new Button();
             this._btnExit.Dock = DockStyle.Fill;
             this._btnExit.Text = "E&xit";
@@ -68,6 +64,20 @@ namespace iobloc
             this._link.Text = "iObloc v3.0";
             this._link.TextAlign = ContentAlignment.MiddleCenter;
             this._link.Click += link_Click;
+            // 
+            // _panel
+            // 
+            this._panel = new TableLayoutPanel();
+            this._panel.Dock = DockStyle.Fill;
+            this._panel.ColumnCount = 1;
+            this._panel.RowCount = 5;
+            this._panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100f));
+            float p = 100f / this._panel.RowCount;
+            for (int i = 0; i < this._panel.RowCount; i++)
+                this._panel.RowStyles.Add(new RowStyle(SizeType.Percent, p));
+            this._panel.Controls.Add(this._btnSettings);
+            this._panel.Controls.Add(this._btnConsole);
+            this._panel.Controls.Add(this._btnForm);
             this._panel.Controls.Add(_link);
             this._panel.Controls.Add(this._btnExit);
             // 

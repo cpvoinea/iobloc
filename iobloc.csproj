@@ -3,16 +3,8 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.0</TargetFramework>
-    <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
     <UseWindowsForms>true</UseWindowsForms>
-    <PackageId>iobloc</PackageId>
-    <Version>3.0.0</Version>
-    <Authors>io</Authors>
-    <IsPackable>true</IsPackable>
+    <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.DotNet.ILCompiler" Version="1.0.0-alpha-27207-01" />
-  </ItemGroup>
   
 </Project>

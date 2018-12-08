@@ -64,3 +64,6 @@ class Program
 * SDK as nuget package (+demo game)
 * dynamic integration of external games
 * extensive documentation
+## v3.0
+* WinForms port
+* launcher
