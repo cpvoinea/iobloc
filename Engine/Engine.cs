@@ -97,7 +97,7 @@ namespace iobloc
             this.ResumeLayout(false);
         }
 
-        private void btnSettings_Click(object sender, EventArgs args)
+        private void btnSettings_Click(object sender, EventArgs e)
         {
             try
             {
@@ -108,22 +108,22 @@ namespace iobloc
             catch { }
         }
 
-        private void btnConsole_Click(object sender, EventArgs args)
+        private void btnConsole_Click(object sender, EventArgs e)
         {
             Start(false);
         }
 
-        private void btnForm_Click(object sender, EventArgs args)
+        private void btnForm_Click(object sender, EventArgs e)
         {
             Start(true);
         }
 
-        private void btnExit_Click(object sender, EventArgs args)
+        private void btnExit_Click(object sender, EventArgs e)
         {
             Application.Exit();
         }
 
-        private void link_Click(object sender, EventArgs args)
+        private void link_Click(object sender, EventArgs e)
         {
             StartProcess("https://github.com/cpvoinea/iobloc/releases");
         }

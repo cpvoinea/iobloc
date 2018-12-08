@@ -76,14 +76,20 @@ namespace iobloc
                 this._grid.RowStyles.Add(new RowStyle(SizeType.Percent, v));
 
             for (int i = 0; i < this._grid.ColumnCount * this._grid.RowCount; i++)
-                this._grid.Controls.Add(new Label()
+            {
+                var fill = new Label()
                 {
                     AutoSize = false,
                     Dock = DockStyle.Fill,
                     Margin = new Padding(0),
                     Padding = new Padding(0),
-                    TextAlign = ContentAlignment.MiddleCenter
-                });
+                    TextAlign = ContentAlignment.MiddleCenter,
+                };
+                fill.MouseClick += OnMouseDown;
+                fill.MouseWheel += OnMouseWheel;
+
+                this._grid.Controls.Add(fill);
+            }
 
             for (int row = 0; row < _game.Border.Height; row++)
                 for (int col = 0; col < _game.Border.Width; col++)
@@ -169,13 +175,26 @@ namespace iobloc
 
         #endregion
 
+        private void Pause(bool pause)
+        {
+            _game.TogglePause();
+            DrawAll();
+            _isPaused = pause;
+        }
+
+        private void HandleInput(string key)
+        {
+            _game.HandleInput(key); // handle if key is allowed
+            DrawAll();
+            if (!_game.IsRunning)
+                this.Close();
+        }
+
         protected override void OnKeyDown(KeyEventArgs e)
         {
             if (_isPaused)
             {
-                _game.TogglePause();
-                DrawAll();
-                _isPaused = false;
+                Pause(false);
                 return;
             }
 
@@ -187,21 +206,54 @@ namespace iobloc
                 this.Close();
             }
             else if (_game.AllowedKeys.Contains(key))
-            {
-                _game.HandleInput(key); // handle if key is allowed
-                DrawAll();
-                if (!_game.IsRunning)
-                    this.Close();
-            }
+                HandleInput(key);
             else
-            {
-                _isPaused = true;
-                _game.TogglePause();
-                DrawAll();
-            }
+                Pause(true);
         }
 
-        private void FrameTimer_Tick(object sender, EventArgs args)
+        private void OnMouseDown(object sender, MouseEventArgs e)
+        {
+            if (_isPaused)
+            {
+                Pause(false);
+                return;
+            }
+
+            string key = null;
+            if (_game is Menu) // in menu, get clicked item
+            {
+                int g = _grid.GetPositionFromControl(sender as Control).Row - 1;
+                key = "D" + (g < 10 ? g.ToString() : "");
+            }
+            else
+                switch (e.Button)
+                {
+                    case MouseButtons.Left: key = UIKey.UpArrow; break;
+                    case MouseButtons.Right: key = UIKey.DownArrow; break;
+                    case MouseButtons.Middle: key = UIKey.Enter; break;
+                }
+
+            if (key != null && _game.AllowedKeys.Contains(key))
+                HandleInput(key);
+        }
+
+        private void OnMouseWheel(object sender, MouseEventArgs e)
+        {
+            if (e.Delta == 0)
+                return;
+
+            if (_isPaused)
+            {
+                Pause(false);
+                return;
+            }
+
+            string key = e.Delta < 0 ? UIKey.LeftArrow : UIKey.RightArrow;
+            if (_game.AllowedKeys.Contains(key))
+                HandleInput(key);
+        }
+
+        private void FrameTimer_Tick(object sender, EventArgs e)
         {
             if (!_game.IsRunning)
             {
