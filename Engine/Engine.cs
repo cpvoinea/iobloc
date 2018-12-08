@@ -40,7 +40,7 @@ namespace iobloc
             this._btnConsole = new Button();
             this._btnConsole.Dock = DockStyle.Fill;
             this._btnConsole.Text = "&Console";
-            this._btnConsole.Enabled = false;
+            // this._btnConsole.Enabled = false;
             this._btnConsole.Click += btnConsole_Click;
             //
             // _btnForm
@@ -153,9 +153,11 @@ namespace iobloc
                     }
                     else
                     {
+                        AllocConsole();
                         ConsoleRunner.Initialize();
                         ConsoleRunner.Run(game);
                         ConsoleRunner.Exit();
+                        FreeConsole();
                     }
 
                     if (game is IBaseGame) // base game selected
@@ -177,5 +179,10 @@ namespace iobloc
                 catch { }
             }
         }
+
+        [System.Runtime.InteropServices.DllImport("kernel32.dll")]
+        private static extern bool AllocConsole();
+        [System.Runtime.InteropServices.DllImport("kernel32.dll")]
+        private static extern bool FreeConsole();
     }
 }
