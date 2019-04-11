@@ -9,5 +9,6 @@ namespace iobloc
         public const string UpArrow = "UpArrow";
         public const string DownArrow = "DownArrow";
         public const string Enter = "Enter";
+        public const string Space = "Spacebar";
     }
 }

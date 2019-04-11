@@ -11,90 +11,94 @@ namespace iobloc
     {
         private const int SCALE_FONT = 18;
         private const int SCALE_HORIZONTAL = 8;
-        private const int SCALE_VERTICAL = 12;
-        private TableLayoutPanel _panel;
-        private Button _btnSettings;
-        private Button _btnConsole;
-        private Button _btnForm;
-        private Button _btnExit;
-        private LinkLabel _link;
+        private const int SCALE_VERTICAL = 15;
+        private readonly TableLayoutPanel _panel;
+        private readonly Button _btnSettings;
+        private readonly Button _btnConsole;
+        private readonly Button _btnForm;
+        private readonly Button _btnImage;
+        private readonly Button _btnExit;
+        private readonly LinkLabel _link;
 
         public Engine()
         {
-            InitializeComponent();
-        }
-
-        private void InitializeComponent()
-        {
-            this.SuspendLayout();
+            SuspendLayout();
             //
             // _btnSettings
             //
-            this._btnSettings = new Button();
-            this._btnSettings.Dock = DockStyle.Fill;
-            this._btnSettings.Text = "&Settings";
-            this._btnSettings.Click += btnSettings_Click;
+            _btnSettings = new Button();
+            _btnSettings.Dock = DockStyle.Fill;
+            _btnSettings.Text = "&Settings";
+            _btnSettings.Click += btnSettings_Click;
             //
             // _btnConsole
             //
-            this._btnConsole = new Button();
-            this._btnConsole.Dock = DockStyle.Fill;
-            this._btnConsole.Text = "&Console";
-            // this._btnConsole.Enabled = false;
-            this._btnConsole.Click += btnConsole_Click;
+            _btnConsole = new Button();
+            _btnConsole.Dock = DockStyle.Fill;
+            _btnConsole.Text = "&Console";
+            // _btnConsole.Enabled = false;
+            _btnConsole.Click += btnConsole_Click;
             //
             // _btnForm
             //
-            this._btnForm = new Button();
-            this._btnForm.Dock = DockStyle.Fill;
-            this._btnForm.Text = "&Form";
-            this._btnForm.Click += btnForm_Click;
+            _btnForm = new Button();
+            _btnForm.Dock = DockStyle.Fill;
+            _btnForm.Text = "&Form";
+            _btnForm.Click += btnForm_Click;
+            //
+            // _btnImage
+            //
+            _btnImage = new Button();
+            _btnImage.Dock = DockStyle.Fill;
+            _btnImage.Text = "&Image";
+            _btnImage.Click += btnImage_Click;
             //
             // _btnExit
             //
-            this._btnExit = new Button();
-            this._btnExit.Dock = DockStyle.Fill;
-            this._btnExit.Text = "E&xit";
-            this._btnExit.Click += btnExit_Click;
+            _btnExit = new Button();
+            _btnExit.Dock = DockStyle.Fill;
+            _btnExit.Text = "E&xit";
+            _btnExit.Click += btnExit_Click;
             //
             // _link
             //
-            this._link = new LinkLabel();
-            this._link.Dock = DockStyle.Fill;
-            this._link.Text = "iObloc v3.0";
-            this._link.TextAlign = ContentAlignment.MiddleCenter;
-            this._link.Click += link_Click;
+            _link = new LinkLabel();
+            _link.Dock = DockStyle.Fill;
+            _link.Text = "iObloc v3.0";
+            _link.TextAlign = ContentAlignment.MiddleCenter;
+            _link.Click += link_Click;
             // 
             // _panel
             // 
-            this._panel = new TableLayoutPanel();
-            this._panel.Dock = DockStyle.Fill;
-            this._panel.ColumnCount = 1;
-            this._panel.RowCount = 5;
-            this._panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100f));
-            float p = 100f / this._panel.RowCount;
-            for (int i = 0; i < this._panel.RowCount; i++)
-                this._panel.RowStyles.Add(new RowStyle(SizeType.Percent, p));
-            this._panel.Controls.Add(this._btnSettings);
-            this._panel.Controls.Add(this._btnConsole);
-            this._panel.Controls.Add(this._btnForm);
-            this._panel.Controls.Add(_link);
-            this._panel.Controls.Add(this._btnExit);
+            _panel = new TableLayoutPanel();
+            _panel.Dock = DockStyle.Fill;
+            _panel.ColumnCount = 1;
+            _panel.RowCount = 6;
+            _panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100f));
+            float p = 100f / _panel.RowCount;
+            for (int i = 0; i < _panel.RowCount; i++)
+                _panel.RowStyles.Add(new RowStyle(SizeType.Percent, p));
+            _panel.Controls.Add(_btnSettings);
+            _panel.Controls.Add(_btnConsole);
+            _panel.Controls.Add(_btnForm);
+            _panel.Controls.Add(_btnImage);
+            _panel.Controls.Add(_link);
+            _panel.Controls.Add(_btnExit);
             // 
             // FormRunner
             // 
-            this.FormBorderStyle = FormBorderStyle.FixedToolWindow;
-            this.StartPosition = FormStartPosition.CenterScreen;
-            this.Font = new Font(Font.FontFamily, SCALE_FONT);
-            this.ClientSize = new System.Drawing.Size(SCALE_FONT * SCALE_HORIZONTAL, SCALE_FONT * SCALE_VERTICAL);
-            this.AcceptButton = _btnForm;
-            this.CancelButton = _btnExit;
-            this.ShowIcon = false;
-            this.ShowInTaskbar = true;
-            this.Controls.Add(this._panel);
-            this.Name = "Engine";
-            this.Text = "iObloc";
-            this.ResumeLayout(false);
+            FormBorderStyle = FormBorderStyle.FixedToolWindow;
+            StartPosition = FormStartPosition.CenterScreen;
+            Font = new Font(Font.FontFamily, SCALE_FONT);
+            ClientSize = new System.Drawing.Size(SCALE_FONT * SCALE_HORIZONTAL, SCALE_FONT * SCALE_VERTICAL);
+            AcceptButton = _btnImage;
+            CancelButton = _btnExit;
+            ShowIcon = false;
+            ShowInTaskbar = true;
+            Controls.Add(_panel);
+            Name = "Engine";
+            Text = "iObloc";
+            ResumeLayout(false);
         }
 
         private void btnSettings_Click(object sender, EventArgs e)
@@ -110,12 +114,17 @@ namespace iobloc
 
         private void btnConsole_Click(object sender, EventArgs e)
         {
-            Start(false);
+            Start(RenderType.Console);
         }
 
         private void btnForm_Click(object sender, EventArgs e)
         {
-            Start(true);
+            Start(RenderType.TableForm);
+        }
+
+        private void btnImage_Click(object sender, EventArgs e)
+        {
+            Start(RenderType.ImageForm);
         }
 
         private void btnExit_Click(object sender, EventArgs e)
@@ -134,7 +143,7 @@ namespace iobloc
             catch { }
         }
 
-        private void Start(bool isForms)
+        private void Start(RenderType render)
         {
             try
             {
@@ -144,20 +153,30 @@ namespace iobloc
                 IGame game = menu;
                 while (game != null)
                 {
-                    if (isForms)
+                    switch (render)
                     {
-                        Cursor = Cursors.WaitCursor;
-                        var form = new FormRunner(game);
-                        Cursor = Cursors.Default;
-                        form.ShowDialog(this);
-                    }
-                    else
-                    {
-                        AllocConsole();
-                        ConsoleRunner.Initialize();
-                        ConsoleRunner.Run(game);
-                        ConsoleRunner.Exit();
-                        FreeConsole();
+                        case RenderType.ImageForm:
+                            Cursor = Cursors.WaitCursor;
+                            using (var form = new ImageFormRenderer())
+                            {
+                                Cursor = Cursors.Default;
+                                form.Run(game);
+                                form.ShowDialog(this);
+                            }
+                            break;
+                        case RenderType.TableForm:
+                            Cursor = Cursors.WaitCursor;
+                            using (var form = new TableFormRenderer())
+                            {
+                                Cursor = Cursors.Default;
+                                form.Run(game);
+                                form.ShowDialog(this);
+                            }
+                            break;
+                        case RenderType.Console:
+                            using (var console = new ConsoleRenderer())
+                                console.Run(game);
+                            break;
                     }
 
                     if (game is IBaseGame) // base game selected
@@ -179,10 +198,5 @@ namespace iobloc
                 catch { }
             }
         }
-
-        [System.Runtime.InteropServices.DllImport("kernel32.dll")]
-        private static extern bool AllocConsole();
-        [System.Runtime.InteropServices.DllImport("kernel32.dll")]
-        private static extern bool FreeConsole();
     }
 }
