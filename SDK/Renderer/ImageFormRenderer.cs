@@ -10,7 +10,6 @@ namespace iobloc
         private const int SCALE_VERTICAL = SCALE_FONT + 9;
 
         private Panel _panel;
-        private Graphics g;
         private int _cellWidth;
         private int _cellHeight;
 
@@ -56,7 +55,6 @@ namespace iobloc
             SetSize();
             using (var g = _panel.CreateGraphics())
             {
-                g.FillRectangle(Brushes.White, pane.FromCol * _cellWidth, pane.FromRow * _cellHeight, pane.Width * _cellWidth, pane.Height * _cellHeight);
                 g.DrawRectangle(Pens.Black, pane.FromCol * _cellWidth, pane.FromRow * _cellHeight, pane.Width * _cellWidth, pane.Height * _cellHeight);
 
                 if (pane.IsTextMode)
@@ -82,42 +80,17 @@ namespace iobloc
                 }
                 else
                 {
-                    bool cursor = false;
-                    int cursorX = 0, cursorY = 0;
                     for (int row = 0; row < pane.Height; row++)
                         for (int col = 0; col < pane.Width; col++)
                         {
+                            int x = (pane.FromCol + col) * _cellWidth;
+                            int y = (pane.FromRow + row) * _cellHeight;
                             int c = pane[row, col];
-                            if (c != 0)
-                            {
-                                if (c < 0)
-                                {
-                                    c = -c;
-                                    cursor = true;
-                                }
-                                int x = (pane.FromCol + col) * _cellWidth;
-                                int y = (pane.FromRow + row) * _cellHeight;
-                                g.FillRectangle(RenderMapping.FormBrush[c], x, y, _cellWidth, _cellHeight);
-                                if (cursor)
-                                {
-                                    cursorX = x + 1;
-                                    cursorY = y + 1;
-                                }
-                            }
+                            Brush b = c > 0 ? RenderMapping.FormBrush[c] : Brushes.White;
+                            g.FillRectangle(b, x, y, _cellWidth, _cellHeight);
                         }
-                    if (cursor)
-                        g.DrawEllipse(Pens.White, cursorX, cursorY, _cellWidth - 3, _cellHeight - 3);
                 }
             }
-        }
-
-        protected override void OnClientSizeChanged(EventArgs e)
-        {
-            base.OnClientSizeChanged(e);
-            SetSize();
-            using (var g = _panel.CreateGraphics())
-                g.Clear(Color.FromKnownColor(KnownColor.Control));
-            DrawAll(true);
         }
     }
 }

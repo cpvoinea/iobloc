@@ -1,7 +1,6 @@
 using System;
 using System.Windows.Forms;
 using System.Drawing;
-using System.Collections.Generic;
 
 namespace iobloc
 {
@@ -10,8 +9,8 @@ namespace iobloc
         protected const int SCALE_FONT = 14;
 
         private readonly Timer _timer = new Timer();
-        protected IGame Game = null;
-        protected bool IsPaused = false;
+        protected IGame Game;
+        protected bool IsPaused;
 
         public FormRenderer()
         {
@@ -40,18 +39,8 @@ namespace iobloc
         public void Run(IGame game)
         {
             Game = game;
-            SuspendLayout();
             if (Game.FrameInterval > 0)
                 _timer.Interval = Game.FrameInterval;
-            InitializeControls();
-            //if (!(Game is Menu))
-            //{
-            //    ControlBox = false;
-            //    ShowIcon = false;
-            //    TopMost = true;
-            //    WindowState = FormWindowState.Maximized;
-            //}
-            ResumeLayout(false);
 
             Game.Start();
             if (!Game.IsRunning)
@@ -59,18 +48,18 @@ namespace iobloc
 
             if (Game.FrameInterval > 0)
                 _timer.Start();
+
+            InitializeControls();
         }
 
         protected void DrawAll(bool force = false)
         {
-            SuspendLayout();
             foreach (var p in Game.Panes.Values)
                 if (p.HasChanges || force)
                 {
                     DrawPane(p);
                     p.Change(false);
                 }
-            ResumeLayout(true);
         }
 
         protected void Pause(bool pause)
