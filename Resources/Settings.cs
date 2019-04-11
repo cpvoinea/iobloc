@@ -203,14 +203,14 @@ namespace iobloc
                  {"AssemblyPath", "iobloc.dll"},
                  {"ClassName", "iobloc.Demo"},
                  {"Name", "Demo"},
-                 //{"MenuKeys", "D"},
+                 {"MenuKeys", "D"},
              });
             //  Platform
             Add(21, new Dictionary<string, string>{
                  {"AssemblyPath", "iobloc.platform.dll"},
                  {"ClassName", "iobloc.platform.Platform"},
                  {"Name", "Platform"},
-                 //{"MenuKeys", "P"},
+                 {"MenuKeys", "P"},
              });
         }
     }

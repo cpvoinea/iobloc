@@ -20,11 +20,6 @@ namespace iobloc
         private readonly Button _btnExit;
         private readonly LinkLabel _link;
 
-        static Launcher()
-        {
-            Serializer.Load();
-        }
-
         public Launcher()
         {
             SuspendLayout();
@@ -133,17 +128,17 @@ namespace iobloc
 
         private void BtnConsole_Click(object sender, EventArgs e)
         {
-            Launch(RenderType.Console, owner: this);
+            Launch(RenderType.Console);
         }
 
         private void BtnForm_Click(object sender, EventArgs e)
         {
-            Launch(RenderType.TableForm, owner: this);
+            Launch(RenderType.TableForm);
         }
 
         private void BtnImage_Click(object sender, EventArgs e)
         {
-            Launch(RenderType.ImageForm, owner: this);
+            Launch(RenderType.ImageForm);
         }
 
         private void BtnExit_Click(object sender, EventArgs e)
@@ -162,24 +157,21 @@ namespace iobloc
             catch { }
         }
 
-        public static Form Launch(RenderType renderType = RenderType.ImageForm, GameType gameType = GameType.Menu, Form owner = null)
+        public void Launch(RenderType renderType)
         {
-            IRenderer renderer = GetRenderer(renderType);
-            IGame menu = Serializer.GetGame((int)GameType.Menu);
-            IGame game = gameType == GameType.Menu ? menu : Serializer.GetGame((int)gameType);
             try
             {
+                Serializer.Load();
+                IGame menu = Serializer.GetGame((int)GameType.Menu);
+                IGame game = menu;
 
                 while (game != null)
                 {
-                    renderer.Run(game);
-                    if (renderer is Form)
+                    using (IRenderer renderer = GetRenderer(renderType))
                     {
-                        var frm = renderer as Form;
-                        if (owner == null && game != menu)
-                            return frm;
-                        else
-                            frm.ShowDialog(owner);
+                        renderer.Run(game);
+                        if (renderer is Form)
+                            (renderer as Form).ShowDialog(this);
                     }
 
                     if (game is IBaseGame) // base game selected
@@ -189,13 +181,10 @@ namespace iobloc
                     else // exit
                         game = null;
                 }
-
-                return null;
             }
             catch (Exception ex)
             {
-                MessageBox.Show(owner, ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return null;
+                MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
@@ -204,7 +193,7 @@ namespace iobloc
             }
         }
 
-        private static IRenderer GetRenderer(RenderType renderType)
+        public static IRenderer GetRenderer(RenderType renderType)
         {
             switch (renderType)
             {
@@ -213,6 +202,23 @@ namespace iobloc
                 case RenderType.ImageForm: return new ImageFormRenderer();
                 default: return null;
             }
+        }
+
+        public static Form Form(GameType gameType, RenderType renderType = RenderType.ImageForm)
+        {
+            Serializer.Load();
+            IGame game = Serializer.GetGame((int)gameType);
+            IRenderer renderer = GetRenderer(renderType);
+            renderer.Run(game);
+            return renderer as Form;
+        }
+
+        public static void Console(GameType gameType)
+        {
+            Serializer.Load();
+            IGame game = Serializer.GetGame((int)gameType);
+            ConsoleRenderer renderer = new ConsoleRenderer();
+            renderer.Run(game);
         }
     }
 }

@@ -104,10 +104,7 @@ namespace iobloc
                     allowedKeys.AddRange(shortcutList);
 
                     if (Enum.IsDefined(typeof(GameType), id))
-                    {
-                        string prefix = id < 10 ? id.ToString() : shortcuts;
-                        text.Add($"{prefix}:{(GameType)id}");
-                    }
+                        text.Add($"{id}:{(GameType)id}");
                     else
                     {
                         string name = s.ContainsKey(Settings.Name) ? s[Settings.Name] : "UNKNOWN";
