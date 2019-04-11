@@ -6,7 +6,7 @@ namespace iobloc
         private int _col;
         private int _color;
         private int _prev;
-        private bool _paint;
+        private bool _paint = true;
         private bool _light;
 
         public Paint2() : base(GameType.Paint2) { }
@@ -19,7 +19,7 @@ namespace iobloc
                 Main.Clear();
                 _color = 0;
                 _prev = 0;
-                _paint = false;
+                _paint = true;
             }
             _row = Height / 2;
             _col = Width / 2;
@@ -37,7 +37,7 @@ namespace iobloc
             {
                 _prev = Main[_row, _col];
                 for (int i = 0; i < BlockWidth; i++)
-                    Main[_row, _col + i] = (!_paint || _color == 0 && _prev == 0) ? 15 : _color;
+                    Main[_row, _col + i] = (!_paint || _color == 0 && _prev == 0) ? -15 : -_color;
                 base.Change(set);
             }
         }
@@ -62,7 +62,6 @@ namespace iobloc
                     }
                     break;
                 case "D8":
-                case "NumPad8":
                     if (_paint)
                     {
                         _light = !_light;
@@ -71,7 +70,6 @@ namespace iobloc
                     }
                     break;
                 case "D9":
-                case "NumPad9":
                     if (_paint)
                     {
                         _color = 15;
@@ -79,7 +77,6 @@ namespace iobloc
                     }
                     break;
                 case "D0":
-                case "NumPad0":
                     if (_paint)
                     {
                         _color = 0;

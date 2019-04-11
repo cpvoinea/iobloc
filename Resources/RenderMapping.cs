@@ -25,6 +25,25 @@ namespace iobloc
             {15, Color.White}
         };
 
+        public static readonly Dictionary<int, Brush> FormBrush = new Dictionary<int, Brush> {
+            {0, Brushes.Black},
+            {1, Brushes.DarkBlue},
+            {2, Brushes.DarkGreen},
+            {3, Brushes.DarkCyan},
+            {4, Brushes.DarkRed},
+            {5, Brushes.DarkMagenta},
+            {6, Brushes.DarkSlateGray},
+            {7, Brushes.Gray},
+            {8, Brushes.DarkGray},
+            {9, Brushes.Blue},
+            {10, Brushes.Green},
+            {11, Brushes.Cyan},
+            {12, Brushes.Red},
+            {13, Brushes.Magenta},
+            {14, Brushes.Yellow},
+            {15, Brushes.White}
+        };
+
         public static readonly Dictionary<Keys, string> FormKey = new Dictionary<Keys, string>{
             {Keys.Left, UIKey.LeftArrow},
             {Keys.Right, UIKey.RightArrow},
