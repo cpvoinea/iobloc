@@ -97,7 +97,7 @@ namespace iobloc
                 Game.Stop(); // stop on Escape
                 Close();
             }
-            else if (Game.AllowedKeys.Contains(key))
+            else if (Serializer.Contains(Game.AllowedKeys, key))
                 HandleInput(key);
             else
                 Pause(true);

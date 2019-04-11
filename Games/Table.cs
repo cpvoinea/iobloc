@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace iobloc
 {
@@ -62,16 +61,16 @@ namespace iobloc
         {
             base.InitializeSettings();
             // colors
-            CP = GameSettings.GetColor(Settings.PlayerColor);
-            CE = GameSettings.GetColor(Settings.EnemyColor);
-            CN = GameSettings.GetColor(Settings.NeutralColor);
-            CD = GameSettings.GetColor("DarkColor");
-            CL = GameSettings.GetColor("LightColor");
-            CM = GameSettings.GetColor("MarkingColor");
+            CP = Serializer.GetColor(GameSettings, Settings.PlayerColor);
+            CE = Serializer.GetColor(GameSettings, Settings.EnemyColor);
+            CN = Serializer.GetColor(GameSettings, Settings.NeutralColor);
+            CD = Serializer.GetColor(GameSettings, "DarkColor");
+            CL = Serializer.GetColor(GameSettings, "LightColor");
+            CM = Serializer.GetColor(GameSettings, "MarkingColor");
             // AI players
-            int aiCount = GameSettings.GetInt("AIs", 0);
-            string assemblyPath = GameSettings.GetString(Settings.AssemblyPath);
-            string className = GameSettings.GetString(Settings.ClassName);
+            int aiCount = Serializer.GetInt(GameSettings, "AIs", 0);
+            string assemblyPath = Serializer.GetString(GameSettings, Settings.AssemblyPath);
+            string className = Serializer.GetString(GameSettings, Settings.ClassName);
             if (aiCount > 0)
                 _player2 = new BasicAI();
             if (aiCount > 1)
@@ -129,7 +128,6 @@ namespace iobloc
 
             for (int i = 0; i < 6; i++)
             {
-                bool isDark = i % 2 == 0;
                 _lines[i] = new TableLine(Panes[Pnl.Table.LowerRight], BlockWidth, Block, 5 - i, Main.Height - 1, true);
                 _lines[i + 6] = new TableLine(Panes[Pnl.Table.LowerLeft], BlockWidth, Block, 5 - i, Main.Height - 1, true);
                 _lines[i + 12] = new TableLine(Panes[Pnl.Table.UpperLeft], BlockWidth, Block, i, 0, false);
@@ -212,7 +210,7 @@ namespace iobloc
 
         private void ShowDice()
         {
-            Panes[Pnl.Table.Dice].SetText(string.Join<int>(",", _dice));
+            Panes[Pnl.Table.Dice].SetText(Serializer.Join(",", _dice));
         }
 
         #endregion
@@ -339,13 +337,19 @@ namespace iobloc
             }
             else if (_taken.HasValue && _allowed.Count == 2)
             {
-                int to = _allowed.First(x => x != _taken.Value);
+                int i = 0;
+                while (i < _allowed.Count && _allowed[i] == _taken.Value)
+                    i++;
+                int to = _allowed[i];
                 Travel(_taken.Value, to);
                 AddAction(ActionType.Put);
             }
             else if (!_cursor.HasValue || !_allowed.Contains(_cursor.Value))
             {
-                int to = _allowed.Max();
+                int to = 0;
+                foreach (int a in _allowed)
+                    if (a > to)
+                        to = a;
                 AddAction(ActionType.Select, to);
             }
         }

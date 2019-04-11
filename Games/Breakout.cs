@@ -19,10 +19,10 @@ namespace iobloc
         protected override void InitializeSettings()
         {
             base.InitializeSettings();
-            CP = GameSettings.GetColor(Settings.PlayerColor);
-            CE = GameSettings.GetColor(Settings.EnemyColor);
-            CN = GameSettings.GetColor(Settings.NeutralColor);
-            BR = GameSettings.GetInt("BlockRows");
+            CP = Serializer.GetColor(GameSettings, Settings.PlayerColor);
+            CE = Serializer.GetColor(GameSettings, Settings.EnemyColor);
+            CN = Serializer.GetColor(GameSettings, Settings.NeutralColor);
+            BR = Serializer.GetInt(GameSettings, "BlockRows");
         }
 
         protected override void Initialize()

@@ -14,13 +14,13 @@ namespace iobloc
         protected override void InitializeSettings()
         {
             base.InitializeSettings();
-            P = GameSettings.GetColor(Settings.PlayerColor);
-            B = GameSettings.GetColor("BlockColor");
-            W = GameSettings.GetColor("WallColor");
-            T = GameSettings.GetColor("TargetColor");
-            R = GameSettings.GetColor("TargetBlockColor");
-            H = GameSettings.GetColor("TargetPlayerColor");
-            WS = GameSettings.GetInt("WinScore");
+            P = Serializer.GetColor(GameSettings, Settings.PlayerColor);
+            B = Serializer.GetColor(GameSettings, "BlockColor");
+            W = Serializer.GetColor(GameSettings, "WallColor");
+            T = Serializer.GetColor(GameSettings, "TargetColor");
+            R = Serializer.GetColor(GameSettings, "TargetBlockColor");
+            H = Serializer.GetColor(GameSettings, "TargetPlayerColor");
+            WS = Serializer.GetInt(GameSettings, "WinScore");
         }
 
         // Summary:

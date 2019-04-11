@@ -19,8 +19,8 @@ namespace iobloc
         protected override void InitializeSettings()
         {
             base.InitializeSettings();
-            CP = GameSettings.GetColor(Settings.PlayerColor);
-            CN = GameSettings.GetColor(Settings.NeutralColor);
+            CP = Serializer.GetColor(GameSettings, Settings.PlayerColor);
+            CN = Serializer.GetColor(GameSettings, Settings.NeutralColor);
         }
 
         protected override void Initialize()
@@ -111,7 +111,6 @@ namespace iobloc
                         candidates.Add(p);
                 }
             _point = candidates[_random.Next(candidates.Count)];
-            candidates = null;
         }
 
         void SetMove(int h, int v)

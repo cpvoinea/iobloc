@@ -17,5 +17,6 @@ namespace iobloc
         Fireworks = 11,
         RainingBlood = 12,
         Logo = 13,
+        Paint2 = 14,
     }
 }

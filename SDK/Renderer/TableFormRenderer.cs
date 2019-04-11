@@ -15,13 +15,15 @@ namespace iobloc
             // 
             // _grid
             // 
-            _grid = new TableLayoutPanel();
-            _grid.Dock = DockStyle.Fill;
-            _grid.CellBorderStyle = TableLayoutPanelCellBorderStyle.None;
-            _grid.Margin = new Padding(0);
-            _grid.Padding = new Padding(0);
-            _grid.ColumnCount = Game.Border.Width;
-            _grid.RowCount = Game.Border.Height;
+            _grid = new TableLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                CellBorderStyle = TableLayoutPanelCellBorderStyle.None,
+                Margin = new Padding(0),
+                Padding = new Padding(0),
+                ColumnCount = Game.Border.Width,
+                RowCount = Game.Border.Height
+            };
             float h = 100f / _grid.ColumnCount;
             float v = 100f / _grid.RowCount;
 
@@ -124,7 +126,7 @@ namespace iobloc
                     case MouseButtons.Middle: key = UIKey.Enter; break;
                 }
 
-            if (key != null && Game.AllowedKeys.Contains(key))
+            if (key != null && Serializer.Contains(Game.AllowedKeys, key))
                 HandleInput(key);
         }
 
@@ -140,7 +142,7 @@ namespace iobloc
             }
 
             string key = e.Delta < 0 ? UIKey.LeftArrow : UIKey.RightArrow;
-            if (Game.AllowedKeys.Contains(key))
+            if (Serializer.Contains(Game.AllowedKeys, key))
                 HandleInput(key);
         }
     }

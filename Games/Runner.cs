@@ -18,9 +18,9 @@ namespace iobloc
         protected override void InitializeSettings()
         {
             base.InitializeSettings();
-            CP = GameSettings.GetColor(Settings.PlayerColor);
-            CE = GameSettings.GetColor(Settings.EnemyColor);
-            FS = GameSettings.GetInt("FenceSpace");
+            CP = Serializer.GetColor(GameSettings, Settings.PlayerColor);
+            CE = Serializer.GetColor(GameSettings, Settings.EnemyColor);
+            FS = Serializer.GetInt(GameSettings, "FenceSpace");
         }
 
         protected override void Initialize()

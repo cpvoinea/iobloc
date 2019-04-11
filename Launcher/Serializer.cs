@@ -62,7 +62,7 @@ namespace iobloc
                 while (!sr.EndOfStream)
                 {
                     string line = sr.ReadLine();
-                    if (string.IsNullOrWhiteSpace(line))
+                    if (string.IsNullOrEmpty(line.Trim()))
                         break;
                     // first line contains game ID as id
                     int id = int.Parse(line.Split(' ')[0]);
@@ -112,15 +112,15 @@ namespace iobloc
                     }
                 }
                 if (s.ContainsKey(Settings.Highscore))
-                    Highscores.Add(id, s.GetInt(Settings.Highscore, 0));
+                    Highscores.Add(id, Serializer.GetInt(s, Settings.Highscore, 0));
             }
 
             int menuId = (int)GameType.Menu;
             if (!Settings.ContainsKey(menuId))
                 Settings.Add(menuId, new Dictionary<string, string>());
             var menu = Settings[menuId];
-            menu[Settings.AllowedKeys] = string.Join(',', allowedKeys);
-            menu[Settings.Help] = string.Join(',', text);
+            menu[Settings.AllowedKeys] = Join(",", allowedKeys);
+            menu[Settings.Help] = Join(",", text);
             menu[Settings.Height] = text.Count.ToString();
         }
 
@@ -220,6 +220,7 @@ namespace iobloc
                     case GameType.Menu: game = new Menu(); break;
                     case GameType.Fireworks: game = new EndAnimation(GameType.Fireworks); break;
                     case GameType.RainingBlood: game = new EndAnimation(GameType.RainingBlood); break;
+                    case GameType.Paint2: game = new Paint2(); break;
                 }
             else
             {
@@ -255,7 +256,7 @@ namespace iobloc
             return null;
         }
 
-        public static string GetString(this Dictionary<string, string> dic, string id)
+        public static string GetString(Dictionary<string, string> dic, string id)
         {
             if (!dic.ContainsKey(id))
                 return string.Empty;
@@ -267,7 +268,7 @@ namespace iobloc
         // Parameters: dic: game settings
         // Parameters: id: setting name
         // Parameters: defVal: default value
-        public static int GetInt(this Dictionary<string, string> dic, string id, int defVal = 0)
+        public static int GetInt(Dictionary<string, string> dic, string id, int defVal = 0)
         {
             if (!dic.ContainsKey(id))
                 return defVal;
@@ -279,7 +280,7 @@ namespace iobloc
         // Parameters: dic: game settings
         // Parameters: id: setting name
         // Parameters: defVal: default value
-        public static double GetReal(this Dictionary<string, string> dic, string id, double defVal = 0)
+        public static double GetReal(Dictionary<string, string> dic, string id, double defVal = 0)
         {
             if (!dic.ContainsKey(id))
                 return defVal;
@@ -290,7 +291,7 @@ namespace iobloc
         //      Split comma-separated list of strings from a setting value
         // Parameters: dic: game settings
         // Parameters: id: setting name
-        public static string[] GetList(this Dictionary<string, string> dic, string id)
+        public static string[] GetList(Dictionary<string, string> dic, string id)
         {
             if (!dic.ContainsKey(id))
                 return new string[0];
@@ -301,7 +302,7 @@ namespace iobloc
         //      Parse a color value from setting color name
         // Parameters: dic: game settings
         // Parameters: id: setting name
-        public static int GetColor(this Dictionary<string, string> dic, string id)
+        public static int GetColor(Dictionary<string, string> dic, string id)
         {
             if (!dic.ContainsKey(id))
                 return 0;
@@ -312,12 +313,22 @@ namespace iobloc
         //      Check if array contains value
         // Parameters: array: 
         // Parameters: val: 
-        public static bool Contains<T>(this T[] array, T val)
+        public static bool Contains<T>(T[] array, T val)
         {
             foreach (T k in array)
                 if (k.Equals(val))
                     return true;
             return false;
+        }
+
+        public static string Join<T>(string sep, List<T> array)
+        {
+            if (array == null || array.Count == 0)
+                return string.Empty;
+            string result = array[0].ToString();
+            for (int i = 1; i < array.Count; i++)
+                result += sep + array[i].ToString();
+            return result;
         }
     }
 }

@@ -7,7 +7,7 @@ namespace iobloc
     // Use System.Console to paint and get input
     public class ConsoleRenderer : IRenderer
     {
-        private const bool SAFE_MODE = true; // made it static instead of const to avoid warnings
+        private static readonly bool SAFE_MODE = true; // made it static instead of const to avoid warnings
         private const int MinWidth = 103;
         private const int MinHeight = 44;
         private static int WinWidth = MinWidth;
@@ -20,7 +20,6 @@ namespace iobloc
         //      Use console for drawing
         public ConsoleRenderer()
         {
-            AllocConsole();
             // support box drawing
             Console.OutputEncoding = Encoding.UTF8;
             // not hiding the cursor is sometimes usefull for debugging
@@ -57,7 +56,6 @@ namespace iobloc
 
             DrawBorder(_game.Border);
             DateTime start = DateTime.Now; // frame start time
-            int ticks = 0; // elapsed time in ms
             while (_game.IsRunning)
             {
                 DrawAll();
@@ -77,12 +75,11 @@ namespace iobloc
                 if (_game.IsRunning && _game.FrameInterval > 0)
                 {
                     Thread.Sleep(20);
-                    ticks = (int)DateTime.Now.Subtract(start).TotalMilliseconds;
+                    int ticks = (int)DateTime.Now.Subtract(start).TotalMilliseconds;
                     if (ticks > _game.FrameInterval) // move to next frame
                     {
                         _game.NextFrame();
                         start = DateTime.Now;
-                        ticks -= _game.FrameInterval;
                     }
                 }
             }
@@ -108,7 +105,6 @@ namespace iobloc
             Console.CursorVisible = true;
             // restore initial values
             Resize(WinWidth, WinHeight);
-            FreeConsole();
         }
 
         // Summary:
@@ -149,7 +145,7 @@ namespace iobloc
 
             if (key == UIKey.Escape)
                 _game.Stop(); // stop on Escape
-            else if (_game.AllowedKeys.Contains(key))
+            else if (Serializer.Contains(_game.AllowedKeys, key))
                 _game.HandleInput(key); // handle if key is allowed
             else
                 return true; // pause if key is not allowed
@@ -278,10 +274,5 @@ namespace iobloc
                 catch { width++; } // on some operating systems the window resize is not supported
             while (!success && width < 16);
         }
-
-        [System.Runtime.InteropServices.DllImport("kernel32.dll")]
-        private static extern bool AllocConsole();
-        [System.Runtime.InteropServices.DllImport("kernel32.dll")]
-        private static extern bool FreeConsole();
     }
 }

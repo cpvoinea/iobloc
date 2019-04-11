@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 
 namespace iobloc
 {
@@ -30,12 +29,24 @@ namespace iobloc
             var allowed = GetAllowedFrom(lines, dice);
             if (allowed.Length == 0)
                 return null;
-            int farthest = allowed.Max();
+            int farthest = 0;
+            foreach (int a in allowed)
+                if (a > farthest)
+                    farthest = a;
 
             allowed = GetAllowedTo(lines, dice, farthest);
             if (allowed.Length == 0)
                 return null;
-            int closest = allowed.Contains(26) ? 26 : allowed.Min();
+            int min = int.MaxValue;
+            bool has26 = false;
+            foreach (int a in allowed)
+            {
+                if (a < min)
+                    min = a;
+                if (a == 26)
+                    has26 = true;
+            }
+            int closest = has26 ? 26 : min;
 
             return new[] { farthest, closest, GetDice(dice, farthest, closest) };
         }
@@ -78,7 +89,11 @@ namespace iobloc
         public static int[] GetAllowedTo(int[] lines, int[] dice, int from)
         {
             List<int> result = new List<int>();
-            foreach (int d in dice.Distinct())
+            List<int> distinct = new List<int>();
+            foreach (int d in dice)
+                if (!distinct.Contains(d))
+                    distinct.Add(d);
+            foreach (int d in distinct)
             {
                 int to = from - d;
                 if (to >= 0 && CanPut(lines, to))
@@ -92,7 +107,11 @@ namespace iobloc
 
         private static bool CanPutFrom(int[] lines, int[] dice, int from)
         {
-            foreach (int d in dice.Distinct())
+            List<int> distinct = new List<int>();
+            foreach (int d in dice)
+                if (!distinct.Contains(d))
+                    distinct.Add(d);
+            foreach (int d in distinct)
                 if (from - d >= 0 && CanPut(lines, from - d))
                     return true;
             return false;
@@ -108,12 +127,15 @@ namespace iobloc
 
         private static bool CanTakeOutFrom(int[] lines, int[] dice, int from)
         {
-            if (dice.Contains(from + 1))
+            if (Serializer.Contains(dice, from + 1))
                 return true;
             for (int i = from + 1; i < 6; i++)
                 if (CanTake(lines, i))
                     return false;
-            return dice.Any(d => d > from + 1);
+            foreach (int d in dice)
+                if (d > from + 1)
+                    return true;
+            return false;
         }
 
         private static bool CanTake(int[] lines, int from) => lines[from] > 0;
@@ -127,10 +149,15 @@ namespace iobloc
             int val = from - to;
             if (to == 26)
             {
-                if (dice.Contains(from + 1))
+                if (Serializer.Contains(dice, from + 1))
                     val = from + 1;
                 else
-                    val = dice.First(d => d > from + 1);
+                    foreach (int d in dice)
+                        if (d > from + 1)
+                        {
+                            val = d;
+                            break;
+                        }
             }
 
             return val;

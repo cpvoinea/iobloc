@@ -17,11 +17,11 @@ namespace iobloc
         protected override void InitializeSettings()
         {
             base.InitializeSettings();
-            CP = GameSettings.GetColor(Settings.PlayerColor);
-            CE = GameSettings.GetColor(Settings.EnemyColor);
-            CN = GameSettings.GetColor(Settings.NeutralColor);
-            AR = GameSettings.GetInt("AlienRows");
-            AC = GameSettings.GetInt("AlienCols");
+            CP = Serializer.GetColor(GameSettings, Settings.PlayerColor);
+            CE = Serializer.GetColor(GameSettings, Settings.EnemyColor);
+            CN = Serializer.GetColor(GameSettings, Settings.NeutralColor);
+            AR = Serializer.GetInt(GameSettings, "AlienRows");
+            AC = Serializer.GetInt(GameSettings, "AlienCols");
         }
 
         protected override void Initialize()

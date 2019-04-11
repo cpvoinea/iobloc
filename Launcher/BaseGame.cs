@@ -136,15 +136,15 @@ namespace iobloc
         {
             GameSettings = Serializer.Settings.ContainsKey(ID) ? Serializer.Settings[ID] : new Dictionary<string, string>();
 
-            AllowedKeys = GameSettings.GetList(Settings.AllowedKeys);
-            Help = GameSettings.GetList(Settings.Help);
-            Width = GameSettings.GetInt(Settings.Width, 10);
-            Height = GameSettings.GetInt(Settings.Height, 10);
-            BlockWidth = GameSettings.GetInt(Settings.BlockWidth, 1);
-            BlockSpace = GameSettings.GetInt(Settings.BlockSpace);
+            AllowedKeys = Serializer.GetList(GameSettings, Settings.AllowedKeys);
+            Help = Serializer.GetList(GameSettings, Settings.Help);
+            Width = Serializer.GetInt(GameSettings, Settings.Width, 10);
+            Height = Serializer.GetInt(GameSettings, Settings.Height, 10);
+            BlockWidth = Serializer.GetInt(GameSettings, Settings.BlockWidth, 1);
+            BlockSpace = Serializer.GetInt(GameSettings, Settings.BlockSpace);
             Block = BlockWidth + BlockSpace;
-            FrameMultiplier = GameSettings.GetReal(Settings.FrameMultiplier, 1);
-            LevelThreshold = GameSettings.GetInt(Settings.LevelThreshold);
+            FrameMultiplier = Serializer.GetReal(GameSettings, Settings.FrameMultiplier, 1);
+            LevelThreshold = Serializer.GetInt(GameSettings, Settings.LevelThreshold);
         }
 
         // Summary:
@@ -164,7 +164,7 @@ namespace iobloc
             }
 
             // don't show level for these games
-            if (!new GameType[] { GameType.Fireworks, GameType.RainingBlood, GameType.Paint }.Contains(Type))
+            if (!Serializer.Contains(new GameType[] { GameType.Fireworks, GameType.RainingBlood, GameType.Paint }, Type))
                 Panes.Add(Pnl.Level, new Pane(Border.Height - 1, (Border.Width + 1) / 2 - 2, Border.Height - 1, (Border.Width + 1) / 2));
             if (Serializer.Highscores.ContainsKey(ID)) // don't add score pane if game doesn't keep score
             {

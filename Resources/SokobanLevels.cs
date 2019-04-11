@@ -10,11 +10,11 @@ namespace iobloc
         static SokobanLevels()
         {
             var settings = Serializer.Settings[(int)GameType.Sokoban];
-            int P = settings.GetColor(Settings.PlayerColor);
-            int B = settings.GetColor("BlockColor");
-            int W = settings.GetColor("WallColor");
-            int T = settings.GetColor("TargetColor");
-            int R = settings.GetColor("TargetBlockColor");
+            int P = Serializer.GetColor(settings, Settings.PlayerColor);
+            int B = Serializer.GetColor(settings, "BlockColor");
+            int W = Serializer.GetColor(settings, "WallColor");
+            int T = Serializer.GetColor(settings, "TargetColor");
+            int R = Serializer.GetColor(settings, "TargetBlockColor");
 
             _levels = new[]{
                 new[,] { // 0

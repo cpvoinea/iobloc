@@ -10,7 +10,11 @@ namespace iobloc
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Engine());
+
+            using (var app = new Launcher())
+            {
+                Application.Run(app);
+            }
         }
     }
 }
