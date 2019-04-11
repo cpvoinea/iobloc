@@ -38,7 +38,7 @@ namespace iobloc
             _btnConsole = new Button
             {
                 Dock = DockStyle.Fill,
-                Text = "&Console"
+                Text = "&Text"
             };
             // _btnConsole.Enabled = false;
             _btnConsole.Click += BtnConsole_Click;
@@ -48,7 +48,7 @@ namespace iobloc
             _btnForm = new Button
             {
                 Dock = DockStyle.Fill,
-                Text = "&Table"
+                Text = "&Grid"
             };
             _btnForm.Click += BtnForm_Click;
             //

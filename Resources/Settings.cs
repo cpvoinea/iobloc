@@ -191,27 +191,27 @@ namespace iobloc
             });
             // Paint2
             Add(14, new Dictionary<string, string>{
-                // {"MenuKeys", "X"},
+                {"MenuKeys", "X"},
                 {"Help", "Move_cursor:ARROWS,Toggle_draw:SPACE,Select_color:1-7,Toggle_shade:8,Black:9,White:0"},
                 {"AllowedKeys", "LeftArrow,RightArrow,UpArrow,DownArrow,Spacebar,D0,D1,D2,D3,D4,D5,D6,D7,D8,D9"},
                 {"FrameMultiplier", "0"},
                 {"Width", "100"},
                 {"Height", "100"},
             });
-            // // Demo
-            // Add(20, new Dictionary<string, string>{
-            //     {"AssemblyPath", "iobloc.dll"},
-            //     {"ClassName", "iobloc.Demo"},
-            //     {"Name", "Demo"},
-            //     {"MenuKeys", "D"},
-            // });
-            // //  Platform
-            // Add(21, new Dictionary<string, string>{
-            //     {"AssemblyPath", "iobloc.platform.dll"},
-            //     {"ClassName", "iobloc.platform.Platform"},
-            //     {"Name", "Platform"},
-            //     {"MenuKeys", "P"},
-            // });
+            // Demo
+            Add(20, new Dictionary<string, string>{
+                 {"AssemblyPath", "iobloc.dll"},
+                 {"ClassName", "iobloc.Demo"},
+                 {"Name", "Demo"},
+                 {"MenuKeys", "D"},
+             });
+            //  Platform
+            Add(21, new Dictionary<string, string>{
+                 {"AssemblyPath", "iobloc.platform.dll"},
+                 {"ClassName", "iobloc.platform.Platform"},
+                 {"Name", "Platform"},
+                 {"MenuKeys", "P"},
+             });
         }
     }
 }

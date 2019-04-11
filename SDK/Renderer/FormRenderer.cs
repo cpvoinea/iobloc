@@ -27,15 +27,15 @@ namespace iobloc
             StartPosition = FormStartPosition.CenterScreen;
             Font = new Font(Font.FontFamily, SCALE_FONT);
             DoubleBuffered = true;
-            ShowIcon = false;
-            ShowInTaskbar = false;
             Name = "FormRenderer";
-            Text = "iObloc";
+            Text = "";
             ResumeLayout(false);
         }
 
         protected abstract void InitializeControls();
         public abstract void DrawPane(Pane pane);
+        protected virtual string GetMenuKey(Control sender, MouseEventArgs e) { return null; }
+        protected virtual void SetSize() { }
 
         public void Run(IGame game)
         {
@@ -44,10 +44,16 @@ namespace iobloc
             if (Game.FrameInterval > 0)
                 _timer.Interval = Game.FrameInterval;
             InitializeControls();
+            //if (!(Game is Menu))
+            //{
+            //    ControlBox = false;
+            //    ShowIcon = false;
+            //    TopMost = true;
+            //    WindowState = FormWindowState.Maximized;
+            //}
             ResumeLayout(false);
 
             Game.Start();
-            DrawAll();
             if (!Game.IsRunning)
                 return;
 
@@ -55,11 +61,11 @@ namespace iobloc
                 _timer.Start();
         }
 
-        protected void DrawAll()
+        protected void DrawAll(bool force = false)
         {
             SuspendLayout();
             foreach (var p in Game.Panes.Values)
-                if (p.HasChanges)
+                if (p.HasChanges || force)
                 {
                     DrawPane(p);
                     p.Change(false);
@@ -117,6 +123,47 @@ namespace iobloc
 
             Game.NextFrame();
             DrawAll();
+        }
+
+        protected virtual void ControlMouseClick(object sender, MouseEventArgs e)
+        {
+            if (IsPaused)
+            {
+                Pause(false);
+                return;
+            }
+
+            string key = null;
+            if (Game is Menu) // in menu, get clicked item
+            {
+                key = GetMenuKey(sender as Control, e);
+            }
+            else
+                switch (e.Button)
+                {
+                    case MouseButtons.Left: key = UIKey.UpArrow; break;
+                    case MouseButtons.Right: key = UIKey.DownArrow; break;
+                    case MouseButtons.Middle: key = UIKey.Enter; break;
+                }
+
+            if (key != null && Serializer.Contains(Game.AllowedKeys, key))
+                HandleInput(key);
+        }
+
+        protected virtual void ControlMouseWheel(object sender, MouseEventArgs e)
+        {
+            if (e.Delta == 0)
+                return;
+
+            if (IsPaused)
+            {
+                Pause(false);
+                return;
+            }
+
+            string key = e.Delta < 0 ? UIKey.LeftArrow : UIKey.RightArrow;
+            if (Serializer.Contains(Game.AllowedKeys, key))
+                HandleInput(key);
         }
 
         protected override void Dispose(bool disposing)

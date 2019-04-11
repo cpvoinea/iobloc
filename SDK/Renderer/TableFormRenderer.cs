@@ -45,8 +45,8 @@ namespace iobloc
                     Padding = new Padding(0),
                     TextAlign = ContentAlignment.MiddleCenter,
                 };
-                fill.MouseClick += OnMouseDown;
-                fill.MouseWheel += OnMouseWheel;
+                fill.MouseClick += ControlMouseClick;
+                fill.MouseWheel += ControlMouseWheel;
 
                 _grid.Controls.Add(fill);
             }
@@ -61,6 +61,12 @@ namespace iobloc
 
             ClientSize = new Size(_grid.ColumnCount * SCALE_HORIZONTAL, _grid.RowCount * SCALE_VERTICAL);
             Controls.Add(_grid);
+        }
+
+        protected override string GetMenuKey(Control control, MouseEventArgs e)
+        {
+            int g = _grid.GetPositionFromControl(control).Row - 1;
+            return "D" + (g < 10 ? g.ToString() : "");
         }
 
         public override void DrawPane(Pane pane)
@@ -102,48 +108,6 @@ namespace iobloc
         private Control Cell(Pane pane, int row, int col)
         {
             return _grid.GetControlFromPosition(pane.FromCol + col, pane.FromRow + row);
-        }
-
-        private void OnMouseDown(object sender, MouseEventArgs e)
-        {
-            if (IsPaused)
-            {
-                Pause(false);
-                return;
-            }
-
-            string key = null;
-            if (Game is Menu) // in menu, get clicked item
-            {
-                int g = _grid.GetPositionFromControl(sender as Control).Row - 1;
-                key = "D" + (g < 10 ? g.ToString() : "");
-            }
-            else
-                switch (e.Button)
-                {
-                    case MouseButtons.Left: key = UIKey.UpArrow; break;
-                    case MouseButtons.Right: key = UIKey.DownArrow; break;
-                    case MouseButtons.Middle: key = UIKey.Enter; break;
-                }
-
-            if (key != null && Serializer.Contains(Game.AllowedKeys, key))
-                HandleInput(key);
-        }
-
-        private void OnMouseWheel(object sender, MouseEventArgs e)
-        {
-            if (e.Delta == 0)
-                return;
-
-            if (IsPaused)
-            {
-                Pause(false);
-                return;
-            }
-
-            string key = e.Delta < 0 ? UIKey.LeftArrow : UIKey.RightArrow;
-            if (Serializer.Contains(Game.AllowedKeys, key))
-                HandleInput(key);
         }
     }
 }
