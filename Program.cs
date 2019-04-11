@@ -13,7 +13,8 @@ namespace iobloc
 
             using (var app = new Launcher())
             {
-                Application.Run(app);
+                if (app != null)
+                    Application.Run(app);
             }
         }
     }

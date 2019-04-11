@@ -2,7 +2,6 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace iobloc
@@ -168,16 +167,12 @@ namespace iobloc
 
                 while (game != null)
                 {
-                    if (renderType == RenderType.Console)
-                        AllocConsole();
                     using (IRenderer renderer = GetRenderer(renderType))
                     {
                         renderer.Run(game);
                         if (renderer is Form)
                             (renderer as Form).ShowDialog(this);
                     }
-                    if (renderType == RenderType.Console)
-                        FreeConsole();
 
                     if (game is IBaseGame) // base game selected
                         game = (game as IBaseGame).Next; // continue to next game
@@ -209,7 +204,7 @@ namespace iobloc
             }
         }
 
-        public static Form Run(GameType gameType, RenderType renderType = RenderType.ImageForm)
+        public static Form Form(GameType gameType, RenderType renderType = RenderType.ImageForm)
         {
             Serializer.Load();
             IGame game = Serializer.GetGame((int)gameType);
@@ -218,10 +213,12 @@ namespace iobloc
             return renderer as Form;
         }
 
-        [DllImport("kernel32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool AllocConsole();
-        [DllImport("kernel32.dll")]
-        private static extern bool FreeConsole();
+        public static void Console(GameType gameType)
+        {
+            Serializer.Load();
+            IGame game = Serializer.GetGame((int)gameType);
+            ConsoleRenderer renderer = new ConsoleRenderer();
+            renderer.Run(game);
+        }
     }
 }
