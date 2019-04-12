@@ -25,6 +25,7 @@ namespace iobloc
             Font = new Font(Font.FontFamily, SCALE_FONT);
             DoubleBuffered = true;
             ControlBox = false;
+            ShowIcon = false;
             Name = "FormRenderer";
             Text = "";
             ResumeLayout(false);
@@ -33,6 +34,7 @@ namespace iobloc
         protected abstract Control InitializeControls();
         public abstract void DrawPane(Pane pane);
         protected virtual string GetMenuKey(Control sender, MouseEventArgs e) { return null; }
+        protected virtual void OnToggle() { }
 
         public void Run(IGame game)
         {
@@ -53,11 +55,11 @@ namespace iobloc
                 _timer.Start();
         }
 
-        protected void DrawAll()
+        protected void DrawAll(bool force = false)
         {
             SuspendLayout();
             foreach (var p in Game.Panes.Values)
-                if (p.HasChanges)
+                if (p.HasChanges || force)
                 {
                     DrawPane(p);
                     p.Change(false);
@@ -68,6 +70,7 @@ namespace iobloc
         protected void Pause(bool pause)
         {
             Game.TogglePause();
+            OnToggle();
             DrawAll();
             IsPaused = pause;
         }

@@ -7,6 +7,8 @@ namespace iobloc
     public class ImageFormRenderer : FormRenderer
     {
         private Panel _panel;
+        private bool _isInitialized;
+        private int _width, _height;
 
         protected override Control InitializeControls()
         {
@@ -23,9 +25,31 @@ namespace iobloc
             return _panel;
         }
 
+        private void ChangeSize()
+        {
+            _width = _panel.Width / Game.Border.Width;
+            _height = _panel.Height / Game.Border.Height;
+            if (_isInitialized)
+            {
+                ClearPanel();
+                DrawAll(true);
+            }
+        }
+
+        private void ClearPanel()
+        {
+            using (Graphics g = _panel.CreateGraphics())
+                g.Clear(Color.FromKnownColor(KnownColor.Control));
+        }
+
+        protected override void OnToggle()
+        {
+            ClearPanel();
+        }
+
         protected override string GetMenuKey(Control control, MouseEventArgs e)
         {
-            int index = e.Y / (_panel.Height / Game.Border.Height) - 1;
+            int index = e.Y / _height - 1;
             if (index < 10)
                 return "D" + index;
             if (index >= Game.Panes[Pnl.Main].Text.Length)
@@ -38,12 +62,13 @@ namespace iobloc
 
         public override void DrawPane(Pane pane)
         {
-            int cellWidth = _panel.Width / Game.Border.Width;
-            int cellHeight = _panel.Height / Game.Border.Height;
+            if (!_isInitialized)
+                return;
+
             using (var g = _panel.CreateGraphics())
             {
-                //g.FillRectangle(Brushes.White, pane.FromCol * cellWidth, pane.FromRow * cellHeight, pane.Width * cellWidth, pane.Height * cellHeight);
-                g.DrawRectangle(Pens.Black, pane.FromCol * cellWidth, pane.FromRow * cellHeight, pane.Width * cellWidth, pane.Height * cellHeight);
+                //g.FillRectangle(Brushes.White, pane.FromCol * _width, pane.FromRow * _height, pane.Width * _width, pane.Height * _height);
+                g.DrawRectangle(Pens.Black, pane.FromCol * _width, pane.FromRow * _height, pane.Width * _width, pane.Height * _height);
 
                 if (pane.IsTextMode)
                 {
@@ -52,7 +77,7 @@ namespace iobloc
                         string text = pane.Text[row];
                         if (string.IsNullOrEmpty(text))
                             continue;
-                        g.DrawString(text, Font, Brushes.Black, pane.FromCol * cellWidth, (pane.FromRow + row) * cellHeight);
+                        g.DrawString(text, Font, Brushes.Black, pane.FromCol * _width, (pane.FromRow + row) * _height);
                     }
                 }
                 else
@@ -63,17 +88,29 @@ namespace iobloc
                             int c = pane[row, col];
                             if (c != 0)
                             {
-                                int x = (pane.FromCol + col) * cellWidth;
-                                int y = (pane.FromRow + row) * cellHeight;
-                                g.FillRectangle(RenderMapping.FormBrush[c < 0 ? -c : c], x, y, cellWidth, cellHeight);
+                                int x = (pane.FromCol + col) * _width;
+                                int y = (pane.FromRow + row) * _height;
+                                g.FillRectangle(RenderMapping.FormBrush[c < 0 ? -c : c], x, y, _width, _height);
                                 if (c < 0)
-                                    g.DrawEllipse(Pens.White, x + 1, y + 1, cellWidth - 3, cellHeight - 3);
+                                    g.DrawEllipse(Pens.White, x + 1, y + 1, _width - 3, _height - 3);
                             }
                         }
                 }
             }
 
             _panel.Show();
+        }
+
+        protected override void OnSizeChanged(EventArgs e)
+        {
+            base.OnSizeChanged(e);
+            ChangeSize();
+        }
+
+        protected override void OnShown(EventArgs e)
+        {
+            base.OnShown(e); _isInitialized = true;
+            DrawAll(true);
         }
     }
 }
