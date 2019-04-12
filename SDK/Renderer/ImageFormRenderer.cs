@@ -67,7 +67,6 @@ namespace iobloc
             if (!_isInitialized)
                 return;
 
-            SuspendLayout();
             using (var g = _panel.CreateGraphics())
             {
                 if (pane.IsTextMode)
@@ -89,7 +88,9 @@ namespace iobloc
                             var b = c == 0 ? new SolidBrush(Color.FromKnownColor(KnownColor.Control)) : RenderMapping.FormBrush[c < 0 ? -c : c];
                             int x = (pane.FromCol + col) * _width;
                             int y = (pane.FromRow + row) * _height;
-                            g.FillRectangle(b, x, y, _width, _height);
+                            int xOff = col == 0 ? 1 : 0;
+                            int yOff = row == 0 ? 1 : 0;
+                            g.FillRectangle(b, x + xOff, y + yOff, _width - xOff, _height - yOff);
                             if (c < 0)
                                 g.DrawEllipse(Pens.White, x + 1, y + 1, _width - 3, _height - 3);
                         }
@@ -97,7 +98,6 @@ namespace iobloc
 
                 g.DrawRectangle(Pens.Black, pane.FromCol * _width, pane.FromRow * _height, pane.Width * _width, pane.Height * _height);
             }
-            ResumeLayout(true);
         }
 
         protected override void OnSizeChanged(EventArgs e)
