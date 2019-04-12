@@ -5,7 +5,7 @@ using System.Threading;
 namespace iobloc
 {
     // Use System.Console to paint and get input
-    public class ConsoleRenderer : IRenderer
+    public class ConsoleRenderer : IRenderer<int>
     {
         private static readonly bool SAFE_MODE = true; // made it static instead of const to avoid warnings
         private const int MinWidth = 103;
@@ -14,7 +14,7 @@ namespace iobloc
         private static int WinHeight = MinHeight;
         private static int CurrentBorderHeight;
 
-        private IGame _game = null;
+        private IGame<int> _game = null;
 
         // Summary:
         //      Use console for drawing
@@ -46,7 +46,7 @@ namespace iobloc
         //   game.NextFrame()
         // while (key is not Escape)
         // game.Stop()
-        public void Run(IGame game)
+        public void Run(IGame<int> game)
         {
             _game = game;
 
@@ -89,7 +89,7 @@ namespace iobloc
         //      Draw a pane inside a rectangular area.
         //      The pane has either lines of text or a multi-colored matrix with a single character
         // Parameters: pane: pane to draw
-        public void DrawPane(Pane pane)
+        public void DrawPane(Pane<int> pane)
         {
             if (pane.IsTextMode)
                 DrawPaneText(pane, pane.Text);
@@ -202,7 +202,7 @@ namespace iobloc
         //      Put centered lines of text inside a rectangle, clear the rest
         // Parameters: pane: pane defines rectangle
         // Parameters: lines: text lines to write
-        private static void DrawPaneText(Pane pane, string[] lines)
+        private static void DrawPaneText(Pane<int> pane, string[] lines)
         {
             // use empty line to clear where text is missing
             string empty = new String(' ', pane.Width);
@@ -228,7 +228,7 @@ namespace iobloc
         // Summary:
         //      Draw a matrix containing a symbol of multiple colors, 0 representing background color
         // Parameters: pane: pane defines rectangle and color matrix
-        private static void DrawPaneColor(Pane pane)
+        private static void DrawPaneColor(Pane<int> pane)
         {
             for (int row = 0; row < pane.Height; row++)
             {

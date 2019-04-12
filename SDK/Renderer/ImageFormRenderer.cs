@@ -62,7 +62,7 @@ namespace iobloc
             return k[0].ToString();
         }
 
-        public override void DrawPane(Pane pane)
+        public override void DrawPane(Pane<int> pane)
         {
             if (!_isInitialized)
                 return;

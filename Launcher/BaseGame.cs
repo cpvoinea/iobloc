@@ -3,7 +3,7 @@ using System.Collections.Generic;
 namespace iobloc
 {
     // Base game handles common operations like loading settings and initialization
-    abstract class BaseGame : IBaseGame
+    abstract class BaseGame : IBaseGame<int>
     {
         // internal code of game
         private int ID => (int)Type;
@@ -41,7 +41,7 @@ namespace iobloc
         public Border Border { get; private set; }
         // Summary:
         //      Rectangulars to draw in UI
-        public Dictionary<string, Pane> Panes { get; private set; }
+        public Dictionary<string, Pane<int>> Panes { get; private set; }
         // Summary:
         //      Duration between frames in ms
         public int FrameInterval { get; private set; }
@@ -53,10 +53,10 @@ namespace iobloc
         public string[] AllowedKeys { get; protected set; }
         // Summary:
         //      Reference to next game to run, null to terminate
-        public IGame Next { get; protected set; }
+        public IGame<int> Next { get; protected set; }
         // Summary:
         //      Main pane inside border rectangle
-        protected Pane Main { get; set; }
+        protected Pane<int> Main { get; set; }
         // Summary:
         //      Get current score. Setting the score triggers level progression, highscore update and winning conditions
         protected int Score { get { return _score; } set { SetScore(value); } }
@@ -153,24 +153,24 @@ namespace iobloc
         protected virtual void InitializeUI()
         {
             Border = new Border(Width + 2, Height + 2);
-            Panes = new Dictionary<string, Pane>();
+            Panes = new Dictionary<string, Pane<int>>();
 
             // don't use main for these games
             if (Type != GameType.Table)
             {
-                Main = new Pane(1, 1, Height, Width);
+                Main = new Pane<int>(1, 1, Height, Width);
                 Main.SetText(Help, false);
                 Panes.Add(Pnl.Main, Main);
             }
 
             // don't show level for these games
             if (!Serializer.Contains(new GameType[] { GameType.Fireworks, GameType.RainingBlood, GameType.Paint }, Type))
-                Panes.Add(Pnl.Level, new Pane(Border.Height - 1, (Border.Width + 1) / 2 - 2, Border.Height - 1, (Border.Width + 1) / 2));
+                Panes.Add(Pnl.Level, new Pane<int>(Border.Height - 1, (Border.Width + 1) / 2 - 2, Border.Height - 1, (Border.Width + 1) / 2));
             if (Serializer.Highscores.ContainsKey(ID)) // don't add score pane if game doesn't keep score
             {
                 if (Border.Width > 8) // don't add highscore pane if there's no room
-                    Panes.Add(Pnl.Highscore, new Pane(0, 1, 0, 3));
-                Panes.Add(Pnl.Score, new Pane(0, Border.Width - 4, 0, Border.Width - 2));
+                    Panes.Add(Pnl.Highscore, new Pane<int>(0, 1, 0, 3));
+                Panes.Add(Pnl.Score, new Pane<int>(0, Border.Width - 4, 0, Border.Width - 2));
             }
         }
 

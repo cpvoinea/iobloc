@@ -15,12 +15,12 @@ namespace iobloc
     //   game.NextFrame()
     // while (key is not Escape)
     // game.Stop()
-    public interface IGame
+    public interface IGame<T>
     {
         // Get border around the Panes, to draw in UI
         Border Border { get; }
         // Rectangulars to draw in UI
-        Dictionary<string, Pane> Panes { get; }
+        Dictionary<string, Pane<T>> Panes { get; }
         // Duration between frames in ms
         int FrameInterval { get; }
         // List of shortcut keys which are handled by game

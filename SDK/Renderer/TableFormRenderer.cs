@@ -67,7 +67,7 @@ namespace iobloc
             return "D" + (g < 10 ? g.ToString() : "");
         }
 
-        public override void DrawPane(Pane pane)
+        public override void DrawPane(Pane<int> pane)
         {
             for (int row = 0; row < pane.Height; row++)
                 for (int col = 0; col < pane.Width; col++)
@@ -103,7 +103,7 @@ namespace iobloc
             }
         }
 
-        private Control Cell(Pane pane, int row, int col)
+        private Control Cell(Pane<int> pane, int row, int col)
         {
             return _grid.GetControlFromPosition(pane.FromCol + col, pane.FromRow + row);
         }

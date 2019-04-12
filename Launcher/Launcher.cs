@@ -146,12 +146,12 @@ namespace iobloc
             try
             {
                 Serializer.Load();
-                IGame menu = Serializer.GetGame((int)GameType.Menu);
-                IGame game = Serializer.GetGame((int)gameType);
+                IGame<int> menu = Serializer.GetGame((int)GameType.Menu);
+                IGame<int> game = Serializer.GetGame((int)gameType);
 
                 while (game != null)
                 {
-                    IRenderer renderer = GetRenderer(renderType);
+                    IRenderer<int> renderer = GetRenderer(renderType);
                     renderer.Run(game);
                     var frm = renderer as Form;
 
@@ -162,8 +162,8 @@ namespace iobloc
                         frm.ShowDialog(owner);
                     }
 
-                    if (game is IBaseGame) // base game selected
-                        game = (game as IBaseGame).Next; // continue to next game
+                    if (game is IBaseGame<int>) // base game selected
+                        game = (game as IBaseGame<int>).Next; // continue to next game
                     else if (game != menu) // return to menu
                         game = menu;
                     else // exit
@@ -184,7 +184,7 @@ namespace iobloc
             }
         }
 
-        public static IRenderer GetRenderer(RenderType renderType)
+        public static IRenderer<int> GetRenderer(RenderType renderType)
         {
             switch (renderType)
             {

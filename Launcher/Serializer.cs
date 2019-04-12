@@ -16,7 +16,7 @@ namespace iobloc
         // save highscores to this file for persistance
         private const string HighscoresFileName = "highscores.txt";
         // in-memory caching of games
-        private readonly static Dictionary<int, IGame> Games = new Dictionary<int, IGame>();
+        private readonly static Dictionary<int, IGame<int>> Games = new Dictionary<int, IGame<int>>();
         // Access to settings as a dictionary where keys are game IDs
         public readonly static Settings Settings = new Settings();
         // List of highscores, compiled from settings, not all games keep scores
@@ -201,12 +201,12 @@ namespace iobloc
         //      Get game from cache or create a new one and add it to cache.
         //      To save memory and keep game states on transitions.
         // Parameters: id: game ID
-        public static IGame GetGame(int id)
+        public static IGame<int> GetGame(int id)
         {
             if (Games.ContainsKey(id))
                 return Games[id];
 
-            IGame game = null;
+            IGame<int> game = null;
             if (Enum.IsDefined(typeof(GameType), id))
                 switch ((GameType)id)
                 {
@@ -228,7 +228,7 @@ namespace iobloc
             else
             {
                 var s = Settings[id];
-                game = InstantiateFromAssembly<IGame>(s[Settings.AssemblyPath], s[Settings.ClassName]);
+                game = InstantiateFromAssembly<IGame<int>>(s[Settings.AssemblyPath], s[Settings.ClassName]);
             }
 
             if (game != null)
@@ -236,7 +236,7 @@ namespace iobloc
             return game;
         }
 
-        public static IGame GetGame(string id)
+        public static IGame<int> GetGame(string id)
         {
             if (!KeyToGameIdMapping.ContainsKey(id))
                 return null;

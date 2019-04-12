@@ -2,7 +2,7 @@ namespace iobloc
 {
     class TableLine
     {
-        private Pane Pane { get; set; }
+        private Pane<int> Pane { get; set; }
         private int BlockWidth { get; set; }
         private int Block { get; set; }
         private int StartCol { get; set; }
@@ -12,7 +12,7 @@ namespace iobloc
         public bool IsWhite { get; private set; }
         public bool IsMarked { get; private set; }
 
-        public TableLine(Pane pane, int blockWidth, int block, int col, int row, bool isLower)
+        public TableLine(Pane<int> pane, int blockWidth, int block, int col, int row, bool isLower)
         {
             Pane = pane;
             BlockWidth = blockWidth;

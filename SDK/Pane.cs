@@ -2,12 +2,12 @@ namespace iobloc
 {
     // A matrix of values representing a rectangle component that needs to be drawn.
     // There are 2 ways to draw a pane: as lines of text or as a color matrix
-    public class Pane
+    public class Pane<T>
     {
         // pane color matrix
-        private readonly int[,] _grid;
+        private readonly T[,] _grid;
         // Access to color matrix
-        public int this[int row, int col] { get { return _grid[row, col]; } set { _grid[row, col] = value; } }
+        public T this[int row, int col] { get { return _grid[row, col]; } set { _grid[row, col] = value; } }
         // Character to be drawn in different colors as configured in grid matrix
         internal char BlockChar { get; private set; }
         // Distance from top where pane begins
@@ -40,13 +40,13 @@ namespace iobloc
             Width = toCol - fromCol + 1;
             Height = toRow - fromRow + 1;
             HasChanges = true;
-            _grid = new int[Height, Width];
+            _grid = new T[Height, Width];
         }
 
         // Summary:
         //      Set color matrix to same value
         // Parameters: val: value defaults to 0
-        public void Clear(int val = 0)
+        public void Clear(T val = default)
         {
             for (int i = 0; i < Height; i++)
                 for (int j = 0; j < Width; j++)

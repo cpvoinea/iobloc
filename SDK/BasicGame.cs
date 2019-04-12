@@ -15,14 +15,14 @@ namespace iobloc
     //   game.NextFrame()
     // while (key is not Escape)
     // game.Stop()
-    public abstract class BasicGame : IGame
+    public abstract class BasicGame : IGame<int>
     {
         // Identifier of main pane
         protected const string MAIN = "main";
         // Get border around the Panes, to draw in UI
         public Border Border { get; protected set; }
         // Rectangulars to draw in UI
-        public Dictionary<string, Pane> Panes { get; protected set; }
+        public Dictionary<string, Pane<int>> Panes { get; protected set; }
         // Duration between frames in ms
         public int FrameInterval { get; protected set; }
         // List of shortcut keys which are handled by game
@@ -30,13 +30,13 @@ namespace iobloc
         // Is true while game is running, false when game needs to exit
         public bool IsRunning { get; protected set; }
         // The pane inside the frame
-        protected Pane Main { get { return Panes[MAIN]; } }
+        protected Pane<int> Main { get { return Panes[MAIN]; } }
 
         public BasicGame(int mainWidth, int mainHeight, string text = null, int frameInterval = 0, string allowedKeys = "")
         {
             Border = new Border(mainWidth + 2, mainHeight + 2);
-            Pane main = new Pane(1, 1, mainHeight, mainWidth);
-            Panes = new Dictionary<string, Pane> { { MAIN, main } };
+            Pane<int> main = new Pane<int>(1, 1, mainHeight, mainWidth);
+            Panes = new Dictionary<string, Pane<int>> { { MAIN, main } };
             if (!string.IsNullOrEmpty(text))
                 main.SetText(text.Split(','), false);
             FrameInterval = frameInterval;

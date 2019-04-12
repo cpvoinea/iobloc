@@ -4,12 +4,12 @@ using System.Drawing;
 
 namespace iobloc
 {
-    public abstract class FormRenderer : Form, IRenderer
+    public abstract class FormRenderer : Form, IRenderer<int>
     {
         protected const int SCALE_FONT = 14;
 
         private readonly Timer _timer = new Timer();
-        protected IGame Game = null;
+        protected IGame<int> Game = null;
         protected bool IsPaused = false;
 
         public FormRenderer()
@@ -30,10 +30,10 @@ namespace iobloc
         }
 
         protected abstract Control InitializeControls();
-        public abstract void DrawPane(Pane pane);
+        public abstract void DrawPane(Pane<int> pane);
         protected virtual string GetMenuKey(Control sender, MouseEventArgs e) { return null; }
 
-        public void Run(IGame game)
+        public void Run(IGame<int> game)
         {
             Game = game;
             SuspendLayout();
