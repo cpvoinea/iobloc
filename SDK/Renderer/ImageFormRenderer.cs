@@ -39,10 +39,12 @@ namespace iobloc
         private void ClearPanel()
         {
             using (Graphics g = _panel.CreateGraphics())
+            {
                 g.Clear(Color.FromKnownColor(KnownColor.Control));
+            }
         }
 
-        protected override void OnToggle()
+        protected override void Toggling()
         {
             ClearPanel();
         }
@@ -65,11 +67,9 @@ namespace iobloc
             if (!_isInitialized)
                 return;
 
+            SuspendLayout();
             using (var g = _panel.CreateGraphics())
             {
-                //g.FillRectangle(Brushes.White, pane.FromCol * _width, pane.FromRow * _height, pane.Width * _width, pane.Height * _height);
-                g.DrawRectangle(Pens.Black, pane.FromCol * _width, pane.FromRow * _height, pane.Width * _width, pane.Height * _height);
-
                 if (pane.IsTextMode)
                 {
                     for (int row = 0; row < pane.Text.Length && row < pane.Height; row++)
@@ -86,19 +86,18 @@ namespace iobloc
                         for (int col = 0; col < pane.Width; col++)
                         {
                             int c = pane[row, col];
-                            if (c != 0)
-                            {
-                                int x = (pane.FromCol + col) * _width;
-                                int y = (pane.FromRow + row) * _height;
-                                g.FillRectangle(RenderMapping.FormBrush[c < 0 ? -c : c], x, y, _width, _height);
-                                if (c < 0)
-                                    g.DrawEllipse(Pens.White, x + 1, y + 1, _width - 3, _height - 3);
-                            }
+                            var b = c == 0 ? new SolidBrush(Color.FromKnownColor(KnownColor.Control)) : RenderMapping.FormBrush[c < 0 ? -c : c];
+                            int x = (pane.FromCol + col) * _width;
+                            int y = (pane.FromRow + row) * _height;
+                            g.FillRectangle(b, x, y, _width, _height);
+                            if (c < 0)
+                                g.DrawEllipse(Pens.White, x + 1, y + 1, _width - 3, _height - 3);
                         }
                 }
-            }
 
-            _panel.Show();
+                g.DrawRectangle(Pens.Black, pane.FromCol * _width, pane.FromRow * _height, pane.Width * _width, pane.Height * _height);
+            }
+            ResumeLayout(true);
         }
 
         protected override void OnSizeChanged(EventArgs e)
