@@ -6,9 +6,7 @@ namespace iobloc
 {
     public abstract class FormRenderer : Form, IRenderer
     {
-        private const int SCALE_FONT = 14;
-        private const int SCALE_HORIZONTAL = SCALE_FONT + 6;
-        private const int SCALE_VERTICAL = SCALE_FONT + 9;
+        protected const int SCALE_FONT = 14;
 
         private readonly Timer _timer = new Timer();
         protected IGame Game = null;
@@ -42,7 +40,6 @@ namespace iobloc
             if (Game.FrameInterval > 0)
                 _timer.Interval = Game.FrameInterval;
             Controls.Add(InitializeControls());
-            ClientSize = new Size(Game.Border.Width * SCALE_HORIZONTAL, Game.Border.Height * SCALE_VERTICAL);
             ResumeLayout(false);
 
             Game.Start();

@@ -5,6 +5,9 @@ namespace iobloc
 {
     public class TableFormRenderer : FormRenderer
     {
+        private const int SCALE_HORIZONTAL = SCALE_FONT + 2;
+        private const int SCALE_VERTICAL = SCALE_FONT + 8;
+
         private TableLayoutPanel _grid;
 
         protected override Control InitializeControls()
@@ -54,6 +57,7 @@ namespace iobloc
                         c.Text = ((char)Game.Border[row, col]).ToString();
                     }
 
+            ClientSize = new Size(Game.Border.Width * SCALE_HORIZONTAL, Game.Border.Height * SCALE_VERTICAL);
             return _grid;
         }
 

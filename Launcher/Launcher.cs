@@ -153,16 +153,13 @@ namespace iobloc
                 {
                     IRenderer renderer = GetRenderer(renderType);
                     renderer.Run(game);
-                    if (renderer is Form)
+                    var frm = renderer as Form;
+
+                    if (frm != null)
                     {
-                        var frm = renderer as Form;
                         if (owner == null && game != menu)
                             return frm;
-                        else
-                        {
-                            frm.ShowDialog(owner);
-                            renderer.Dispose();
-                        }
+                        frm.ShowDialog(owner);
                     }
 
                     if (game is IBaseGame) // base game selected

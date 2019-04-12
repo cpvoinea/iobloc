@@ -69,23 +69,6 @@ namespace iobloc
                         Change(true);
                     }
                     break;
-                case "D9":
-                    if (_paint)
-                    {
-                        _color = 15;
-                        Change(true);
-                    }
-                    break;
-                case "D0":
-                    if (_paint)
-                    {
-                        _color = 0;
-                        Change(true);
-                    }
-                    break;
-                case "R":
-                    Initialize();
-                    break;
                 case UIKey.Space:
                     _paint = !_paint;
                     Change(true);

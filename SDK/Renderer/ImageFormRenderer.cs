@@ -6,7 +6,10 @@ namespace iobloc
 {
     public class ImageFormRenderer : FormRenderer
     {
+        private const int SCALE_HORIZONTAL = SCALE_FONT;
+        private const int SCALE_VERTICAL = SCALE_FONT + 8;
         private readonly Brush _backgroundBrush = new SolidBrush(Color.FromKnownColor(KnownColor.Control));
+
         private Panel _panel;
         private bool _isInitialized;
         private int _width, _height;
@@ -23,6 +26,7 @@ namespace iobloc
             _panel.MouseClick += ControlMouseClick;
             _panel.MouseWheel += ControlMouseWheel;
 
+            ClientSize = new Size(Game.Border.Width * SCALE_HORIZONTAL, Game.Border.Height * SCALE_VERTICAL);
             return _panel;
         }
 

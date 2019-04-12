@@ -11,7 +11,7 @@ namespace iobloc
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            using (var app = Launcher.Launch(RenderType.ImageForm))
+            using (var app = Launcher.Launch())
             {
                 if (app != null)
                     Application.Run(app);
