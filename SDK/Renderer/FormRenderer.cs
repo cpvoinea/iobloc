@@ -9,9 +9,10 @@ namespace iobloc
         protected const int SCALE_FONT = 14;
 
         private readonly Timer _timer = new Timer();
-        protected IGame<T> Game = null;
-        protected bool IsPaused = false;
+        protected IGame<T> Game;
+        protected bool IsPaused;
         protected bool IsInitialized;
+        protected bool SupressToggle;
 
         public FormRenderer()
         {
@@ -96,7 +97,7 @@ namespace iobloc
             }
             else if (Serializer.Contains(Game.AllowedKeys, key))
                 HandleInput(key);
-            else
+            else if (!SupressToggle)
                 Pause(true);
         }
 

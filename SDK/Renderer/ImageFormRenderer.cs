@@ -84,6 +84,8 @@ namespace iobloc
             if (!IsInitialized)
                 return;
 
+            if (Game.Border.Width == 0 || Game.Border.Height == 0)
+                return;
             CellWidth = MainPanel.Width / Game.Border.Width;
             CellHeight = MainPanel.Height / Game.Border.Height;
             using (Graphics g = MainPanel.CreateGraphics())
