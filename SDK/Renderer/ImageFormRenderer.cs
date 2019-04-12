@@ -6,6 +6,7 @@ namespace iobloc
 {
     public class ImageFormRenderer : FormRenderer
     {
+        private readonly Brush _backgroundBrush = new SolidBrush(Color.FromKnownColor(KnownColor.Control));
         private Panel _panel;
         private bool _isInitialized;
         private int _width, _height;
@@ -44,11 +45,6 @@ namespace iobloc
             }
         }
 
-        protected override void Toggling()
-        {
-            ClearPanel();
-        }
-
         protected override string GetMenuKey(Control control, MouseEventArgs e)
         {
             int index = e.Y / _height - 1;
@@ -71,6 +67,7 @@ namespace iobloc
             {
                 if (pane.IsTextMode)
                 {
+                    g.FillRectangle(_backgroundBrush, pane.FromCol * _width + 1, pane.FromRow * _height + 1, pane.Width * _width - 2, pane.Height * _height - 2);
                     for (int row = 0; row < pane.Text.Length && row < pane.Height; row++)
                     {
                         string text = pane.Text[row];
@@ -85,7 +82,7 @@ namespace iobloc
                         for (int col = 0; col < pane.Width; col++)
                         {
                             int c = pane[row, col];
-                            var b = c == 0 ? new SolidBrush(Color.FromKnownColor(KnownColor.Control)) : RenderMapping.FormBrush[c < 0 ? -c : c];
+                            var b = c == 0 ? _backgroundBrush : RenderMapping.FormBrush[c < 0 ? -c : c];
                             int x = (pane.FromCol + col) * _width;
                             int y = (pane.FromRow + row) * _height;
                             int xOff = col == 0 ? 1 : 0;

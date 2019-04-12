@@ -34,7 +34,6 @@ namespace iobloc
         protected abstract Control InitializeControls();
         public abstract void DrawPane(Pane pane);
         protected virtual string GetMenuKey(Control sender, MouseEventArgs e) { return null; }
-        protected virtual void Toggling() { }
 
         public void Run(IGame game)
         {
@@ -70,7 +69,6 @@ namespace iobloc
         protected void Pause(bool pause)
         {
             Game.TogglePause();
-            Toggling();
             DrawAll();
             IsPaused = pause;
         }
