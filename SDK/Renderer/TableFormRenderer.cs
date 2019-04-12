@@ -5,16 +5,11 @@ namespace iobloc
 {
     public class TableFormRenderer : FormRenderer
     {
-        private const int SCALE_HORIZONTAL = SCALE_FONT + 2;
-        private const int SCALE_VERTICAL = SCALE_FONT + 8;
-
         private TableLayoutPanel _grid;
 
-        protected override void InitializeControls()
+        protected override Control InitializeControls()
         {
-            // 
             // _grid
-            // 
             _grid = new TableLayoutPanel
             {
                 Dock = DockStyle.Fill,
@@ -59,8 +54,7 @@ namespace iobloc
                         c.Text = ((char)Game.Border[row, col]).ToString();
                     }
 
-            ClientSize = new Size(_grid.ColumnCount * SCALE_HORIZONTAL, _grid.RowCount * SCALE_VERTICAL);
-            Controls.Add(_grid);
+            return _grid;
         }
 
         protected override string GetMenuKey(Control control, MouseEventArgs e)

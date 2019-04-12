@@ -23,18 +23,14 @@ namespace iobloc
         public Launcher()
         {
             SuspendLayout();
-            //
             // _btnSettings
-            //
             _btnSettings = new Button
             {
                 Dock = DockStyle.Fill,
                 Text = "&Settings"
             };
             _btnSettings.Click += BtnSettings_Click;
-            //
             // _btnConsole
-            //
             _btnConsole = new Button
             {
                 Dock = DockStyle.Fill,
@@ -42,36 +38,28 @@ namespace iobloc
             };
             // _btnConsole.Enabled = false;
             _btnConsole.Click += BtnConsole_Click;
-            //
             // _btnForm
-            //
             _btnForm = new Button
             {
                 Dock = DockStyle.Fill,
                 Text = "&Grid"
             };
             _btnForm.Click += BtnForm_Click;
-            //
             // _btnImage
-            //
             _btnImage = new Button
             {
                 Dock = DockStyle.Fill,
                 Text = "&Image"
             };
             _btnImage.Click += BtnImage_Click;
-            //
             // _btnExit
-            //
             _btnExit = new Button
             {
                 Dock = DockStyle.Fill,
                 Text = "E&xit"
             };
             _btnExit.Click += BtnExit_Click;
-            //
             // _link
-            //
             _link = new LinkLabel
             {
                 Dock = DockStyle.Fill,
@@ -79,9 +67,7 @@ namespace iobloc
                 TextAlign = ContentAlignment.MiddleCenter
             };
             _link.Click += Link_Click;
-            // 
             // _panel
-            // 
             _panel = new TableLayoutPanel
             {
                 Dock = DockStyle.Fill,
@@ -98,9 +84,7 @@ namespace iobloc
             _panel.Controls.Add(_btnImage);
             _panel.Controls.Add(_link);
             _panel.Controls.Add(_btnExit);
-            // 
-            // FormRunner
-            // 
+            // Launcher
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
             StartPosition = FormStartPosition.CenterScreen;
             Font = new Font(Font.FontFamily, SCALE_FONT);
@@ -128,17 +112,17 @@ namespace iobloc
 
         private void BtnConsole_Click(object sender, EventArgs e)
         {
-            Launch(RenderType.Console);
+            Launch(RenderType.Console, owner: this);
         }
 
         private void BtnForm_Click(object sender, EventArgs e)
         {
-            Launch(RenderType.TableForm);
+            Launch(RenderType.TableForm, owner: this);
         }
 
         private void BtnImage_Click(object sender, EventArgs e)
         {
-            Launch(RenderType.ImageForm);
+            Launch(RenderType.ImageForm, owner: this);
         }
 
         private void BtnExit_Click(object sender, EventArgs e)
@@ -157,21 +141,28 @@ namespace iobloc
             catch { }
         }
 
-        public void Launch(RenderType renderType)
+        public static Form Launch(RenderType renderType = RenderType.ImageForm, GameType gameType = GameType.Menu, Form owner = null)
         {
             try
             {
                 Serializer.Load();
                 IGame menu = Serializer.GetGame((int)GameType.Menu);
-                IGame game = menu;
+                IGame game = Serializer.GetGame((int)gameType);
 
                 while (game != null)
                 {
-                    using (IRenderer renderer = GetRenderer(renderType))
+                    IRenderer renderer = GetRenderer(renderType);
+                    renderer.Run(game);
+                    if (renderer is Form)
                     {
-                        renderer.Run(game);
-                        if (renderer is Form)
-                            (renderer as Form).ShowDialog(this);
+                        var frm = renderer as Form;
+                        if (owner == null && game != menu)
+                            return frm;
+                        else
+                        {
+                            frm.ShowDialog(owner);
+                            renderer.Dispose();
+                        }
                     }
 
                     if (game is IBaseGame) // base game selected
@@ -181,10 +172,13 @@ namespace iobloc
                     else // exit
                         game = null;
                 }
+
+                return owner;
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(owner, ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return owner;
             }
             finally
             {
@@ -202,23 +196,6 @@ namespace iobloc
                 case RenderType.ImageForm: return new ImageFormRenderer();
                 default: return null;
             }
-        }
-
-        public static Form Form(GameType gameType, RenderType renderType = RenderType.ImageForm)
-        {
-            Serializer.Load();
-            IGame game = Serializer.GetGame((int)gameType);
-            IRenderer renderer = GetRenderer(renderType);
-            renderer.Run(game);
-            return renderer as Form;
-        }
-
-        public static void Console(GameType gameType)
-        {
-            Serializer.Load();
-            IGame game = Serializer.GetGame((int)gameType);
-            ConsoleRenderer renderer = new ConsoleRenderer();
-            renderer.Run(game);
         }
     }
 }

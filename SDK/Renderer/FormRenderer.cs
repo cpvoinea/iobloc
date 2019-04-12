@@ -1,13 +1,14 @@
 using System;
 using System.Windows.Forms;
 using System.Drawing;
-using System.Collections.Generic;
 
 namespace iobloc
 {
     public abstract class FormRenderer : Form, IRenderer
     {
-        protected const int SCALE_FONT = 14;
+        private const int SCALE_FONT = 14;
+        private const int SCALE_HORIZONTAL = SCALE_FONT + 6;
+        private const int SCALE_VERTICAL = SCALE_FONT + 9;
 
         private readonly Timer _timer = new Timer();
         protected IGame Game = null;
@@ -16,26 +17,22 @@ namespace iobloc
         public FormRenderer()
         {
             SuspendLayout();
-            //
             // _timer
-            //
             _timer.Tick += FrameTimer_Tick;
-            // 
             // FormRenderer
-            // 
             FormBorderStyle = FormBorderStyle.SizableToolWindow;
             StartPosition = FormStartPosition.CenterScreen;
             Font = new Font(Font.FontFamily, SCALE_FONT);
             DoubleBuffered = true;
+            ControlBox = false;
             Name = "FormRenderer";
             Text = "";
             ResumeLayout(false);
         }
 
-        protected abstract void InitializeControls();
+        protected abstract Control InitializeControls();
         public abstract void DrawPane(Pane pane);
         protected virtual string GetMenuKey(Control sender, MouseEventArgs e) { return null; }
-        protected virtual void SetSize() { }
 
         public void Run(IGame game)
         {
@@ -43,17 +40,12 @@ namespace iobloc
             SuspendLayout();
             if (Game.FrameInterval > 0)
                 _timer.Interval = Game.FrameInterval;
-            InitializeControls();
-            //if (!(Game is Menu))
-            //{
-            //    ControlBox = false;
-            //    ShowIcon = false;
-            //    TopMost = true;
-            //    WindowState = FormWindowState.Maximized;
-            //}
+            Controls.Add(InitializeControls());
+            ClientSize = new Size(Game.Border.Width * SCALE_HORIZONTAL, Game.Border.Height * SCALE_VERTICAL);
             ResumeLayout(false);
 
             Game.Start();
+            DrawAll();
             if (!Game.IsRunning)
                 return;
 
@@ -61,11 +53,11 @@ namespace iobloc
                 _timer.Start();
         }
 
-        protected void DrawAll(bool force = false)
+        protected void DrawAll()
         {
             SuspendLayout();
             foreach (var p in Game.Panes.Values)
-                if (p.HasChanges || force)
+                if (p.HasChanges)
                 {
                     DrawPane(p);
                     p.Change(false);
