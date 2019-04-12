@@ -190,7 +190,7 @@ namespace iobloc
             {
                 case RenderType.Console: return new ConsoleRenderer();
                 case RenderType.TableForm: return new TableFormRenderer();
-                case RenderType.ImageForm: return new ImageFormRenderer();
+                case RenderType.ImageForm: return new ImageFormRenderer<int>();
                 default: return null;
             }
         }

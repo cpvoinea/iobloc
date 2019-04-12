@@ -3,14 +3,14 @@ using System.Drawing;
 
 namespace iobloc
 {
-    public class TableFormRenderer : FormRenderer
+    public class TableFormRenderer : FormRenderer<int>
     {
         private const int SCALE_HORIZONTAL = SCALE_FONT + 2;
         private const int SCALE_VERTICAL = SCALE_FONT + 8;
 
         private TableLayoutPanel _grid;
 
-        protected override Control InitializeControls()
+        protected override void InitializeControls()
         {
             // _grid
             _grid = new TableLayoutPanel
@@ -58,7 +58,7 @@ namespace iobloc
                     }
 
             ClientSize = new Size(Game.Border.Width * SCALE_HORIZONTAL, Game.Border.Height * SCALE_VERTICAL);
-            return _grid;
+            Controls.Add(_grid);
         }
 
         protected override string GetMenuKey(Control control, MouseEventArgs e)

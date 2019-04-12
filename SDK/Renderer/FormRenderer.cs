@@ -4,17 +4,17 @@ using System.Drawing;
 
 namespace iobloc
 {
-    public abstract class FormRenderer : Form, IRenderer<int>
+    public abstract class FormRenderer<T> : Form, IRenderer<T>
     {
         protected const int SCALE_FONT = 14;
 
         private readonly Timer _timer = new Timer();
-        protected IGame<int> Game = null;
+        protected IGame<T> Game = null;
         protected bool IsPaused = false;
+        protected bool IsInitialized;
 
         public FormRenderer()
         {
-            SuspendLayout();
             // _timer
             _timer.Tick += FrameTimer_Tick;
             // FormRenderer
@@ -24,22 +24,22 @@ namespace iobloc
             DoubleBuffered = true;
             ControlBox = false;
             ShowIcon = false;
+            KeyPreview = true;
             Name = "FormRenderer";
             Text = "";
-            ResumeLayout(false);
         }
 
-        protected abstract Control InitializeControls();
-        public abstract void DrawPane(Pane<int> pane);
+        protected abstract void InitializeControls();
+        public abstract void DrawPane(Pane<T> pane);
         protected virtual string GetMenuKey(Control sender, MouseEventArgs e) { return null; }
 
-        public void Run(IGame<int> game)
+        public void Run(IGame<T> game)
         {
             Game = game;
             SuspendLayout();
             if (Game.FrameInterval > 0)
                 _timer.Interval = Game.FrameInterval;
-            Controls.Add(InitializeControls());
+            InitializeControls();
             ResumeLayout(false);
 
             Game.Start();
@@ -53,14 +53,15 @@ namespace iobloc
 
         protected void DrawAll(bool force = false)
         {
-            SuspendLayout();
+            if (!IsInitialized)
+                return;
+
             foreach (var p in Game.Panes.Values)
                 if (p.HasChanges || force)
                 {
                     DrawPane(p);
                     p.Change(false);
                 }
-            ResumeLayout(true);
         }
 
         protected void Pause(bool pause)
@@ -154,6 +155,13 @@ namespace iobloc
             string key = e.Delta < 0 ? UIKey.LeftArrow : UIKey.RightArrow;
             if (Serializer.Contains(Game.AllowedKeys, key))
                 HandleInput(key);
+        }
+
+        protected override void OnShown(EventArgs e)
+        {
+            base.OnShown(e);
+            IsInitialized = true;
+            OnSizeChanged(e);
         }
 
         protected override void Dispose(bool disposing)

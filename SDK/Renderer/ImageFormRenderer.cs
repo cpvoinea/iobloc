@@ -4,54 +4,34 @@ using System.Windows.Forms;
 
 namespace iobloc
 {
-    public class ImageFormRenderer : FormRenderer
+    public class ImageFormRenderer<T> : FormRenderer<T>
     {
         private const int SCALE_HORIZONTAL = SCALE_FONT;
         private const int SCALE_VERTICAL = SCALE_FONT + 8;
         private readonly Brush _backgroundBrush = new SolidBrush(Color.FromKnownColor(KnownColor.Control));
 
-        private Panel _panel;
-        private bool _isInitialized;
-        private int _width, _height;
+        protected Panel MainPanel;
+        protected int CellWidth, CellHeight;
 
-        protected override Control InitializeControls()
+        protected override void InitializeControls()
         {
             // _panel
-            _panel = new Panel
+            MainPanel = new Panel
             {
                 Dock = DockStyle.Fill,
                 Margin = new Padding(0),
                 Padding = new Padding(0)
             };
-            _panel.MouseClick += ControlMouseClick;
-            _panel.MouseWheel += ControlMouseWheel;
+            MainPanel.MouseClick += ControlMouseClick;
+            MainPanel.MouseWheel += ControlMouseWheel;
 
             ClientSize = new Size(Game.Border.Width * SCALE_HORIZONTAL, Game.Border.Height * SCALE_VERTICAL);
-            return _panel;
-        }
-
-        private void ChangeSize()
-        {
-            _width = _panel.Width / Game.Border.Width;
-            _height = _panel.Height / Game.Border.Height;
-            if (_isInitialized)
-            {
-                ClearPanel();
-                DrawAll(true);
-            }
-        }
-
-        private void ClearPanel()
-        {
-            using (Graphics g = _panel.CreateGraphics())
-            {
-                g.Clear(Color.FromKnownColor(KnownColor.Control));
-            }
+            Controls.Add(MainPanel);
         }
 
         protected override string GetMenuKey(Control control, MouseEventArgs e)
         {
-            int index = e.Y / _height - 1;
+            int index = e.Y / CellHeight - 1;
             if (index < 10)
                 return "D" + index;
             if (index >= Game.Panes[Pnl.Main].Text.Length)
@@ -62,22 +42,19 @@ namespace iobloc
             return k[0].ToString();
         }
 
-        public override void DrawPane(Pane<int> pane)
+        public override void DrawPane(Pane<T> pane)
         {
-            if (!_isInitialized)
-                return;
-
-            using (var g = _panel.CreateGraphics())
+            using (var g = MainPanel.CreateGraphics())
             {
                 if (pane.IsTextMode)
                 {
-                    g.FillRectangle(_backgroundBrush, pane.FromCol * _width + 1, pane.FromRow * _height + 1, pane.Width * _width - 2, pane.Height * _height - 2);
+                    g.FillRectangle(_backgroundBrush, pane.FromCol * CellWidth + 1, pane.FromRow * CellHeight + 1, pane.Width * CellWidth - 2, pane.Height * CellHeight - 2);
                     for (int row = 0; row < pane.Text.Length && row < pane.Height; row++)
                     {
                         string text = pane.Text[row];
                         if (string.IsNullOrEmpty(text))
                             continue;
-                        g.DrawString(text, Font, Brushes.Black, pane.FromCol * _width, (pane.FromRow + row) * _height);
+                        g.DrawString(text, Font, Brushes.Black, pane.FromCol * CellWidth, (pane.FromRow + row) * CellHeight);
                     }
                 }
                 else
@@ -85,31 +62,32 @@ namespace iobloc
                     for (int row = 0; row < pane.Height; row++)
                         for (int col = 0; col < pane.Width; col++)
                         {
-                            int c = pane[row, col];
+                            int c = int.Parse(pane[row, col].ToString());
                             var b = c == 0 ? _backgroundBrush : RenderMapping.FormBrush[c < 0 ? -c : c];
-                            int x = (pane.FromCol + col) * _width;
-                            int y = (pane.FromRow + row) * _height;
+                            int x = (pane.FromCol + col) * CellWidth;
+                            int y = (pane.FromRow + row) * CellHeight;
                             int xOff = col == 0 ? 1 : 0;
                             int yOff = row == 0 ? 1 : 0;
-                            g.FillRectangle(b, x + xOff, y + yOff, _width - xOff, _height - yOff);
+                            g.FillRectangle(b, x + xOff, y + yOff, CellWidth - xOff, CellHeight - yOff);
                             if (c < 0)
-                                g.DrawEllipse(Pens.White, x + 1, y + 1, _width - 3, _height - 3);
+                                g.DrawEllipse(Pens.White, x + 1, y + 1, CellWidth - 3, CellHeight - 3);
                         }
                 }
 
-                g.DrawRectangle(Pens.Black, pane.FromCol * _width, pane.FromRow * _height, pane.Width * _width, pane.Height * _height);
+                g.DrawRectangle(Pens.Black, pane.FromCol * CellWidth, pane.FromRow * CellHeight, pane.Width * CellWidth, pane.Height * CellHeight);
             }
         }
 
         protected override void OnSizeChanged(EventArgs e)
         {
             base.OnSizeChanged(e);
-            ChangeSize();
-        }
+            if (!IsInitialized)
+                return;
 
-        protected override void OnShown(EventArgs e)
-        {
-            base.OnShown(e); _isInitialized = true;
+            CellWidth = MainPanel.Width / Game.Border.Width;
+            CellHeight = MainPanel.Height / Game.Border.Height;
+            using (Graphics g = MainPanel.CreateGraphics())
+                g.Clear(Color.FromKnownColor(KnownColor.Control));
             DrawAll(true);
         }
     }
