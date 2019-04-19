@@ -71,4 +71,3 @@ class Program
 * .NET Framework port - iobloc4win.csproj builds in Visual Studio while iobloc.csproj still works for Core 3.0 in VS Code
 * new WinForms renderer displays panel graphics instead of table of controls
 * game panels hold generic cells (int type was used until now)
-* Paint2
