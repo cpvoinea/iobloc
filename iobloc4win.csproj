@@ -47,10 +47,6 @@
     <Compile Include="Games\Breakout.cs" />
     <Compile Include="Games\Helicopter.cs" />
     <Compile Include="Games\Invaders.cs" />
-    <Compile Include="Games\Paint2\PaintRenderer.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SDK\PaneCell.cs" />
     <Compile Include="Games\Runner.cs" />
     <Compile Include="Games\Snake.cs" />
     <Compile Include="Games\Sokoban.cs" />
@@ -59,7 +55,6 @@
     <Compile Include="Games\Special\LevelSelection.cs" />
     <Compile Include="Games\Special\Menu.cs" />
     <Compile Include="Games\Special\Paint.cs" />
-    <Compile Include="Games\Paint2\Paint2.cs" />
     <Compile Include="Games\Table.cs" />
     <Compile Include="Games\Tetris.cs" />
     <Compile Include="Launcher\BaseGame.cs" />
