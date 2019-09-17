@@ -3,7 +3,7 @@ using System.Drawing;
 
 namespace iobloc
 {
-    public class TableFormRenderer : FormRenderer<int>
+    public class TableFormRenderer : FormRenderer
     {
         private const int SCALE_HORIZONTAL = SCALE_FONT + 2;
         private const int SCALE_VERTICAL = SCALE_FONT + 8;
@@ -67,7 +67,7 @@ namespace iobloc
             return "D" + (g < 10 ? g.ToString() : "");
         }
 
-        public override void DrawPane(Pane<int> pane)
+        public override void DrawPane(Pane<PaneCell> pane)
         {
             for (int row = 0; row < pane.Height; row++)
                 for (int col = 0; col < pane.Width; col++)
@@ -98,14 +98,18 @@ namespace iobloc
             {
                 for (int row = 0; row < pane.Height; row++)
                     for (int col = 0; col < pane.Width; col++)
-                        if (pane[row, col] > 0)
-                            Cell(pane, row, col).BackColor = RenderMapping.FormColor[pane[row, col]];
+                        if (pane[row, col].Color > 0)
+                        {
+                            var c = Cell(pane, row, col);
+                            c.BackColor = RenderMapping.FormColor[pane[row, col].Color];
+                            c.BorderStyle = pane[row,col].IsCursor ? BorderStyle.FixedSingle : BorderStyle.None;
+                        }
             }
         }
 
-        private Control Cell(Pane<int> pane, int row, int col)
+        private Label Cell(Pane<PaneCell> pane, int row, int col)
         {
-            return _grid.GetControlFromPosition(pane.FromCol + col, pane.FromRow + row);
+            return _grid.GetControlFromPosition(pane.FromCol + col, pane.FromRow + row) as Label;
         }
     }
 }

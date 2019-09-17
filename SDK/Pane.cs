@@ -2,7 +2,7 @@ namespace iobloc
 {
     // A matrix of values representing a rectangle component that needs to be drawn.
     // There are 2 ways to draw a pane: as lines of text or as a color matrix
-    public class Pane<T>
+    public class Pane<T> where T : struct
     {
         // pane color matrix
         private readonly T[,] _grid;

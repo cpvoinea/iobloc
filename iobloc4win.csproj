@@ -33,12 +33,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject />
+    <StartupObject>iobloc.Program</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>iobloc4win.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
@@ -83,6 +88,7 @@
     <Compile Include="SDK\IGame.cs" />
     <Compile Include="SDK\ITableAI.cs" />
     <Compile Include="SDK\Pane.cs" />
+    <Compile Include="SDK\PaneCell.cs" />
     <Compile Include="SDK\Renderer\ConsoleRenderer.cs" />
     <Compile Include="SDK\Renderer\FormRenderer.cs">
       <SubType>Form</SubType>
@@ -94,6 +100,9 @@
     <Compile Include="SDK\Renderer\TableFormRenderer.cs">
       <SubType>Form</SubType>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="iobloc4win.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -10,7 +10,7 @@ namespace iobloc
         protected override void Initialize()
         {
             for (int i = 0; i < 16; i++)
-                Main[0, i] = 15 - i;
+                Main[0, i] = new PaneCell(15 - i);
             Level = Serializer.MasterLevel;
         }
 
@@ -20,11 +20,11 @@ namespace iobloc
         {
             if (set)
             {
-                Main[0, Level] = 15;
+                Main[0, Level] = new PaneCell(15);
                 base.Change(true);
             }
             else
-                Main[0, Level] = 15 - Level;
+                Main[0, Level] = new PaneCell(15 - Level);
         }
 
         // Summary:

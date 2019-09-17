@@ -39,12 +39,12 @@ namespace iobloc
         {
             _lost = _distance >= Height;
             for (int i = 0; !_lost && i < BlockWidth; i++)
-                _lost |= Main[_distance, i + 1] == CE;
+                _lost |= Main[_distance, i + 1].Color == CE;
             if (set && _lost)
-                Main.Clear(CE);
+                Main.Clear(new PaneCell(CE));
             else
                 for (int i = 0; i < BlockWidth; i++)
-                    Main[_distance, i + 1] = set ? CP : 0;
+                    Main[_distance, i + 1] = new PaneCell(set ? CP : 0);
             base.Change(set);
         }
 
@@ -100,7 +100,7 @@ namespace iobloc
                     Main[i, j] = Main[i, j + 1];
 
             for (int i = 0; i < Height; i++)
-                Main[i, Width - 1] = 0;
+                Main[i, Width - 1] = new PaneCell(0);
             CreateObstacles();
             Score++;
 
@@ -112,7 +112,7 @@ namespace iobloc
             bool hasSpace = true;
             int y = Width - 2;
             while (hasSpace && y >= 0 && y >= Width - OS)
-                hasSpace &= (Main[Height - 1, y] == 0 && Main[0, y--] == 0);
+                hasSpace &= (Main[Height - 1, y].Color == 0 && Main[0, y--].Color == 0);
             if (!hasSpace)
                 return;
 
@@ -124,13 +124,13 @@ namespace iobloc
             {
                 fence = _random.Next(Height - 3);
                 for (int i = Height - 1; i > Height - 1 - fence; i--)
-                    Main[i, Width - 1] = CE;
+                    Main[i, Width - 1] = new PaneCell(CE);
             }
             if ((p & 2) > 0)
             {
                 int ceil = _random.Next(Height - 3 - fence);
                 for (int i = 0; i < ceil; i++)
-                    Main[i, Width - 1] = CE;
+                    Main[i, Width - 1] = new PaneCell(CE);
             }
         }
     }

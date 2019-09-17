@@ -38,7 +38,7 @@ namespace iobloc
             for (int row = 0; row < BR; row++)
                 for (int col = 0; col < Width; col += Block)
                     for (int i = 0; i < BlockWidth; i++)
-                        Main[row, col + i] = CE;
+                        Main[row, col + i] = new PaneCell(CE);
             _targets = LT;
             Change(true);
         }
@@ -46,7 +46,7 @@ namespace iobloc
         protected override void Change(bool set)
         {
             for (int i = -2; i <= 2; i++)
-                Main[Height - 1, _paddle + i] = set ? CP : 0;
+                Main[Height - 1, _paddle + i] = new PaneCell(set ? CP : 0);
             if (set && _ballRow >= Height - 1)
             {
                 base.Initialize(); // reset score and level
@@ -54,7 +54,7 @@ namespace iobloc
             }
             else
             {
-                Main[_ballRow, _ballCol] = set ? CN : 0;
+                Main[_ballRow, _ballCol] = new PaneCell(set ? CN : 0);
                 base.Change(set);
             }
         }
@@ -112,7 +112,7 @@ namespace iobloc
                         newAngle = 2 * Math.PI - newAngle;
                     else if (col < 0 || col >= Width)
                         newAngle = Math.PI - newAngle;
-                    else if (Main[row, col] == CE)
+                    else if (Main[row, col].Color == CE)
                     {
                         Break(row, col);
                         newAngle = 2 * Math.PI - newAngle;
@@ -139,7 +139,7 @@ namespace iobloc
                             case 2: newAngle = Math.PI / 4; break;
                         }
                     }
-                    else if (Main[row, col] > 0)
+                    else if (Main[row, col].Color > 0)
                     {
                         Break(row, col);
                         newAngle = 2 * Math.PI - newAngle;
@@ -156,7 +156,7 @@ namespace iobloc
         {
             int x = (col / Block) * Block;
             for (int i = 0; i < BlockWidth; i++)
-                Main[row, x + i] = 0;
+                Main[row, x + i] = new PaneCell(0);
             Score++;
             _targets--;
             if (_targets == 0)

@@ -32,12 +32,12 @@ namespace iobloc
         {
             if (!set)
                 for (int i = 0; i < BlockWidth; i++)
-                    Main[_row, _col + i] = _paint ? _color : _prev;
+                    Main[_row, _col + i] = new PaneCell(_paint ? _color : _prev, set);
             else
             {
-                _prev = Main[_row, _col];
+                _prev = Main[_row, _col].Color;
                 for (int i = 0; i < BlockWidth; i++)
-                    Main[_row, _col + i] = (!_paint || _color == 0 && _prev == 0) ? 15 : _color;
+                    Main[_row, _col + i] = new PaneCell((!_paint || _color == 0 && _prev == 0) ? 15 : _color, set);
                 base.Change(set);
             }
         }

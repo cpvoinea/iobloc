@@ -43,15 +43,15 @@ namespace iobloc
             for (int row = 0; row < AR; row++)
                 for (int col = 0; col < Width && col < AC * Block; col += Block)
                     for (int i = 0; col + i < Width && i < BlockWidth; i++)
-                        Main[row, col + i] = CE;
+                        Main[row, col + i] = new PaneCell(CE);
             Change(true);
         }
 
         protected override void Change(bool set)
         {
             for (int i = -1; i <= 1; i++)
-                Main[Height - 1, _ship + i] = set ? CP : 0;
-            Main[_bulletRow, _bulletCol] = set ? CN : 0;
+                Main[Height - 1, _ship + i] = new PaneCell(set ? CP : 0);
+            Main[_bulletRow, _bulletCol] = new PaneCell(set ? CN : 0);
             base.Change(set);
         }
 
@@ -88,7 +88,7 @@ namespace iobloc
         public override void NextFrame()
         {
             for (int i = 0; i < Width; i++)
-                if (Main[Height - 2, i] == CE)
+                if (Main[Height - 2, i].Color == CE)
                 {
                     base.Initialize(); // reset score and level
                     Lose();
@@ -100,12 +100,12 @@ namespace iobloc
             {
                 _skipFrame = 2;
                 for (int i = 0; i < Height; i++)
-                    if (_movingRight && Main[i, Width - 1] > 0 ||
-                     !_movingRight && Main[i, 0] > 0)
+                    if (_movingRight && Main[i, Width - 1].Color > 0 ||
+                     !_movingRight && Main[i, 0].Color > 0)
                     {
                         for (int k = Height - 1; k >= 0; k--)
                             for (int j = 0; j < Width; j++)
-                                Main[k, j] = k == 0 ? 0 : Main[k - 1, j];
+                                Main[k, j] = new PaneCell(k == 0 ? 0 : Main[k - 1, j].Color);
 
                         _movingRight = !_movingRight;
                         break;
@@ -113,11 +113,11 @@ namespace iobloc
                 if (_movingRight)
                     for (int i = 0; i < Height; i++)
                         for (int j = Width - 1; j >= 0; j--)
-                            Main[i, j] = j == 0 ? 0 : Main[i, j - 1];
+                            Main[i, j] = new PaneCell(j == 0 ? 0 : Main[i, j - 1].Color);
                 else
                     for (int i = 0; i < Height; i++)
                         for (int j = 0; j < Width; j++)
-                            Main[i, j] = j == Width - 1 ? 0 : Main[i, j + 1];
+                            Main[i, j] = new PaneCell(j == Width - 1 ? 0 : Main[i, j + 1].Color);
             }
 
             _skipFrame--;
@@ -132,16 +132,16 @@ namespace iobloc
                 else
                 {
                     _bulletRow--;
-                    if (Main[_bulletRow, _bulletCol] == CE)
+                    if (Main[_bulletRow, _bulletCol].Color == CE)
                     {
                         int c = _bulletCol;
                         do
-                            Main[_bulletRow, c++] = 0;
-                        while (c < Width && Main[_bulletRow, c] == CE);
+                            Main[_bulletRow, c++] = new PaneCell(0);
+                        while (c < Width && Main[_bulletRow, c].Color == CE);
 
                         c = _bulletCol;
-                        while (c > 0 && Main[_bulletRow, --c] == CE)
-                            Main[_bulletRow, c] = 0;
+                        while (c > 0 && Main[_bulletRow, --c].Color == CE)
+                            Main[_bulletRow, c] = new PaneCell(0);
 
                         Score++;
                         _targets--;
@@ -155,7 +155,7 @@ namespace iobloc
                             _shot = false;
                             _bulletRow = Height - 2;
                             _bulletCol = _ship;
-                            Main[_bulletRow, _bulletCol] = CN;
+                            Main[_bulletRow, _bulletCol] = new PaneCell(CN);
                         }
                     }
                 }

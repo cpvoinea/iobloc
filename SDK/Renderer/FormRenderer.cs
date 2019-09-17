@@ -4,12 +4,12 @@ using System.Drawing;
 
 namespace iobloc
 {
-    public abstract class FormRenderer<T> : Form, IRenderer<T>
+    public abstract class FormRenderer : Form, IRenderer<PaneCell>
     {
         protected const int SCALE_FONT = 14;
 
         private readonly Timer _timer = new Timer();
-        protected IGame<T> Game;
+        protected IGame<PaneCell> Game;
         protected bool IsPaused;
         protected bool IsInitialized;
         protected bool SupressToggle;
@@ -19,22 +19,15 @@ namespace iobloc
             // _timer
             _timer.Tick += FrameTimer_Tick;
             // FormRenderer
-            FormBorderStyle = FormBorderStyle.SizableToolWindow;
-            StartPosition = FormStartPosition.CenterScreen;
             Font = new Font(Font.FontFamily, SCALE_FONT);
-            DoubleBuffered = true;
-            ControlBox = false;
-            ShowIcon = false;
-            KeyPreview = true;
             Name = "FormRenderer";
-            Text = "";
         }
 
         protected abstract void InitializeControls();
-        public abstract void DrawPane(Pane<T> pane);
+        public abstract void DrawPane(Pane<PaneCell> pane);
         protected virtual string GetMenuKey(Control sender, MouseEventArgs e) { return null; }
 
-        public void Run(IGame<T> game)
+        public void Run(IGame<PaneCell> game)
         {
             Game = game;
             SuspendLayout();

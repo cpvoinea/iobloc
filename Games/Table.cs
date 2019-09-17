@@ -90,17 +90,17 @@ namespace iobloc
                 new BorderLine(6 * Block + 1, 7 * Block + 2, Height / 2 + 3, false)
             });
             // panes
-            Panes.Add(Pnl.Table.UpperLeft, new Pane<int>(1, 1, 17, 6 * Block, (char)Symbol.BlockUpper));
-            Panes.Add(Pnl.Table.MiddleLeft, new Pane<int>(18, 1, Height - 17, 6 * Block));
-            Panes.Add(Pnl.Table.LowerLeft, new Pane<int>(Height - 16, 1, Height, 6 * Block, (char)Symbol.BlockLower));
-            Panes.Add(Pnl.Table.UpperTaken, new Pane<int>(1, 6 * Block + 2, 17, 7 * Block + 1, (char)Symbol.BlockUpper));
-            Panes.Add(Pnl.Table.Dice, new Pane<int>(Height / 2 - 1, 6 * Block + 2, Height / 2 + 2, 7 * Block + 1));
-            Panes.Add(Pnl.Table.LowerTaken, new Pane<int>(Height - 16, 6 * Block + 2, Height, 7 * Block + 1, (char)Symbol.BlockLower));
-            Panes.Add(Pnl.Table.UpperRight, new Pane<int>(1, 7 * Block + 3, 17, 13 * Block + 2, (char)Symbol.BlockUpper));
-            Panes.Add(Pnl.Table.MiddleRight, new Pane<int>(18, 7 * Block + 3, Height - 17, 13 * Block + 2));
-            Panes.Add(Pnl.Table.LowerRight, new Pane<int>(Height - 16, 7 * Block + 3, Height, 13 * Block + 2, (char)Symbol.BlockLower));
-            Panes.Add(Pnl.Table.UpperOut, new Pane<int>(1, 13 * Block + 4, 17, 14 * Block + 3, (char)Symbol.BlockUpper));
-            Panes.Add(Pnl.Table.LowerOut, new Pane<int>(Height - 16, 13 * Block + 4, Height, 14 * Block + 3, (char)Symbol.BlockLower));
+            Panes.Add(Pnl.Table.UpperLeft, new Pane<PaneCell>(1, 1, 17, 6 * Block, (char)Symbol.BlockUpper));
+            Panes.Add(Pnl.Table.MiddleLeft, new Pane<PaneCell>(18, 1, Height - 17, 6 * Block));
+            Panes.Add(Pnl.Table.LowerLeft, new Pane<PaneCell>(Height - 16, 1, Height, 6 * Block, (char)Symbol.BlockLower));
+            Panes.Add(Pnl.Table.UpperTaken, new Pane<PaneCell>(1, 6 * Block + 2, 17, 7 * Block + 1, (char)Symbol.BlockUpper));
+            Panes.Add(Pnl.Table.Dice, new Pane<PaneCell>(Height / 2 - 1, 6 * Block + 2, Height / 2 + 2, 7 * Block + 1));
+            Panes.Add(Pnl.Table.LowerTaken, new Pane<PaneCell>(Height - 16, 6 * Block + 2, Height, 7 * Block + 1, (char)Symbol.BlockLower));
+            Panes.Add(Pnl.Table.UpperRight, new Pane<PaneCell>(1, 7 * Block + 3, 17, 13 * Block + 2, (char)Symbol.BlockUpper));
+            Panes.Add(Pnl.Table.MiddleRight, new Pane<PaneCell>(18, 7 * Block + 3, Height - 17, 13 * Block + 2));
+            Panes.Add(Pnl.Table.LowerRight, new Pane<PaneCell>(Height - 16, 7 * Block + 3, Height, 13 * Block + 2, (char)Symbol.BlockLower));
+            Panes.Add(Pnl.Table.UpperOut, new Pane<PaneCell>(1, 13 * Block + 4, 17, 14 * Block + 3, (char)Symbol.BlockUpper));
+            Panes.Add(Pnl.Table.LowerOut, new Pane<PaneCell>(Height - 16, 13 * Block + 4, Height, 14 * Block + 3, (char)Symbol.BlockLower));
             Main = Panes[Pnl.Table.UpperLeft];
             // text panes
             Main.SetText(Help, false);

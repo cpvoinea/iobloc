@@ -28,7 +28,7 @@ namespace iobloc
                         int gy = (_piece.Y - 2 + j) * BlockWidth;
                         if (gx >= 0)
                             for (int k = 0; k < BlockWidth; k++)
-                                Main[gx, gy + k] = set ? (int)_piece.Color : 0;
+                                Main[gx, gy + k] = new PaneCell(set ? (int)_piece.Color : 0);
                     }
             base.Change(set);
         }
@@ -85,7 +85,7 @@ namespace iobloc
                         int gx = piece.X - 1 + i;
                         int gy = (piece.Y - 2 + j) * BlockWidth;
                         bool free = gy >= 0 && gy < Width && gx < Height &&
-                            (gx < 0 && ignoreTop || gx >= 0 && Main[gx, gy] == 0);
+                            (gx < 0 && ignoreTop || gx >= 0 && Main[gx, gy].Color == 0);
                         if (!free)
                             return false;
                     }
@@ -133,12 +133,12 @@ namespace iobloc
                 bool line = true;
                 int j = 0;
                 while (line && j < Width)
-                    line &= Main[i, j++] > 0;
+                    line &= Main[i, j++].Color > 0;
                 if (line)
                 {
                     for (int k = i; k >= 0; k--)
                         for (int l = 0; l < Width; l++)
-                            Main[k, l] = k == 0 ? 0 : Main[k - 1, l];
+                            Main[k, l] = new PaneCell(k == 0 ? 0 : Main[k - 1, l].Color);
                     i++;
                     series++;
                 }

@@ -147,7 +147,6 @@ namespace iobloc
                 {"FrameMultiplier", "0"},
                 {"Width", "40"},
                 {"Height", "20"},
-                {"BlockWidth", "2"},
             });
             // Table
             Add(9, new Dictionary<string, string>{

@@ -5,7 +5,7 @@ using System.Threading;
 namespace iobloc
 {
     // Use System.Console to paint and get input
-    public class ConsoleRenderer : IRenderer<int>
+    public class ConsoleRenderer : IRenderer<PaneCell>
     {
         private static readonly bool SAFE_MODE = true; // made it static instead of const to avoid warnings
         private const int MinWidth = 103;
@@ -14,7 +14,7 @@ namespace iobloc
         private static int WinHeight = MinHeight;
         private static int CurrentBorderHeight;
 
-        private IGame<int> _game = null;
+        private IGame<PaneCell> _game = null;
 
         // Summary:
         //      Use console for drawing
@@ -46,7 +46,7 @@ namespace iobloc
         //   game.NextFrame()
         // while (key is not Escape)
         // game.Stop()
-        public void Run(IGame<int> game)
+        public void Run(IGame<PaneCell> game)
         {
             _game = game;
 
@@ -89,7 +89,7 @@ namespace iobloc
         //      Draw a pane inside a rectangular area.
         //      The pane has either lines of text or a multi-colored matrix with a single character
         // Parameters: pane: pane to draw
-        public void DrawPane(Pane<int> pane)
+        public void DrawPane(Pane<PaneCell> pane)
         {
             if (pane.IsTextMode)
                 DrawPaneText(pane, pane.Text);
@@ -202,7 +202,7 @@ namespace iobloc
         //      Put centered lines of text inside a rectangle, clear the rest
         // Parameters: pane: pane defines rectangle
         // Parameters: lines: text lines to write
-        private static void DrawPaneText(Pane<int> pane, string[] lines)
+        private static void DrawPaneText(Pane<PaneCell> pane, string[] lines)
         {
             // use empty line to clear where text is missing
             string empty = new String(' ', pane.Width);
@@ -228,7 +228,7 @@ namespace iobloc
         // Summary:
         //      Draw a matrix containing a symbol of multiple colors, 0 representing background color
         // Parameters: pane: pane defines rectangle and color matrix
-        private static void DrawPaneColor(Pane<int> pane)
+        private static void DrawPaneColor(Pane<PaneCell> pane)
         {
             for (int row = 0; row < pane.Height; row++)
             {
@@ -238,8 +238,8 @@ namespace iobloc
                 {
                     // group together same color values, to draw only once
                     int from = col;
-                    int last = pane[row, col];
-                    do col++; while (col < pane.Width && pane[row, col] == last);
+                    int last = pane[row, col].Color;
+                    do col++; while (col < pane.Width && pane[row, col].Color == last);
                     // fro->col section has same color: last
                     if (last == 0)
                         Console.Write(new string(' ', col - from)); // use background color

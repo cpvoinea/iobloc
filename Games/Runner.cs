@@ -42,13 +42,13 @@ namespace iobloc
         protected override void Change(bool set)
         {
             int h = Height - 1 - _distance;
-            if (set && (Main[h, 1] == CE || Main[h - 1, 1] == CE))
+            if (set && (Main[h, 1].Color == CE || Main[h - 1, 1].Color == CE))
             {
-                Main.Clear(CE);
+                Main.Clear(new PaneCell(CE));
                 _lost = true;
             }
             else
-                Main[h, 1] = Main[h - 1, 1] = set ? CP : 0;
+                Main[h, 1] = Main[h - 1, 1] = new PaneCell(set ? CP : 0);
             base.Change(set);
         }
 
@@ -118,10 +118,10 @@ namespace iobloc
                     Main[i, j] = Main[i, j + 1];
 
             for (int i = 0; i < Height; i++)
-                Main[i, Width - 1] = 0;
+                Main[i, Width - 1] = new PaneCell(0);
             CreateFence();
 
-            if (Main[Height - 1, 1] == CE)
+            if (Main[Height - 1, 1].Color == CE)
                 Score++;
             Change(true);
         }
@@ -131,12 +131,12 @@ namespace iobloc
             bool hasSpace = true;
             int y = Width - 4;
             while (hasSpace && y >= 0 && y >= Width - FS)
-                hasSpace &= Main[Height - 1, y--] == 0;
+                hasSpace &= Main[Height - 1, y--].Color == 0;
             if (!hasSpace)
                 return;
             int fence = _random.Next(3);
             for (int i = 0; i < 3; i++)
-                Main[Height - 1 - i, Width - 2] = i < fence ? CE : 0;
+                Main[Height - 1 - i, Width - 2] = new PaneCell(i < fence ? CE : 0);
         }
     }
 }

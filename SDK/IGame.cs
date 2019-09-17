@@ -15,7 +15,7 @@ namespace iobloc
     //   game.NextFrame()
     // while (key is not Escape)
     // game.Stop()
-    public interface IGame<T>
+    public interface IGame<T> where T : struct
     {
         // Get border around the Panes, to draw in UI
         Border Border { get; }

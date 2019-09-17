@@ -53,16 +53,16 @@ namespace iobloc
 
             if (_row + v < 0 || _row + v >= Height || _col + h < 0 || _col + h >= Width)
                 return;
-            int next = Main[_row + v, _col + h];
+            int next = Main[_row + v, _col + h].Color;
             if (next == W)
                 return;
 
             if (next == 0 || next == T)
             {
-                SetBlock(_row, _col, Main[_row, _col] == H ? T : 0);
+                SetBlock(_row, _col, Main[_row, _col].Color == H ? T : 0);
                 _row += v;
                 _col += h;
-                SetBlock(_row, _col, Main[_row, _col] == T ? H : P);
+                SetBlock(_row, _col, Main[_row, _col].Color == T ? H : P);
 
                 Score--;
                 base.Change(true);
@@ -71,16 +71,16 @@ namespace iobloc
             {
                 if (_row + 2 * v < 0 || _row + 2 * v >= Height || _col + 2 * h < 0 || _col + 2 * h >= Width)
                     return;
-                int second = Main[_row + 2 * v, _col + 2 * h];
+                int second = Main[_row + 2 * v, _col + 2 * h].Color;
                 if (second == W || second == B || second == R)
                     return;
 
                 if (second == 0 || second == T)
                 {
-                    SetBlock(_row, _col, Main[_row, _col] == H ? T : 0);
+                    SetBlock(_row, _col, Main[_row, _col].Color == H ? T : 0);
                     _row += v;
                     _col += h;
-                    if (Main[_row, _col] == R)
+                    if (Main[_row, _col].Color == R)
                     {
                         _targets++;
                         SetBlock(_row, _col, H);
@@ -88,7 +88,7 @@ namespace iobloc
                     else
                         SetBlock(_row, _col, P);
 
-                    if (Main[_row + v, _col + h] == T)
+                    if (Main[_row + v, _col + h].Color == T)
                     {
                         SetBlock(_row + v, _col + h, R);
                         _targets--;
@@ -143,7 +143,7 @@ namespace iobloc
         void SetBlock(int row, int col, int val)
         {
             for (int i = 0; i < BlockWidth; i++)
-                Main[row, col + i] = val;
+                Main[row, col + i] = new PaneCell(val);
         }
     }
 }

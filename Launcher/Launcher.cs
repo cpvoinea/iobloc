@@ -141,19 +141,30 @@ namespace iobloc
             catch { }
         }
 
+        static IRenderer<PaneCell> GetRenderer(RenderType renderType)
+        {
+            switch (renderType)
+            {
+                case RenderType.Console: return new ConsoleRenderer();
+                case RenderType.TableForm: return new TableFormRenderer();
+                case RenderType.ImageForm: return new ImageFormRenderer();
+                default: return null;
+            }
+        }
+
         public static Form Launch(RenderType renderType = RenderType.ImageForm, GameType gameType = GameType.Menu, Form owner = null)
         {
             try
             {
                 Serializer.Load();
-                IGame<int> menu = Serializer.GetGame((int)GameType.Menu);
-                IGame<int> game = Serializer.GetGame((int)gameType);
+                IGame<PaneCell> menu = Serializer.GetGame((int)GameType.Menu);
+                IGame<PaneCell> game = Serializer.GetGame((int)gameType);
 
                 while (game != null)
                 {
-                    IRenderer<int> renderer = GetRenderer(renderType);
+                    IRenderer<PaneCell> renderer = GetRenderer(renderType);
                     renderer.Run(game);
-                    var frm = renderer as Form;
+                    var frm = (Form)renderer;
 
                     if (frm != null)
                     {
@@ -163,7 +174,7 @@ namespace iobloc
                     }
 
                     if (game is IBaseGame<int>) // base game selected
-                        game = (game as IBaseGame<int>).Next; // continue to next game
+                        game = (game as IBaseGame<PaneCell>).Next; // continue to next game
                     else if (game != menu) // return to menu
                         game = menu;
                     else // exit
@@ -179,19 +190,8 @@ namespace iobloc
             }
             finally
             {
-                try { Serializer.Save(); }
+                try { /* Serializer.Save(); */ }
                 catch { }
-            }
-        }
-
-        public static IRenderer<int> GetRenderer(RenderType renderType)
-        {
-            switch (renderType)
-            {
-                case RenderType.Console: return new ConsoleRenderer();
-                case RenderType.TableForm: return new TableFormRenderer();
-                case RenderType.ImageForm: return new ImageFormRenderer<int>();
-                default: return null;
             }
         }
     }

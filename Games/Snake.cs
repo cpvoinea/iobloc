@@ -51,9 +51,9 @@ namespace iobloc
         {
             foreach (var p in _snake)
                 for (int i = 0; i < BlockWidth; i++)
-                    Main[p.Row, p.Col + i] = set ? CP : 0;
+                    Main[p.Row, p.Col + i] = new PaneCell(set ? CP : 0);
             for (int i = 0; i < BlockWidth; i++)
-                Main[_point.Row, _point.Col + i] = set ? CN : 0;
+                Main[_point.Row, _point.Col + i] = new PaneCell(set ? CN : 0);
             base.Change(set);
         }
 

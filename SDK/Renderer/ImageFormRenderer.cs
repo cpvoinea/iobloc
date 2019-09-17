@@ -4,7 +4,7 @@ using System.Windows.Forms;
 
 namespace iobloc
 {
-    public class ImageFormRenderer<T> : FormRenderer<T>
+    public class ImageFormRenderer : FormRenderer
     {
         private const int SCALE_HORIZONTAL = SCALE_FONT;
         private const int SCALE_VERTICAL = SCALE_FONT + 8;
@@ -15,7 +15,12 @@ namespace iobloc
 
         protected override void InitializeControls()
         {
-            // _panel
+            Icon = Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            StartPosition = FormStartPosition.CenterScreen;
+            WindowState = FormWindowState.Maximized;
+            DoubleBuffered = true;
+            KeyPreview = true;
+            Text = "TUDOR";
             MainPanel = new Panel
             {
                 Dock = DockStyle.Fill,
@@ -42,7 +47,7 @@ namespace iobloc
             return k[0].ToString();
         }
 
-        public override void DrawPane(Pane<T> pane)
+        public override void DrawPane(Pane<PaneCell> pane)
         {
             using (var g = MainPanel.CreateGraphics())
             {
@@ -62,7 +67,7 @@ namespace iobloc
                     for (int row = 0; row < pane.Height; row++)
                         for (int col = 0; col < pane.Width; col++)
                         {
-                            int c = int.Parse(pane[row, col].ToString());
+                            int c = pane[row, col].Color;
                             var b = c == 0 ? _backgroundBrush : RenderMapping.FormBrush[c < 0 ? -c : c];
                             int x = (pane.FromCol + col) * CellWidth;
                             int y = (pane.FromRow + row) * CellHeight;
@@ -71,6 +76,8 @@ namespace iobloc
                             g.FillRectangle(b, x + xOff, y + yOff, CellWidth - xOff, CellHeight - yOff);
                             if (c < 0)
                                 g.DrawEllipse(Pens.White, x + 1, y + 1, CellWidth - 3, CellHeight - 3);
+                            if (pane[row, col].IsCursor)
+                                g.DrawRectangle(Pens.White, x + 1, y + 1, CellWidth - 3, CellHeight - 3);
                         }
                 }
 

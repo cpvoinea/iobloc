@@ -16,7 +16,7 @@ namespace iobloc
             for (int i = 0; i <= Animations.SIZE_LOGO; i++)
                 for (int j = 0; j < Animations.SIZE_LOGO; j++)
                     if (i < Height && j < Width && logo[i, j] == 1)
-                        Main[i, j] = r.Next(15) + 1;
+                        Main[i, j] = new PaneCell(r.Next(15) + 1);
         }
 
         // Summary:
