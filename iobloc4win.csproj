@@ -85,6 +85,7 @@
     <Compile Include="SDK\BasicGame.cs" />
     <Compile Include="SDK\Border.cs" />
     <Compile Include="SDK\BorderLine.cs" />
+    <Compile Include="SDK\CellShape.cs" />
     <Compile Include="SDK\IGame.cs" />
     <Compile Include="SDK\ITableAI.cs" />
     <Compile Include="SDK\Pane.cs" />

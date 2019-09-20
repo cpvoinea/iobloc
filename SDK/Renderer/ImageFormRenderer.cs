@@ -67,17 +67,27 @@ namespace iobloc
                     for (int row = 0; row < pane.Height; row++)
                         for (int col = 0; col < pane.Width; col++)
                         {
-                            int c = pane[row, col].Color;
-                            var b = c == 0 ? _backgroundBrush : RenderMapping.FormBrush[c < 0 ? -c : c];
+                            var c = pane[row, col];
+
+                            var b = c.Color == 0 ? _backgroundBrush : RenderMapping.FormBrush[c.Color];
                             int x = (pane.FromCol + col) * CellWidth;
                             int y = (pane.FromRow + row) * CellHeight;
                             int xOff = col == 0 ? 1 : 0;
                             int yOff = row == 0 ? 1 : 0;
-                            g.FillRectangle(b, x + xOff, y + yOff, CellWidth - xOff, CellHeight - yOff);
-                            if (c < 0)
-                                g.DrawEllipse(Pens.White, x + 1, y + 1, CellWidth - 3, CellHeight - 3);
-                            if (pane[row, col].IsCursor)
-                                g.DrawRectangle(Pens.White, x + 1, y + 1, CellWidth - 3, CellHeight - 3);
+                            //g.FillRectangle(_backgroundBrush, x + xOff, y + yOff, CellWidth - xOff, CellHeight - yOff);
+                            switch (c.Shape)
+                            {
+                                case CellShape.Block:
+                                    g.FillRectangle(b, x + xOff, y + yOff, CellWidth - xOff, CellHeight - yOff);
+                                    break;
+                                case CellShape.Elipse:
+                                    g.FillEllipse(b, x + xOff, y + yOff, CellWidth - xOff, CellHeight - yOff);
+                                    break;
+                            }
+                            if (c.IsCursor)
+                                g.DrawLine(c.Color < 14 ? Pens.White : Pens.Black, x + CellWidth / 2, y + CellHeight / 2, x + CellWidth / 2 + 1, y + CellHeight / 2);
+                            if (c.Char != '\0')
+                                g.DrawString(c.Char.ToString(), Font, c.Color < 8 && c.Color > 0 ? Brushes.White : Brushes.Black, x + 3, y + 3);
                         }
                 }
 

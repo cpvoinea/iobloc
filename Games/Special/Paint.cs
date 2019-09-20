@@ -8,18 +8,54 @@ namespace iobloc
         private int _prev;
         private bool _paint;
         private bool _light;
+        CellShape _shape;
 
-        public Paint() : base(GameType.Paint) { }
+        public Paint() : base(GameType.Paint)
+        {
+            _paint = true;
+            ShowInfo();
+            Change(true);
+        }
+
+        protected override void InitializeUI()
+        {
+            base.InitializeUI();
+            Panes.Add("Canvas", new Pane<PaneCell>(1, 1, Height - 1, Width));
+            Panes.Add("Info", new Pane<PaneCell>(Height, 1, Height, Width));
+            Main = Panes["Canvas"];
+            Main.SetText(Help, false);
+        }
+
+        void ShowInfo()
+        {
+            var info = Panes["Info"];
+            info[0, 0] = new PaneCell(_paint ? 1 + (_light ? 8 : 0) : 0, shape:_shape, ch: '1');
+            info[0, 1] = new PaneCell(_paint ? 2 + (_light ? 8 : 0) : 0, shape: _shape, ch: '2');
+            info[0, 2] = new PaneCell(_paint ? 3 + (_light ? 8 : 0) : 0, shape: _shape, ch: '3');
+            info[0, 3] = new PaneCell(_paint ? 4 + (_light ? 8 : 0) : 0, shape: _shape, ch: '4');
+            info[0, 4] = new PaneCell(_paint ? 5 + (_light ? 8 : 0) : 0, shape: _shape, ch: '5');
+            info[0, 5] = new PaneCell(_paint ? 6 + (_light ? 8 : 0) : 0, shape: _shape, ch: '6');
+            info[0, 6] = new PaneCell(_paint ? 7 + (_light ? 8 : 0) : 0, shape: _shape, ch: '7');
+            info[0, 7] = new PaneCell(_paint ? _color + 8 * (_color >= 8 ? -1 : 1) : 0, shape: _shape, ch: '8');
+            info[0, 8] = new PaneCell(_paint ? 15 : 0, shape: _shape, ch: '9');
+            info[0, 9] = new PaneCell(0, shape: _shape, ch: '0');
+            info[0, 10] = new PaneCell(_paint ? 0 : _color, shape: _shape, ch: 'S');
+            info[0, 11] = new PaneCell(_color, shape: 1-_shape, ch: '-');
+            info.Change(true);
+        }
 
         protected override void Initialize()
         {
             base.Initialize();
+            ShowInfo();
+
             if (IsInitialized)
             {
                 Main.Clear();
                 _color = 0;
                 _prev = 0;
                 _paint = false;
+                _shape = CellShape.Block;
             }
             _row = Height / 2;
             _col = Width / 2;
@@ -32,12 +68,12 @@ namespace iobloc
         {
             if (!set)
                 for (int i = 0; i < BlockWidth; i++)
-                    Main[_row, _col + i] = new PaneCell(_paint ? _color : _prev, set);
+                    Main[_row, _col + i] = new PaneCell(_paint ? _color : _prev, set, _shape);
             else
             {
                 _prev = Main[_row, _col].Color;
                 for (int i = 0; i < BlockWidth; i++)
-                    Main[_row, _col + i] = new PaneCell((!_paint || _color == 0 && _prev == 0) ? 15 : _color, set);
+                    Main[_row, _col + i] = new PaneCell((!_paint || _color == 0 && _prev == 0) ? 15 : _color, set, _shape);
                 base.Change(set);
             }
         }
@@ -63,8 +99,9 @@ namespace iobloc
                     if (_paint)
                     {
                         _color = int.Parse(key.Substring(key.Length - 1));
-                        if (_light)
+                        if (_light && _color < 15)
                             _color += 8;
+                        ShowInfo();
                         Change(true);
                     }
                     break;
@@ -74,6 +111,7 @@ namespace iobloc
                     {
                         _light = !_light;
                         _color += _color < 8 ? 8 : -8;
+                        ShowInfo();
                         Change(true);
                     }
                     break;
@@ -82,6 +120,7 @@ namespace iobloc
                     if (_paint)
                     {
                         _color = 15;
+                        ShowInfo();
                         Change(true);
                     }
                     break;
@@ -96,7 +135,7 @@ namespace iobloc
                 case "R":
                     Initialize();
                     break;
-                case UIKey.Enter:
+                case UIKey.Space:
                     _paint = !_paint;
                     Change(true);
                     break;
@@ -125,12 +164,19 @@ namespace iobloc
                     }
                     break;
                 case UIKey.DownArrow:
-                    if (_row < Height - 1)
+                    if (_row < Height - 2)
                     {
                         Change(false);
                         _row++;
                         Change(true);
                     }
+                    break;
+                case "OemMinus":
+                    _shape = 1 - _shape;
+                    ShowInfo();
+                    Change(true);
+                    break;
+                case "Oemplus":
                     break;
             }
         }

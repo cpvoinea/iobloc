@@ -101,8 +101,10 @@ namespace iobloc
                         if (pane[row, col].Color > 0)
                         {
                             var c = Cell(pane, row, col);
-                            c.BackColor = RenderMapping.FormColor[pane[row, col].Color];
-                            c.BorderStyle = pane[row,col].IsCursor ? BorderStyle.FixedSingle : BorderStyle.None;
+                            var pc = pane[row, col];
+                            c.BackColor = RenderMapping.FormColor[pc.Color];
+                            c.BorderStyle = pc.IsCursor ? BorderStyle.FixedSingle : BorderStyle.None;
+                            c.Text = pc.Char.ToString();
                         }
             }
         }

@@ -59,10 +59,10 @@ namespace iobloc
             IsMarked = set;
         }
 
-        public void Set(int row, int color)
+        public void Set(int row, int color, bool isCursor = false)
         {
             for (int i = 0; i < BlockWidth; i++)
-                Pane[StartRow + row * Direction, StartCol * Block + i] = new PaneCell(color);
+                Pane[StartRow + row * Direction, StartCol * Block + i] = new PaneCell(color, isCursor, CellShape.Elipse);
             Pane.Change();
         }
     }

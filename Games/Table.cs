@@ -175,8 +175,8 @@ namespace iobloc
                 return;
             int cc = !set && Cursor.IsMarked ? CM : (set ? CN : 0);
             int ch = set && _taken.HasValue ? Color : 0;
-            Cursor.Set(0, cc);
-            Cursor.Set(Main.Height - 1, ch);
+            Cursor.Set(0, cc, true);
+            Cursor.Set(Main.Height - 1, ch, true);
         }
 
         private void ChangeBackground(bool set)

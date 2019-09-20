@@ -142,8 +142,8 @@ namespace iobloc
             // Paint
             Add(8, new Dictionary<string, string>{
                 {"MenuKeys", "D8,NumPad8"},
-                {"Help", "Move_cursor:ARROWS,Toggle_draw:ENTER,Select_color:1-7,Toggle_shade:8,Write_color:9,Erase_color:0,Reset:R"},
-                {"AllowedKeys", "LeftArrow,RightArrow,UpArrow,DownArrow,Enter,R,D0,D1,D2,D3,D4,D5,D6,D7,D8,D9,NumPad0,NumPad1,NumPad2,NumPad3,NumPad4,NumPad5,NumPad6,NumPad7,NumPad8,NumPad9"},
+                {"Help", "Move_cursor:ARROWS,Toggle_draw:SPACE,Select_color:1-7,Toggle_shade:8,Write_color:9,Erase_color:0,Reset:R,Shape:-,Size:="},
+                {"AllowedKeys", "LeftArrow,RightArrow,UpArrow,DownArrow,Spacebar,R,D0,D1,D2,D3,D4,D5,D6,D7,D8,D9,NumPad0,NumPad1,NumPad2,NumPad3,NumPad4,NumPad5,NumPad6,NumPad7,NumPad8,NumPad9,OemMinus,Oemplus"},
                 {"FrameMultiplier", "0"},
                 {"Width", "40"},
                 {"Height", "20"},
@@ -158,8 +158,8 @@ namespace iobloc
                 {"LevelThreshold", "1"},
                 {"Width", "59"},
                 {"Height", "40"},
-                {"BlockWidth", "3"},
-                {"BlockSpace", "1"},
+                {"BlockWidth", "1"},
+                {"BlockSpace", "0"},
                 {"PlayerColor", "Blue"},
                 {"EnemyColor", "Red"},
                 {"NeutralColor", "Yellow"},
