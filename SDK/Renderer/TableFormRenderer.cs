@@ -103,7 +103,7 @@ namespace iobloc
                             var c = Cell(pane, row, col);
                             var pc = pane[row, col];
                             c.BackColor = RenderMapping.FormColor[pc.Color];
-                            c.BorderStyle = pc.IsCursor ? BorderStyle.FixedSingle : BorderStyle.None;
+                            // c.BorderStyle = pc.IsCursor ? BorderStyle.FixedSingle : BorderStyle.None;
                             c.Text = pc.Char.ToString();
                         }
             }

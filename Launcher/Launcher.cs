@@ -164,10 +164,10 @@ namespace iobloc
                 {
                     IRenderer<PaneCell> renderer = GetRenderer(renderType);
                     renderer.Run(game);
-                    var frm = (Form)renderer;
 
-                    if (frm != null)
+                    if (renderer is Form)
                     {
+                        var frm = (Form)renderer;
                         if (owner == null && game != menu)
                             return frm;
                         frm.ShowDialog(owner);

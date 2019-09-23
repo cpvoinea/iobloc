@@ -56,7 +56,7 @@ namespace iobloc
             _finished = false;
 
             var m = Mazes[Level];
-            for (int i = 0; i < Width; i++)
+            for (int i = 0; i < Width / BlockWidth; i++)
                 for (int j = 0; j < Height; j++)
                 {
                     int c = m[i, j];

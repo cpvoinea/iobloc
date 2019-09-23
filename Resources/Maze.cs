@@ -22,6 +22,7 @@ namespace iobloc
                 {0, W, 0, 0, W, 0, W, 0, W, 0, 0, 0},
                 {0, 0, 0, W, W, 0, 0, 0, W, W, W, F},
             },
+            // https://www.dcode.fr/maze-generator
             new int[,]{
                 { S,0,W,W,W,W,W,W,W,W,W,W },
                 { 0,0,0,0,W,0,0,0,W,0,0,0 },
