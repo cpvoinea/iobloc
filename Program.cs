@@ -11,7 +11,7 @@ namespace iobloc
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            using (Form app = Launcher.Launch(RenderType.ImageForm, GameType.Paint))
+            using (Form app = Launcher.Launch(RenderType.ImageForm, GameType.Labirint))
             {
                 if (app != null)
                     Application.Run(app);

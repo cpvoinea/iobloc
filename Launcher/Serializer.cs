@@ -223,6 +223,7 @@ namespace iobloc
                     case GameType.Menu: game = new Menu(); break;
                     case GameType.Fireworks: game = new EndAnimation(GameType.Fireworks); break;
                     case GameType.RainingBlood: game = new EndAnimation(GameType.RainingBlood); break;
+                    case GameType.Labirint: game = new Labirint(); break;
                 }
             else
             {

@@ -20,7 +20,7 @@ namespace iobloc
             WindowState = FormWindowState.Maximized;
             DoubleBuffered = true;
             KeyPreview = true;
-            Text = "TUDOR";
+            Text = "";
             MainPanel = new Panel
             {
                 Dock = DockStyle.Fill,

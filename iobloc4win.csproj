@@ -52,6 +52,7 @@
     <Compile Include="Games\Breakout.cs" />
     <Compile Include="Games\Helicopter.cs" />
     <Compile Include="Games\Invaders.cs" />
+    <Compile Include="Games\Labirint.cs" />
     <Compile Include="Games\Runner.cs" />
     <Compile Include="Games\Snake.cs" />
     <Compile Include="Games\Sokoban.cs" />
@@ -72,6 +73,7 @@
     <Compile Include="Launcher\Serializer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Resources\Animations.cs" />
+    <Compile Include="Resources\Maze.cs" />
     <Compile Include="Resources\Pnl.cs" />
     <Compile Include="Resources\Position.cs" />
     <Compile Include="Resources\RenderMapping.cs" />
@@ -104,6 +106,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="iobloc4win.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

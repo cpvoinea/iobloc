@@ -29,7 +29,7 @@ namespace iobloc
         void ShowInfo()
         {
             var info = Panes["Info"];
-            info[0, 0] = new PaneCell(_paint ? 1 + (_light ? 8 : 0) : 0, shape:_shape, ch: '1');
+            info[0, 0] = new PaneCell(_paint ? 1 + (_light ? 8 : 0) : 0, shape: _shape, ch: '1');
             info[0, 1] = new PaneCell(_paint ? 2 + (_light ? 8 : 0) : 0, shape: _shape, ch: '2');
             info[0, 2] = new PaneCell(_paint ? 3 + (_light ? 8 : 0) : 0, shape: _shape, ch: '3');
             info[0, 3] = new PaneCell(_paint ? 4 + (_light ? 8 : 0) : 0, shape: _shape, ch: '4');
@@ -40,14 +40,13 @@ namespace iobloc
             info[0, 8] = new PaneCell(_paint ? 15 : 0, shape: _shape, ch: '9');
             info[0, 9] = new PaneCell(0, shape: _shape, ch: '0');
             info[0, 10] = new PaneCell(_paint ? 0 : _color, shape: _shape, ch: 'S');
-            info[0, 11] = new PaneCell(_color, shape: 1-_shape, ch: '-');
+            info[0, 11] = new PaneCell(_color, shape: 1 - _shape, ch: '-');
             info.Change(true);
         }
 
         protected override void Initialize()
         {
             base.Initialize();
-            ShowInfo();
 
             if (IsInitialized)
             {
@@ -61,6 +60,7 @@ namespace iobloc
             _col = Width / 2;
             _color = 9;
             _light = true;
+            ShowInfo();
             Change(true);
         }
 
@@ -175,8 +175,6 @@ namespace iobloc
                     _shape = 1 - _shape;
                     ShowInfo();
                     Change(true);
-                    break;
-                case "Oemplus":
                     break;
             }
         }
