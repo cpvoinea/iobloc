@@ -5,6 +5,8 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
+    <!-- <PublishReadyToRun>true</PublishReadyToRun> -->
+    <PublishTrimmed>true</PublishTrimmed>
   </PropertyGroup>
   
 </Project>
