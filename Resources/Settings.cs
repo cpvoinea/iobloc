@@ -191,10 +191,11 @@ namespace iobloc
             // Labirint
             Add(14, new Dictionary<string, string>{
                 {"MenuKeys", "L"},
+                {"Help", "Move:ARROWS,Change:SPACE" },
                 {"AllowedKeys", "LeftArrow,RightArrow,UpArrow,DownArrow,Spacebar"},
                 {"FrameMultiplier", "0"},
-                {"Width", "12"},
-                {"Height", "12"},
+                {"Width", "11"},
+                {"Height", "11"},
                 {"PlayerColor", "Blue"},
                 {"EnemyColor", "Red"},
                 {"NeutralColor", "DarkGray"},
