@@ -122,7 +122,7 @@ namespace iobloc
 
         private void BtnImage_Click(object sender, EventArgs e)
         {
-            Launch(RenderType.ImageForm, owner: this);
+            Launch(RenderType.PanelForm, owner: this);
         }
 
         private void BtnExit_Click(object sender, EventArgs e)
@@ -147,13 +147,13 @@ namespace iobloc
             {
                 case RenderType.Console: return new ConsoleRenderer();
                 case RenderType.TableForm: return new TableFormRenderer();
-                case RenderType.ImageForm: return new ImageFormRenderer();
+                case RenderType.PanelForm: return new PanelFormRenderer();
                 case RenderType.Avalonia: return new AvaloniaRenderer();
                 default: return null;
             }
         }
 
-        public static Form Launch(RenderType renderType = RenderType.ImageForm, GameType gameType = GameType.Menu, Form owner = null)
+        public static Form Launch(RenderType renderType = RenderType.PanelForm, GameType gameType = GameType.Menu, Form owner = null)
         {
             try
             {

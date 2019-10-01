@@ -14,20 +14,21 @@ namespace iobloc
             System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
             using (var app = Launcher.Launch(RenderType.Avalonia, GameType.Labirint))
             {
-                if (app != null)
+                if (app is Form)
                     System.Windows.Forms.Application.Run(app as Form);
-                BuildAvaloniaApp().Start(AppMain, args);
+                else
+                    BuildAvaloniaApp().Start(AppMain, args);
             }
         }
 
         // Avalonia configuration, don't remove; also used by visual designer.
-        public static AppBuilder BuildAvaloniaApp() => AppBuilder.Configure<AvaloniaRenderer>().UsePlatformDetect().LogToDebug();
+        public static AppBuilder BuildAvaloniaApp() => AppBuilder.Configure<AvaloniaApp>().UsePlatformDetect().LogToDebug();
 
         // Your application's entry point. Here you can initialize your MVVM framework, DI
         // container, etc.
         private static void AppMain(Avalonia.Application app, string[] args)
         {
-            app.Run(new MainWindow());
+            app.Run(new AvaloniaWindow());
         }
     }
 }

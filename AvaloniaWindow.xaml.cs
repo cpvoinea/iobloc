@@ -1,12 +1,11 @@
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
 namespace iobloc
 {
-    public class MainWindow : Window
+    public class AvaloniaWindow : Window
     {
-        public MainWindow()
+        public AvaloniaWindow()
         {
             InitializeComponent();
         }

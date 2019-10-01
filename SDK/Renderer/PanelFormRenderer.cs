@@ -4,7 +4,7 @@ using System.Windows.Forms;
 
 namespace iobloc
 {
-    public class ImageFormRenderer : FormRenderer
+    public class PanelFormRenderer : FormRenderer
     {
         private const int SCALE_HORIZONTAL = SCALE_FONT;
         private const int SCALE_VERTICAL = SCALE_FONT + 8;
