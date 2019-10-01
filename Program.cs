@@ -1,21 +1,33 @@
 ﻿using System;
 using System.Windows.Forms;
+using Avalonia;
+using Avalonia.Logging.Serilog;
 
 namespace iobloc
 {
     class Program
     {
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-
-            using (Form app = Launcher.Launch(RenderType.ImageForm, GameType.Labirint))
+            System.Windows.Forms.Application.EnableVisualStyles();
+            System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
+            using (var app = Launcher.Launch(RenderType.Avalonia, GameType.Labirint))
             {
                 if (app != null)
-                    Application.Run(app);
+                    System.Windows.Forms.Application.Run(app as Form);
+                BuildAvaloniaApp().Start(AppMain, args);
             }
+        }
+
+        // Avalonia configuration, don't remove; also used by visual designer.
+        public static AppBuilder BuildAvaloniaApp() => AppBuilder.Configure<AvaloniaRenderer>().UsePlatformDetect().LogToDebug();
+
+        // Your application's entry point. Here you can initialize your MVVM framework, DI
+        // container, etc.
+        private static void AppMain(Avalonia.Application app, string[] args)
+        {
+            app.Run(new MainWindow());
         }
     }
 }

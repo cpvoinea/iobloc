@@ -148,6 +148,7 @@ namespace iobloc
                 case RenderType.Console: return new ConsoleRenderer();
                 case RenderType.TableForm: return new TableFormRenderer();
                 case RenderType.ImageForm: return new ImageFormRenderer();
+                case RenderType.Avalonia: return new AvaloniaRenderer();
                 default: return null;
             }
         }
@@ -167,7 +168,7 @@ namespace iobloc
 
                     if (renderer is Form)
                     {
-                        var frm = (Form)renderer;
+                        var frm = renderer as Form;
                         if (owner == null && game != menu)
                             return frm;
                         frm.ShowDialog(owner);
