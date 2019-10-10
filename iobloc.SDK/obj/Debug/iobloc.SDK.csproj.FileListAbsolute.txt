@@ -1,0 +1,4 @@
+C:\Users\catalinv\Documents\GitHub\iobloc\iobloc.SDK\bin\Debug\iobloc.SDK.dll
+C:\Users\catalinv\Documents\GitHub\iobloc\iobloc.SDK\bin\Debug\iobloc.SDK.pdb
+C:\Users\catalinv\Documents\GitHub\iobloc\iobloc.SDK\obj\Debug\iobloc.SDK.dll
+C:\Users\catalinv\Documents\GitHub\iobloc\iobloc.SDK\obj\Debug\iobloc.SDK.pdb

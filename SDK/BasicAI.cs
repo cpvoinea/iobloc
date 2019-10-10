@@ -139,6 +139,7 @@ namespace iobloc
         }
 
         private static bool CanTake(int[] lines, int from) => lines[from] > 0;
+
         private static bool CanPut(int[] lines, int to) => lines[to] >= -1;
 
         public static int GetDice(int[] dice, int from, int to)

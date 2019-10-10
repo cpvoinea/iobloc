@@ -1,0 +1,8 @@
+C:\Users\catalinv\Documents\GitHub\iobloc\iobloc.Games\obj\Debug\iobloc.Games.csprojAssemblyReference.cache
+C:\Users\catalinv\Documents\GitHub\iobloc\iobloc.Games\bin\Debug\iobloc.Games.dll
+C:\Users\catalinv\Documents\GitHub\iobloc\iobloc.Games\bin\Debug\iobloc.Games.pdb
+C:\Users\catalinv\Documents\GitHub\iobloc\iobloc.Games\bin\Debug\iobloc.SDK.dll
+C:\Users\catalinv\Documents\GitHub\iobloc\iobloc.Games\bin\Debug\iobloc.SDK.pdb
+C:\Users\catalinv\Documents\GitHub\iobloc\iobloc.Games\obj\Debug\iobloc.Games.csproj.CopyComplete
+C:\Users\catalinv\Documents\GitHub\iobloc\iobloc.Games\obj\Debug\iobloc.Games.dll
+C:\Users\catalinv\Documents\GitHub\iobloc\iobloc.Games\obj\Debug\iobloc.Games.pdb

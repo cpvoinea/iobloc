@@ -17,7 +17,17 @@
     </AvaloniaResource>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.8.2" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.8.2" />
+    <AvaloniaResource Remove="iobloc.Editor\**" />
+    <AvaloniaResource Remove="iobloc.Games\**" />
+    <AvaloniaResource Remove="iobloc.SDK\**" />
+    <Compile Remove="iobloc.Editor\**" />
+    <Compile Remove="iobloc.Games\**" />
+    <Compile Remove="iobloc.SDK\**" />
+    <EmbeddedResource Remove="iobloc.Editor\**" />
+    <EmbeddedResource Remove="iobloc.Games\**" />
+    <EmbeddedResource Remove="iobloc.SDK\**" />
+    <None Remove="iobloc.Editor\**" />
+    <None Remove="iobloc.Games\**" />
+    <None Remove="iobloc.SDK\**" />
   </ItemGroup>
 </Project>

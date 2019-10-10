@@ -148,7 +148,6 @@ namespace iobloc
                 case RenderType.Console: return new ConsoleRenderer();
                 case RenderType.TableForm: return new TableFormRenderer();
                 case RenderType.PanelForm: return new PanelFormRenderer();
-                case RenderType.Avalonia: return new AvaloniaRenderer();
                 default: return null;
             }
         }

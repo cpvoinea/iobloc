@@ -1,4 +1,4 @@
 namespace iobloc
 {
-    enum RenderType { Console, TableForm, PanelForm, Avalonia }
+    enum RenderType { Console, TableForm, PanelForm }
 }
