@@ -1,10 +1,4 @@
-bin/*
-obj/*
-web/*
-*.exe
-highscores.txt
-settings.txt
-iobloc.dll
-settings.txt
-*.user
 .vs/*
+*/bin/*
+*/obj/*
+
