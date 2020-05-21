@@ -1,11 +1,9 @@
-using System;
-
 namespace iobloc
 {
     class Runner : BaseGame
     {
         private int CP, CE, FS;
-        private readonly Random _random = new Random();
+        private readonly System.Random _random = new System.Random();
         private int _distance;
         private bool _skipAdvance;
         private int _hang;

@@ -1,4 +1,3 @@
-using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -99,7 +98,7 @@ namespace iobloc
             ResumeLayout(false);
         }
 
-        private void BtnSettings_Click(object sender, EventArgs e)
+        private void BtnSettings_Click(object sender, System.EventArgs e)
         {
             try
             {
@@ -110,27 +109,27 @@ namespace iobloc
             catch { }
         }
 
-        private void BtnConsole_Click(object sender, EventArgs e)
+        private void BtnConsole_Click(object sender, System.EventArgs e)
         {
             Launch(RenderType.Console, owner: this);
         }
 
-        private void BtnForm_Click(object sender, EventArgs e)
+        private void BtnForm_Click(object sender, System.EventArgs e)
         {
             Launch(RenderType.TableForm, owner: this);
         }
 
-        private void BtnImage_Click(object sender, EventArgs e)
+        private void BtnImage_Click(object sender, System.EventArgs e)
         {
             Launch(RenderType.PanelForm, owner: this);
         }
 
-        private void BtnExit_Click(object sender, EventArgs e)
+        private void BtnExit_Click(object sender, System.EventArgs e)
         {
             Application.Exit();
         }
 
-        private void Link_Click(object sender, EventArgs e)
+        private void Link_Click(object sender, System.EventArgs e)
         {
             StartProcess("https://github.com/cpvoinea/iobloc/releases");
         }
@@ -143,14 +142,13 @@ namespace iobloc
 
         static IRenderer<PaneCell> GetRenderer(RenderType renderType)
         {
-            switch (renderType)
+            return renderType switch
             {
-                case RenderType.Console: return new ConsoleRenderer();
-                case RenderType.TableForm: return new TableFormRenderer();
-                case RenderType.PanelForm: return new PanelFormRenderer();
-                case RenderType.Avalonia: return new AvaloniaRenderer();
-                default: return null;
-            }
+                RenderType.Console => new ConsoleRenderer(),
+                RenderType.TableForm => new TableFormRenderer(),
+                RenderType.PanelForm => new PanelFormRenderer(),
+                _ => null,
+            };
         }
 
         public static Form Launch(RenderType renderType = RenderType.PanelForm, GameType gameType = GameType.Menu, Form owner = null)
@@ -174,7 +172,7 @@ namespace iobloc
                         frm.ShowDialog(owner);
                     }
 
-                    if (game is IBaseGame<int>) // base game selected
+                    if (game is IBaseGame<PaneCell>) // base game selected
                         game = (game as IBaseGame<PaneCell>).Next; // continue to next game
                     else if (game != menu) // return to menu
                         game = menu;
@@ -184,7 +182,7 @@ namespace iobloc
 
                 return owner;
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 MessageBox.Show(owner, ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return owner;

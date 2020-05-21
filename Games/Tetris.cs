@@ -1,10 +1,8 @@
-using System;
-
 namespace iobloc
 {
     class Tetris : BaseGame
     {
-        private readonly Random _random = new Random();
+        private readonly System.Random _random = new System.Random();
         private TetrisPiece _piece;
 
         public Tetris() : base(GameType.Tetris) { }

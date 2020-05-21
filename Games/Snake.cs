@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace iobloc
@@ -6,7 +5,7 @@ namespace iobloc
     class Snake : BaseGame
     {
         int CP, CN;
-        readonly Random _random = new Random();
+        readonly System.Random _random = new System.Random();
         readonly LinkedList<Position> _snake = new LinkedList<Position>();
         Position _point;
         int _h;

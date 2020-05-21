@@ -1,6 +1,7 @@
-using System;
 using System.Text;
 using System.Threading;
+
+using iobloc.Native;
 
 namespace iobloc
 {
@@ -55,7 +56,7 @@ namespace iobloc
                 return;
 
             DrawBorder(_game.Border);
-            DateTime start = DateTime.Now; // frame start time
+            System.DateTime start = System.DateTime.Now; // frame start time
             while (_game.IsRunning)
             {
                 DrawAll();
@@ -75,11 +76,11 @@ namespace iobloc
                 if (_game.IsRunning && _game.FrameInterval > 0)
                 {
                     Thread.Sleep(20);
-                    int ticks = (int)DateTime.Now.Subtract(start).TotalMilliseconds;
+                    int ticks = (int)System.DateTime.Now.Subtract(start).TotalMilliseconds;
                     if (ticks > _game.FrameInterval) // move to next frame
                     {
                         _game.NextFrame();
-                        start = DateTime.Now;
+                        start = System.DateTime.Now;
                     }
                 }
             }
@@ -205,7 +206,7 @@ namespace iobloc
         private static void DrawPaneText(Pane<PaneCell> pane, string[] lines)
         {
             // use empty line to clear where text is missing
-            string empty = new String(' ', pane.Width);
+            string empty = new string(' ', pane.Width);
             // center vertical
             int start = (pane.Height - lines.Length) / 2;
             if (start < 0) start = 0;

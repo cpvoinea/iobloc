@@ -1,11 +1,9 @@
-using System;
-
 namespace iobloc
 {
     class Helicopter : BaseGame
     {
         private int CP, CE, OS;
-        private readonly Random _random = new Random();
+        private readonly System.Random _random = new System.Random();
         private int _speed;
         private int _distance;
         private bool _skipAdvance;

@@ -1,4 +1,4 @@
-using System;
+using Math = System.Math;
 
 namespace iobloc
 {

@@ -1,4 +1,3 @@
-using System;
 using System.Windows.Forms;
 using System.Drawing;
 
@@ -94,7 +93,7 @@ namespace iobloc
                 Pause(true);
         }
 
-        private void FrameTimer_Tick(object sender, EventArgs e)
+        private void FrameTimer_Tick(object sender, System.EventArgs e)
         {
             if (!Game.IsRunning)
             {
@@ -151,7 +150,7 @@ namespace iobloc
                 HandleInput(key);
         }
 
-        protected override void OnShown(EventArgs e)
+        protected override void OnShown(System.EventArgs e)
         {
             base.OnShown(e);
             IsInitialized = true;

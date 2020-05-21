@@ -1,4 +1,4 @@
-using System;
+using iobloc.Native;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -58,30 +58,30 @@ namespace iobloc
             else
                 return;
 
-            using (var sr = File.OpenText(SettingsFileName))
-                while (!sr.EndOfStream)
+            using var sr = File.OpenText(SettingsFileName);
+            while (!sr.EndOfStream)
+            {
+                string line = sr.ReadLine();
+                if (string.IsNullOrEmpty(line.Trim()))
+                    break;
+                // first line contains game ID as id
+                int id = int.Parse(line.Split(' ')[0]);
+                if (!Settings.ContainsKey(id))
+                    Settings.Add(id, new Dictionary<string, string>());
+                // empty line ends game settings
+                while (!string.IsNullOrEmpty(line) && !sr.EndOfStream)
                 {
-                    string line = sr.ReadLine();
-                    if (string.IsNullOrEmpty(line.Trim()))
-                        break;
-                    // first line contains game ID as id
-                    int id = int.Parse(line.Split(' ')[0]);
-                    if (!Settings.ContainsKey(id))
-                        Settings.Add(id, new Dictionary<string, string>());
-                    // empty line ends game settings
-                    while (!string.IsNullOrEmpty(line) && !sr.EndOfStream)
-                    {
-                        line = sr.ReadLine();
-                        // 2 words on each line (name = value) separated by space, extra words will be ignored as comments
-                        int i = line.IndexOf(' ');
-                        if (i <= 0)
-                            continue;
-                        string name = line.Substring(0, i);
-                        string val = line.Substring(i + 1);
-                        // if setting name exists, it will be overwritten with file value as a string
-                        Settings[id][name] = val;
-                    }
+                    line = sr.ReadLine();
+                    // 2 words on each line (name = value) separated by space, extra words will be ignored as comments
+                    int i = line.IndexOf(' ');
+                    if (i <= 0)
+                        continue;
+                    string name = line.Substring(0, i);
+                    string val = line.Substring(i + 1);
+                    // if setting name exists, it will be overwritten with file value as a string
+                    Settings[id][name] = val;
                 }
+            }
         }
 
         // Summary:
@@ -103,7 +103,7 @@ namespace iobloc
                         KeyToGameIdMapping.Add(sc, id);
                     allowedKeys.AddRange(shortcutList);
 
-                    if (Enum.IsDefined(typeof(GameType), id))
+                    if (System.Enum.IsDefined(typeof(GameType), id))
                     {
                         string prefix = id < 10 ? id.ToString() : shortcuts;
                         text.Add($"{prefix}:{(GameType)id}");
@@ -131,18 +131,16 @@ namespace iobloc
         //      If external settings file was used but file does not exist, create it
         private static void SaveSettings()
         {
-            using (var sw = File.CreateText(SettingsFileName))
+            using var sw = File.CreateText(SettingsFileName);
+            foreach (int id in Settings.Keys)
             {
-                foreach (int id in Settings.Keys)
-                {
-                    // first line is game ID as id of dictionary
-                    sw.WriteLine($"{id} {(GameType)id}");
-                    // setting values as "name value" (separated by space)
-                    foreach (string k in Settings[id].Keys)
-                        sw.WriteLine($"{k} {Settings[id][k]}");
-                    // empty line to mark the end of settings for this game
-                    sw.WriteLine();
-                }
+                // first line is game ID as id of dictionary
+                sw.WriteLine($"{id} {(GameType)id}");
+                // setting values as "name value" (separated by space)
+                foreach (string k in Settings[id].Keys)
+                    sw.WriteLine($"{k} {Settings[id][k]}");
+                // empty line to mark the end of settings for this game
+                sw.WriteLine();
             }
         }
 
@@ -155,17 +153,17 @@ namespace iobloc
                 return;
 
             // each line has to int values: ID and highscore
-            using (var sr = File.OpenText(HighscoresFileName))
-                while (!sr.EndOfStream)
+            using var sr = File.OpenText(HighscoresFileName);
+            while (!sr.EndOfStream)
+            {
+                string[] line = sr.ReadLine().Split(' ');
+                if (line.Length >= 2)
                 {
-                    string[] line = sr.ReadLine().Split(' ');
-                    if (line.Length >= 2)
-                    {
-                        int id = int.Parse(line[0]);
-                        if (Highscores.ContainsKey(id))
-                            Highscores[id] = int.Parse(line[1]);
-                    }
+                    int id = int.Parse(line[0]);
+                    if (Highscores.ContainsKey(id))
+                        Highscores[id] = int.Parse(line[1]);
                 }
+            }
         }
 
         // Summary:
@@ -173,11 +171,9 @@ namespace iobloc
         private static void SaveHighscores()
         {
             // each line has to int values: ID and highscore
-            using (var sw = File.CreateText(HighscoresFileName))
-            {
-                foreach (int id in Highscores.Keys)
-                    sw.WriteLine($"{id} {Highscores[id]}");
-            }
+            using var sw = File.CreateText(HighscoresFileName);
+            foreach (int id in Highscores.Keys)
+                sw.WriteLine($"{id} {Highscores[id]}");
         }
 
         // Summary:
@@ -207,7 +203,7 @@ namespace iobloc
                 return Games[id];
 
             IGame<PaneCell> game = null;
-            if (Enum.IsDefined(typeof(GameType), id))
+            if (System.Enum.IsDefined(typeof(GameType), id))
                 switch ((GameType)id)
                 {
                     case GameType.Level: game = new LevelSelection(); break;
@@ -309,7 +305,7 @@ namespace iobloc
         {
             if (!dic.ContainsKey(id))
                 return 0;
-            return (int)Enum.Parse(typeof(ConsoleColor), dic[id]);
+            return (int)System.Enum.Parse(typeof(ConsoleColor), dic[id]);
         }
 
         // Summary:

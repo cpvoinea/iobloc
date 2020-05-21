@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace iobloc
@@ -24,7 +23,7 @@ namespace iobloc
 
         #region Settings
         private int CP, CE, CN, CD, CL, CM;
-        private readonly Random _random = new Random();
+        private readonly System.Random _random = new System.Random();
         private bool _useFreeMove;
         private bool _useMarking;
         private bool _useBackground;
