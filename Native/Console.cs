@@ -8,7 +8,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
-using SR = iobloc.ConsoleTest.Properties.Resources;
+using SR = iobloc.Properties.Resources;
 
 using iobloc.Native.Windows;
 

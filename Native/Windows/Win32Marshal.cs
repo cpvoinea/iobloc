@@ -6,7 +6,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
-using SR = iobloc.ConsoleTest.Properties.Resources;
+using SR = iobloc.Properties.Resources;
 
 namespace iobloc.Native.Windows
 {

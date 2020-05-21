@@ -4,7 +4,7 @@
 
 using System.Text;
 using System.Diagnostics;
-using SR = iobloc.ConsoleTest.Properties.Resources;
+using SR = iobloc.Properties.Resources;
 
 namespace iobloc.Native.Windows
 {

@@ -4,7 +4,7 @@
 
 #nullable enable
 using System.Text;
-using SR = iobloc.ConsoleTest.Properties.Resources;
+using SR = iobloc.Properties.Resources;
 
 namespace iobloc.Native.Windows
 {

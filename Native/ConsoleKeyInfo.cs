@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 #nullable enable
-using SR = iobloc.ConsoleTest.Properties.Resources;
+using SR = iobloc.Properties.Resources;
 
 namespace iobloc.Native
 {
