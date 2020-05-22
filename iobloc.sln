@@ -21,7 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iobloc.Table", "iobloc.Tabl
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1.SDK", "1.SDK", "{1D59D237-4868-42B5-97F9-D62DF5E3C12D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ascio", "Ascio\Ascio.csproj", "{CD428DFA-1768-4FCE-8CEC-106EE21C9585}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iobloc.Ascio", "iobloc.Ascio\Ascio.csproj", "{CD428DFA-1768-4FCE-8CEC-106EE21C9585}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iobloc", "iobloc\iobloc.csproj", "{4DACEB26-FF6E-41CF-A79F-3C258BB129F7}"
 EndProject
