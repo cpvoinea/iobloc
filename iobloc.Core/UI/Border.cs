@@ -9,7 +9,7 @@ namespace iobloc
         private readonly int[,] _grid;
         private readonly List<BorderLine> _lines;
         // Access to box drawing symbol matrix
-        internal int this[int row, int col] => _grid[row, col];
+        public int this[int row, int col] => _grid[row, col];
 
         // Maximum width
         public int Width { get; private set; }

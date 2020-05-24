@@ -152,7 +152,7 @@ namespace iobloc
             Add(9, new Dictionary<string, string>{
                 {"AssemblyPath", "iobloc.Table.dll"},
                 {"ClassName", "iobloc.Table"},
-                {"AIAssemblyPath", "iobloc.Core.dll" },
+                {"AIAssemblyPath", "iobloc.Table.dll" },
                 {"AIClassName", "iobloc.BasicTableAI" },
                 {"Name", "Table"},
                 {"MenuKeys", "D9"},
@@ -206,14 +206,14 @@ namespace iobloc
             });
             // Demo
             Add(20, new Dictionary<string, string>{
-                 {"AssemblyPath", "iobloc.Games.dll"},
+                 {"AssemblyPath", "iobloc.Demo.dll"},
                  {"ClassName", "iobloc.Demo"},
                  {"Name", "Demo"},
                  {"MenuKeys", "D"},
              });
             //  Platform
             Add(21, new Dictionary<string, string>{
-                 {"AssemblyPath", "iobloc.Platform.dll"},
+                 {"AssemblyPath", "iobloc.Demo.dll"},
                  {"ClassName", "iobloc.Platform.Platform"},
                  {"Name", "Platform"},
                  {"MenuKeys", "P"},

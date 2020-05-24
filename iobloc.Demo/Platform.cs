@@ -1,4 +1,4 @@
-namespace iobloc.Platform
+namespace iobloc
 {
     public class Platform : BasicGame
     {

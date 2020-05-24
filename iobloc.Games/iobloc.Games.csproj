@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\iobloc.SDK\iobloc.SDK.csproj" />
+    <ProjectReference Include="..\iobloc.Core\iobloc.Core.csproj" />
   </ItemGroup>
 
 </Project>

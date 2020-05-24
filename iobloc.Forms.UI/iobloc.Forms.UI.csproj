@@ -1,14 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\iobloc.Demo\iobloc.Demo.csproj" />
+    <ProjectReference Include="..\iobloc.Forms\iobloc.Forms.csproj" />
     <ProjectReference Include="..\iobloc.Games\iobloc.Games.csproj" />
-    <ProjectReference Include="..\iobloc.Platform\iobloc.Platform.csproj" />
     <ProjectReference Include="..\iobloc.Table\iobloc.Table.csproj" />
   </ItemGroup>
 

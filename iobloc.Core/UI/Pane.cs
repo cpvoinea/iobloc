@@ -9,21 +9,21 @@ namespace iobloc
         // Access to color matrix
         public T this[int row, int col] { get { return _grid[row, col]; } set { _grid[row, col] = value; } }
         // Character to be drawn in different colors as configured in grid matrix
-        internal char BlockChar { get; private set; }
+        public char BlockChar { get; private set; }
         // Distance from top where pane begins
-        internal int FromRow { get; private set; }
+        public int FromRow { get; private set; }
         // Distance from left where pane begins
-        internal int FromCol { get; private set; }
+        public int FromCol { get; private set; }
         // Number of columns in pane
         public int Width { get; private set; }
         // Number of rows in pane
         public int Height { get; private set; }
         // Lines of text to be displayed in text mode
-        internal string[] Text { get; private set; }
+        public string[] Text { get; private set; }
         // Indicates if text mode (true) or color mode (false)
         public bool IsTextMode { get; private set; }
         // If true, pane has changed and should be drawn again
-        internal bool HasChanges { get; private set; }
+        public bool HasChanges { get; private set; }
 
         // Summary:
         //      Initialize pane
