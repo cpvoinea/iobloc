@@ -8,7 +8,7 @@ namespace iobloc
         //[System.STAThread]
         static void Main()
         {
-            new ConsoleRenderer().Run(new Walker());
+            new ConsoleRenderer().Run(new Matrix());
 
             //Application.SetHighDpiMode(HighDpiMode.SystemAware);
             //Application.EnableVisualStyles();

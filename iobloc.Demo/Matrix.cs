@@ -17,7 +17,7 @@ namespace iobloc
             for (int i = 0; i < Main.Height * Main.Width; i++)
                 text.Append((char)(rand.Next(range) + 'a'));
 
-            var area = new Area(1, 1, Main.Width, Main.Height, (short)NativeColor.ForegroundGreen);
+            var area = new Area(1, 1, Main.Width, Main.Height, (short)(NativeColor.ForegroundGreen | NativeColor.BackgroundGreen | NativeColor.ForegroundIntensity));
             area.SetText(text.ToString());
 
             Main.Area = area;
