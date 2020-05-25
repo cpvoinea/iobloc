@@ -40,7 +40,7 @@ namespace iobloc
             _rectCloud = new Area(1, 1, 12, 4, Color.ForegroundBlue | Color.ForegroundGreen | Color.ForegroundRed | Color.BackgroundBlue | Color.BackgroundIntensity);
             _rectCloud.SetText(WalkAnimation.CLD);
             int n = Main.Width / 24;
-            int w = Main.Width / n;
+            int w = n == 0 ? 0 : Main.Width / n;
             int h = Main.Height - 12;
             for (int i = 0; i < n; i++)
             {
