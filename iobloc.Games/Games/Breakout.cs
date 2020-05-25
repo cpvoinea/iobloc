@@ -2,7 +2,7 @@ using Math = System.Math;
 
 namespace iobloc
 {
-    class Breakout : BaseGame
+    public class Breakout : BaseGame
     {
         private int CP, CE, CN, BR;
         private int LT => (Width + BlockSpace) / Block * BR;

@@ -1,6 +1,6 @@
 namespace iobloc
 {
-    class Labirint : BaseGame
+    public class Labirint : BaseGame
     {
         private int S, F, W, T;
         private static readonly int[][,] Mazes = Maze.All;

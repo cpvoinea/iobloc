@@ -21,10 +21,7 @@ namespace iobloc
             public const int ColorLose = 4;
             public const int PlatformLiftTime = 1350;
             public const int FrameInterval = PlatformLiftTime / (PlatformMaxHeight - PlatformMinHeight) / PlayerSpeed;
-            public const string LeftKey = "LeftArrow";
-            public const string RightKey = "RightArrow";
-            public const string UpKey = "UpArrow";
-            public const string AllowedKeys = LeftKey + "," + RightKey + "," + UpKey;
+            public const string AllowedKeys = UIKey.LeftArrow + "," + UIKey.RightArrow + "," + UIKey.UpArrow;
             public const string Help = "Touch the target,Use arrows to move";
             public const int TimeLimit = 10_000;
             public const string PnlTime = "time";
@@ -251,15 +248,15 @@ namespace iobloc
 
             switch (key)
             {
-                case Settings.LeftKey:
+                case UIKey.LeftArrow:
                     CancelMove(PlayerMove.Right);
                     SetMove(PlayerMove.Left);
                     break;
-                case Settings.RightKey:
+                case UIKey.RightArrow:
                     CancelMove(PlayerMove.Left);
                     SetMove(PlayerMove.Right);
                     break;
-                case Settings.UpKey:
+                case UIKey.UpArrow:
                     if (_playerAltitude == 0 || _isPlayerOnPlatform) // is standing on something
                         SetMove(PlayerMove.Up);
                     break;

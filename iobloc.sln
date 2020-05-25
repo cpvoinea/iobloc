@@ -15,13 +15,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iobloc.Core", "iobloc.Core\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iobloc.Table", "iobloc.Table\iobloc.Table.csproj", "{CF39F357-065E-4B38-B197-D1E138112138}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iobloc.Ascio", "iobloc.Ascio\iobloc.Ascio.csproj", "{CD428DFA-1768-4FCE-8CEC-106EE21C9585}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iobloc.Forms", "iobloc.Forms\iobloc.Forms.csproj", "{7510272E-EB5F-47F9-9B38-2741011B11E1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iobloc.Demo", "iobloc.Demo\iobloc.Demo.csproj", "{420C39E1-E34F-4C63-82E4-D89BB0933363}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iobloc.Forms.UI", "iobloc.Forms.UI\iobloc.Forms.UI.csproj", "{535BE0F8-FF78-4984-BC3E-532A4AA6143A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iobloc", "iobloc\iobloc.csproj", "{B535B7C9-2BF9-45C6-B24A-E672E489434A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,10 +43,6 @@ Global
 		{CF39F357-065E-4B38-B197-D1E138112138}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CF39F357-065E-4B38-B197-D1E138112138}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CF39F357-065E-4B38-B197-D1E138112138}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CD428DFA-1768-4FCE-8CEC-106EE21C9585}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CD428DFA-1768-4FCE-8CEC-106EE21C9585}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CD428DFA-1768-4FCE-8CEC-106EE21C9585}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CD428DFA-1768-4FCE-8CEC-106EE21C9585}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7510272E-EB5F-47F9-9B38-2741011B11E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7510272E-EB5F-47F9-9B38-2741011B11E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7510272E-EB5F-47F9-9B38-2741011B11E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -57,10 +51,10 @@ Global
 		{420C39E1-E34F-4C63-82E4-D89BB0933363}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{420C39E1-E34F-4C63-82E4-D89BB0933363}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{420C39E1-E34F-4C63-82E4-D89BB0933363}.Release|Any CPU.Build.0 = Release|Any CPU
-		{535BE0F8-FF78-4984-BC3E-532A4AA6143A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{535BE0F8-FF78-4984-BC3E-532A4AA6143A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{535BE0F8-FF78-4984-BC3E-532A4AA6143A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{535BE0F8-FF78-4984-BC3E-532A4AA6143A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B535B7C9-2BF9-45C6-B24A-E672E489434A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B535B7C9-2BF9-45C6-B24A-E672E489434A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B535B7C9-2BF9-45C6-B24A-E672E489434A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B535B7C9-2BF9-45C6-B24A-E672E489434A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

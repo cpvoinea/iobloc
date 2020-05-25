@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace iobloc
 {
-    class Snake : BaseGame
+    public class Snake : BaseGame
     {
         int CP, CN;
         readonly System.Random _random = new System.Random();

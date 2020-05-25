@@ -1,6 +1,6 @@
 namespace iobloc
 {
-    class Runner : BaseGame
+    public class Runner : BaseGame
     {
         private int CP, CE, FS;
         private readonly System.Random _random = new System.Random();

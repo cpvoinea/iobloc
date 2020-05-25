@@ -1,18 +1,24 @@
-using System;
+using iobloc.NativeConsole;
+using iobloc.NativeConsole.Windows;
 using System.Text;
 using System.Threading;
+using static iobloc.NativeConsole.Windows.Interop.Kernel32;
 
 namespace iobloc
 {
     // Use System.Console to paint and get input
     public class ConsoleRenderer : IRenderer<PaneCell>
     {
+        private static readonly bool DEBUG = true;
         private static readonly bool SAFE_MODE = true; // made it static instead of const to avoid warnings
         private const int MinWidth = 103;
         private const int MinHeight = 44;
         private static int WinWidth = MinWidth;
         private static int WinHeight = MinHeight;
         private static int CurrentBorderHeight;
+        private System.DateTime _start = System.DateTime.Now;
+        private int _frames = 0;
+        private int _fps = 0;
 
         private IGame<PaneCell> _game = null;
 
@@ -59,6 +65,19 @@ namespace iobloc
             while (_game.IsRunning)
             {
                 DrawAll();
+
+                if (DEBUG)
+                {
+                    _frames++;
+                    double dif = System.DateTime.Now.Subtract(_start).TotalSeconds;
+                    if (dif >= 3)
+                    {
+                        _fps = (int)(_frames / dif);
+                        _frames = 0;
+                        _start = System.DateTime.Now;
+                    }
+                }
+
                 bool paused = HandleInput();
                 if (!_game.IsRunning)
                     break;
@@ -91,10 +110,27 @@ namespace iobloc
         // Parameters: pane: pane to draw
         public void DrawPane(Pane<PaneCell> pane)
         {
-            if (pane.IsTextMode)
-                DrawPaneText(pane, pane.Text);
+            if (DEBUG && _game.IsRunning)
+            {
+                var status = GetStatus();
+                if (!string.IsNullOrEmpty(status) && pane.Width > status.Length)
+                {
+                    Console.SetCursorPosition(pane.Width - status.Length - 1, 0);
+                    Console.Write(status);
+                }
+            }
+
+            if (pane.Area != null)
+            {
+                DrawArea(pane.Area.Value);
+            }
             else
-                DrawPaneColor(pane);
+            {
+                if (pane.IsTextMode)
+                    DrawPaneText(pane, pane.Text);
+                else
+                    DrawPaneColor(pane);
+            }
         }
 
         public void Dispose()
@@ -273,6 +309,20 @@ namespace iobloc
                 }
                 catch { width++; } // on some operating systems the window resize is not supported
             while (!success && width < 16);
+        }
+
+        private string GetStatus()
+        {
+            if (_fps > 0)
+                return string.Format("FPS={0}", _fps);
+
+            return "";
+        }
+
+        public void DrawArea(Area area)
+        {
+            var rect = area.Rect;
+            WriteConsoleOutput(GetStdHandle(HandleTypes.STD_OUTPUT_HANDLE), area.Text, area.Size, area.From, ref rect);
         }
     }
 }

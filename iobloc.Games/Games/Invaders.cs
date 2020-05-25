@@ -1,6 +1,6 @@
 namespace iobloc
 {
-    class Invaders : BaseGame
+    public class Invaders : BaseGame
     {
         private int CP, CE, CN, AR, AC;
         private int LT => AR * AC;

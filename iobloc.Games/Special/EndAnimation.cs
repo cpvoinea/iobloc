@@ -1,7 +1,7 @@
 namespace iobloc
 {
     // The simplest game, has no input, just iterates frames and exists to menu
-    class EndAnimation : BaseGame
+    public class EndAnimation : BaseGame
     {
         // all frames
         private readonly int[][,] _animation;

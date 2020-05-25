@@ -1,7 +1,7 @@
 
 namespace iobloc
 {
-    class Sokoban : BaseGame
+    public class Sokoban : BaseGame
     {
         int P, B, W, T, R, H, WS;
         int _targets = int.MaxValue;

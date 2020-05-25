@@ -1,4 +1,4 @@
-﻿namespace iobloc.Ascio
+﻿namespace iobloc
 {
     static class WalkAnimation
     {

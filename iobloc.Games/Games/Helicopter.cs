@@ -1,6 +1,6 @@
 namespace iobloc
 {
-    class Helicopter : BaseGame
+    public class Helicopter : BaseGame
     {
         private int CP, CE, OS;
         private readonly System.Random _random = new System.Random();

@@ -24,6 +24,7 @@ namespace iobloc
         public bool IsTextMode { get; private set; }
         // If true, pane has changed and should be drawn again
         public bool HasChanges { get; private set; }
+        public Area? Area { get; set; }
 
         // Summary:
         //      Initialize pane

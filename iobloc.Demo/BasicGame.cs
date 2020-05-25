@@ -18,7 +18,6 @@ namespace iobloc
     public abstract class BasicGame : IGame<PaneCell>
     {
         // Identifier of main pane
-        protected const string MAIN = "main";
         // Get border around the Panes, to draw in UI
         public Border Border { get; protected set; }
         // Rectangulars to draw in UI
@@ -30,13 +29,13 @@ namespace iobloc
         // Is true while game is running, false when game needs to exit
         public bool IsRunning { get; protected set; }
         // The pane inside the frame
-        protected Pane<PaneCell> Main { get { return Panes[MAIN]; } }
+        protected Pane<PaneCell> Main { get { return Panes[Pnl.Main]; } }
 
         public BasicGame(int mainWidth, int mainHeight, string text = null, int frameInterval = 0, string allowedKeys = "")
         {
             Border = new Border(mainWidth + 2, mainHeight + 2);
             Pane<PaneCell> main = new Pane<PaneCell>(1, 1, mainHeight, mainWidth);
-            Panes = new Dictionary<string, Pane<PaneCell>> { { MAIN, main } };
+            Panes = new Dictionary<string, Pane<PaneCell>> { { Pnl.Main, main } };
             if (!string.IsNullOrEmpty(text))
                 main.SetText(text.Split(','), false);
             FrameInterval = frameInterval;

@@ -152,7 +152,7 @@ namespace iobloc
             Add(9, new Dictionary<string, string>{
                 {"AssemblyPath", "iobloc.Table.dll"},
                 {"ClassName", "iobloc.Table"},
-                {"AIAssemblyPath", "iobloc.Table.dll" },
+                {"AIAssemblyPath", "iobloc.Core.dll" },
                 {"AIClassName", "iobloc.BasicTableAI" },
                 {"Name", "Table"},
                 {"MenuKeys", "D9"},
@@ -161,10 +161,10 @@ namespace iobloc
                 {"AllowedKeys", "LeftArrow,RightArrow,UpArrow,R,F,M,N,B"},
                 {"FrameMultiplier", "0.01"},
                 {"LevelThreshold", "1"},
-                {"Width", "17"},
+                {"Width", "31"},
                 {"Height", "40"},
                 {"BlockWidth", "1"},
-                {"BlockSpace", "0"},
+                {"BlockSpace", "1"},
                 {"PlayerColor", "Blue"},
                 {"EnemyColor", "Red"},
                 {"NeutralColor", "Yellow"},
@@ -214,7 +214,7 @@ namespace iobloc
             //  Platform
             Add(21, new Dictionary<string, string>{
                  {"AssemblyPath", "iobloc.Demo.dll"},
-                 {"ClassName", "iobloc.Platform.Platform"},
+                 {"ClassName", "iobloc.Platform"},
                  {"Name", "Platform"},
                  {"MenuKeys", "P"},
              });

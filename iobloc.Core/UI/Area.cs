@@ -1,40 +1,42 @@
-namespace iobloc.Ascio
+using static iobloc.NativeConsole.Windows.Interop.Kernel32;
+
+namespace iobloc
 {
-    struct Screen
+    public struct Area
     {
         public int Left { get; private set; }
         public int Top { get; private set; }
         public int Width { get; private set; }
         public int Height { get; private set; }
-        public CharInfo[,] Text { get; private set; }
+        public CHAR_INFO[,] Text { get; private set; }
 
-        public Coord From => new Coord { X = (short)Left, Y = (short)Top };
-        public Coord Size => new Coord { X = (short)Width, Y = (short)Height };
-        public Rect Rect => new Rect { Left = (short)Left, Top = (short)Top, Right = (short)(Left + Width - 1), Bottom = (short)(Top + Height - 1) };
-        public CharInfo this[int row, int col] => Text[row, col];
+        public COORD From => new COORD { X = (short)Left, Y = (short)Top };
+        public COORD Size => new COORD { X = (short)Width, Y = (short)Height };
+        public SMALL_RECT Rect => new SMALL_RECT { Left = (short)Left, Top = (short)Top, Right = (short)(Left + Width - 1), Bottom = (short)(Top + Height - 1) };
+        public CHAR_INFO this[int row, int col] => Text[row, col];
 
-        public Screen(int left, int top, int width, int height, CharAttr? attr = null)
+        public Area(int left, int top, int width, int height, Color? attr = null)
         {
             Left = left;
             Top = top;
             Width = width;
             Height = height;
-            Text = new CharInfo[height, width];
+            Text = new CHAR_INFO[height, width];
             if (attr.HasValue)
                 Clear(attr.Value);
         }
 
-        public void Clear(CharAttr? attr = null)
+        public void Clear(Color? attr = null)
         {
             for (int y = 0; y < Height; y++)
                 for (int x = 0; x < Width; x++)
                     if (attr.HasValue)
-                        Text[y, x] = new CharInfo(' ', attr.Value);
+                        Text[y, x] = new CHAR_INFO(' ', (short)attr.Value);
                     else
-                        Text[y, x].Change(' ');
+                        Text[y, x] = new CHAR_INFO(' ', Text[y,x].Attr);
         }
 
-        public void SetText(string text, Rect? area = null)
+        public void SetText(string text, SMALL_RECT? area = null)
         {
             int left = area.HasValue ? area.Value.Left : 0;
             int top = area.HasValue ? area.Value.Top : 0;
@@ -45,7 +47,7 @@ namespace iobloc.Ascio
             while (i < text.Length)
                 if (y >= 0 && y < Height)
                 {
-                    Text[y, x].Change(text[i]);
+                    Text[y, x] = new CHAR_INFO(text[i], Text[y,x].Attr);
                     i++;
                     x++;
                     if (x >= Width || x - left >= w)
@@ -56,14 +58,14 @@ namespace iobloc.Ascio
                 }
         }
 
-        public void SetScreen(Screen rect)
+        public void SetArea(Area rect)
         {
             for (int y = 0, sy = rect.Top; y < rect.Height && y + rect.Top < Height; y++, sy++)
                 if (sy >= 0 && sy < Height)
                     for (int x = 0, sx = rect.Left; x < rect.Width && x + rect.Left < Width; x++, sx++)
                         if (sx >= 0 && sx < Width)
                         {
-                            CharInfo c = rect.Text[y, x];
+                            CHAR_INFO c = rect.Text[y, x];
                             if (c.Char != ' ')
                                 Text[sy, sx] = c;
                         }

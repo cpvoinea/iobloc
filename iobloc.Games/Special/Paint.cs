@@ -1,6 +1,6 @@
 namespace iobloc
 {
-    class Paint : BaseGame
+    public class Paint : BaseGame
     {
         private int _row;
         private int _col;

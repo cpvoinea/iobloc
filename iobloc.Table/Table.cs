@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace iobloc
 {
-    class Table : BaseGame
+    public class Table : BaseGame
     {
         #region Action struct
         enum ActionType { Skip, Select, Take, Put, Throw }

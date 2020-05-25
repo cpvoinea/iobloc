@@ -1,7 +1,7 @@
 namespace iobloc
 {
     // Display list of available games to link through Next
-    class Menu : BaseGame
+    public class Menu : BaseGame
     {
         bool _exit;
 
