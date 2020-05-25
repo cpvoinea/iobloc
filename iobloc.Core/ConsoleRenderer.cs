@@ -1,8 +1,6 @@
 using iobloc.NativeConsole;
-using iobloc.NativeConsole.Windows;
 using System.Text;
 using System.Threading;
-using static iobloc.NativeConsole.Windows.Interop.Kernel32;
 
 namespace iobloc
 {
@@ -321,8 +319,7 @@ namespace iobloc
 
         public void DrawArea(Area area)
         {
-            var rect = area.Rect;
-            WriteConsoleOutput(GetStdHandle(HandleTypes.STD_OUTPUT_HANDLE), area.Text, area.Size, new COORD { X = (short)(area.From.X-1), Y = (short)(area.From.Y-1) }, ref rect);
+            Console.WriteArea(area.Top, area.Left, area.Width, area.Text);
         }
     }
 }

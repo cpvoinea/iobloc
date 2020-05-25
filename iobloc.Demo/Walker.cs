@@ -1,7 +1,6 @@
 using iobloc.NativeConsole;
 using System.Collections.Generic;
 using System.Text;
-using static iobloc.NativeConsole.Windows.Interop.Kernel32;
 
 namespace iobloc
 {
@@ -28,16 +27,16 @@ namespace iobloc
             base.Start();
             Console.Title = "Gioni Walker";
 
-            _rectBackground = new Area(1, 1, Main.Width, Main.Height, Color.BackgroundBlue | Color.BackgroundIntensity);
+            _rectBackground = new Area(1, 1, Main.Width, Main.Height, (short)(NativeColor.BackgroundBlue | NativeColor.BackgroundIntensity));
 
             StringBuilder gnd = new StringBuilder(Main.Width);
             for (int i = 0; i < Main.Width; i++)
                 gnd.Append(WalkAnimation.GND[_rand.Next(WalkAnimation.GND.Length)]);
             _groundText = gnd.ToString();
-            _ground = new Area(0, Main.Height - 1, Main.Width, 1, Color.BackgroundBlue | Color.BackgroundGreen | Color.ForegroundGreen | Color.ForegroundIntensity);
+            _ground = new Area(0, Main.Height - 1, Main.Width, 1, (short)(NativeColor.BackgroundBlue | NativeColor.BackgroundGreen | NativeColor.ForegroundGreen | NativeColor.ForegroundIntensity));
             _ground.SetText(_groundText);
 
-            _rectCloud = new Area(1, 1, 12, 4, Color.ForegroundBlue | Color.ForegroundGreen | Color.ForegroundRed | Color.BackgroundBlue | Color.BackgroundIntensity);
+            _rectCloud = new Area(1, 1, 12, 4, (short)(NativeColor.ForegroundBlue | NativeColor.ForegroundGreen | NativeColor.ForegroundRed | NativeColor.BackgroundBlue | NativeColor.BackgroundIntensity));
             _rectCloud.SetText(WalkAnimation.CLD);
             int n = Main.Width / 24;
             int w = n == 0 ? 0 : Main.Width / n;
@@ -50,9 +49,11 @@ namespace iobloc
                 _clouds.Add(_rectCloud);
             }
 
-            _rectActor = new Area((Main.Width - 5) / 2, Main.Height - 7, 5, 6, Color.ForegroundRed | Color.ForegroundIntensity | Color.BackgroundBlue | Color.BackgroundIntensity);
+            _rectActor = new Area((Main.Width - 5) / 2, Main.Height - 7, 5, 6, (short)(NativeColor.ForegroundRed | NativeColor.ForegroundIntensity | NativeColor.BackgroundBlue | NativeColor.BackgroundIntensity));
             _actor = _rectActor;
             _actor.SetText(WalkAnimation.ACT[WO]);
+
+            Draw();
         }
 
         public override void HandleInput(string key)
@@ -104,9 +105,11 @@ namespace iobloc
 
                 _clouds = movedClouds;
             }
-        }
 
-        public override void NextFrame()
+            Draw();
+         }
+
+        private void Draw()
         {
             Area area = _rectBackground;
             area.Clear();

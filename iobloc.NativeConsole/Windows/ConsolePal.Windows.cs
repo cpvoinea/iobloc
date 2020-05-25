@@ -1006,6 +1006,28 @@ namespace iobloc.NativeConsole.Windows
             }
         }
 
+        public static unsafe void WriteArea(int fromRow, int fromCol, int areaWidth, int[] data)
+        {
+            const int X = 1 << 16;
+            int areaHeight = data.Length / areaWidth;
+            Interop.Kernel32.CHAR_INFO[] ci = new Interop.Kernel32.CHAR_INFO[areaWidth * areaHeight];
+            for (int col = 0; col < areaWidth; col++)
+                for (int row = 0; row < areaHeight; row++)
+                {
+                    int v = data[row * areaWidth + col];
+                    ci[row * areaWidth + col] = new Interop.Kernel32.CHAR_INFO((ushort)(v / X), (short)(v % X));
+                }
+            var rect = new Interop.Kernel32.SMALL_RECT { Top = (short)fromRow, Left = (short)fromCol, Bottom = (short)(fromRow + areaHeight - 1), Right = (short)(fromCol + areaWidth - 1) };
+
+            fixed (Interop.Kernel32.CHAR_INFO* pCharInfo = ci)
+                Interop.Kernel32.WriteConsoleOutput(
+                    Interop.Kernel32.GetStdHandle(Interop.Kernel32.HandleTypes.STD_OUTPUT_HANDLE),
+                    pCharInfo,
+                    new Interop.Kernel32.COORD { X = (short)(rect.Right - rect.Left + 1), Y = (short)(rect.Bottom - rect.Top + 1) },
+                    new Interop.Kernel32.COORD { X = (short)(rect.Left - 1), Y = (short)(rect.Top - 1) },
+                    ref rect);
+        }
+
 
         private static Interop.Kernel32.Color ConsoleColorToColorAttribute(ConsoleColor color, bool isBackground)
         {

@@ -1,74 +1,50 @@
-using static iobloc.NativeConsole.Windows.Interop.Kernel32;
-
 namespace iobloc
 {
     public struct Area
     {
+        const int X = 1 << 16;
         public int Left { get; private set; }
         public int Top { get; private set; }
         public int Width { get; private set; }
         public int Height { get; private set; }
-        public CHAR_INFO[,] Text { get; private set; }
+        public int[] Text { get; }
 
-        public COORD From => new COORD { X = (short)Left, Y = (short)Top };
-        public COORD Size => new COORD { X = (short)Width, Y = (short)Height };
-        public SMALL_RECT Rect => new SMALL_RECT { Left = (short)Left, Top = (short)Top, Right = (short)(Left + Width - 1), Bottom = (short)(Top + Height - 1) };
-        public CHAR_INFO this[int row, int col] => Text[row, col];
+        public int this[int row, int col]
+        {
+            get { return Text[row * Width + col]; }
+            set { Text[row * Width + col] = value; }
+        }
 
-        public Area(int left, int top, int width, int height, Color? attr = null)
+        public Area(int left, int top, int width, int height, short? attr = null)
         {
             Left = left;
             Top = top;
             Width = width;
             Height = height;
-            Text = new CHAR_INFO[height, width];
+            Text = new int[height * width];
             if (attr.HasValue)
                 Clear(attr.Value);
         }
 
-        public void Clear(Color? attr = null)
+        public void Clear(short? attr = null)
         {
-            for (int y = 0; y < Height; y++)
-                for (int x = 0; x < Width; x++)
-                    if (attr.HasValue)
-                        Text[y, x] = new CHAR_INFO(' ', (short)attr.Value);
-                    else
-                        Text[y, x] = new CHAR_INFO(' ', Text[y,x].Attr);
+            for (int i = 0; i < Text.Length; i++)
+                Text[i] = (' ' * X) + (attr ?? (Text[i] % X));
         }
 
-        public void SetText(string text, SMALL_RECT? area = null)
+        public void SetText(string text)
         {
-            int left = area.HasValue ? area.Value.Left : 0;
-            int top = area.HasValue ? area.Value.Top : 0;
-            int w = area.HasValue ? area.Value.Right - area.Value.Left + 1 : Width;
-            int y = top;
-            int x = left;
-            int i = 0;
-            while (i < text.Length)
-                if (y >= 0 && y < Height)
-                {
-                    Text[y, x] = new CHAR_INFO(text[i], Text[y,x].Attr);
-                    i++;
-                    x++;
-                    if (x >= Width || x - left >= w)
-                    {
-                        x = left;
-                        y++;
-                    }
-                }
+            for (int i = 0; i < text.Length; i++)
+                Text[i] = (text[i] * X) + (Text[i] % X);
         }
 
         public void SetArea(Area rect)
         {
-            for (int y = 0, sy = rect.Top; y < rect.Height && y + rect.Top < Height; y++, sy++)
-                if (sy >= 0 && sy < Height)
-                    for (int x = 0, sx = rect.Left; x < rect.Width && x + rect.Left < Width; x++, sx++)
-                        if (sx >= 0 && sx < Width)
-                        {
-                            CHAR_INFO c = rect.Text[y, x];
-                            if (c.Char != ' ')
-                                Text[sy, sx] = c;
-                        }
+            for (int ry = 0, y = rect.Top; ry < rect.Height && ry + rect.Top < Height; ry++, y++)
+                if (y >= 0 && y < Height)
+                    for (int rx = 0, x = rect.Left; rx < rect.Width && rx + rect.Left < Width; rx++, x++)
+                        if (x >= 0 && x < Width)
+                            this[y, x] = rect[ry, rx];
         }
 
         public void Move(int left, int top)

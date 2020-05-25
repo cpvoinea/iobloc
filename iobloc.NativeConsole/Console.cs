@@ -11,6 +11,7 @@ using System.Threading;
 using SR = iobloc.Properties.Resources;
 
 using iobloc.NativeConsole.Windows;
+using System;
 
 namespace iobloc.NativeConsole
 {
@@ -790,6 +791,12 @@ namespace iobloc.NativeConsole
         public static void Write(string? value)
         {
             Out.Write(value);
+        }
+
+        [MethodImplAttribute(MethodImplOptions.NoInlining)]
+        public static void WriteArea(int fromRow, int fromCol, int areaWidth, int[] data)
+        {
+            ConsolePal.WriteArea(fromRow, fromCol, areaWidth, data);
         }
 
         internal static bool HandleBreakEvent(ConsoleSpecialKey controlKey)

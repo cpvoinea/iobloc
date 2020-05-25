@@ -3,7 +3,7 @@ using IntPtr = System.IntPtr;
 
 namespace iobloc.NativeConsole.Windows
 {
-    public class Interop
+    internal class Interop
     {
         internal const short KEY_EVENT = 1;
 
@@ -171,7 +171,7 @@ namespace iobloc.NativeConsole.Windows
         }
 
 
-        public class Kernel32
+        internal class Kernel32
         {
             internal const int ENABLE_PROCESSED_INPUT = 0x0001;
             internal const int CTRL_C_EVENT = 0;
@@ -194,14 +194,14 @@ namespace iobloc.NativeConsole.Windows
                 internal const int FILE_TYPE_PIPE = 0x0003;
             }
 
-            public class HandleTypes
+            internal class HandleTypes
             {
-                public const int STD_INPUT_HANDLE = -10;
-                public const int STD_OUTPUT_HANDLE = -11;
-                public const int STD_ERROR_HANDLE = -12;
+                internal const int STD_INPUT_HANDLE = -10;
+                internal const int STD_OUTPUT_HANDLE = -11;
+                internal const int STD_ERROR_HANDLE = -12;
             }
 
-            public enum Color : short
+            internal enum Color : short
             {
                 Black = 0,
                 ForegroundBlue = 0x1,
@@ -233,14 +233,14 @@ namespace iobloc.NativeConsole.Windows
             }
 
             [StructLayout(LayoutKind.Sequential)]
-            public struct CHAR_INFO
+            internal struct CHAR_INFO
             {
                 private readonly ushort charData;
 
-                public char Char => (char)charData;
-                public short Attr { get; }
+                internal char Char => (char)charData;
+                internal short Attr { get; }
 
-                public CHAR_INFO(ushort charData, short attributes)
+                internal CHAR_INFO(ushort charData, short attributes)
                 {
                     this.charData = charData;
                     Attr = attributes;
@@ -265,19 +265,19 @@ namespace iobloc.NativeConsole.Windows
             }
 
             [StructLayoutAttribute(LayoutKind.Sequential)]
-            public struct COORD
+            internal struct COORD
             {
-                public short X;
-                public short Y;
+                internal short X;
+                internal short Y;
             }
 
             [StructLayoutAttribute(LayoutKind.Sequential)]
-            public struct SMALL_RECT
+            internal struct SMALL_RECT
             {
-                public short Left;
-                public short Top;
-                public short Right;
-                public short Bottom;
+                internal short Left;
+                internal short Top;
+                internal short Right;
+                internal short Bottom;
             }
 
 
@@ -327,7 +327,7 @@ namespace iobloc.NativeConsole.Windows
             internal static extern Interop.Kernel32.COORD GetLargestConsoleWindowSize(IntPtr hConsoleOutput);
 
             [DllImport(Libraries.Kernel32)]
-            public static extern IntPtr GetStdHandle(int nStdHandle);  // param is NOT a handle, but it returns one!
+            internal static extern IntPtr GetStdHandle(int nStdHandle);  // param is NOT a handle, but it returns one!
 
             [DllImport(Libraries.Kernel32)]
             internal static extern unsafe int MultiByteToWideChar(uint CodePage, uint dwFlags, byte* lpMultiByteStr, int cbMultiByte, char* lpWideCharStr, int cchWideChar);
@@ -379,9 +379,6 @@ namespace iobloc.NativeConsole.Windows
 
             [DllImport(Libraries.Kernel32, SetLastError = true, CharSet = CharSet.Unicode, EntryPoint = "WriteConsoleOutputW")]
             internal static extern unsafe bool WriteConsoleOutput(IntPtr hConsoleOutput, CHAR_INFO* buffer, COORD bufferSize, COORD bufferCoord, ref SMALL_RECT writeRegion);
-
-            [DllImport(Libraries.Kernel32, SetLastError = true, CharSet = CharSet.Unicode, EntryPoint = "WriteConsoleOutputW")]
-            public static extern unsafe bool WriteConsoleOutput(IntPtr hConsoleOutput, [MarshalAs(UnmanagedType.LPArray), In] CHAR_INFO[,] buffer, COORD bufferSize, COORD bufferCoord, ref SMALL_RECT writeRegion);
 
             [DllImport(Libraries.Kernel32, SetLastError = true)]
             internal static extern unsafe int WriteFile(IntPtr handle, byte* bytes, int numBytesToWrite, out int numBytesWritten, IntPtr mustBeZero);
